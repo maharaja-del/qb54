@@ -1,0 +1,659 @@
+{
+  "sections": {
+    "simple_logo": {
+      "type": "simple-logo",
+      "name": "Simple Logo Section",
+      "settings": {
+        "section_bg": "#0d0d0d",
+        "section_padding_top": 10,
+        "section_padding_bottom": 10,
+        "max_width": 1400,
+        "logo": "shopify://shop_images/QB54_Ball_Logo_only_copy_copy_410x_25d11a0b-a689-4422-9e25-846e937323d1.png",
+        "logo_alt": "QB54",
+        "logo_link": "https://playqb54.com/",
+        "logo_width": 150,
+        "logo_opacity": 100,
+        "logo_border_radius": 0,
+        "logo_border_width": 0,
+        "logo_border_color": "#e0e0e0",
+        "logo_hover_scale": 104,
+        "logo_hover_transform": -2,
+        "logo_hover_opacity": 80,
+        "logo_hover_border_color": "#cccccc",
+        "mobile_section_padding_top": 10,
+        "mobile_section_padding_bottom": 10,
+        "mobile_logo_width": 130
+      }
+    },
+    "main-page": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "heading_size": "title-xl tracking-heading",
+        "heading_alignment": "text-left",
+        "heading_tag": "h1",
+        "text_size": "text-base",
+        "padding_top": 72,
+        "padding_bottom": 120,
+        "divider": false,
+        "narrow": true,
+        "rounded": false
+      }
+    },
+    "pickem_hero": {
+      "type": "NFL-lp-hero",
+      "name": "QB54 Pick'em League Hero",
+      "settings": {
+        "bg_image": "shopify://shop_images/QB54_1000_1000_Header.jpg",
+        "bg_opacity": 20,
+        "image_focal_point": "center center",
+        "top_label": "The NFL Is Back • Free Season-Long Contest",
+        "heading_line_1": "PICK WINNERS.",
+        "heading_line_2": "WIN PRIZES.",
+        "heading_line_3": "",
+        "offer_text": "100% Free — No Purchase Necessary",
+        "subheading": "Join the official QB54 NFL Pick'em League. Call the winner of every NFL game each week, rack up points, and battle for weekly prizes plus a season-long grand prize — straight from the QB54 store.",
+        "body_copy": "Powered by Top Dog. Pick a winner for each of the week's NFL games in under 2 minutes. Most correct picks each week takes home a prize. Top 3 in points after Week 17 split the grand prize vault.",
+        "cta_text": "Join The League Free",
+        "cta_url": "https://topdog.global/leagues/qb54?ref=C9F83C",
+        "secondary_text": "Shop QB54 Gear",
+        "secondary_url": "https://playqb54.com/collections/qb54-game-set-1",
+        "video_url": ""
+      }
+    },
+    "stats_banner": {
+      "type": "statistics-banner",
+      "name": "Statistics Banner",
+      "blocks": {
+        "stat_weeks": {
+          "type": "statistic",
+          "settings": { "number": "17", "label": "WEEKS OF ACTION" }
+        },
+        "stat_games": {
+          "type": "statistic",
+          "settings": { "number": "15", "label": "NFL GAMES EVERY WEEK" }
+        },
+        "stat_cost": {
+          "type": "statistic",
+          "settings": { "number": "$0", "label": "COST TO JOIN" }
+        },
+        "stat_winners": {
+          "type": "statistic",
+          "settings": { "number": "3", "label": "GRAND PRIZE WINNERS" }
+        }
+      },
+      "block_order": ["stat_weeks", "stat_games", "stat_cost", "stat_winners"],
+      "settings": {
+        "desktop_columns": 4,
+        "section_padding": 40,
+        "mobile_section_padding": 32,
+        "grid_gap": 40,
+        "mobile_gap": 24,
+        "section_bg": "#9aff00",
+        "number_color": "#000000",
+        "label_color": "#000000",
+        "number_font_size": 56,
+        "number_font_weight": 800,
+        "label_font_size": 12,
+        "label_font_weight": 600,
+        "mobile_number_font_size": 40,
+        "mobile_label_font_size": 11
+      }
+    },
+    "how_it_works": {
+      "type": "game-rules-steps",
+      "name": "How The League Works",
+      "blocks": {
+        "header": {
+          "type": "header",
+          "settings": {
+            "badge_text": "HOW IT WORKS",
+            "title": "How The QB54 Pick'em League Works",
+            "subtitle": "Free to join. Takes 2 minutes. Here's the play."
+          }
+        },
+        "steps_container": {
+          "type": "steps_container",
+          "settings": {}
+        },
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "step_number": "1",
+            "step_title": "Join Free",
+            "step_description": "Tap Join the League and create your free Top Dog account through QB54's page."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "step_number": "2",
+            "step_title": "Make Your Picks",
+            "step_description": "Every week, pick the winner of each NFL game before kickoff."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "step_number": "3",
+            "step_title": "Earn Points",
+            "step_description": "Score 1 point for every correct pick. Points stack up week after week."
+          }
+        },
+        "step_4": {
+          "type": "step",
+          "settings": {
+            "step_number": "4",
+            "step_title": "Win Prizes",
+            "step_description": "Top scorer each week wins a prize. Top 3 for the season split the grand prize vault — all from the QB54 store."
+          }
+        },
+        "cta_button": {
+          "type": "cta_button",
+          "settings": {
+            "button_text": "Join The League Free",
+            "button_link": "https://topdog.global/leagues/qb54?ref=C9F83C"
+          }
+        }
+      },
+      "block_order": ["header", "steps_container", "step_1", "step_2", "step_3", "step_4", "cta_button"],
+      "settings": {
+        "section_bg": "#1a1a1a",
+        "section_padding_top": 90,
+        "section_padding_bottom": 90,
+        "header_margin_bottom": 70,
+        "steps_margin_top": 90,
+        "badge_color": "#9aff00",
+        "badge_font_size": 12,
+        "title_color": "#ffffff",
+        "title_font_size": 52,
+        "subtitle_color": "#9a9a9a",
+        "subtitle_font_size": 18,
+        "line_color": "#9aff00",
+        "circle_size": 100,
+        "circle_border_width": 2,
+        "circle_border_color": "#9aff00",
+        "circle_bg": "#2a2a2a",
+        "step_number_color": "#9aff00",
+        "step_number_font_size": 36,
+        "step_title_color": "#ffffff",
+        "step_title_font_size": 24,
+        "step_description_color": "#9a9a9a",
+        "step_description_font_size": 15,
+        "button_margin_top": 70,
+        "button_bg_color": "#9aff00",
+        "button_text_color": "#000000",
+        "button_font_size": 16,
+        "button_font_weight": "600",
+        "button_padding_x": 32,
+        "button_padding_y": 16,
+        "button_border_radius": 8,
+        "button_border_width": 0,
+        "button_border_color": "#9aff00",
+        "button_letter_spacing": 5,
+        "button_uppercase": true,
+        "button_hover_bg_color": "#ffffff",
+        "button_hover_text_color": "#000000",
+        "button_hover_border_color": "#ffffff",
+        "button_hover_transform": -2,
+        "mobile_section_padding_top": 56,
+        "mobile_section_padding_bottom": 56,
+        "mobile_header_margin_bottom": 44,
+        "mobile_steps_margin_top": 56,
+        "mobile_badge_font_size": 11,
+        "mobile_title_font_size": 30,
+        "mobile_subtitle_font_size": 16,
+        "mobile_circle_size": 80,
+        "mobile_step_number_font_size": 28,
+        "mobile_step_title_font_size": 22,
+        "mobile_step_description_font_size": 15,
+        "mobile_button_margin_top": 56,
+        "mobile_button_font_size": 16,
+        "mobile_button_padding_x": 24,
+        "mobile_button_padding_y": 14
+      }
+    },
+    "prizes": {
+      "type": "qb54-pickem-prizes",
+      "name": "Pick'em Prizes",
+      "blocks": {
+        "prize_weekly": {
+          "type": "prize",
+          "settings": {
+            "rank": "weekly",
+            "badge_text": "Weekly Prize",
+            "title": "QB54 Gear Package",
+            "description": "Awarded to the highest scorer of the week, every single week of the season.",
+            "value": ""
+          }
+        },
+        "prize_first": {
+          "type": "prize",
+          "settings": {
+            "rank": "first",
+            "badge_text": "Grand Champion",
+            "title": "Full QB54 Game Set + Gear Bundle",
+            "description": "Awarded to the #1 overall scorer after Week 17.",
+            "value": ""
+          }
+        },
+        "prize_second": {
+          "type": "prize",
+          "settings": {
+            "rank": "second",
+            "badge_text": "Runner Up",
+            "title": "QB54 Game Set",
+            "description": "Awarded to the #2 overall scorer after Week 17.",
+            "value": ""
+          }
+        },
+        "prize_third": {
+          "type": "prize",
+          "settings": {
+            "rank": "third",
+            "badge_text": "3rd Place",
+            "title": "QB54 Gear Package",
+            "description": "Awarded to the #3 overall scorer after Week 17.",
+            "value": ""
+          }
+        }
+      },
+      "block_order": ["prize_weekly", "prize_first", "prize_second", "prize_third"],
+      "settings": {
+        "eyebrow": "What You Can Win",
+        "heading": "Prizes On <em>Prizes</em> On Prizes.",
+        "subheading": "Every prize ships straight from the QB54 store — the same tailgate gear thousands of fans already love.",
+        "footnote": "Prizes subject to change. No purchase necessary to enter or win. See Top Dog league rules for full details.",
+        "background": "#0d0d0d",
+        "card_background": "#171717",
+        "accent_color": "#9aff00",
+        "heading_color": "#ffffff",
+        "text_color": "#c9c9c9",
+        "heading_size_mobile": 32,
+        "heading_size_desktop": 46,
+        "padding_mobile": 56,
+        "padding_desktop": 84
+      }
+    },
+    "testers_cta": {
+      "type": "qb54-pickem-testers-cta",
+      "name": "Testers Wanted CTA",
+      "settings": {
+        "badge_text": "Week 1 = Testing Round",
+        "heading": "Be An Original <em>Top Dog</em>.",
+        "subheading": "Week 1 is our trial run before the real season kicks off in Week 2. Join now, test-drive the league, and lock in your spot before everyone else piles in. Do you have what it takes to be Top Dog?",
+        "cta_text": "I've Got What It Takes — Join Now",
+        "cta_url": "https://topdog.global/leagues/qb54?ref=C9F83C",
+        "note_1": "Free forever",
+        "note_2": "No credit card required",
+        "note_3": "No purchase necessary to enter or win",
+        "background": "#0d0d0d",
+        "accent_color": "#9aff00",
+        "heading_color": "#ffffff",
+        "text_color": "#c9c9c9",
+        "heading_size_mobile": 34,
+        "heading_size_desktop": 50,
+        "padding_mobile": 48,
+        "padding_desktop": 72
+      }
+    },
+    "shop_products": {
+      "type": "qb54-best-sellers",
+      "name": "Shop QB54 While You Play",
+      "blocks": {
+        "product_1": {
+          "type": "product",
+          "settings": {
+            "product": "qb54-black-game-set",
+            "rank_label": "Best Seller",
+            "rating_text": "5-star rated"
+          }
+        },
+        "product_2": {
+          "type": "product",
+          "settings": {
+            "product": "backyard-football-game-qb54-navy-edition",
+            "rank_label": "Navy Edition",
+            "rating_text": "5-star rated"
+          }
+        },
+        "product_3": {
+          "type": "product",
+          "settings": {
+            "product": "backyard-football-game-qb54-red-edition",
+            "rank_label": "Red Edition",
+            "rating_text": "5-star rated"
+          }
+        }
+      },
+      "block_order": ["product_1", "product_2", "product_3"],
+      "settings": {
+        "eyebrow": "Shop QB54",
+        "heading": "Gear Up Before <em>Kickoff</em>",
+        "subheading": "The tailgate legend behind the prizes. Grab your set before the season starts.",
+        "bullet_1": "Everything included — 2 chairs, goals, ball, pump, tee, carry bag",
+        "bullet_2": "Sets up anywhere in under 2 minutes",
+        "bullet_3": "Heavy-duty chairs support up to 275 lbs",
+        "atc_label": "Add to Cart",
+        "feat_micro": "30-day money-back guarantee · Secure checkout",
+        "strip_1": "Free shipping on orders $225+",
+        "strip_2": "30-day money-back guarantee",
+        "strip_3": "Ships within 1 business day",
+        "background": "#f4f2e8",
+        "navy_color": "#363a66",
+        "gold_color": "#fdc439",
+        "text_color": "#171717",
+        "star_color": "#f59e0b",
+        "sale_color": "#e11d48",
+        "heading_size_mobile": 32,
+        "heading_size_desktop": 46,
+        "padding_mobile": 56,
+        "padding_desktop": 80,
+        "strip_items": 3
+      }
+    },
+    "footballs_row": {
+      "type": "featured-collection",
+      "name": "NFL Footballs",
+      "settings": {
+        "collection": "nfl-footballs",
+        "product_limit": 8,
+        "columns": 4,
+        "carousel_on_desktop": true,
+        "show_view_all": true,
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "heading": "NFL Team Footballs",
+        "heading_size": "title-md",
+        "heading_alignment": "text-left md:items-end md:flex-row",
+        "heading_tag": "h2",
+        "subheading": "Throwback vintage footballs for your team.",
+        "color_text": "#ffffff",
+        "color_background": "#0d0d0d",
+        "color_button_text": "#0a1400",
+        "color_button_background": "#9aff00",
+        "padding_top": 72,
+        "padding_bottom": 40,
+        "divider": false,
+        "full_width": false,
+        "rounded": false
+      }
+    },
+    "tailgate_cta": {
+      "type": "qb54-final-cta",
+      "name": "Tailgate Gear CTA",
+      "settings": {
+        "eyebrow": "The Full Setup",
+        "heading": "Need The Whole <em>Tailgate</em>?",
+        "subheading": "Blankets, coolers, tumblers, tables, tents and more — all shoppable by your team.",
+        "primary_button_text": "Shop The Tailgate Hub",
+        "primary_button_url": "https://playqb54.com/pages/nfl-tailgate-shop",
+        "secondary_button_text": "",
+        "secondary_button_url": "",
+        "chip_1": "Free shipping on orders $225+",
+        "chip_2": "30-day money-back guarantee",
+        "chip_3": "Secure checkout — Shop Pay, PayPal, Google Pay",
+        "background": "#171717",
+        "accent_color": "#9aff00",
+        "heading_color": "#ffffff",
+        "subheading_color": "#c9c9c9",
+        "button_radius": 10,
+        "heading_size_mobile": 32,
+        "heading_size_desktop": 46,
+        "padding_mobile": 48,
+        "padding_desktop": 72
+      }
+    },
+    "testimonials": {
+      "type": "testimonial-reviews-section",
+      "name": "Testimonial Reviews",
+      "blocks": {
+        "review_1": {
+          "type": "review",
+          "settings": {
+            "review_text": "This is hands down the best outdoor game I've ever owned. My family plays it every single weekend. It's become a tradition.",
+            "reviewer_name": "Mike R.",
+            "verified_text": "Verified Buyer"
+          }
+        },
+        "review_2": {
+          "type": "review",
+          "settings": {
+            "review_text": "QB54 is one of the most fun tailgate games I've played. It's easy to learn, competitive right away, and the fact that it converts into two chairs makes it perfect for game day.",
+            "reviewer_name": "Ethan S.",
+            "verified_text": "Verified Buyer"
+          }
+        },
+        "review_3": {
+          "type": "review",
+          "settings": {
+            "review_text": "At first I thought QB54 was a little pricey, but after playing it, it completely made sense. It's incredibly fun, well designed, and easily becomes the highlight of any tailgate.",
+            "reviewer_name": "Sara P.",
+            "verified_text": "Verified Buyer"
+          }
+        },
+        "review_4": {
+          "type": "review",
+          "settings": {
+            "review_text": "I bought QB54 as a gift and it ended up being the highlight of the party. Everyone wanted to play, and it quickly turned into a full-on competition.",
+            "reviewer_name": "Lisa L.",
+            "verified_text": "Verified Buyer"
+          }
+        },
+        "review_5": {
+          "type": "review",
+          "settings": {
+            "review_text": "We bought QB54 for our grandson and it turned out to be the perfect gift. Not only does he love playing it, but it's become something we enjoy doing together whenever we visit.",
+            "reviewer_name": "Eugene T",
+            "verified_text": "Verified Buyer"
+          }
+        },
+        "review_6": {
+          "type": "review",
+          "settings": {
+            "review_text": "Kids have loved it! They even played it in the snow today. Easy to assemble and the rules are easy to follow.",
+            "reviewer_name": "Sydney",
+            "verified_text": "Verified Buyer"
+          }
+        }
+      },
+      "block_order": ["review_1", "review_2", "review_3", "review_4", "review_5", "review_6"],
+      "settings": {
+        "section_padding": 80,
+        "desktop_columns": 3,
+        "grid_gap": 24,
+        "hero_bottom_margin": 80,
+        "header_bottom_margin": 48,
+        "section_bg": "#1a1a1a",
+        "hero_text_color": "#ffffff",
+        "hero_highlight_color": "#9aff00",
+        "eyebrow_color": "#9aff00",
+        "main_heading_color": "#ffffff",
+        "card_bg": "#2a2a2a",
+        "card_border_color": "#3a3a3a",
+        "star_color": "#9aff00",
+        "review_text_color": "#ffffff",
+        "reviewer_name_color": "#ffffff",
+        "verified_text_color": "#888888",
+        "hero_font_size": 44,
+        "mobile_hero_font_size": 30,
+        "eyebrow_font_size": 12,
+        "main_heading_font_size": 42,
+        "mobile_main_heading_font_size": 24,
+        "review_text_size": 16,
+        "card_padding": 32,
+        "card_border_radius": 8,
+        "show_hero_text": true,
+        "hero_line_1": "The Game Behind The Prizes",
+        "hero_line_2_before": "",
+        "hero_line_2_highlight": "THOUSANDS OF 5-STAR REVIEWS",
+        "hero_line_2_after": "",
+        "eyebrow_text": "",
+        "main_heading": "",
+        "enable_mobile_slider": true
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "name": "FAQ",
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "title": "Is the QB54 Pick'em League really free?",
+            "text": "<p>Yes — it's 100% free to join and play all season long. No purchase necessary to enter or win.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "title": "How do I make my picks?",
+            "text": "<p>After you join for free through Top Dog, simply pick the winning team for each NFL game before that week's games kick off.</p>"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "title": "How does scoring work?",
+            "text": "<p>You earn 1 point for every game you pick correctly. Your points add up across all 17 weeks of the NFL season.</p>"
+          }
+        },
+        "q4": {
+          "type": "question",
+          "settings": {
+            "title": "What if I join during the testing week?",
+            "text": "<p>Week 1 is a trial run to make sure everything runs smoothly. The official contest — and the points that count toward prizes — start in Week 2, so testers get a head start.</p>"
+          }
+        },
+        "q5": {
+          "type": "question",
+          "settings": {
+            "title": "What can I win?",
+            "text": "<p>Each week, the player with the most points wins a prize package from the QB54 store. At the end of the season, the top 3 overall scorers split our grand prize vault.</p>"
+          }
+        },
+        "q6": {
+          "type": "question",
+          "settings": {
+            "title": "Who runs the contest?",
+            "text": "<p>The league is hosted by Top Dog, QB54's official Pick'em partner. QB54 supplies and ships every prize.</p>"
+          }
+        }
+      },
+      "block_order": ["q1", "q2", "q3", "q4", "q5", "q6"],
+      "settings": {
+        "style": "with-border",
+        "heading": "Frequently Asked Questions",
+        "heading_size": "title-md",
+        "heading_alignment": "text-left md:items-end md:flex-row",
+        "heading_tag": "h2",
+        "color_text": "#ffffff",
+        "color_background": "#0d0d0d",
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "divider": false,
+        "narrow": true,
+        "rounded": false
+      }
+    },
+    "final_cta": {
+      "type": "qb54-final-cta",
+      "name": "Final CTA",
+      "settings": {
+        "eyebrow": "Free To Join · Prizes All Season",
+        "heading": "Think You've Got What It <em>Takes</em>?",
+        "subheading": "Join fellow QB54 fans picking winners every week. It's free, it's fast, and the prizes are real QB54 gear.",
+        "primary_button_text": "Join The QB54 League Free",
+        "primary_button_url": "https://topdog.global/leagues/qb54?ref=C9F83C",
+        "secondary_button_text": "Shop QB54 Gear",
+        "secondary_button_url": "https://playqb54.com/collections/qb54-game-set-1",
+        "chip_1": "100% free to join",
+        "chip_2": "Weekly + season-long prizes",
+        "chip_3": "No purchase necessary",
+        "background": "#0d0d0d",
+        "accent_color": "#9aff00",
+        "heading_color": "#ffffff",
+        "subheading_color": "#c9c9c9",
+        "button_radius": 10,
+        "heading_size_mobile": 38,
+        "heading_size_desktop": 60,
+        "padding_mobile": 56,
+        "padding_desktop": 88
+      }
+    },
+    "footer_links": {
+      "type": "simple-links",
+      "name": "Simple Links Section",
+      "blocks": {
+        "link_privacy": {
+          "type": "link",
+          "settings": { "link_text": "Privacy Policy", "link_url": "https://playqb54.com/pages/privacy-policy" }
+        },
+        "link_terms": {
+          "type": "link",
+          "settings": { "link_text": "Terms of Service", "link_url": "https://playqb54.com/pages/terms-of-service" }
+        },
+        "link_return": {
+          "type": "link",
+          "settings": { "link_text": "Return Policy", "link_url": "https://playqb54.com/pages/return-policy" }
+        },
+        "link_refund": {
+          "type": "link",
+          "settings": { "link_text": "Refund Policy", "link_url": "https://playqb54.com/pages/refund-policy" }
+        },
+        "link_shipping": {
+          "type": "link",
+          "settings": { "link_text": "Shipping Policy", "link_url": "https://playqb54.com/pages/shipping-policy" }
+        }
+      },
+      "block_order": ["link_privacy", "link_terms", "link_return", "link_refund", "link_shipping"],
+      "settings": {
+        "section_bg": "#0d0d0d",
+        "section_padding_top": 30,
+        "section_padding_bottom": 30,
+        "max_width": 1200,
+        "link_spacing": 30,
+        "link_color": "#9aff00",
+        "link_bg_color": "rgba(0,0,0,0)",
+        "link_border_color": "rgba(0,0,0,0)",
+        "link_font_size": 16,
+        "link_font_weight": "400",
+        "link_text_decoration": "underline",
+        "link_padding_x": 12,
+        "link_padding_y": 8,
+        "link_border_radius": 0,
+        "link_border_width": 0,
+        "link_letter_spacing": 0,
+        "link_uppercase": false,
+        "link_hover_color": "#000000",
+        "link_hover_bg_color": "rgba(0,0,0,0)",
+        "link_hover_border_color": "rgba(0,0,0,0)",
+        "link_hover_text_decoration": "none",
+        "link_hover_transform": 0,
+        "mobile_section_padding_top": 20,
+        "mobile_section_padding_bottom": 20,
+        "mobile_link_spacing": 16,
+        "mobile_link_font_size": 15,
+        "mobile_link_padding_x": 10,
+        "mobile_link_padding_y": 6,
+        "mobile_link_width": 90
+      }
+    }
+  },
+  "order": [
+    "simple_logo",
+    "main-page",
+    "pickem_hero",
+    "stats_banner",
+    "how_it_works",
+    "prizes",
+    "testers_cta",
+    "shop_products",
+    "footballs_row",
+    "tailgate_cta",
+    "testimonials",
+    "faq",
+    "final_cta",
+    "footer_links"
+  ]
+}

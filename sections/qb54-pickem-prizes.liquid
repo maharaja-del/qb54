@@ -1,0 +1,543 @@
+{%- liquid
+  assign prize_blocks = section.blocks | where: 'type', 'prize'
+  assign weekly_block = prize_blocks | where: 'settings.rank', 'weekly' | first
+  assign podium_blocks = prize_blocks | where: 'settings.rank', 'first'
+  assign podium_blocks = podium_blocks | concat: (prize_blocks | where: 'settings.rank', 'second')
+  assign podium_blocks = podium_blocks | concat: (prize_blocks | where: 'settings.rank', 'third')
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --pz-bg: {{ section.settings.background }};
+    --pz-lime: {{ section.settings.accent_color }};
+    --pz-ink: {{ section.settings.heading_color }};
+    --pz-sub: {{ section.settings.text_color }};
+    --pz-card: {{ section.settings.card_background }};
+    --pz-gold: #e8c14a;
+    --pz-silver: #c7ccd6;
+    --pz-bronze: #d08a52;
+  }
+
+  #shopify-section-{{ section.id }} .pz {
+    background: var(--pz-bg);
+    padding: {{ section.settings.padding_mobile }}px 0;
+  }
+
+  #shopify-section-{{ section.id }} .pz-shell {
+    width: min(1200px, 100% - 40px);
+    margin-inline: auto;
+  }
+
+  #shopify-section-{{ section.id }} .pz-head {
+    max-width: 680px;
+    margin: 0 auto 36px;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .pz-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-body-family);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--pz-lime);
+    margin-bottom: 12px;
+  }
+  #shopify-section-{{ section.id }} .pz-eyebrow::before,
+  #shopify-section-{{ section.id }} .pz-eyebrow::after {
+    content: '';
+    width: 22px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--pz-lime);
+  }
+
+  #shopify-section-{{ section.id }} .pz-heading {
+    font-family: var(--font-heading-family);
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    color: var(--pz-ink);
+    margin: 0 0 12px;
+    font-size: {{ section.settings.heading_size_mobile }}px;
+  }
+  #shopify-section-{{ section.id }} .pz-heading em {
+    font-style: normal;
+    color: var(--pz-lime);
+  }
+
+  #shopify-section-{{ section.id }} .pz-sub {
+    font-family: var(--font-body-family);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--pz-sub);
+    margin: 0;
+  }
+
+  /* Weekly prize — full width banner card */
+  #shopify-section-{{ section.id }} .pz-weekly {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    align-items: center;
+    background: var(--pz-card);
+    border: 1px solid color-mix(in srgb, var(--pz-lime) 28%, transparent);
+    border-radius: 18px;
+    padding: 26px 24px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  #shopify-section-{{ section.id }} .pz-weekly::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(520px 200px at 0% 0%, color-mix(in srgb, var(--pz-lime) 10%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} .pz-weekly-media {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #111;
+    aspect-ratio: 4 / 3;
+  }
+  #shopify-section-{{ section.id }} .pz-weekly-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .pz-weekly-body {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #shopify-section-{{ section.id }} .pz-tag {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    gap: 7px;
+    background: var(--pz-lime);
+    color: #0a1400;
+    font-family: var(--font-heading-family);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 999px;
+  }
+
+  #shopify-section-{{ section.id }} .pz-weekly-title {
+    font-family: var(--font-heading-family);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 24px;
+    line-height: 1.1;
+    color: var(--pz-ink);
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .pz-weekly-desc {
+    font-family: var(--font-body-family);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--pz-sub);
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .pz-value {
+    font-family: var(--font-heading-family);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    color: var(--pz-lime);
+  }
+
+  /* Podium — 1st / 2nd / 3rd */
+  #shopify-section-{{ section.id }} .pz-podium {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  #shopify-section-{{ section.id }} .pz-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: var(--pz-card);
+    border: 1px solid color-mix(in srgb, #ffffff 10%, transparent);
+    border-radius: 16px;
+    padding: 22px 20px 24px;
+    position: relative;
+  }
+  #shopify-section-{{ section.id }} .pz-card[data-rank='first'] {
+    border-color: color-mix(in srgb, var(--pz-gold) 55%, transparent);
+    box-shadow: 0 16px 40px color-mix(in srgb, var(--pz-gold) 16%, transparent);
+  }
+  #shopify-section-{{ section.id }} .pz-card[data-rank='second'] {
+    border-color: color-mix(in srgb, var(--pz-silver) 45%, transparent);
+  }
+  #shopify-section-{{ section.id }} .pz-card[data-rank='third'] {
+    border-color: color-mix(in srgb, var(--pz-bronze) 45%, transparent);
+  }
+
+  #shopify-section-{{ section.id }} .pz-medal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    font-family: var(--font-heading-family);
+    font-weight: 700;
+    font-size: 18px;
+    flex: none;
+  }
+  #shopify-section-{{ section.id }} .pz-card[data-rank='first'] .pz-medal { background: color-mix(in srgb, var(--pz-gold) 24%, transparent); color: var(--pz-gold); }
+  #shopify-section-{{ section.id }} .pz-card[data-rank='second'] .pz-medal { background: color-mix(in srgb, var(--pz-silver) 24%, transparent); color: var(--pz-silver); }
+  #shopify-section-{{ section.id }} .pz-card[data-rank='third'] .pz-medal { background: color-mix(in srgb, var(--pz-bronze) 24%, transparent); color: var(--pz-bronze); }
+
+  #shopify-section-{{ section.id }} .pz-card-media {
+    border-radius: 10px;
+    overflow: hidden;
+    background: #111;
+    aspect-ratio: 4 / 3;
+  }
+  #shopify-section-{{ section.id }} .pz-card-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .pz-card-title {
+    font-family: var(--font-heading-family);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 17px;
+    line-height: 1.15;
+    color: var(--pz-ink);
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .pz-card-desc {
+    font-family: var(--font-body-family);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--pz-sub);
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .pz-foot {
+    text-align: center;
+    margin-top: 26px;
+    font-family: var(--font-body-family);
+    font-size: 13px;
+    color: var(--pz-sub);
+  }
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} .pz-weekly {
+      grid-template-columns: minmax(0, 260px) 1fr;
+    }
+    #shopify-section-{{ section.id }} .pz-podium {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    #shopify-section-{{ section.id }} .pz {
+      padding: {{ section.settings.padding_desktop }}px 0;
+    }
+    #shopify-section-{{ section.id }} .pz-heading {
+      font-size: {{ section.settings.heading_size_desktop }}px;
+    }
+  }
+</style>
+
+<div class="pz">
+  <div class="pz-shell">
+    <header class="pz-head">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="pz-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="pz-heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="pz-sub">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+    </header>
+
+    {%- if weekly_block != blank -%}
+      <article class="pz-weekly" {{ weekly_block.shopify_attributes }}>
+        <div class="pz-weekly-media">
+          {%- if weekly_block.settings.image != blank -%}
+            {{- weekly_block.settings.image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '350,700', sizes: '(max-width: 699px) 92vw, 260px', alt: weekly_block.settings.title | escape -}}
+          {%- else -%}
+            {{- 'product-1' | placeholder_svg_tag: 'pz-placeholder' -}}
+          {%- endif -%}
+        </div>
+        <div class="pz-weekly-body">
+          <span class="pz-tag">{{ weekly_block.settings.badge_text | default: 'Weekly Prize' | escape }}</span>
+          <h3 class="pz-weekly-title">{{ weekly_block.settings.title | escape }}</h3>
+          {%- if weekly_block.settings.description != blank -%}
+            <p class="pz-weekly-desc">{{ weekly_block.settings.description | escape }}</p>
+          {%- endif -%}
+          {%- if weekly_block.settings.value != blank -%}
+            <span class="pz-value">{{ weekly_block.settings.value | escape }}</span>
+          {%- endif -%}
+        </div>
+      </article>
+    {%- endif -%}
+
+    {%- if podium_blocks.size > 0 -%}
+      <div class="pz-podium">
+        {%- for block in podium_blocks -%}
+          {%- liquid
+            case block.settings.rank
+              when 'first'
+                assign medal = '1'
+              when 'second'
+                assign medal = '2'
+              when 'third'
+                assign medal = '3'
+            endcase
+          -%}
+          <article class="pz-card" data-rank="{{ block.settings.rank }}" {{ block.shopify_attributes }}>
+            <span class="pz-medal">{{ medal }}</span>
+            <div class="pz-card-media">
+              {%- if block.settings.image != blank -%}
+                {{- block.settings.image | image_url: width: 500 | image_tag: loading: 'lazy', widths: '250,500', sizes: '(max-width: 699px) 45vw, 320px', alt: block.settings.title | escape -}}
+              {%- else -%}
+                {{- 'product-1' | placeholder_svg_tag: 'pz-placeholder' -}}
+              {%- endif -%}
+            </div>
+            <h3 class="pz-card-title">{{ block.settings.badge_text | default: block.settings.title | escape }}</h3>
+            <p class="pz-card-desc">{{ block.settings.title }}{% if block.settings.description != blank %} — {{ block.settings.description }}{% endif %}</p>
+            {%- if block.settings.value != blank -%}
+              <span class="pz-value">{{ block.settings.value | escape }}</span>
+            {%- endif -%}
+          </article>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.footnote != blank -%}
+      <p class="pz-foot">{{ section.settings.footnote | escape }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "QB54 Pick'em Prizes",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "What You Can Win"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading (italic = lime accent)",
+      "default": "Prizes On <em>Prizes</em> On Prizes."
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Every prize ships straight from the QB54 store — the same tailgate gear thousands of fans already love."
+    },
+    {
+      "type": "text",
+      "id": "footnote",
+      "label": "Footnote",
+      "info": "Leave blank to hide.",
+      "default": "Prizes subject to change. No purchase necessary to enter or win. See Top Dog league rules for full details."
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#0d0d0d"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#171717"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent (lime)",
+      "default": "#9aff00"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading / titles",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Body text",
+      "default": "#c9c9c9"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size mobile",
+      "min": 26,
+      "max": 48,
+      "step": 2,
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size desktop",
+      "min": 34,
+      "max": 72,
+      "step": 2,
+      "default": 46
+    },
+    {
+      "type": "range",
+      "id": "padding_mobile",
+      "label": "Vertical padding mobile",
+      "min": 24,
+      "max": 100,
+      "step": 4,
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_desktop",
+      "label": "Vertical padding desktop",
+      "min": 40,
+      "max": 140,
+      "step": 4,
+      "default": 72
+    }
+  ],
+  "blocks": [
+    {
+      "type": "prize",
+      "name": "Prize",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "select",
+          "id": "rank",
+          "label": "Prize slot",
+          "options": [
+            { "value": "weekly", "label": "Weekly prize (full-width banner)" },
+            { "value": "first", "label": "Grand prize — 1st place" },
+            { "value": "second", "label": "Grand prize — 2nd place" },
+            { "value": "third", "label": "Grand prize — 3rd place" }
+          ],
+          "default": "weekly"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Prize image"
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Badge / short label",
+          "default": "Weekly Prize"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Prize title",
+          "default": "QB54 Gear Package"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Awarded to the highest scorer of the week."
+        },
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value text",
+          "info": "Optional, e.g. $250 Value.",
+          "default": ""
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "QB54 Pick'em Prizes",
+      "blocks": [
+        {
+          "type": "prize",
+          "settings": {
+            "rank": "weekly",
+            "badge_text": "Weekly Prize",
+            "title": "QB54 Gear Package",
+            "description": "Awarded to the highest scorer of the week, every week of the season."
+          }
+        },
+        {
+          "type": "prize",
+          "settings": {
+            "rank": "first",
+            "badge_text": "Grand Champion",
+            "title": "Full QB54 Game Set + Gear Bundle",
+            "description": "Season-long #1 in total points."
+          }
+        },
+        {
+          "type": "prize",
+          "settings": {
+            "rank": "second",
+            "badge_text": "Runner Up",
+            "title": "QB54 Game Set",
+            "description": "Season-long #2 in total points."
+          }
+        },
+        {
+          "type": "prize",
+          "settings": {
+            "rank": "third",
+            "badge_text": "3rd Place",
+            "title": "QB54 Gear Package",
+            "description": "Season-long #3 in total points."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

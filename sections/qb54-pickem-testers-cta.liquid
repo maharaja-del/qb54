@@ -1,0 +1,357 @@
+<style>
+  #shopify-section-{{ section.id }} {
+    --ptc-bg: {{ section.settings.background }};
+    --ptc-lime: {{ section.settings.accent_color }};
+    --ptc-ink: {{ section.settings.heading_color }};
+    --ptc-sub: {{ section.settings.text_color }};
+  }
+
+  #shopify-section-{{ section.id }} .ptc {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--ptc-bg);
+    border-top: 1px solid color-mix(in srgb, var(--ptc-lime) 35%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--ptc-lime) 35%, transparent);
+    padding: {{ section.settings.padding_mobile }}px 0;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .ptc::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 640px;
+    height: 260px;
+    background: radial-gradient(ellipse at center, color-mix(in srgb, var(--ptc-lime) 12%, transparent) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #shopify-section-{{ section.id }} .ptc-shell {
+    position: relative;
+    z-index: 1;
+    width: min(760px, 100% - 40px);
+    margin-inline: auto;
+  }
+
+  #shopify-section-{{ section.id }} .ptc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    background: color-mix(in srgb, var(--ptc-lime) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ptc-lime) 45%, transparent);
+    color: var(--ptc-lime);
+    font-family: var(--font-heading-family);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: 999px;
+    margin-bottom: 22px;
+  }
+
+  #shopify-section-{{ section.id }} .ptc-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ptc-lime);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--ptc-lime) 60%, transparent);
+    animation: ptc-pulse 1.8s ease-out infinite;
+    flex: none;
+  }
+
+  @keyframes ptc-pulse {
+    0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ptc-lime) 55%, transparent); }
+    70%  { box-shadow: 0 0 0 9px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+
+  #shopify-section-{{ section.id }} .ptc-heading {
+    font-family: var(--font-heading-family);
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    color: var(--ptc-ink);
+    margin: 0 0 16px;
+    font-size: {{ section.settings.heading_size_mobile }}px;
+    text-wrap: balance;
+  }
+  #shopify-section-{{ section.id }} .ptc-heading em {
+    font-style: normal;
+    color: var(--ptc-lime);
+  }
+
+  #shopify-section-{{ section.id }} .ptc-sub {
+    font-family: var(--font-body-family);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ptc-sub);
+    max-width: 58ch;
+    margin: 0 auto 30px;
+  }
+
+  #shopify-section-{{ section.id }} .ptc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--ptc-lime);
+    color: #0a1400;
+    font-family: var(--font-heading-family);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 17px 32px;
+    min-height: 54px;
+    border-radius: 10px;
+    text-decoration: none;
+    box-shadow: 0 14px 34px color-mix(in srgb, var(--ptc-lime) 26%, transparent);
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+  #shopify-section-{{ section.id }} .ptc-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 40px color-mix(in srgb, var(--ptc-lime) 34%, transparent);
+  }
+  #shopify-section-{{ section.id }} .ptc-btn svg {
+    width: 15px;
+    height: 15px;
+    flex: none;
+  }
+
+  #shopify-section-{{ section.id }} .ptc-notes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 24px;
+    margin-top: 26px;
+    padding-top: 22px;
+    border-top: 1px solid color-mix(in srgb, var(--ptc-lime) 18%, transparent);
+  }
+
+  #shopify-section-{{ section.id }} .ptc-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-body-family);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ptc-sub);
+  }
+  #shopify-section-{{ section.id }} .ptc-note svg {
+    flex: none;
+    width: 15px;
+    height: 15px;
+    color: var(--ptc-lime);
+  }
+
+  @media screen and (min-width: 900px) {
+    #shopify-section-{{ section.id }} .ptc {
+      padding: {{ section.settings.padding_desktop }}px 0;
+    }
+    #shopify-section-{{ section.id }} .ptc-heading {
+      font-size: {{ section.settings.heading_size_desktop }}px;
+    }
+    #shopify-section-{{ section.id }} .ptc-sub { font-size: 18px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .ptc-dot { animation: none; }
+    #shopify-section-{{ section.id }} .ptc-btn { transition: none; }
+  }
+</style>
+
+<div class="ptc">
+  <div class="ptc-shell">
+    {%- if section.settings.badge_text != blank -%}
+      <span class="ptc-badge">
+        <span class="ptc-dot" aria-hidden="true"></span>
+        {{ section.settings.badge_text | escape }}
+      </span>
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank -%}
+      <h2 class="ptc-heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.subheading != blank -%}
+      <p class="ptc-sub">{{ section.settings.subheading }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.cta_text != blank -%}
+      <a class="ptc-btn" href="{{ section.settings.cta_url | default: '#' }}">
+        {{ section.settings.cta_text | escape }}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    {%- endif -%}
+
+    {%- assign has_notes = false -%}
+    {%- if section.settings.note_1 != blank or section.settings.note_2 != blank or section.settings.note_3 != blank -%}
+      {%- assign has_notes = true -%}
+    {%- endif -%}
+    {%- if has_notes -%}
+      <div class="ptc-notes">
+        {%- if section.settings.note_1 != blank -%}
+          <span class="ptc-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+            {{ section.settings.note_1 | escape }}
+          </span>
+        {%- endif -%}
+        {%- if section.settings.note_2 != blank -%}
+          <span class="ptc-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+            {{ section.settings.note_2 | escape }}
+          </span>
+        {%- endif -%}
+        {%- if section.settings.note_3 != blank -%}
+          <span class="ptc-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+            {{ section.settings.note_3 | escape }}
+          </span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "QB54 Pick'em Testers CTA",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "Week 1 = Testing Round"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading (italic = lime accent)",
+      "default": "Be An Original <em>Top Dog</em>."
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Week 1 is our trial run before the real season kicks off in Week 2. Join now, test-drive the league, and lock in your spot before everyone else piles in."
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "default": "I've Got What It Takes — Join Now"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Trust notes"
+    },
+    {
+      "type": "text",
+      "id": "note_1",
+      "label": "Note 1",
+      "default": "Free forever"
+    },
+    {
+      "type": "text",
+      "id": "note_2",
+      "label": "Note 2",
+      "default": "No credit card required"
+    },
+    {
+      "type": "text",
+      "id": "note_3",
+      "label": "Note 3",
+      "default": "No purchase necessary to enter or win"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#0d0d0d"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent (badge, button, highlight)",
+      "default": "#9aff00"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Subheading / notes",
+      "default": "#c9c9c9"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size mobile",
+      "min": 26,
+      "max": 48,
+      "step": 2,
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size desktop",
+      "min": 34,
+      "max": 72,
+      "step": 2,
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "padding_mobile",
+      "label": "Vertical padding mobile",
+      "min": 24,
+      "max": 100,
+      "step": 4,
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_desktop",
+      "label": "Vertical padding desktop",
+      "min": 40,
+      "max": 140,
+      "step": 4,
+      "default": 72
+    }
+  ],
+  "presets": [
+    {
+      "name": "QB54 Pick'em Testers CTA"
+    }
+  ]
+}
+{% endschema %}
