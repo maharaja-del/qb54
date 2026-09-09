@@ -1,0 +1,178 @@
+{% liquid
+  assign id = section.id
+%}
+
+<section class="media-seen-{{ id }}">
+  <div class="page-width">
+    <div class="media-inner">
+      {% if section.settings.eyebrow != blank %}
+        <div class="media-eyebrow">{{ section.settings.eyebrow }}</div>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h2 class="media-heading">{{ section.settings.heading }}</h2>
+      {% endif %}
+
+      <div class="media-logos">
+        {% for block in section.blocks %}
+          <div class="media-logo" {{ block.shopify_attributes }}>
+            {% if block.settings.logo != blank %}
+              <img
+                src="{{ block.settings.logo | image_url: width: 600 }}"
+                alt="{{ block.settings.alt_text | escape }}"
+                loading="lazy"
+                width="600"
+                height="300">
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if section.settings.footer_text != blank %}
+        <div class="media-footer">{{ section.settings.footer_text }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <style>
+    .media-seen-{{ id }} {
+      background: {{ section.settings.background }};
+      padding-top: {{ section.settings.padding_top_mobile }}px;
+      padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+      color: {{ section.settings.text_color }};
+      text-align: center;
+    }
+
+    .media-seen-{{ id }} .media-eyebrow {
+      font-size: {{ section.settings.eyebrow_size_mobile }}px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      opacity: 0.8;
+      margin-bottom: 12px;
+    }
+
+    .media-seen-{{ id }} .media-heading {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+      margin-bottom: 32px;
+      line-height: 1.2;
+    }
+
+    /* MOBILE: 2 logos per row */
+    .media-seen-{{ id }} .media-logos {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      justify-items: center;
+      margin-bottom: 40px;
+    }
+
+    .media-seen-{{ id }} .media-logo img {
+      max-width: {{ section.settings.logo_size_mobile }}px;
+      height: auto;
+      opacity: {{ section.settings.logo_opacity }};
+    }
+
+    .media-seen-{{ id }} .media-footer {
+      font-size: {{ section.settings.footer_size_mobile }}px;
+      opacity: 0.85;
+    }
+
+    /* MOBILE-ONLY FIX: center last logo when it sits alone */
+    @media (max-width: 749px) {
+      .media-seen-{{ id }} .media-logo:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+        justify-self: center;
+      }
+    }
+
+    @media (min-width: 750px) {
+      .media-seen-{{ id }} {
+        padding-top: {{ section.settings.padding_top_desktop }}px;
+        padding-bottom: {{ section.settings.padding_bottom_desktop }}px;
+      }
+
+      .media-seen-{{ id }} .media-heading {
+        font-size: {{ section.settings.heading_size_desktop }}px;
+        margin-bottom: 56px;
+      }
+
+      .media-seen-{{ id }} .media-eyebrow {
+        font-size: {{ section.settings.eyebrow_size_desktop }}px;
+      }
+
+      .media-seen-{{ id }} .media-logos {
+        grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);
+        gap: 48px;
+      }
+
+      .media-seen-{{ id }} .media-logo img {
+        max-width: {{ section.settings.logo_size_desktop }}px;
+      }
+
+      .media-seen-{{ id }} .media-footer {
+        font-size: {{ section.settings.footer_size_desktop }}px;
+      }
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "As Seen On – Media",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow text", "default": "AS SEEN ON" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Featured in Major Media" },
+    { "type": "text", "id": "footer_text", "label": "Footer text", "default": "Trusted by millions of families across America" },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "columns_desktop", "label": "Desktop columns", "min": 2, "max": 6, "step": 1, "default": 4 },
+
+    { "type": "header", "content": "Logo sizes" },
+    { "type": "range", "id": "logo_size_mobile", "label": "Logo size mobile (px)", "min": 80, "max": 300, "step": 10, "default": 160 },
+    { "type": "range", "id": "logo_size_desktop", "label": "Logo size desktop (px)", "min": 120, "max": 400, "step": 10, "default": 220 },
+
+    { "type": "header", "content": "Style" },
+    { "type": "color", "id": "background", "label": "Background color", "default": "#3f6b4a" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" },
+    { "type": "range", "id": "logo_opacity", "label": "Logo opacity", "min": 0.4, "max": 1, "step": 0.1, "default": 1 },
+
+    { "type": "range", "id": "eyebrow_size_mobile", "label": "Eyebrow size mobile", "min": 10, "max": 20, "step": 1, "default": 12 },
+    { "type": "range", "id": "eyebrow_size_desktop", "label": "Eyebrow size desktop", "min": 12, "max": 24, "step": 1, "default": 14 },
+
+    { "type": "range", "id": "heading_size_mobile", "label": "Heading size mobile", "min": 22, "max": 40, "step": 2, "default": 28 },
+    { "type": "range", "id": "heading_size_desktop", "label": "Heading size desktop", "min": 32, "max": 64, "step": 2, "default": 44 },
+
+    { "type": "range", "id": "footer_size_mobile", "label": "Footer size mobile", "min": 12, "max": 20, "step": 1, "default": 14 },
+    { "type": "range", "id": "footer_size_desktop", "label": "Footer size desktop", "min": 14, "max": 24, "step": 1, "default": 16 },
+
+    { "type": "range", "id": "padding_top_mobile", "label": "Padding top mobile", "min": 20, "max": 120, "step": 4, "default": 48 },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "Padding bottom mobile", "min": 20, "max": 120, "step": 4, "default": 48 },
+    { "type": "range", "id": "padding_top_desktop", "label": "Padding top desktop", "min": 40, "max": 200, "step": 4, "default": 96 },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "Padding bottom desktop", "min": 40, "max": 200, "step": 4, "default": 96 }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Media logo",
+      "settings": [
+        { "type": "image_picker", "id": "logo", "label": "Logo image" },
+        { "type": "text", "id": "alt_text", "label": "Alt text", "default": "Media logo" }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "As Seen On – Media",
+      "blocks": [
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" }
+      ]
+    }
+  ]
+}
+{% endschema %}

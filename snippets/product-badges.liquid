@@ -1,0 +1,75 @@
+{%- doc -%}
+  Renders product badges including custom labels and sale indicators with flexible display options.
+
+  Displays promotional badges, custom labels, and calculated savings on product cards and pages.
+
+  @param {object} product - Shopify product object with price and metafield data
+  @param {object} [variant] - Specific variant for single badge display
+  @param {boolean} [use_variant] - Show variant sale badge
+  @param {boolean} [vertical_badges] - Show badges vertically
+  @param {boolean} [show_sold_out] - Enable sold out badge display
+  @param {boolean} [show_save_amount] - Enable savings badge display
+  @param {string} [save_type] - Savings calculation format
+  @param {string} [class] - Additional CSS classes
+
+  @example
+  {% render 'product-badges',
+     product: product,
+     show_save_amount: true,
+     save_type: 'dollar'
+  %}
+{%- enddoc -%}
+
+{%- liquid
+  if show_save_amount
+    if use_variant
+      assign target = variant | default: product.selected_or_first_available_variant
+    else
+      assign target = product
+    endif
+    if target.compare_at_price > target.price
+      if save_type == 'label'
+        assign saved_amount = save_type
+      elsif save_type == 'dollar'
+        assign saved_amount = target.compare_at_price | minus: target.price | money
+      else
+        assign saved_amount = target.compare_at_price | minus: target.price | times: 100.0 | divided_by: target.compare_at_price | round
+        assign saved_amount = saved_amount | append: '%'
+      endif
+    endif
+  endif
+-%}
+<div class="badges{% if class != blank %} {{ class }}{% endif %}">
+  {%- if product.metafields.theme.label.value != blank -%}
+    {%- capture styles -%}
+      {%- if product.metafields.theme.label_color.value != blank -%}
+        --badge-background: {{ product.metafields.theme.label_color.value }};--badge-foreground: #ffffff;
+      {%- endif -%}
+    {%- endcapture -%}
+    {%- for label in product.metafields.theme.label.value -%}
+      <span class="badge{% if vertical_badges %} badge--vertical{% endif %} flex items-center gap-1d5 font-medium leading-none rounded-full"{% if styles != blank %} style="{{ styles }}"{% endif %}>
+        {{- label | escape -}}
+      </span>
+    {%- endfor -%}
+  {%- endif -%}
+
+  {%- if saved_amount != blank -%}
+     <span class="badge{% if vertical_badges %} badge--vertical{% endif %} badge--onsale flex items-center gap-1d5 font-medium leading-none rounded-full">
+      {%- liquid
+        if save_type == 'label'
+          echo 'products.general.sale' | t
+        else
+          echo 'products.general.save_html' | t: saved_amount: saved_amount
+        endif
+      -%}
+    </span>
+  {%- endif -%}
+
+  {%- if show_sold_out -%}
+    {%- unless product.available -%}
+      <span class="badge{% if vertical_badges %} badge--vertical{% endif %} badge--soldout flex items-center gap-1d5 font-medium leading-none rounded-full">
+        {{- 'products.product.sold_out' | t -}}
+      </span>
+    {%- endunless -%}
+  {%- endif -%}
+</div>

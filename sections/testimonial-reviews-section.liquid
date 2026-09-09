@@ -1,0 +1,393 @@
+{%- style -%}
+  .testimonial-reviews-section, .testimonial-reviews-section * { box-sizing: border-box; }
+  
+  .testimonial-reviews-section {
+    background: {{ section.settings.section_bg }};
+    padding: {{ section.settings.section_padding }}px 0;
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  .testimonial-hero {
+    text-align: center;
+    margin-bottom: {{ section.settings.hero_bottom_margin }}px;
+  }
+  
+  .testimonial-hero-title {
+    font-size: {{ section.settings.hero_font_size }}px;
+    font-weight: 400;
+    color: {{ section.settings.hero_text_color }};
+    margin: 0 0 8px 0;
+    line-height: 1.2;
+    font-style: italic;
+  }
+  
+  .testimonial-hero-title .highlight {
+    color: {{ section.settings.hero_highlight_color }};
+    font-style: italic;
+  }
+  
+  .testimonial-hero-underline {
+    width: 60px;
+    height: 3px;
+    background: {{ section.settings.hero_highlight_color }};
+    margin: 12px auto 0;
+  }
+  
+  .testimonial-section-header {
+    margin-bottom: {{ section.settings.header_bottom_margin }}px;
+  }
+  
+  .testimonial-eyebrow {
+    font-size: {{ section.settings.eyebrow_font_size }}px;
+    font-weight: 700;
+    color: {{ section.settings.eyebrow_color }};
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 12px 0;
+  }
+  
+  .testimonial-main-heading {
+    font-size: {{ section.settings.main_heading_font_size }}px;
+    font-weight: 700;
+    color: {{ section.settings.main_heading_color }};
+    margin: 0;
+    line-height: 1.15;
+  }
+  
+  .testimonial-reviews-grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.desktop_columns }}, 1fr);
+    gap: {{ section.settings.grid_gap }}px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .testimonial-review-card {
+    background: {{ section.settings.card_bg }};
+    border: 1px solid {{ section.settings.card_border_color }};
+    border-radius: {{ section.settings.card_border_radius }}px;
+    padding: {{ section.settings.card_padding }}px;
+    position: relative;
+  }
+  
+  .testimonial-stars {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+  }
+  
+  .testimonial-star {
+    width: 16px;
+    height: 16px;
+    color: {{ section.settings.star_color }};
+  }
+  
+  .testimonial-review-text {
+    font-size: {{ section.settings.review_text_size }}px;
+    line-height: 1.6;
+    color: {{ section.settings.review_text_color }};
+    margin: 0 0 20px 0;
+  }
+  
+  .testimonial-reviewer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .testimonial-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  
+  .testimonial-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .testimonial-reviewer-info h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: {{ section.settings.reviewer_name_color }};
+    margin: 0 0 2px 0;
+  }
+  
+  .testimonial-verified {
+    font-size: 13px;
+    color: {{ section.settings.verified_text_color }};
+    margin: 0;
+  }
+  
+  /* Mobile Slider Styles */
+  @media (max-width: 768px) {
+    .testimonial-hero-title {
+      font-size: {{ section.settings.mobile_hero_font_size }}px;
+    }
+    
+    .testimonial-main-heading {
+      font-size: {{ section.settings.mobile_main_heading_font_size }}px;
+      line-height: 1.25;
+    }
+    
+    /*.testimonial-reviews-grid {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: 16px;
+      padding: 0 20px;
+      margin: 0 -20px;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .testimonial-review-card {
+      min-width: 280px;
+      max-width: 320px;
+      flex-shrink: 0;
+      scroll-snap-align: start;
+    }*/
+    
+    .testimonial-reviews-grid::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .testimonial-mobile-nav{
+    display:none;
+  }
+  @media (max-width: 768px) {
+
+  {% if section.settings.enable_mobile_slider %}
+
+  .testimonial-reviews-grid.mobile-slider-enabled {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 0;
+    padding: 0 20px;
+  }
+  
+
+  .testimonial-review-card {
+    flex: 0 0 100%;
+    max-width: 100%;
+    scroll-snap-align: center;
+    margin: 0 20px;
+  }
+
+  .testimonial-reviews-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .testimonial-mobile-nav{
+    display:flex;
+    justify-content:center;
+    gap:18px;
+    margin-top:20px;
+  }
+
+  .testimonial-arrow{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:{{ section.settings.hero_highlight_color }};
+    color:#000;
+    font-size:22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    font-weight:bold;
+  }
+
+  {% endif %}
+
+}
+  
+  @media (max-width: 480px) {
+    .testimonial-reviews-section {
+      padding: {{ section.settings.section_padding | divided_by: 2 }}px 0;
+    }
+    
+    .testimonial-hero-title {
+      font-size: {{ section.settings.mobile_hero_font_size | minus: 4 }}px;
+    }
+    
+    .testimonial-main-heading {
+      font-size: {{ section.settings.mobile_main_heading_font_size | minus: 4 }}px;
+    }
+    
+    .testimonial-review-card {
+      min-width: 260px;
+      padding: {{ section.settings.card_padding | minus: 8 }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="testimonial-reviews-section">
+  <div class="page-width">
+    {% if section.settings.show_hero_text %}
+      <div class="testimonial-hero">
+        <h2 class="testimonial-hero-title">
+          {{ section.settings.hero_line_1 }}<br>
+          {{ section.settings.hero_line_2_before }}<span class="highlight">{{ section.settings.hero_line_2_highlight }}</span>{{ section.settings.hero_line_2_after }}
+        </h2>
+        <div class="testimonial-hero-underline"></div>
+      </div>
+    {% endif %}
+    
+    <div class="testimonial-section-header">
+      {% if section.settings.eyebrow_text != blank %}
+        <p class="testimonial-eyebrow">{{ section.settings.eyebrow_text }}</p>
+      {% endif %}
+      <h3 class="testimonial-main-heading">{{ section.settings.main_heading }}</h3>
+    </div>
+    
+    <div class="testimonial-reviews-grid{% if section.settings.enable_mobile_slider %} mobile-slider-enabled{% endif %}">
+      {% for block in section.blocks %}
+        {% case block.type %}
+          {% when 'review' %}
+            <div id="slide-{{ forloop.index }}" class="testimonial-review-card" {{ block.shopify_attributes }}>
+              <div class="testimonial-stars">
+                {% for i in (1..5) %}
+                  <div class="testimonial-star">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                  </div>
+                {% endfor %}
+              </div>
+              
+              <p class="testimonial-review-text">{{ block.settings.review_text }}</p>
+              
+              <div class="testimonial-reviewer">
+                <div class="testimonial-avatar">
+                  {% if block.settings.reviewer_avatar != blank %}
+                    {{ block.settings.reviewer_avatar | image_url: width: 96 | image_tag: loading: 'lazy' }}
+                  {% endif %}
+                </div>
+                <div class="testimonial-reviewer-info">
+                  <h4>{{ block.settings.reviewer_name }}</h4>
+                  <p class="testimonial-verified">{{ block.settings.verified_text }}</p>
+                </div>
+              </div>
+   {% if section.settings.enable_mobile_slider %}
+    <div class="testimonial-mobile-nav">
+      {% if forloop.index > 1 %}
+        <a href="#slide-{{ forloop.index | minus: 1 }}" class="testimonial-arrow">‹</a>
+      {% endif %}
+
+      {% if forloop.index < section.blocks.size %}
+        <a href="#slide-{{ forloop.index | plus: 1 }}" class="testimonial-arrow">›</a>
+      {% endif %}
+    </div>
+    {% endif %}
+            </div>
+        {% endcase %}
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Testimonial Reviews",
+  "settings": [
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "section_padding", "label": "Section padding", "min": 40, "max": 120, "step": 4, "default": 80 },
+    { "type": "range", "id": "desktop_columns", "label": "Desktop columns", "min": 1, "max": 4, "step": 1, "default": 3 },
+    { "type": "range", "id": "grid_gap", "label": "Grid gap", "min": 16, "max": 48, "step": 4, "default": 24 },
+    { "type": "range", "id": "hero_bottom_margin", "label": "Hero bottom margin", "min": 40, "max": 120, "step": 4, "default": 80 },
+    { "type": "range", "id": "header_bottom_margin", "label": "Header bottom margin", "min": 20, "max": 80, "step": 4, "default": 48 },
+    
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "section_bg", "label": "Section background", "default": "#1a1a1a" },
+    { "type": "color", "id": "hero_text_color", "label": "Hero text color", "default": "#ffffff" },
+    { "type": "color", "id": "hero_highlight_color", "label": "Hero highlight color", "default": "#9aff00" },
+    { "type": "color", "id": "eyebrow_color", "label": "Eyebrow text color", "default": "#9aff00" },
+    { "type": "color", "id": "main_heading_color", "label": "Main heading color", "default": "#ffffff" },
+    { "type": "color", "id": "card_bg", "label": "Card background", "default": "#2a2a2a" },
+    { "type": "color", "id": "card_border_color", "label": "Card border color", "default": "#3a3a3a" },
+    { "type": "color", "id": "star_color", "label": "Star color", "default": "#9aff00" },
+    { "type": "color", "id": "review_text_color", "label": "Review text color", "default": "#ffffff" },
+    { "type": "color", "id": "reviewer_name_color", "label": "Reviewer name color", "default": "#ffffff" },
+    { "type": "color", "id": "verified_text_color", "label": "Verified text color", "default": "#888888" },
+    
+    { "type": "header", "content": "Typography" },
+    { "type": "range", "id": "hero_font_size", "label": "Hero font size", "min": 28, "max": 64, "step": 2, "default": 48 },
+    { "type": "range", "id": "mobile_hero_font_size", "label": "Mobile hero font size", "min": 24, "max": 40, "step": 2, "default": 32 },
+    { "type": "range", "id": "eyebrow_font_size", "label": "Eyebrow font size", "min": 10, "max": 16, "step": 1, "default": 12 },
+    { "type": "range", "id": "main_heading_font_size", "label": "Main heading font size", "min": 24, "max": 56, "step": 2, "default": 42 },
+    { "type": "range", "id": "mobile_main_heading_font_size", "label": "Mobile main heading font size", "min": 20, "max": 32, "step": 2, "default": 24 },
+    { "type": "range", "id": "review_text_size", "label": "Review text size", "min": 14, "max": 20, "step": 1, "default": 16 },
+    
+    { "type": "header", "content": "Card Settings" },
+    { "type": "range", "id": "card_padding", "label": "Card padding", "min": 16, "max": 48, "step": 4, "default": 32 },
+    { "type": "range", "id": "card_border_radius", "label": "Card border radius", "min": 0, "max": 20, "step": 2, "default": 8 },
+    
+    { "type": "header", "content": "Hero Content" },
+    { "type": "checkbox", "id": "show_hero_text", "label": "Show hero text", "default": true },
+    { "type": "text", "id": "hero_line_1", "label": "Hero line 1", "default": "Pack it up." },
+    { "type": "text", "id": "hero_line_2_before", "label": "Hero line 2 (before highlight)", "default": "Play it " },
+    { "type": "text", "id": "hero_line_2_highlight", "label": "Hero line 2 (highlight)", "default": "Anywhere" },
+    { "type": "text", "id": "hero_line_2_after", "label": "Hero line 2 (after highlight)", "default": "." },
+    { "type": "text", "id": "eyebrow_text", "label": "Eyebrow text", "default": "WALL OF HYPE" },
+    { "type": "text", "id": "main_heading", "label": "Main heading", "default": "Hundreds of 5-Star Reviews" },
+    {
+      "type": "checkbox",
+      "id": "enable_mobile_slider",
+      "label": "Enable mobile slider",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        { "type": "textarea", "id": "review_text", "label": "Review text", "default": "This is hands down the best outdoor game I've ever owned. My family plays it every single weekend. It's become a tradition." },
+        { "type": "text", "id": "reviewer_name", "label": "Reviewer name", "default": "Mike R." },
+        { "type": "text", "id": "verified_text", "label": "Verified text", "default": "Verified Buyer" },
+        { "type": "image_picker", "id": "reviewer_avatar", "label": "Reviewer avatar" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonial Reviews",
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "review_text": "This is hands down the best outdoor game I've ever owned. My family plays it every single weekend. It's become a tradition.",
+            "reviewer_name": "Mike R.",
+            "verified_text": "Verified Buyer"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "review_text": "Brought this to a tailgate and it was the hit of the parking lot. Everyone wanted to play. Already ordered a set for my brother.",
+            "reviewer_name": "Sarah K.",
+            "verified_text": "Verified Buyer"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "review_text": "Built like a tank and folds up super compact. We take it camping, to the beach — everywhere. Worth every penny.",
+            "reviewer_name": "Jason T.",
+            "verified_text": "Verified Buyer"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

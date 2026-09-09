@@ -1,0 +1,65 @@
+{%- doc -%}
+  Renders gift wrapping option with checkbox toggle and conditional gift note field.
+
+  Manages gift wrap product quantities and stores preferences in cart attributes.
+
+  @param {object} gift_wrap_variant - The gift wrap product variant object
+  @param {number} gift_wraps_in_cart - Current quantity of gift wrap items in cart
+  @param {string} section_id - Section identifier for unique field IDs
+
+  @example
+  {% render 'gift-wrapping',
+    gift_wrap_variant: product.first_available_variant,
+    gift_wraps_in_cart: gift_wraps_in_cart,
+    section_id: section.id
+  %}
+{%- enddoc -%}
+
+{%- liquid
+  assign gift_wrap_attribute = 'cart.gift_wrapping.attributes.gift_wrap' | t
+  assign gift_note_attribute = 'cart.gift_wrapping.attributes.gift_note' | t
+  assign boolean_true = 'cart.gift_wrapping.boolean.true' | t
+-%}
+<gift-wrapping class="gift-wrapping grid gap-4"
+  data-gift-wrap-id="{{ gift_wrap_variant.id }}"
+  data-gift-wrapping="{{ cart.attributes[gift_wrap_attribute] | escape }}"
+  cart-items-size="{{ cart.items.size }}"
+  gift-wraps-in-cart="{{ gift_wraps_in_cart }}"
+  items-in-cart="{{ cart.item_count | minus: gift_wraps_in_cart }}"
+  data-section-id="{{ section_id }}"
+>
+  <div class="flex gap-2 md:gap-3">
+    <div class="relative">
+      <div class="loader absolute right-0" hidden>
+        {%- render 'icon', icon: 'rotator', size: 'sm', class: 'animate-rotator' -%}
+      </div>
+      <input
+        type="checkbox"
+        id="GiftWrap-{{ section_id }}"
+        name="attributes[{{ gift_wrap_attribute }}]"
+        value="{{ boolean_true | escape }}"
+        {%- if cart.attributes[gift_wrap_attribute] == boolean_true %} checked{% endif -%}
+      />
+    </div>
+    <label for="GiftWrap-{{ section_id }}" class="text-sm md:text-base leading-tight">
+      {%- liquid
+        assign gift_price = gift_wrap_variant.price | money
+        echo 'cart.gift_wrapping.message_html' | t : price: gift_price
+      -%}
+    </label>
+  </div>
+  {%- if settings.gift_wrap_note -%}
+    {%- if cart.attributes[gift_wrap_attribute] == boolean_true -%}
+      <gift-note class="field">
+        <textarea
+          class="textarea is-floating"
+          rows="4"
+          id="GiftNote-{{ section_id }}"
+          name="attributes[{{ gift_note_attribute }}]"
+          placeholder=" "
+        >{{ cart.attributes[gift_note_attribute] }}</textarea>
+        <label class="label is-floating" for="GiftNote-{{ section_id }}">{{ 'cart.gift_wrapping.note_placeholder' | t }}</label>
+      </gift-note>
+    {%- endif -%}
+  {%- endif -%}
+</gift-wrapping>

@@ -1,0 +1,624 @@
+{%- style -%}
+  .instagram-collaboration, .instagram-collaboration * { box-sizing: border-box; }
+  
+  .instagram-collaboration {
+    background: {{ section.settings.section_bg }};
+    padding: {{ section.settings.section_padding }}px 0;
+    overflow-x: hidden;
+    width: 100%;
+  }
+  
+  .collaboration-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .collaboration-header {
+    text-align: center;
+    margin-bottom: {{ section.settings.header_spacing }}px;
+  }
+  
+  .collaboration-title {
+    font-size: {{ section.settings.title_size }}px;
+    font-weight: {{ section.settings.title_weight }};
+    color: {{ section.settings.title_color }};
+    margin-bottom: {{ section.settings.title_spacing }}px;
+    letter-spacing: {{ section.settings.title_letter_spacing | divided_by: 100.0 }}em;
+    line-height: 1.2;
+  }
+  
+  .collaboration-subtitle {
+    font-size: {{ section.settings.subtitle_size }}px;
+    color: {{ section.settings.subtitle_color }};
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  
+  .collaboration-content {
+    display: grid;
+    grid-template-columns: 1fr 0.8fr 1fr;
+    gap: {{ section.settings.content_gap }}px;
+    align-items: stretch;
+  }
+  
+  .instagram-card {
+    border-radius: {{ section.settings.card_radius }}px;
+    padding: {{ section.settings.card_padding }}px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 500px;
+  }
+  
+  .instagram-card--left {
+    background: linear-gradient({{ section.settings.left_gradient_angle }}deg, {{ section.settings.left_gradient_start }}, {{ section.settings.left_gradient_end }});
+  }
+  
+  .instagram-card--right {
+    background: linear-gradient({{ section.settings.right_gradient_angle }}deg, {{ section.settings.right_gradient_start }}, {{ section.settings.right_gradient_end }});
+  }
+  
+  .card-top-image {
+    width: {{ section.settings.card_image_width }}px;
+    height: {{ section.settings.card_image_width }}px;
+    border-radius: {{ section.settings.card_image_radius }}px;
+    object-fit: cover;
+    margin: 0 auto {{ section.settings.image_spacing }}px;
+    display: block;
+  }
+  
+  .instagram-handle {
+    font-size: {{ section.settings.handle_size }}px;
+    font-weight: {{ section.settings.handle_weight }};
+    margin-bottom: {{ section.settings.handle_spacing }}px;
+    color: {{ section.settings.handle_color }};
+    text-align: center;
+  }
+  
+  .card-description {
+    font-size: {{ section.settings.description_size }}px;
+    color: {{ section.settings.description_color }};
+    line-height: {{ section.settings.description_line_height | divided_by: 100.0 }};
+    margin-bottom: {{ section.settings.description_spacing }}px;
+    text-align: center;
+    opacity: {{ section.settings.description_opacity | divided_by: 100.0 }};
+  }
+  
+  .instagram-stats {
+    display: flex;
+    justify-content: space-around;
+    margin: {{ section.settings.stats_spacing }}px 0;
+    flex-grow: 1;
+    align-items: center;
+  }
+  
+  .stat-item {
+    text-align: center;
+  }
+  
+  .stat-number {
+    font-size: {{ section.settings.stat_number_size }}px;
+    font-weight: {{ section.settings.stat_number_weight }};
+    display: block;
+    color: {{ section.settings.stat_number_color }};
+  }
+  
+  .stat-label {
+    font-size: {{ section.settings.stat_label_size }}px;
+    opacity: {{ section.settings.stat_label_opacity | divided_by: 100.0 }};
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: {{ section.settings.stat_label_color }};
+  }
+  
+  .instagram-cta {
+    background: rgba(255,255,255,{{ section.settings.cta_bg_opacity | divided_by: 100.0 }});
+    border: 1px solid rgba(255,255,255,{{ section.settings.cta_border_opacity | divided_by: 100.0 }});
+    color: {{ section.settings.cta_text_color }};
+    padding: {{ section.settings.cta_padding }}px;
+    border-radius: {{ section.settings.cta_radius }}px;
+    text-decoration: none;
+    font-weight: {{ section.settings.cta_font_weight }};
+    font-size: {{ section.settings.cta_size }}px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    margin-top: auto;
+    width: 100%;
+  }
+  
+  .instagram-cta:hover {
+    background: rgba(255,255,255,{{ section.settings.cta_hover_opacity | divided_by: 100.0 }});
+    transform: translateY(-2px);
+  }
+  
+  .center-content {
+    position: relative;
+    border-radius: {{ section.settings.center_radius }}px;
+    overflow: hidden;
+    background: {{ section.settings.center_bg }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .center-image {
+    width: 100%;
+    height: {{ section.settings.center_height }}px;
+    object-fit: cover;
+    display: block;
+  }
+  
+  .video-container {
+    position: relative;
+    width: 100%;
+    height: {{ section.settings.center_height }}px;
+    background: {{ section.settings.center_bg }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .video-element {
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  
+  .video-cover {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    z-index: 2;
+  }
+  
+  .video-play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: {{ section.settings.play_button_size }}px;
+    height: {{ section.settings.play_button_size }}px;
+    background: {{ section.settings.play_button_color }};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 3;
+  }
+  
+  .video-play-button:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  
+  .video-play-button svg {
+    width: 40%;
+    height: 40%;
+    fill: {{ section.settings.play_button_icon_color }};
+    margin-left: 4px;
+  }
+  
+  @media (max-width: 768px) {
+    .collaboration-content {
+      grid-template-columns: 1fr;
+      gap: {{ section.settings.mobile_gap }}px;
+    }
+    
+    .collaboration-title {
+      font-size: {{ section.settings.mobile_title_size }}px;
+    }
+    
+    .collaboration-subtitle {
+      font-size: {{ section.settings.mobile_subtitle_size }}px;
+    }
+    
+    .instagram-card {
+      padding: {{ section.settings.mobile_card_padding }}px;
+      min-height: auto;
+    }
+    
+    .instagram-card--left {
+      order: {{ section.settings.left_mobile_order }};
+    }
+    
+    .instagram-card--right {
+      order: {{ section.settings.right_mobile_order }};
+    }
+    
+    .center-content {
+      order: {{ section.settings.center_mobile_order }};
+    }
+    
+    .video-container {
+      height: {{ section.settings.mobile_center_height }}px;
+    }
+    
+    .center-image {
+      height: {{ section.settings.mobile_center_height }}px;
+    }
+    
+    .card-top-image {
+      width: {{ section.settings.mobile_card_image_width }}px;
+      height: {{ section.settings.mobile_card_image_width }}px;
+    }
+    
+    .instagram-handle {
+      font-size: {{ section.settings.mobile_handle_size }}px;
+    }
+    
+    .card-description {
+      font-size: {{ section.settings.mobile_description_size }}px;
+    }
+    
+    .stat-number {
+      font-size: {{ section.settings.mobile_stat_number_size }}px;
+    }
+    
+    .stat-label {
+      font-size: {{ section.settings.mobile_stat_label_size }}px;
+    }
+    
+    .instagram-cta {
+      font-size: {{ section.settings.mobile_cta_size }}px;
+      padding: {{ section.settings.mobile_cta_padding }}px;
+    }
+    
+    .video-play-button {
+      width: {{ section.settings.mobile_play_button_size }}px;
+      height: {{ section.settings.mobile_play_button_size }}px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .collaboration-title {
+      font-size: {{ section.settings.mobile_title_size | minus: 4 }}px;
+    }
+    
+    .collaboration-subtitle {
+      font-size: {{ section.settings.mobile_subtitle_size | minus: 2 }}px;
+    }
+    
+    .instagram-card {
+      padding: {{ section.settings.mobile_card_padding | times: 3 | divided_by: 4 }}px;
+    }
+    
+    .card-top-image {
+      width: {{ section.settings.mobile_card_image_width | times: 3 | divided_by: 4 }}px;
+      height: {{ section.settings.mobile_card_image_width | times: 3 | divided_by: 4 }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="instagram-collaboration">
+  <div class="collaboration-container">
+    <div class="collaboration-header">
+      <h2 class="collaboration-title">{{ section.settings.main_title }}</h2>
+      <p class="collaboration-subtitle">{{ section.settings.main_subtitle }}</p>
+    </div>
+    
+    <div class="collaboration-content">
+      <!-- Left Instagram Card -->
+      <div class="instagram-card instagram-card--left">
+        {% if section.settings.left_image != blank %}
+          {{ section.settings.left_image | image_url: width: 200 | image_tag: class: 'card-top-image', loading: 'lazy' }}
+        {% endif %}
+        
+        <div class="instagram-handle">{{ section.settings.left_handle }}</div>
+        
+        {% if section.settings.left_description != blank %}
+          <p class="card-description">{{ section.settings.left_description }}</p>
+        {% endif %}
+        
+        <div class="instagram-stats">
+          <div class="stat-item">
+            <span class="stat-number">{{ section.settings.left_followers }}</span>
+            <span class="stat-label">Followers</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">{{ section.settings.left_posts }}</span>
+            <span class="stat-label">Posts</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">{{ section.settings.left_views }}</span>
+            <span class="stat-label">Views</span>
+          </div>
+        </div>
+        
+        <a href="{{ section.settings.left_link }}" class="instagram-cta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15,3 21,3 21,9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+          {{ section.settings.left_cta_text }}
+        </a>
+      </div>
+      
+      <!-- Center Content -->
+      <div class="center-content">
+        {% if section.settings.content_type == 'image' and section.settings.center_image != blank %}
+          {{ section.settings.center_image | image_url: width: 800 | image_tag: class: 'center-image', loading: 'lazy' }}
+        {% elsif section.settings.content_type == 'video' %}
+          <div class="video-container">
+            {% if section.settings.video_file != blank %}
+              <video class="video-element" id="mainVideo" preload="metadata" {% if section.settings.show_video_controls %}controls{% endif %} playsinline muted>
+                {% for source in section.settings.video_file.sources %}
+                  <source src="{{ source.url }}" type="{{ source.mime_type }}">
+                {% endfor %}
+              </video>
+            {% else %}
+              <div style="background: #333; height: 100%; width: 100%; display: flex; align-items: center; justify-content: center; color: #999; font-size: 14px;">
+                Select a video in the theme editor
+              </div>
+            {% endif %}
+            
+            {% if section.settings.video_cover != blank and section.settings.show_cover %}
+              <img src="{{ section.settings.video_cover | image_url: width: 800 }}" alt="Video cover" class="video-cover" id="videoCover">
+            {% endif %}
+            
+            {% if section.settings.show_cover %}
+              <div class="video-play-button" id="playButton">
+                <svg viewBox="0 0 24 24">
+                  <polygon points="5,3 19,12 5,21"/>
+                </svg>
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+      
+      <!-- Right Instagram Card -->
+      <div class="instagram-card instagram-card--right">
+        {% if section.settings.right_image != blank %}
+          {{ section.settings.right_image | image_url: width: 200 | image_tag: class: 'card-top-image', loading: 'lazy' }}
+        {% endif %}
+        
+        <div class="instagram-handle">{{ section.settings.right_handle }}</div>
+        
+        {% if section.settings.right_description != blank %}
+          <p class="card-description">{{ section.settings.right_description }}</p>
+        {% endif %}
+        
+        <div class="instagram-stats">
+          <div class="stat-item">
+            <span class="stat-number">{{ section.settings.right_followers }}</span>
+            <span class="stat-label">Followers</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">{{ section.settings.right_posts }}</span>
+            <span class="stat-label">Posts</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">{{ section.settings.right_views }}</span>
+            <span class="stat-label">Views</span>
+          </div>
+        </div>
+        
+        <a href="{{ section.settings.right_link }}" class="instagram-cta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15,3 21,3 21,9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+          {{ section.settings.right_cta_text }}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const playButton = document.getElementById('playButton');
+    const videoCover = document.getElementById('videoCover');
+    const videoElement = document.getElementById('mainVideo');
+    
+    if (playButton && videoElement) {
+      function playVideo() {
+        // Hide cover and play button
+        if (videoCover) {
+          videoCover.style.display = 'none';
+        }
+        if (playButton) {
+          playButton.style.display = 'none';
+        }
+        
+        // Ensure video is visible and unmute for sound
+        videoElement.style.display = 'block';
+        videoElement.muted = false;
+        videoElement.volume = 1.0;
+        
+        // Attempt to play with sound
+        const playPromise = videoElement.play();
+        
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            // Video started playing successfully with sound
+          }).catch(error => {
+            console.log('Autoplay with sound failed, trying muted:', error);
+            // If autoplay with sound fails, try muted autoplay
+            videoElement.muted = true;
+            videoElement.play().catch(e => {
+              console.log('Video play failed:', e);
+            });
+          });
+        }
+      }
+      
+      // Play button click handler
+      playButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        playVideo();
+      });
+      
+      // Video cover click handler
+      if (videoCover) {
+        videoCover.addEventListener('click', function(e) {
+          e.preventDefault();
+          playVideo();
+        });
+      }
+      
+      // Handle video ended to show cover again if enabled
+      videoElement.addEventListener('ended', function() {
+        if (videoCover && playButton) {
+          videoCover.style.display = 'block';
+          playButton.style.display = 'flex';
+        }
+      });
+
+      // Handle video pause to show cover again
+      videoElement.addEventListener('pause', function() {
+        if (videoCover && playButton && videoElement.currentTime < videoElement.duration) {
+          videoCover.style.display = 'block';
+          playButton.style.display = 'flex';
+        }
+      });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Instagram Collaboration",
+  "settings": [
+    { "type": "header", "content": "Section Settings" },
+    { "type": "color", "id": "section_bg", "label": "Section background", "default": "#1a1a1a" },
+    { "type": "range", "id": "section_padding", "label": "Section padding", "min": 40, "max": 120, "step": 4, "default": 80 },
+    
+    { "type": "header", "content": "Header Content" },
+    { "type": "text", "id": "main_title", "label": "Main title", "default": "QB54 x @SPORTSFOREDAYS COLLABORATION" },
+    { "type": "textarea", "id": "main_subtitle", "label": "Subtitle", "default": "We've teamed up with Instagram's favorite sports content creator to bring you exclusive offers, Instagram tips, tricks, and tips gathered moments that have helped us millions of views." },
+    
+    { "type": "header", "content": "Typography" },
+    { "type": "range", "id": "title_size", "label": "Title size (Desktop)", "min": 24, "max": 56, "step": 2, "default": 42 },
+    { "type": "range", "id": "mobile_title_size", "label": "Title size (Mobile)", "min": 20, "max": 40, "step": 2, "default": 28 },
+    { "type": "range", "id": "title_weight", "label": "Title font weight", "min": 400, "max": 900, "step": 100, "default": 800 },
+    { "type": "range", "id": "title_letter_spacing", "label": "Title letter spacing", "min": -5, "max": 5, "step": 1, "default": 0 },
+    { "type": "color", "id": "title_color", "label": "Title color", "default": "#ffffff" },
+    { "type": "range", "id": "subtitle_size", "label": "Subtitle size (Desktop)", "min": 14, "max": 24, "step": 1, "default": 16 },
+    { "type": "range", "id": "mobile_subtitle_size", "label": "Subtitle size (Mobile)", "min": 12, "max": 20, "step": 1, "default": 14 },
+    { "type": "color", "id": "subtitle_color", "label": "Subtitle color", "default": "#cccccc" },
+    
+    { "type": "header", "content": "Layout Spacing" },
+    { "type": "range", "id": "header_spacing", "label": "Header bottom spacing", "min": 20, "max": 80, "step": 4, "default": 48 },
+    { "type": "range", "id": "title_spacing", "label": "Title bottom spacing", "min": 8, "max": 32, "step": 2, "default": 16 },
+    { "type": "range", "id": "content_gap", "label": "Content gap (Desktop)", "min": 16, "max": 60, "step": 4, "default": 32 },
+    { "type": "range", "id": "mobile_gap", "label": "Content gap (Mobile)", "min": 16, "max": 48, "step": 4, "default": 24 },
+    
+    { "type": "header", "content": "Mobile Layout Order" },
+    { "type": "range", "id": "left_mobile_order", "label": "Left card mobile order", "min": 1, "max": 3, "step": 1, "default": 1 },
+    { "type": "range", "id": "center_mobile_order", "label": "Center content mobile order", "min": 1, "max": 3, "step": 1, "default": 2 },
+    { "type": "range", "id": "right_mobile_order", "label": "Right card mobile order", "min": 1, "max": 3, "step": 1, "default": 3 },
+    
+    { "type": "header", "content": "Center Content" },
+    { "type": "select", "id": "content_type", "label": "Content type", "options": [ { "value": "image", "label": "Image" }, { "value": "video", "label": "Video" } ], "default": "video" },
+    { "type": "image_picker", "id": "center_image", "label": "Center image" },
+    { "type": "color", "id": "center_bg", "label": "Center background", "default": "#000000" },
+    { "type": "range", "id": "center_radius", "label": "Center border radius", "min": 0, "max": 30, "step": 2, "default": 16 },
+    { "type": "range", "id": "center_height", "label": "Center height (Desktop)", "min": 300, "max": 700, "step": 20, "default": 560 },
+    { "type": "range", "id": "mobile_center_height", "label": "Center height (Mobile)", "min": 300, "max": 500, "step": 20, "default": 400 },
+    
+    { "type": "header", "content": "Video Settings" },
+    { "type": "video", "id": "video_file", "label": "Video file" },
+    { "type": "image_picker", "id": "video_cover", "label": "Video cover image" },
+    { "type": "checkbox", "id": "show_cover", "label": "Show cover image initially", "default": true },
+    { "type": "checkbox", "id": "show_video_controls", "label": "Show video controls", "default": true },
+    { "type": "range", "id": "play_button_size", "label": "Play button size (Desktop)", "min": 40, "max": 100, "step": 4, "default": 72 },
+    { "type": "range", "id": "mobile_play_button_size", "label": "Play button size (Mobile)", "min": 40, "max": 80, "step": 4, "default": 56 },
+    { "type": "color", "id": "play_button_color", "label": "Play button color", "default": "#ef4444" },
+    { "type": "color", "id": "play_button_icon_color", "label": "Play button icon color", "default": "#ffffff" },
+    
+    { "type": "header", "content": "Card General Styling" },
+    { "type": "range", "id": "card_radius", "label": "Card border radius", "min": 0, "max": 30, "step": 2, "default": 16 },
+    { "type": "range", "id": "card_padding", "label": "Card padding (Desktop)", "min": 16, "max": 48, "step": 2, "default": 32 },
+    { "type": "range", "id": "mobile_card_padding", "label": "Card padding (Mobile)", "min": 12, "max": 36, "step": 2, "default": 24 },
+    
+    { "type": "header", "content": "Card Images (Square)" },
+    { "type": "range", "id": "card_image_width", "label": "Card image size (Desktop)", "min": 60, "max": 120, "step": 4, "default": 80 },
+    { "type": "range", "id": "mobile_card_image_width", "label": "Card image size (Mobile)", "min": 48, "max": 96, "step": 4, "default": 68 },
+    { "type": "range", "id": "card_image_radius", "label": "Card image border radius", "min": 0, "max": 20, "step": 2, "default": 8 },
+    { "type": "range", "id": "image_spacing", "label": "Image bottom spacing", "min": 8, "max": 32, "step": 2, "default": 16 },
+    
+    { "type": "header", "content": "Card Description" },
+    { "type": "range", "id": "description_size", "label": "Description font size (Desktop)", "min": 12, "max": 18, "step": 1, "default": 14 },
+    { "type": "range", "id": "mobile_description_size", "label": "Description font size (Mobile)", "min": 11, "max": 16, "step": 1, "default": 13 },
+    { "type": "color", "id": "description_color", "label": "Description text color", "default": "#ffffff" },
+    { "type": "range", "id": "description_opacity", "label": "Description opacity", "min": 60, "max": 100, "step": 5, "default": 85 },
+    { "type": "range", "id": "description_line_height", "label": "Description line height", "min": 120, "max": 180, "step": 5, "default": 150 },
+    { "type": "range", "id": "description_spacing", "label": "Description bottom spacing", "min": 8, "max": 24, "step": 2, "default": 16 },
+    
+    { "type": "header", "content": "Instagram Handle" },
+    { "type": "range", "id": "handle_size", "label": "Handle font size (Desktop)", "min": 14, "max": 24, "step": 1, "default": 18 },
+    { "type": "range", "id": "mobile_handle_size", "label": "Handle font size (Mobile)", "min": 14, "max": 20, "step": 1, "default": 16 },
+    { "type": "range", "id": "handle_weight", "label": "Handle font weight", "min": 400, "max": 900, "step": 100, "default": 700 },
+    { "type": "range", "id": "handle_spacing", "label": "Handle bottom spacing", "min": 8, "max": 24, "step": 2, "default": 12 },
+    { "type": "color", "id": "handle_color", "label": "Handle color", "default": "#ffffff" },
+    
+    { "type": "header", "content": "Stats" },
+    { "type": "range", "id": "stats_spacing", "label": "Stats vertical spacing", "min": 12, "max": 32, "step": 2, "default": 20 },
+    { "type": "range", "id": "stat_number_size", "label": "Stat number size (Desktop)", "min": 16, "max": 28, "step": 1, "default": 22 },
+    { "type": "range", "id": "mobile_stat_number_size", "label": "Stat number size (Mobile)", "min": 14, "max": 24, "step": 1, "default": 18 },
+    { "type": "range", "id": "stat_number_weight", "label": "Stat number font weight", "min": 400, "max": 900, "step": 100, "default": 800 },
+    { "type": "color", "id": "stat_number_color", "label": "Stat number color", "default": "#ffffff" },
+    { "type": "range", "id": "stat_label_size", "label": "Stat label size (Desktop)", "min": 10, "max": 16, "step": 1, "default": 12 },
+    { "type": "range", "id": "mobile_stat_label_size", "label": "Stat label size (Mobile)", "min": 10, "max": 14, "step": 1, "default": 11 },
+    { "type": "range", "id": "stat_label_opacity", "label": "Stat label opacity", "min": 60, "max": 100, "step": 5, "default": 90 },
+    { "type": "color", "id": "stat_label_color", "label": "Stat label color", "default": "#ffffff" },
+    
+    { "type": "header", "content": "CTA Button" },
+    { "type": "range", "id": "cta_padding", "label": "CTA button padding (Desktop)", "min": 8, "max": 20, "step": 2, "default": 12 },
+    { "type": "range", "id": "mobile_cta_padding", "label": "CTA button padding (Mobile)", "min": 6, "max": 16, "step": 2, "default": 10 },
+    { "type": "range", "id": "cta_radius", "label": "CTA button radius", "min": 4, "max": 16, "step": 2, "default": 8 },
+    { "type": "range", "id": "cta_size", "label": "CTA button font size (Desktop)", "min": 12, "max": 18, "step": 1, "default": 14 },
+    { "type": "range", "id": "mobile_cta_size", "label": "CTA button font size (Mobile)", "min": 11, "max": 16, "step": 1, "default": 13 },
+    { "type": "range", "id": "cta_font_weight", "label": "CTA button font weight", "min": 400, "max": 800, "step": 100, "default": 600 },
+    { "type": "color", "id": "cta_text_color", "label": "CTA button text color", "default": "#ffffff" },
+    { "type": "range", "id": "cta_bg_opacity", "label": "CTA button background opacity", "min": 10, "max": 50, "step": 5, "default": 20 },
+    { "type": "range", "id": "cta_border_opacity", "label": "CTA button border opacity", "min": 10, "max": 50, "step": 5, "default": 30 },
+    { "type": "range", "id": "cta_hover_opacity", "label": "CTA button hover opacity", "min": 20, "max": 60, "step": 5, "default": 30 },
+    
+    { "type": "header", "content": "Left Instagram Card" },
+    { "type": "image_picker", "id": "left_image", "label": "Left card top image" },
+    { "type": "text", "id": "left_handle", "label": "Instagram handle", "default": "SportsForeDays" },
+    { "type": "textarea", "id": "left_description", "label": "Description text", "default": "Hey YOU! Book in sports content with higher & organic reach. Getting millions of views." },
+    { "type": "text", "id": "left_followers", "label": "Followers count", "default": "100k" },
+    { "type": "text", "id": "left_posts", "label": "Posts count", "default": "850+" },
+    { "type": "text", "id": "left_views", "label": "Views count", "default": "12M" },
+    { "type": "text", "id": "left_cta_text", "label": "CTA button text", "default": "FOLLOW OUR INSTAGRAM" },
+    { "type": "url", "id": "left_link", "label": "Instagram URL" },
+    { "type": "range", "id": "left_gradient_angle", "label": "Gradient angle", "min": 0, "max": 360, "step": 15, "default": 135 },
+    { "type": "color", "id": "left_gradient_start", "label": "Gradient start color", "default": "#8b5cf6" },
+    { "type": "color", "id": "left_gradient_end", "label": "Gradient end color", "default": "#ec4899" },
+    
+    { "type": "header", "content": "Right Instagram Card" },
+    { "type": "image_picker", "id": "right_image", "label": "Right card top image" },
+    { "type": "text", "id": "right_handle", "label": "Instagram handle", "default": "SportsForeDays" },
+    { "type": "textarea", "id": "right_description", "label": "Description text", "default": "Hey YOU! Book in sports content with higher & organic reach. Getting millions of views." },
+    { "type": "text", "id": "right_followers", "label": "Followers count", "default": "100k" },
+    { "type": "text", "id": "right_posts", "label": "Posts count", "default": "850+" },
+    { "type": "text", "id": "right_views", "label": "Views count", "default": "12M" },
+    { "type": "text", "id": "right_cta_text", "label": "CTA button text", "default": "FOLLOW OUR INSTAGRAM" },
+    { "type": "url", "id": "right_link", "label": "Instagram URL" },
+    { "type": "range", "id": "right_gradient_angle", "label": "Gradient angle", "min": 0, "max": 360, "step": 15, "default": 135 },
+    { "type": "color", "id": "right_gradient_start", "label": "Gradient start color", "default": "#f59e0b" },
+    { "type": "color", "id": "right_gradient_end", "label": "Gradient end color", "default": "#ef4444" }
+  ],
+  "presets": [{ "name": "Instagram Collaboration" }]
+}
+{% endschema %}

@@ -1,0 +1,818 @@
+{% comment %}
+  =========================================================================
+  QB54 × BENT IRON — TOURNAMENT REGISTRATION (Shopify Section)
+  Co-branded form for the Father's Day QB54 Tournament at Bent Iron Brewing.
+  Styling matches the QB54 NFL LP design system.
+  =========================================================================
+
+  INSTALLATION
+  1. Online Store → Themes → ⋯ → Edit code
+  2. In the "Sections" folder click "Add a new section"
+  3. Name it: qb54-form
+  4. Paste this entire file, save
+  5. Online Store → Themes → Customize, open the target page
+  6. Click "Add section", choose "QB54 × Bent Iron Registration Form"
+  7. In section settings:
+     - Upload the QB54 logo (white version recommended for dark bg)
+     - Upload the Bent Iron logo (white version recommended for dark bg)
+     - Google Form ID and the six entry numbers are already pre-filled.
+
+  EMAIL NOTIFICATIONS
+  Email notifications to both brands are handled by a Google Apps Script
+  attached to the linked Google Form. No code in this section needs to
+  change for that — the script fires automatically on every submission.
+  =========================================================================
+{% endcomment %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ─── TOKENS — matched to QB54 NFL LP ─────────────────── */
+  #qb54-form-{{ section.id }} {
+    --lime:      #9aff00;
+    --lime-glow: rgba(154,255,0,0.22);
+    --dark:      #0d0d0d;
+    --white:     #ffffff;
+    --white-80:  rgba(255,255,255,0.82);
+    --white-50:  rgba(255,255,255,0.50);
+    --white-15:  rgba(255,255,255,0.15);
+    --white-08:  rgba(255,255,255,0.08);
+
+    position: relative;
+    width: 100%;
+    background: var(--dark);
+    border-top:    1px solid var(--white-15);
+    border-bottom: 1px solid var(--white-15);
+    /* overflow: hidden removed — it breaks position:sticky on .qb54-side-image.
+       The glow is constrained below so it can't cause horizontal overflow. */
+    isolation: isolate;
+    font-family: "Inter", sans-serif;
+    color: var(--white);
+  }
+  #qb54-form-{{ section.id }} *,
+  #qb54-form-{{ section.id }} *::before,
+  #qb54-form-{{ section.id }} *::after {
+    box-sizing: border-box; margin: 0; padding: 0;
+  }
+  /* Lime top accent — matches the hero/announce bar */
+  #qb54-form-{{ section.id }}::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: var(--lime); box-shadow: 0 0 20px rgba(154,255,0,0.30);
+    z-index: 3;
+  }
+  /* Soft radial glow behind the form */
+  #qb54-form-{{ section.id }} .qb54-glow {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: min(800px, 100%);
+    height: 400px;
+    background: radial-gradient(ellipse at center, rgba(154,255,0,0.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── CONTAINER ───────────────────────────────────────── */
+  #qb54-form-{{ section.id }} .qb54-inner {
+    position: relative; z-index: 1;
+    max-width: 720px; margin: 0 auto;
+    padding: clamp(40px, 6vw, 80px) clamp(20px, 5vw, 40px);
+  }
+  /* When there's a side image, widen the container */
+  #qb54-form-{{ section.id }} .qb54-inner:has(.has-image) {
+    max-width: 1200px;
+  }
+
+  /* ─── SPLIT LAYOUT (form + side image) ────────────────── */
+  #qb54-form-{{ section.id }} .qb54-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  #qb54-form-{{ section.id }} .qb54-form-col {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Side image styles — mobile-first (image stacks on top) */
+  #qb54-form-{{ section.id }} .qb54-side-image {
+    position: relative;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--white-08);
+    border: 1px solid var(--white-15);
+    box-shadow:
+      0 -3px 0 0 var(--lime) inset,
+      0 8px 32px rgba(0,0,0,0.4);
+  }
+  #qb54-form-{{ section.id }} .qb54-side-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  /* Desktop: side-by-side, sticky image */
+  @media (min-width: 900px) {
+    #qb54-form-{{ section.id }} .qb54-layout.has-image {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: clamp(32px, 4vw, 56px);
+    }
+    #qb54-form-{{ section.id }} .qb54-layout.has-image .qb54-form-col {
+      flex: 1 1 50%;
+      max-width: 580px;
+    }
+    /* Image is sticky: pins to viewport while form scrolls, releases when
+       the form ends (sticky elements can't escape their flex parent). */
+    #qb54-form-{{ section.id }} .qb54-side-image {
+      flex: 1 1 50%;
+      max-width: 560px;
+      position: sticky;
+      top: var(--qb54-sticky-top, 100px);
+      align-self: flex-start;
+    }
+    #qb54-form-{{ section.id }} .qb54-side-image img {
+      aspect-ratio: 4 / 5;
+      max-height: calc(100vh - var(--qb54-sticky-top, 100px) - 32px);
+      object-fit: cover;
+    }
+    /* Right-position (default) */
+    #qb54-form-{{ section.id }} .qb54-layout.has-image {
+      flex-direction: row-reverse;
+    }
+    /* Left-position override */
+    #qb54-form-{{ section.id }}[data-image-position="left"] .qb54-layout.has-image {
+      flex-direction: row;
+    }
+  }
+
+  /* ─── COLLAB STRIP — QB54 × BENT IRON ──────────────────── */
+  #qb54-form-{{ section.id }} .qb54-collab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(16px, 4vw, 28px);
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--white-15);
+  }
+  #qb54-form-{{ section.id }} .qb54-collab-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 52px;
+    flex-shrink: 0;
+  }
+  #qb54-form-{{ section.id }} .qb54-collab-logo img {
+    max-height: 100%;
+    max-width: 160px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+  /* Optional: invert dark logos so they read on the dark background */
+  #qb54-form-{{ section.id }} .qb54-collab-logo.is-inverted img {
+    filter: invert(1) brightness(2);
+  }
+  #qb54-form-{{ section.id }} .qb54-collab-x {
+    font-family: "Oswald", sans-serif;
+    font-size: clamp(20px, 2.2vw, 28px);
+    font-weight: 400;
+    color: var(--lime);
+    line-height: 1;
+    opacity: 0.9;
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  /* ─── HEADER ──────────────────────────────────────────── */
+  #qb54-form-{{ section.id }} .qb54-header {
+    text-align: center;
+    margin-bottom: clamp(32px, 5vw, 48px);
+  }
+
+  /* Eyebrow with lime tick */
+  #qb54-form-{{ section.id }} .qb54-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px; margin-bottom: 20px;
+  }
+  #qb54-form-{{ section.id }} .qb54-eyebrow::before {
+    content: ''; display: block; width: 24px; height: 2px;
+    background: var(--lime); border-radius: 2px; flex-shrink: 0;
+  }
+  #qb54-form-{{ section.id }} .qb54-eyebrow span {
+    font-family: "Oswald", sans-serif;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--lime);
+  }
+
+  #qb54-form-{{ section.id }} .qb54-title {
+    font-family: "Oswald", sans-serif;
+    font-size: clamp(32px, 6vw, 56px); font-weight: 700;
+    line-height: 1.05; letter-spacing: -0.02em; text-transform: uppercase;
+    color: var(--white); margin-bottom: 16px;
+  }
+  #qb54-form-{{ section.id }} .qb54-title em {
+    color: var(--lime); font-style: normal;
+    text-shadow: 0 0 40px rgba(154,255,0,0.30);
+  }
+
+  #qb54-form-{{ section.id }} .qb54-subtitle {
+    font-family: "Inter", sans-serif;
+    font-size: clamp(14px, 1.1vw, 16px); line-height: 1.6;
+    color: var(--white-80); max-width: 540px; margin: 0 auto;
+  }
+  #qb54-form-{{ section.id }} .qb54-subtitle strong { color: var(--white); font-weight: 600; }
+
+  /* Info chips */
+  #qb54-form-{{ section.id }} .qb54-chips {
+    display: flex; justify-content: center; align-items: center;
+    gap: 8px; flex-wrap: wrap; margin-top: 24px;
+  }
+  #qb54-form-{{ section.id }} .qb54-chip {
+    display: inline-flex; align-items: center;
+    background: var(--white-08); border: 1px solid var(--white-15);
+    border-radius: 20px; padding: 6px 14px;
+    font-family: "Oswald", sans-serif;
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.13em; text-transform: uppercase;
+    color: var(--white-50);
+  }
+
+  #qb54-form-{{ section.id }} .qb54-divider {
+    width: 28px; height: 2px; background: var(--lime);
+    border-radius: 2px; opacity: 0.5; margin: 32px auto;
+  }
+
+  /* ─── FIELDS ──────────────────────────────────────────── */
+  #qb54-form-{{ section.id }} .qb54-field {
+    margin-bottom: 28px;
+  }
+  #qb54-form-{{ section.id }} .qb54-field:last-of-type {
+    margin-bottom: 24px;
+  }
+
+  #qb54-form-{{ section.id }} .qb54-label {
+    display: block;
+    font-family: "Oswald", sans-serif;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--white); margin-bottom: 10px;
+  }
+  #qb54-form-{{ section.id }} .qb54-label .qb54-req { color: var(--lime); margin-left: 4px; }
+  #qb54-form-{{ section.id }} .qb54-label .qb54-optional {
+    color: var(--white-50); font-weight: 400; margin-left: 6px; letter-spacing: 0.08em;
+  }
+
+  #qb54-form-{{ section.id }} .qb54-hint {
+    display: block; font-family: "Inter", sans-serif;
+    font-size: 12px; color: var(--white-50);
+    margin-top: -4px; margin-bottom: 10px; line-height: 1.5;
+  }
+
+  #qb54-form-{{ section.id }} .qb54-input {
+    width: 100%; min-height: 48px; padding: 14px 16px;
+    background: var(--white-08); border: 1px solid var(--white-15);
+    border-radius: 6px; color: var(--white);
+    font-family: "Inter", sans-serif;
+    font-size: 16px; font-weight: 400;
+    transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+    -webkit-appearance: none; appearance: none;
+  }
+  #qb54-form-{{ section.id }} .qb54-input:focus {
+    outline: none; border-color: var(--lime);
+    background: rgba(154,255,0,0.04);
+    box-shadow: 0 0 0 3px rgba(154,255,0,0.18);
+  }
+  #qb54-form-{{ section.id }} .qb54-input::placeholder { color: rgba(255,255,255,0.35); }
+
+  #qb54-form-{{ section.id }} .qb54-radio-group { display: flex; flex-direction: column; gap: 10px; }
+  #qb54-form-{{ section.id }} .qb54-radio {
+    display: flex; align-items: center; min-height: 52px;
+    padding: 14px 16px; background: var(--white-08);
+    border: 1px solid var(--white-15); border-radius: 6px;
+    cursor: pointer; transition: all 0.18s; user-select: none;
+  }
+  #qb54-form-{{ section.id }} .qb54-radio:hover { border-color: rgba(154,255,0,0.5); background: rgba(154,255,0,0.04); }
+  #qb54-form-{{ section.id }} .qb54-radio input[type="radio"] {
+    appearance: none; -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border: 2px solid var(--white-50);
+    border-radius: 50%; margin: 0 14px 0 0;
+    cursor: pointer; position: relative; flex-shrink: 0;
+    background: transparent; transition: border-color 0.15s;
+  }
+  #qb54-form-{{ section.id }} .qb54-radio input[type="radio"]:checked { border-color: var(--lime); }
+  #qb54-form-{{ section.id }} .qb54-radio input[type="radio"]:checked::after {
+    content: ""; position: absolute; inset: 3px;
+    background: var(--lime); border-radius: 50%;
+    box-shadow: 0 0 8px rgba(154,255,0,0.6);
+  }
+  #qb54-form-{{ section.id }} .qb54-radio:has(input:checked) {
+    border-color: var(--lime); background: rgba(154,255,0,0.06);
+  }
+  #qb54-form-{{ section.id }} .qb54-radio-label {
+    font-family: "Inter", sans-serif;
+    font-size: 15px; font-weight: 500;
+    color: var(--white); line-height: 1.4;
+  }
+
+  #qb54-form-{{ section.id }} .qb54-submit {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 10px; width: 100%; min-height: 52px; margin-top: 12px;
+    padding: 16px 32px; background: var(--lime); color: #0a1400;
+    border: none; border-radius: 7px;
+    font-family: "Oswald", sans-serif;
+    font-size: 15px; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;
+    box-shadow: 0 4px 24px var(--lime-glow);
+    transition: transform 0.18s cubic-bezier(.22,1,.36,1), box-shadow 0.18s;
+  }
+  #qb54-form-{{ section.id }} .qb54-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 36px rgba(154,255,0,0.30); }
+  #qb54-form-{{ section.id }} .qb54-submit:active { transform: translateY(0); }
+  #qb54-form-{{ section.id }} .qb54-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  #qb54-form-{{ section.id }} .qb54-submit svg {
+    width: 14px; height: 14px; stroke: currentColor; fill: none;
+    stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round;
+    transition: transform 0.15s;
+  }
+  #qb54-form-{{ section.id }} .qb54-submit:hover svg { transform: translateX(3px); }
+
+  #qb54-form-{{ section.id }} .qb54-footnote {
+    text-align: center; margin-top: 20px;
+    font-family: "Inter", sans-serif; font-size: 12px;
+    color: var(--white-50); line-height: 1.6;
+  }
+  #qb54-form-{{ section.id }} .qb54-footnote a {
+    color: var(--lime); text-decoration: none; transition: opacity 0.15s;
+  }
+  #qb54-form-{{ section.id }} .qb54-footnote a:hover { opacity: 0.75; }
+
+  #qb54-form-{{ section.id }} .qb54-success { display: none; text-align: center; padding: 24px 0; }
+  #qb54-form-{{ section.id }}.is-submitted .qb54-form { display: none; }
+  #qb54-form-{{ section.id }}.is-submitted .qb54-success { display: block; }
+
+  #qb54-form-{{ section.id }} .qb54-success-icon { font-size: 56px; line-height: 1; margin-bottom: 20px; }
+  #qb54-form-{{ section.id }} .qb54-success-title {
+    font-family: "Anton", sans-serif;
+    font-size: clamp(36px, 6vw, 56px);
+    letter-spacing: -0.01em; line-height: 1;
+    color: var(--lime); text-shadow: 0 0 40px rgba(154,255,0,0.22);
+    margin-bottom: 16px;
+  }
+  #qb54-form-{{ section.id }} .qb54-success-body {
+    font-family: "Inter", sans-serif;
+    font-size: 15px; color: var(--white-80);
+    line-height: 1.7; max-width: 460px; margin: 0 auto;
+  }
+  #qb54-form-{{ section.id }} .qb54-success-body p + p { margin-top: 12px; }
+
+  @media (min-width: 640px) {
+    #qb54-form-{{ section.id }} .qb54-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+    #qb54-form-{{ section.id }} .qb54-row .qb54-field { margin-bottom: 0; }
+  }
+
+  @media (max-width: 480px) {
+    #qb54-form-{{ section.id }} .qb54-inner { padding: 36px 16px 48px; }
+    #qb54-form-{{ section.id }} .qb54-header { margin-bottom: 28px; }
+    #qb54-form-{{ section.id }} .qb54-collab { gap: 14px; margin-bottom: 24px; padding-bottom: 20px; }
+    #qb54-form-{{ section.id }} .qb54-collab-logo { height: 40px; }
+    #qb54-form-{{ section.id }} .qb54-collab-logo img { max-width: 120px; }
+    #qb54-form-{{ section.id }} .qb54-title { font-size: clamp(28px, 9vw, 40px); }
+    #qb54-form-{{ section.id }} .qb54-eyebrow span { font-size: 10px; letter-spacing: 0.28em; }
+    #qb54-form-{{ section.id }} .qb54-chips { gap: 6px; }
+    #qb54-form-{{ section.id }} .qb54-chip { font-size: 9px; padding: 5px 10px; letter-spacing: 0.1em; }
+    #qb54-form-{{ section.id }} .qb54-divider { margin: 24px auto; }
+    #qb54-form-{{ section.id }} .qb54-field { margin-bottom: 18px; }
+    #qb54-form-{{ section.id }} .qb54-submit { font-size: 14px; letter-spacing: 0.16em; padding: 16px 24px; }
+  }
+</style>
+
+<div id="qb54-form-{{ section.id }}"
+     {% if section.settings.image_position == 'left' %}data-image-position="left"{% endif %}
+     style="--qb54-sticky-top: {{ section.settings.sticky_top_offset | default: 100 }}px;">
+  <div class="qb54-glow" aria-hidden="true"></div>
+
+  <div class="qb54-inner">
+
+    {% if section.settings.side_image %}
+      <div class="qb54-layout has-image">
+    {% else %}
+      <div class="qb54-layout">
+    {% endif %}
+
+      {% if section.settings.side_image %}
+        <div class="qb54-side-image">
+          <img src="{{ section.settings.side_image | image_url: width: 1200 }}"
+               srcset="{{ section.settings.side_image | image_url: width: 600 }} 600w,
+                       {{ section.settings.side_image | image_url: width: 900 }} 900w,
+                       {{ section.settings.side_image | image_url: width: 1200 }} 1200w,
+                       {{ section.settings.side_image | image_url: width: 1600 }} 1600w"
+               sizes="(min-width: 900px) 50vw, 100vw"
+               alt="{{ section.settings.image_alt | escape }}"
+               loading="lazy"
+               width="{{ section.settings.side_image.width }}"
+               height="{{ section.settings.side_image.height }}">
+        </div>
+      {% endif %}
+
+      <div class="qb54-form-col">
+
+    <form class="qb54-form"
+          action="https://docs.google.com/forms/d/e/{{ section.settings.google_form_id }}/formResponse"
+          method="POST"
+          novalidate>
+
+      {%- comment -%} COLLAB STRIP — only renders if at least one logo is set {%- endcomment -%}
+      {% if section.settings.qb54_logo or section.settings.bent_iron_logo %}
+        <div class="qb54-collab">
+          {% if section.settings.qb54_logo %}
+            <div class="qb54-collab-logo {% if section.settings.qb54_logo_invert %}is-inverted{% endif %}">
+              <img src="{{ section.settings.qb54_logo | image_url: height: 104 }}"
+                   alt="QB54"
+                   width="160" height="52" loading="eager">
+            </div>
+          {% endif %}
+
+          {% if section.settings.qb54_logo and section.settings.bent_iron_logo %}
+            <span class="qb54-collab-x" aria-hidden="true">×</span>
+          {% endif %}
+
+          {% if section.settings.bent_iron_logo %}
+            <div class="qb54-collab-logo {% if section.settings.bent_iron_logo_invert %}is-inverted{% endif %}">
+              <img src="{{ section.settings.bent_iron_logo | image_url: height: 104 }}"
+                   alt="Bent Iron Brewing"
+                   width="160" height="52" loading="eager">
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="qb54-header">
+        {% if section.settings.eyebrow != blank %}
+          <div class="qb54-eyebrow"><span>{{ section.settings.eyebrow | escape }}</span></div>
+        {% endif %}
+
+        {% if section.settings.title != blank %}
+          <h2 class="qb54-title">{{ section.settings.title }}</h2>
+        {% endif %}
+
+        {% if section.settings.subtitle != blank %}
+          <div class="qb54-subtitle">{{ section.settings.subtitle }}</div>
+        {% endif %}
+
+        {% assign info_blocks = section.blocks | where: "type", "info_item" %}
+        {% if info_blocks.size > 0 %}
+          <div class="qb54-chips">
+            {% for block in info_blocks %}
+              <span class="qb54-chip" {{ block.shopify_attributes }}>{{ block.settings.text | escape }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="qb54-divider" aria-hidden="true"></div>
+
+      <div class="qb54-field">
+        <label class="qb54-label" for="qb54-p1-name-{{ section.id }}">
+          Player #1 Name <span class="qb54-req">*</span>
+        </label>
+       <span class="qb54-hint">Team captain — must be 21+. All prizes are awarded to the 21+ player.</span>
+        <input class="qb54-input" type="text" id="qb54-p1-name-{{ section.id }}"
+               name="entry.{{ section.settings.entry_player1_name }}"
+               required autocomplete="name">
+      </div>
+
+      <div class="qb54-row">
+        <div class="qb54-field">
+          <label class="qb54-label" for="qb54-p1-email-{{ section.id }}">
+            Player #1 Email <span class="qb54-req">*</span>
+          </label>
+          <input class="qb54-input" type="email" id="qb54-p1-email-{{ section.id }}"
+                 name="entry.{{ section.settings.entry_player1_email }}"
+                 required autocomplete="email">
+        </div>
+
+        <div class="qb54-field">
+          <label class="qb54-label" for="qb54-p1-phone-{{ section.id }}">
+            Player #1 Cell <span class="qb54-req">*</span>
+          </label>
+          <input class="qb54-input" type="tel" id="qb54-p1-phone-{{ section.id }}"
+                 name="entry.{{ section.settings.entry_player1_phone }}"
+                 required autocomplete="tel">
+        </div>
+      </div>
+
+      <div class="qb54-field">
+        <label class="qb54-label" for="qb54-p2-name-{{ section.id }}">
+          Player #2 Name <span class="qb54-optional">(Optional)</span>
+        </label>
+       <span class="qb54-hint">Leave blank to be paired up. Must be 13+.</span>
+        <input class="qb54-input" type="text" id="qb54-p2-name-{{ section.id }}"
+               name="entry.{{ section.settings.entry_player2_name }}"
+               autocomplete="off">
+      </div>
+
+      <div class="qb54-field">
+        <label class="qb54-label" for="qb54-team-{{ section.id }}">
+          Team Name <span class="qb54-optional">(Optional)</span>
+        </label>
+        <span class="qb54-hint">For teams of 2 players</span>
+        <input class="qb54-input" type="text" id="qb54-team-{{ section.id }}"
+               name="entry.{{ section.settings.entry_team_name }}"
+               autocomplete="off">
+      </div>
+
+      {% assign radio_blocks = section.blocks | where: "type", "radio_option" %}
+      {% if radio_blocks.size > 0 %}
+        <div class="qb54-field">
+          <label class="qb54-label">
+            {{ section.settings.radio_question | escape }} <span class="qb54-req">*</span>
+          </label>
+          {% if section.settings.radio_hint != blank %}
+            <span class="qb54-hint">{{ section.settings.radio_hint | escape }}</span>
+          {% endif %}
+          <div class="qb54-radio-group">
+            {% for block in radio_blocks %}
+              <label class="qb54-radio" {{ block.shopify_attributes }}>
+                <input type="radio"
+                       name="entry.{{ section.settings.entry_long_toss }}"
+                       value="{{ block.settings.value | escape }}" required>
+                <span class="qb54-radio-label">{{ block.settings.label | escape }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      <button type="submit" class="qb54-submit">
+        <span>{{ section.settings.button_text | escape }}</span>
+        <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </button>
+
+      {% if section.settings.footnote != blank %}
+        <div class="qb54-footnote">{{ section.settings.footnote }}</div>
+      {% endif %}
+    </form>
+
+    <div class="qb54-success" role="status" aria-live="polite">
+      <div class="qb54-success-icon">🏈</div>
+      <div class="qb54-success-title">{{ section.settings.success_title | escape }}</div>
+      <div class="qb54-success-body">{{ section.settings.success_body }}</div>
+    </div>
+
+      </div> {%- comment -%} /.qb54-form-col {%- endcomment -%}
+    </div> {%- comment -%} /.qb54-layout {%- endcomment -%}
+  </div>
+</div>
+
+<script>
+  (function () {
+    var container = document.getElementById('qb54-form-{{ section.id }}');
+    if (!container) return;
+    var form = container.querySelector('.qb54-form');
+    var submitBtn = container.querySelector('.qb54-submit');
+    var submitLabel = submitBtn ? submitBtn.querySelector('span') : null;
+    var originalLabel = submitLabel ? submitLabel.textContent : '';
+
+    function showSuccess() {
+      container.classList.add('is-submitted');
+      container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function resetButton() {
+      if (submitBtn) submitBtn.disabled = false;
+      if (submitLabel) submitLabel.textContent = originalLabel;
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // Native HTML5 validation (required fields)
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      if (submitBtn) submitBtn.disabled = true;
+      if (submitLabel) submitLabel.textContent = 'Sending...';
+
+      var formData = new FormData(form);
+
+      // Submit to Google Forms with no-cors so the browser doesn't
+      // try to read the cross-origin response. The submission still
+      // reaches Google and shows up in the form's Responses.
+      fetch(form.action, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: formData
+      })
+      .then(function () {
+        showSuccess();
+      })
+      .catch(function () {
+        // With no-cors a network failure is rare; in practice the request
+        // is always treated as "opaque success". Show success anyway since
+        // the data has been sent.
+        showSuccess();
+      });
+
+      // Safety net: if for any reason the promise doesn't resolve quickly
+      // (e.g. very slow network), still show success after 2s so the user
+      // isn't stuck on "Sending..."
+      setTimeout(function () {
+        if (!container.classList.contains('is-submitted')) {
+          showSuccess();
+        }
+      }, 2000);
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "QB54 × Bent Iron Form",
+  "tag": "section",
+  "class": "qb54-section",
+  "settings": [
+    { "type": "header", "content": "Collab Logos" },
+    {
+      "type": "paragraph",
+      "content": "Upload WHITE versions of each logo for the dark background. If you only have black/dark logos, toggle the 'Invert colors' option below for that logo."
+    },
+    {
+      "type": "image_picker",
+      "id": "qb54_logo",
+      "label": "QB54 logo"
+    },
+    {
+      "type": "checkbox",
+      "id": "qb54_logo_invert",
+      "label": "Invert QB54 logo colors",
+      "info": "Turn on if your QB54 logo is dark/black and needs to read on the black background",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "bent_iron_logo",
+      "label": "Bent Iron Brewing logo"
+    },
+    {
+      "type": "checkbox",
+      "id": "bent_iron_logo_invert",
+      "label": "Invert Bent Iron logo colors",
+      "info": "Turn on if the Bent Iron logo is dark/black (Bent Iron's site uses a black wordmark — toggling this will display it white)",
+      "default": true
+    },
+
+    { "type": "header", "content": "Side image (desktop only)" },
+    {
+      "type": "paragraph",
+      "content": "On desktop the image sits next to the form. On mobile the image stacks above the form."
+    },
+    {
+      "type": "image_picker",
+      "id": "side_image",
+      "label": "Side image"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position on desktop",
+      "options": [
+        { "value": "right", "label": "Right of form" },
+        { "value": "left",  "label": "Left of form" }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image alt text",
+      "default": "QB54 × Bent Iron Tournament"
+    },
+    {
+      "type": "range",
+      "id": "sticky_top_offset",
+      "label": "Sticky offset from top (desktop)",
+      "info": "How far from the top of the viewport the image pins while scrolling. Increase if your theme has a tall sticky header.",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 100
+    },
+
+    { "type": "header", "content": "Google Form Connection" },
+    {
+      "type": "paragraph",
+      "content": "Pre-wired to the live Father's Day @ Bent Iron Brewing tournament form. To repoint to a different form, replace the values below using a pre-filled link (Forms ⋮ menu → Get pre-filled link)."
+    },
+    {
+      "type": "text",
+      "id": "google_form_id",
+      "label": "Google Form ID",
+      "info": "The long ID between /d/e/ and /viewform in your form URL",
+      "default": "1FAIpQLSfU8t69vRIwMpfTVEYIIywXVWY_-gXF3ko22S6Bs4jNNlrAdg"
+    },
+    { "type": "text", "id": "entry_player1_name",  "label": "Entry ID — Player #1 Name",  "info": "Numbers only, e.g. 1234567", "default": "312918692" },
+    { "type": "text", "id": "entry_player1_email", "label": "Entry ID — Player #1 Email", "default": "1540052489" },
+    { "type": "text", "id": "entry_player1_phone", "label": "Entry ID — Player #1 Cell",  "default": "2046259203" },
+    { "type": "text", "id": "entry_player2_name",  "label": "Entry ID — Player #2 Name",  "default": "2061936009" },
+    { "type": "text", "id": "entry_team_name",     "label": "Entry ID — Team Name",       "default": "2036854198" },
+    { "type": "text", "id": "entry_long_toss",     "label": "Entry ID — Long Toss question", "default": "1594844977" },
+
+    { "type": "header", "content": "Header content" },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "FATHER'S DAY · JUNE 21, 2026"
+    },
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Title (use <em> for the lime accent word)",
+      "default": "<p>QB54 <em>Tournament</em> at Bent Iron</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "<p>Backyard football meets craft beer. Compete for QB54 game sets, Bent Iron gift cards, and bragging rights. <strong>20% off our #54</strong> on tap all day. Tournament at <strong>2pm</strong> — Long Toss at <strong>4pm</strong>.</p>"
+    },
+
+    { "type": "header", "content": "Long Toss question" },
+    { "type": "text", "id": "radio_question", "label": "Question text", "default": "Sticking around for Long Toss?" },
+    { "type": "text", "id": "radio_hint", "label": "Hint text", "default": "Seriously good prizes for Long Toss too" },
+
+    { "type": "header", "content": "Submit button & footer" },
+    { "type": "text", "id": "button_text", "label": "Button text", "default": "Lock In My Spot" },
+    {
+      "type": "richtext",
+      "id": "footnote",
+      "label": "Footer note",
+      "default": "<p>Questions or need to cancel? Email <a href=\"mailto:info@bentironbrewing.com\">info@bentironbrewing.com</a></p>"
+    },
+
+    { "type": "header", "content": "Thank-you screen" },
+    { "type": "text", "id": "success_title", "label": "Success title", "default": "You're locked in." },
+    {
+      "type": "richtext",
+      "id": "success_body",
+      "label": "Success message",
+      "default": "<p>We'll see you at Bent Iron on Father's Day at 2pm. Keep an eye on your inbox — we'll reach out before the tournament.</p><p>Cheers from the QB54 × Bent Iron crew.</p>"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "info_item",
+      "name": "Info chip",
+      "limit": 6,
+      "settings": [
+        { "type": "text", "id": "text", "label": "Chip text", "default": "21+ ONLY" }
+      ]
+    },
+    {
+      "type": "radio_option",
+      "name": "Long Toss option",
+      "limit": 8,
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label shown to customer", "default": "Hell Yeah — Party of 1" },
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value sent to Google Form",
+          "info": "Must EXACTLY match the option text in your Google Form (case, punctuation, spacing)",
+          "default": "Hell Yeah- Party of 1"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "QB54 × Bent Iron Form",
+      "blocks": [
+        { "type": "info_item", "settings": { "text": "21+ ONLY" } },
+        { "type": "info_item", "settings": { "text": "BENT IRON · HAMILTON, NJ" } },
+        { "type": "info_item", "settings": { "text": "CLOSES JUNE 19" } },
+        { "type": "radio_option", "settings": { "label": "Hell Yeah — Party of 1", "value": "Hell Yeah- Party of 1" } },
+        { "type": "radio_option", "settings": { "label": "Hell Yeah — Party of 2", "value": "Hell Yeah- Party of 2" } },
+        { "type": "radio_option", "settings": { "label": "Sorry to miss it!", "value": "Sorry to miss it!" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

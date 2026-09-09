@@ -1,0 +1,75 @@
+{%- capture team_key -%}{%- render 'tailgate-team-key', title: product.title -%}{%- endcapture -%}
+{%- liquid
+  assign team_key = team_key | strip
+  assign selected_variant = product.selected_or_first_available_variant
+  assign product_form_id = 'TailgateHubForm-' | append: section_id | append: '-' | append: product.id
+-%}
+
+<article
+  class="tailgate-hub-card"
+  data-tailgate-product
+  data-team="{{ team_key | escape }}"
+  data-category="{{ category_key | escape }}"
+  data-product-title="{{ product.title | escape }}"
+  hidden
+>
+  <a class="tailgate-hub-card__media" href="{{ product.url }}" aria-label="View {{ product.title | escape }}">
+    {%- if product.featured_image != blank -%}
+      {{- product.featured_image
+        | image_url: width: 900
+        | image_tag:
+          loading: 'lazy',
+          widths: '320,480,640,800,900',
+          sizes: '(max-width: 749px) 50vw, (max-width: 1199px) 33vw, 25vw',
+          alt: product.featured_image.alt | default: product.title,
+          class: 'tailgate-hub-card__image'
+      -}}
+    {%- else -%}
+      {{- 'product-1' | placeholder_svg_tag: 'tailgate-hub-card__image tailgate-hub-card__placeholder placeholder' -}}
+    {%- endif -%}
+
+    <span class="tailgate-hub-card__category">{{ category_label | escape }}</span>
+    {%- if product.compare_at_price_max > product.price -%}
+      <span class="tailgate-hub-card__sale">Sale</span>
+    {%- endif -%}
+  </a>
+
+  <div class="tailgate-hub-card__content">
+    <div class="tailgate-hub-card__meta">
+      <span>{{ category_label | escape }}</span>
+      <span aria-hidden="true">/</span>
+      <span>QB54 Tailgate</span>
+    </div>
+
+    <h3 class="tailgate-hub-card__title">
+      <a href="{{ product.url }}">{{ product.title | escape }}</a>
+    </h3>
+
+    <div class="tailgate-hub-card__price">
+      {%- render 'product-price', product: product -%}
+    </div>
+
+    <div class="tailgate-hub-card__actions">
+      {%- form 'product',
+        product,
+        id: product_form_id,
+        class: 'tailgate-hub-card__form product-form',
+        data-type: 'add-to-cart-form',
+        is: 'product-form'
+      -%}
+        <input type="hidden" name="id" value="{{ selected_variant.id }}">
+        <button class="tailgate-hub-card__add" type="submit" name="add">
+          <span>Add to Cart</span>
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M4 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+          </svg>
+        </button>
+        <div class="product-form__error-message alert alert--error text-sm font-medium leading-tight" role="alert" hidden></div>
+      {%- endform -%}
+
+      <a class="tailgate-hub-card__view" href="{{ product.url }}" aria-label="View details for {{ product.title | escape }}">
+        View
+      </a>
+    </div>
+  </div>
+</article>

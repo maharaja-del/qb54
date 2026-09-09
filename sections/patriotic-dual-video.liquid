@@ -1,0 +1,421 @@
+{% comment %}
+  PDV — Patriotic Dual Video
+  Two Shopify-hosted videos side-by-side with a centered patriotism text panel.
+  Section: sections/patriotic-dual-video.liquid
+  Brand: QB54 — navy + gold + patriotic red
+{% endcomment %}
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  #pdv-{{ section.id }} {
+    --bg:    {{ section.settings.color_bg }};
+    --text:  {{ section.settings.color_text }};
+    --red:   {{ section.settings.color_red }};
+    --blue:  {{ section.settings.color_blue }};
+    --spark: {{ section.settings.color_spark }};
+    --muted: color-mix(in srgb, {{ section.settings.color_text }} 64%, transparent);
+    --line:  color-mix(in srgb, {{ section.settings.color_text }} 14%, transparent);
+    --glass: color-mix(in srgb, {{ section.settings.color_text }} 6%, transparent);
+    --ratio: {{ section.settings.video_ratio }};
+
+    --pad-top:      {{ section.settings.padding_top }}px;
+    --pad-bottom:   {{ section.settings.padding_bottom }}px;
+    --pad-top-m:    {{ section.settings.padding_top_mobile }}px;
+    --pad-bottom-m: {{ section.settings.padding_bottom_mobile }}px;
+
+    position: relative;
+    background:
+      radial-gradient(ellipse 90% 70% at 50% -10%, color-mix(in srgb, var(--blue) 55%, var(--bg)) 0%, var(--bg) 60%),
+      var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    padding: var(--pad-top) 0 var(--pad-bottom);
+    font-family: 'Sora', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    isolation: isolate;
+  }
+
+  /* ── STAR FIELD (top fade) ── */
+  #pdv-{{ section.id }} .pdv-stars {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      radial-gradient(1.6px 1.6px at 12% 18%, #fff, transparent),
+      radial-gradient(1.2px 1.2px at 82% 14%, color-mix(in srgb, #fff 80%, transparent), transparent),
+      radial-gradient(1.8px 1.8px at 35% 24%, #fff, transparent),
+      radial-gradient(1.2px 1.2px at 65% 10%, var(--spark), transparent),
+      radial-gradient(2px 2px at 50% 7%, #fff, transparent),
+      radial-gradient(1.6px 1.6px at 90% 26%, var(--red), transparent),
+      radial-gradient(1.2px 1.2px at 24% 9%, #fff, transparent);
+    background-size: 100% 100%;
+    mask-image: linear-gradient(to bottom, #000 0%, #000 35%, transparent 65%);
+    opacity: .8;
+  }
+
+  /* ── TOP STRIPE DIVIDER (red · white · blue) ── */
+  #pdv-{{ section.id }} .pdv-topstripe {
+    position: absolute; top: 0; left: 0; right: 0; height: 6px; z-index: 1;
+    background: repeating-linear-gradient(90deg,
+      var(--red) 0 16.66%, #fff 16.66% 33.33%, var(--blue) 33.33% 50%);
+    opacity: .9;
+  }
+
+  /* glow orbs */
+  #pdv-{{ section.id }} .pdv-orb {
+    position: absolute; border-radius: 50%; filter: blur(150px);
+    pointer-events: none; z-index: 0;
+  }
+  #pdv-{{ section.id }} .pdv-orb-1 { width: 500px; height: 500px; top: -160px; left: -120px;  background: var(--red);  opacity: .12; }
+  #pdv-{{ section.id }} .pdv-orb-2 { width: 500px; height: 500px; bottom: -200px; right: -120px; background: var(--blue); opacity: .22; }
+
+  /* ── OPTIONAL TOP HEADING ── */
+  #pdv-{{ section.id }} .pdv-top {
+    position: relative; z-index: 2;
+    max-width: 760px; margin: 0 auto clamp(28px, 4vw, 48px);
+    padding: 0 clamp(20px, 4vw, 56px); text-align: center;
+  }
+  #pdv-{{ section.id }} .pdv-top-eyebrow {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-size: 11px; font-weight: 800; letter-spacing: .26em;
+    text-transform: uppercase; color: var(--spark); margin-bottom: 14px;
+  }
+  #pdv-{{ section.id }} .pdv-top-eyebrow::before,
+  #pdv-{{ section.id }} .pdv-top-eyebrow::after {
+    content: ''; width: 26px; height: 1px; background: color-mix(in srgb, var(--spark) 60%, transparent);
+  }
+  #pdv-{{ section.id }} .pdv-top-title {
+    font-family: 'Anton', sans-serif; text-transform: uppercase;
+    font-size: clamp(30px, 4.4vw, 52px); line-height: .95; letter-spacing: .01em;
+  }
+
+  /* ── STAGE: two videos side-by-side ── */
+  #pdv-{{ section.id }} .pdv-stage {
+    position: relative; z-index: 2;
+    max-width: 1240px; margin: 0 auto;
+    padding: 0 clamp(20px, 4vw, 56px);
+    display: grid; grid-template-columns: 1fr clamp(280px, 26vw, 360px) 1fr;
+    gap: clamp(20px, 3vw, 48px);
+    align-items: center;
+  }
+  #pdv-{{ section.id }} .pdv-video {
+    position: relative;
+    aspect-ratio: var(--ratio); width: 100%;
+    border-radius: 20px; overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
+    box-shadow: 0 30px 80px rgba(0,0,0,.5), 0 0 0 1px color-mix(in srgb, var(--text) 5%, transparent);
+    background: #000;
+  }
+  #pdv-{{ section.id }} .pdv-video-el {
+    width: 100%; height: 100%; display: block; object-fit: cover;
+  }
+  #pdv-{{ section.id }} .pdv-placeholder {
+    width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+    color: color-mix(in srgb, var(--text) 28%, transparent);
+    font-size: 12px; letter-spacing: .2em; text-transform: uppercase; font-weight: 800;
+    background: var(--glass);
+  }
+
+  /* video badge */
+  #pdv-{{ section.id }} .pdv-badge {
+    position: absolute; z-index: 3; top: 16px;
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--red); color: #fff;
+    font-weight: 800; font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+    padding: 8px 13px; border-radius: 999px;
+    box-shadow: 0 10px 26px color-mix(in srgb, var(--red) 50%, transparent);
+    border: 1px solid color-mix(in srgb, #fff 30%, transparent);
+  }
+  #pdv-{{ section.id }} .pdv-video-left  .pdv-badge { left: 16px; }
+  #pdv-{{ section.id }} .pdv-video-right .pdv-badge { right: 16px; }
+  #pdv-{{ section.id }} .pdv-badge svg { width: 11px; height: 11px; fill: #fff; }
+
+  /* ── CENTER PANEL (patriotism text, sits between videos) ── */
+  #pdv-{{ section.id }} .pdv-center {
+    position: relative; z-index: 4;
+    width: 100%; text-align: center;
+    padding: clamp(26px, 3vw, 40px) clamp(20px, 2.4vw, 32px);
+    border-radius: 22px;
+    background: color-mix(in srgb, #000 14%, var(--bg));
+    border: 1px solid color-mix(in srgb, var(--spark) 30%, var(--line));
+    box-shadow: 0 24px 60px rgba(0,0,0,.45), inset 0 0 0 1px color-mix(in srgb, #fff 6%, transparent);
+  }
+  #pdv-{{ section.id }} .pdv-center::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 8px;
+    border-bottom-left-radius: 22px; border-bottom-right-radius: 22px;
+    background: repeating-linear-gradient(90deg,
+      var(--red) 0 16.66%, #fff 16.66% 33.33%, var(--blue) 33.33% 50%);
+    opacity: .92;
+  }
+  #pdv-{{ section.id }} .pdv-stardiv {
+    display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px;
+  }
+  #pdv-{{ section.id }} .pdv-stardiv svg { width: 14px; height: 14px; fill: var(--spark); }
+  #pdv-{{ section.id }} .pdv-stardiv span { height: 1px; width: 28px; background: color-mix(in srgb, var(--spark) 55%, transparent); }
+  #pdv-{{ section.id }} .pdv-eyebrow {
+    font-size: 10px; font-weight: 800; letter-spacing: .3em; text-transform: uppercase;
+    color: var(--spark); margin-bottom: 12px;
+  }
+  #pdv-{{ section.id }} .pdv-title {
+    font-family: 'Anton', sans-serif; text-transform: uppercase;
+    font-size: clamp(34px, 4vw, 52px); line-height: .9; letter-spacing: .01em; margin-bottom: 14px;
+  }
+  #pdv-{{ section.id }} .pdv-title .pdv-stripe-text {
+    background-image: repeating-linear-gradient(180deg, var(--red) 0, var(--red) 12%, #fff 12%, #fff 24%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    filter: drop-shadow(0 2px 14px color-mix(in srgb, var(--red) 45%, transparent));
+  }
+  #pdv-{{ section.id }} .pdv-title .pdv-spark-text {
+    color: var(--spark); text-shadow: 0 0 32px color-mix(in srgb, var(--spark) 55%, transparent);
+  }
+  #pdv-{{ section.id }} .pdv-sub {
+    font-size: clamp(13px, 1.05vw, 15px); line-height: 1.65; color: var(--muted); margin: 0 auto;
+    max-width: 320px;
+  }
+  #pdv-{{ section.id }} .pdv-cta {
+    display: inline-flex; align-items: center; gap: 10px; margin-top: 22px;
+    padding: 14px 28px; font-family: 'Sora', sans-serif; font-weight: 800;
+    font-size: 11px; letter-spacing: .16em; text-transform: uppercase;
+    border-radius: 999px; text-decoration: none; cursor: pointer;
+    background: var(--spark); color: #061a06;
+    box-shadow: 0 12px 32px color-mix(in srgb, var(--spark) 45%, transparent);
+    transition: transform .2s, box-shadow .25s, gap .2s;
+  }
+  #pdv-{{ section.id }} .pdv-cta:hover {
+    transform: translateY(-2px); gap: 14px;
+    box-shadow: 0 20px 50px color-mix(in srgb, var(--spark) 55%, transparent);
+  }
+
+  /* ── Sound (mute / unmute) toggle ── */
+  #pdv-{{ section.id }} .pdv-sound-btn {
+    position: absolute; z-index: 5; bottom: 16px;
+    width: 42px; height: 42px; border-radius: 50%; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: color-mix(in srgb, #000 55%, transparent);
+    color: #fff; border: 1px solid color-mix(in srgb, #fff 30%, transparent);
+    cursor: pointer; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    transition: background .2s, transform .2s, border-color .2s;
+  }
+  #pdv-{{ section.id }} .pdv-video-left  .pdv-sound-btn { left: 16px; }
+  #pdv-{{ section.id }} .pdv-video-right .pdv-sound-btn { right: 16px; }
+  #pdv-{{ section.id }} .pdv-sound-btn:hover {
+    background: var(--red); border-color: color-mix(in srgb, #fff 50%, transparent); transform: scale(1.06);
+  }
+  #pdv-{{ section.id }} .pdv-sound-btn svg { width: 18px; height: 18px; }
+  #pdv-{{ section.id }} .pdv-sound-btn .pdv-icon-unmuted { display: none; }
+  #pdv-{{ section.id }} .pdv-sound-btn.pdv-on .pdv-icon-muted { display: none; }
+  #pdv-{{ section.id }} .pdv-sound-btn.pdv-on .pdv-icon-unmuted { display: inline-flex; }
+
+  /* ── RESPONSIVE: stack video → text → video ── */
+  @media (max-width: 900px) {
+    #pdv-{{ section.id }} .pdv-stage { grid-template-columns: 1fr; gap: 22px; justify-items: center; }
+    #pdv-{{ section.id }} .pdv-video { max-width: 420px; }
+    #pdv-{{ section.id }} .pdv-center { max-width: 480px; }
+  }
+  @media (max-width: 640px) {
+    #pdv-{{ section.id }} { padding: var(--pad-top-m) 0 var(--pad-bottom-m); }
+    #pdv-{{ section.id }} .pdv-stage { padding: 0 18px; }
+    #pdv-{{ section.id }} .pdv-video { max-width: 100%; border-radius: 16px; }
+    #pdv-{{ section.id }} .pdv-center { padding: 24px 20px; }
+    #pdv-{{ section.id }} .pdv-title { font-size: clamp(30px, 9vw, 44px); }
+  }
+</style>
+
+<section id="pdv-{{ section.id }}">
+  <div class="pdv-topstripe"></div>
+  <div class="pdv-stars"></div>
+  <div class="pdv-orb pdv-orb-1"></div>
+  <div class="pdv-orb pdv-orb-2"></div>
+
+  {% if section.settings.top_title_v2 != blank or section.settings.top_eyebrow_v2 != blank %}
+    <div class="pdv-top">
+      {% if section.settings.top_eyebrow_v2 != blank %}
+        <div class="pdv-top-eyebrow">{{ section.settings.top_eyebrow_v2 }}</div>
+      {% endif %}
+      {% if section.settings.top_title_v2 != blank %}
+        <div class="pdv-top-title">{{ section.settings.top_title_v2 }}</div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="pdv-stage">
+
+    {%- comment -%} ── LEFT VIDEO ── {%- endcomment -%}
+    <div class="pdv-video pdv-video-left">
+      {% if section.settings.badge_left_v2 != blank %}
+        <span class="pdv-badge">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21.5l1.7-7L2 9.8l7.1-.6L12 2z"/></svg>
+          {{ section.settings.badge_left_v2 }}
+        </span>
+      {% endif %}
+      {%- if section.settings.video_left != blank -%}
+        <video id="pdv-vid-left-{{ section.id }}" class="pdv-video-el" playsinline
+          poster="{{ section.settings.video_left.preview_image | image_url: width: 800 }}"
+          {% if section.settings.video_autoplay %}autoplay muted{% else %}controls{% endif %}
+          {% if section.settings.video_loop %}loop{% endif %}
+          preload="{% if section.settings.video_autoplay %}auto{% else %}metadata{% endif %}">
+          {% for source in section.settings.video_left.sources %}
+            <source src="{{ source.url }}" type="{{ source.mime_type }}">
+          {% endfor %}
+        </video>
+        {% if section.settings.video_autoplay and section.settings.show_sound_toggle %}
+          <button type="button" class="pdv-sound-btn" id="pdv-sound-left-{{ section.id }}" aria-label="Turn sound on or off" aria-pressed="false">
+            <span class="pdv-icon-muted">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+              </svg>
+            </span>
+            <span class="pdv-icon-unmuted">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+              </svg>
+            </span>
+          </button>
+        {% endif %}
+      {%- else -%}
+        <div class="pdv-placeholder">Add Left Video</div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} ── CENTER PATRIOTISM TEXT ── {%- endcomment -%}
+    <div class="pdv-center">
+      <div class="pdv-stardiv">
+        <span></span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21.5l1.7-7L2 9.8l7.1-.6L12 2z"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21.5l1.7-7L2 9.8l7.1-.6L12 2z"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21.5l1.7-7L2 9.8l7.1-.6L12 2z"/></svg>
+        <span></span>
+      </div>
+      {% if section.settings.center_eyebrow_v2 != blank %}
+        <div class="pdv-eyebrow">{{ section.settings.center_eyebrow_v2 }}</div>
+      {% endif %}
+      {% if section.settings.center_line1_v2 != blank or section.settings.center_line2_v2 != blank %}
+        <h2 class="pdv-title">
+          {% if section.settings.center_line1_v2 != blank %}<span class="pdv-stripe-text">{{ section.settings.center_line1_v2 }}</span>{% endif %}
+          {% if section.settings.center_line1_v2 != blank and section.settings.center_line2_v2 != blank %}<br>{% endif %}
+          {% if section.settings.center_line2_v2 != blank %}<span class="pdv-spark-text">{{ section.settings.center_line2_v2 }}</span>{% endif %}
+        </h2>
+      {% endif %}
+      {% if section.settings.center_sub_v2 != blank %}
+        <p class="pdv-sub">{{ section.settings.center_sub_v2 }}</p>
+      {% endif %}
+      {% if section.settings.cta_label_v2 != blank %}
+        <a href="{{ section.settings.cta_url | default: '#' }}" class="pdv-cta">{{ section.settings.cta_label_v2 }} →</a>
+      {% endif %}
+    </div>
+
+    {%- comment -%} ── RIGHT VIDEO ── {%- endcomment -%}
+    <div class="pdv-video pdv-video-right">
+      {% if section.settings.badge_right_v2 != blank %}
+        <span class="pdv-badge">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21.5l1.7-7L2 9.8l7.1-.6L12 2z"/></svg>
+          {{ section.settings.badge_right_v2 }}
+        </span>
+      {% endif %}
+      {%- if section.settings.video_right != blank -%}
+        <video id="pdv-vid-right-{{ section.id }}" class="pdv-video-el" playsinline
+          poster="{{ section.settings.video_right.preview_image | image_url: width: 800 }}"
+          {% if section.settings.video_autoplay %}autoplay muted{% else %}controls{% endif %}
+          {% if section.settings.video_loop %}loop{% endif %}
+          preload="{% if section.settings.video_autoplay %}auto{% else %}metadata{% endif %}">
+          {% for source in section.settings.video_right.sources %}
+            <source src="{{ source.url }}" type="{{ source.mime_type }}">
+          {% endfor %}
+        </video>
+        {% if section.settings.video_autoplay and section.settings.show_sound_toggle %}
+          <button type="button" class="pdv-sound-btn" id="pdv-sound-right-{{ section.id }}" aria-label="Turn sound on or off" aria-pressed="false">
+            <span class="pdv-icon-muted">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+              </svg>
+            </span>
+            <span class="pdv-icon-unmuted">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+              </svg>
+            </span>
+          </button>
+        {% endif %}
+      {%- else -%}
+        <div class="pdv-placeholder">Add Right Video</div>
+      {%- endif -%}
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function(){
+  var sectionId = '{{ section.id }}';
+  ['left','right'].forEach(function(side){
+    var v = document.getElementById('pdv-vid-' + side + '-' + sectionId);
+    if (!v) return;
+    if (v.hasAttribute('autoplay')) {
+      var p = v.play();
+      if (p && p.catch) p.catch(function(){ /* browser blocked autoplay — ignore */ });
+    }
+    var btn = document.getElementById('pdv-sound-' + side + '-' + sectionId);
+    if (btn) {
+      btn.addEventListener('click', function(){
+        v.muted = !v.muted;
+        if (!v.muted) {
+          v.volume = 1;
+          var pp = v.play();
+          if (pp && pp.catch) pp.catch(function(){});
+        }
+        btn.classList.toggle('pdv-on', !v.muted);
+        btn.setAttribute('aria-pressed', String(!v.muted));
+      });
+    }
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Patriotic Dual Video",
+  "tag": "div",
+  "class": "patriotic-dual-video-section",
+  "settings": [
+    { "type": "header", "content": "Top heading (optional)" },
+    { "type": "text", "id": "top_eyebrow_v2", "label": "Eyebrow", "info": "Leave blank to hide", "default": "🇺🇸 Independence Day" },
+    { "type": "text", "id": "top_title_v2", "label": "Title", "info": "Leave blank to hide", "default": "The Ultimate 4th of July Backyard Game" },
+
+    { "type": "header", "content": "Center text (between the videos)" },
+    { "type": "text", "id": "center_eyebrow_v2", "label": "Eyebrow", "info": "Leave blank to hide", "default": "Land of the Free" },
+    { "type": "text", "id": "center_line1_v2", "label": "Headline line 1", "info": "Shown with red & white stripe fill", "default": "One Nation," },
+    { "type": "text", "id": "center_line2_v2", "label": "Headline line 2", "info": "Shown in gold accent", "default": "First to 54" },
+    { "type": "textarea", "id": "center_sub_v2", "label": "Subtitle", "default": "Fireworks later, bragging rights now. Set up the chairs, pick your teams, and throw for the win this 4th of July. 🏈" },
+    { "type": "text", "id": "cta_label_v2", "label": "Button text", "info": "Leave blank to hide", "default": "Shop the 4th of July Sale" },
+    { "type": "url", "id": "cta_url", "label": "Button URL" },
+
+    { "type": "header", "content": "Left video" },
+    { "type": "video", "id": "video_left", "label": "Left video", "info": "Shopify-hosted video (Content → Files, or upload here)" },
+    { "type": "text", "id": "badge_left_v2", "label": "Left badge text", "info": "Leave blank to hide", "default": "Stars & Stripes" },
+
+    { "type": "header", "content": "Right video" },
+    { "type": "video", "id": "video_right", "label": "Right video", "info": "Shopify-hosted video (Content → Files, or upload here)" },
+    { "type": "text", "id": "badge_right_v2", "label": "Right badge text", "info": "Leave blank to hide", "default": "First to 54" },
+
+    { "type": "header", "content": "Video playback" },
+    { "type": "select", "id": "video_ratio", "label": "Video shape", "options": [ { "value": "9 / 16", "label": "Portrait (9:16)" }, { "value": "3 / 4", "label": "Portrait (3:4)" }, { "value": "4 / 5", "label": "Portrait (4:5)" }, { "value": "1 / 1", "label": "Square (1:1)" }, { "value": "16 / 9", "label": "Landscape (16:9)" } ], "default": "9 / 16" },
+    { "type": "checkbox", "id": "video_autoplay", "label": "Autoplay videos (muted)", "info": "Browsers require autoplay to start muted. When off, full playback controls are shown instead.", "default": true },
+    { "type": "checkbox", "id": "show_sound_toggle", "label": "Show unmute button on autoplay videos", "default": true },
+    { "type": "checkbox", "id": "video_loop", "label": "Loop videos", "default": true },
+
+    { "type": "header", "content": "Section spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top padding (desktop)", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding (desktop)", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 100 },
+    { "type": "range", "id": "padding_top_mobile", "label": "Top padding (mobile)", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 44 },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "Bottom padding (mobile)", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 60 },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_bg", "label": "Background", "default": "#141c40" },
+    { "type": "color", "id": "color_text", "label": "Text", "default": "#ffffff" },
+    { "type": "color", "id": "color_red", "label": "Red", "default": "#e11d2f" },
+    { "type": "color", "id": "color_blue", "label": "Blue (glow)", "default": "#2a3f8f" },
+    { "type": "color", "id": "color_spark", "label": "Gold accent", "default": "#f7b80d" }
+  ],
+  "presets": [ { "name": "Patriotic Dual Video" } ]
+}
+{% endschema %}

@@ -1,0 +1,339 @@
+<style>
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.social-video {
+  background: #f7f4ee;
+  padding: 60px 20px;
+  overflow-x: hidden;
+}
+
+.social-video__header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.social-video__handle {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1f2d24;
+}
+
+.social-video__sub {
+  font-size: 16px;
+  color: #6b776f;
+  margin-top: 6px;
+}
+
+/* SLIDER ROW */
+.social-video__row {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 10px;
+}
+
+.social-video__row::-webkit-scrollbar {
+  display: none;
+}
+
+/* CARD */
+.social-video__card {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #000;
+  scroll-snap-align: start;
+  cursor: pointer;
+}
+
+@media (min-width: 1024px) {
+  .social-video__card {
+    flex: 0 0 15%;
+    max-width: 15%;
+  }
+}
+
+@media (max-width: 1023px) {
+  .social-video__card {
+    flex: 0 0 calc(100% / 1.5);
+    max-width: calc(100% / 1.5);
+  }
+}
+
+/* POSTER IMAGE */
+.social-video__poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 3;
+  transition: opacity 0.25s ease;
+}
+
+/* VIDEO */
+.social-video__card video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 2;
+  background: #000;
+}
+
+/* PLAY/PAUSE OVERLAY — shown when paused or not yet started */
+.social-video__play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  color: rgba(255,255,255,0.85);
+  z-index: 5;
+  transition: opacity 0.2s ease;
+  pointer-events: none; /* clicks pass through to the card */
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+}
+
+/* Hide poster + show play icon when playing */
+.social-video__card.is-playing .social-video__poster {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Hide play icon while playing; show pause icon on hover */
+.social-video__card.is-playing .social-video__play {
+  opacity: 0;
+}
+
+.social-video__card.is-playing:hover .social-video__play {
+  opacity: 1;
+}
+
+.social-video__card.is-playing .social-video__play::before {
+  content: '⏸';
+}
+
+.social-video__card:not(.is-playing) .social-video__play::before {
+  content: '▶';
+}
+
+/* MUTE BUTTON */
+.social-video__mute {
+  position: absolute;
+  bottom: 44px;
+  right: 12px;
+  z-index: 6;
+  background: rgba(0,0,0,0.55);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.social-video__card.is-playing .social-video__mute {
+  opacity: 1;
+}
+
+/* TITLE */
+.social-video__title {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  right: 14px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 4;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+  pointer-events: none;
+}
+</style>
+
+<section class="social-video">
+  <div class="social-video__header">
+    <div class="social-video__handle">{{ section.settings.handle }}</div>
+    <div class="social-video__sub">{{ section.settings.subtext }}</div>
+  </div>
+
+  <div class="social-video__row">
+    {% for block in section.blocks %}
+      <div class="social-video__card" data-video-card {{ block.shopify_attributes }}>
+
+        {% if block.settings.video.preview_image %}
+          <img
+            class="social-video__poster"
+            src="{{ block.settings.video.preview_image | image_url: width: 1600 }}"
+            srcset="
+              {{ block.settings.video.preview_image | image_url: width: 600 }} 600w,
+              {{ block.settings.video.preview_image | image_url: width: 900 }} 900w,
+              {{ block.settings.video.preview_image | image_url: width: 1200 }} 1200w,
+              {{ block.settings.video.preview_image | image_url: width: 1600 }} 1600w
+            "
+            sizes="(min-width: 1024px) 15vw, 60vw"
+            alt="{{ block.settings.title | escape }}"
+            loading="lazy"
+            decoding="async"
+          >
+        {% endif %}
+
+        {% if block.settings.video %}
+          {{
+            block.settings.video
+            | video_tag:
+              autoplay: false,
+              muted: false,
+              controls: false,
+              loop: false,
+              playsinline: true,
+              preload: "none",
+              poster: null
+          }}
+        {% endif %}
+
+        <div class="social-video__play" aria-hidden="true"></div>
+        <button class="social-video__mute" aria-label="Toggle mute">🔊</button>
+        <div class="social-video__title">{{ block.settings.title }}</div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('[data-video-card]').forEach(function (card) {
+    var video = card.querySelector('video');
+    var muteBtn = card.querySelector('.social-video__mute');
+
+    if (!video) return;
+
+    // Ensure video starts unmuted
+    video.muted = false;
+
+    /* ── CLICK CARD: toggle play / pause ── */
+    card.addEventListener('click', function (e) {
+      // Don't toggle play if the mute button was clicked
+      if (muteBtn && muteBtn.contains(e.target)) return;
+
+      if (card.classList.contains('is-playing')) {
+        video.pause();
+      } else {
+        // Pause all other videos first
+        document.querySelectorAll('[data-video-card]').forEach(function (other) {
+          var v = other.querySelector('video');
+          if (v && v !== video) {
+            v.pause();
+            other.classList.remove('is-playing');
+          }
+        });
+
+        video.muted = false;
+
+        var playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(function () {
+            // Autoplay with sound blocked — fall back to muted, then unmute
+            video.muted = true;
+            video.play().then(function () {
+              video.muted = false;
+            });
+          });
+        }
+
+        card.classList.add('is-playing');
+      }
+    });
+
+    /* ── MUTE TOGGLE ── */
+    if (muteBtn) {
+      muteBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        video.muted = !video.muted;
+        muteBtn.textContent = video.muted ? '🔇' : '🔊';
+        muteBtn.setAttribute('aria-label', video.muted ? 'Unmute' : 'Mute');
+      });
+    }
+
+    /* ── VIDEO EVENTS ── */
+    video.addEventListener('pause', function () {
+      card.classList.remove('is-playing');
+    });
+
+    video.addEventListener('ended', function () {
+      card.classList.remove('is-playing');
+    });
+
+    video.addEventListener('play', function () {
+      card.classList.add('is-playing');
+    });
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Social Video Slider",
+  "settings": [
+    {
+      "type": "text",
+      "id": "handle",
+      "label": "Handle",
+      "default": "🔥 WARNING VIRAL CONTENT"
+    },
+    {
+      "type": "text",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Tap to play"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "video",
+      "name": "Video",
+      "settings": [
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Video file"
+        },
+        {
+          "type": "image_picker",
+          "id": "poster",
+          "label": "Poster image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Caption",
+          "default": "QB54 goes viral"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Social Video Slider"
+    }
+  ]
+}
+{% endschema %}

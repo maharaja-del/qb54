@@ -1,0 +1,358 @@
+{% comment %} QB54 × Moon Media — Collab Cards Section {% endcomment %}
+
+<style>
+  #qb-collab-{{ section.id }} {
+    --qb: {{ section.settings.color_qb }};
+    --moon: {{ section.settings.color_moon }};
+    --gold: {{ section.settings.color_gold }};
+    padding: 80px 0;
+    background: {{ section.settings.color_bg }};
+    border-top: 1px solid rgba(185,249,0,.1);
+    font-family: 'Sora', sans-serif;
+  }
+  #qb-collab-{{ section.id }} .cc-inner {
+    max-width: 1100px; margin: 0 auto; padding: 0 48px;
+    display: flex; flex-direction: column; align-items: center; gap: 48px;
+  }
+  #qb-collab-{{ section.id }} .cc-head { text-align: center; }
+  #qb-collab-{{ section.id }} .cc-eyebrow {
+    font-size: .6rem; letter-spacing: .2em; text-transform: uppercase;
+    color: rgba(255,255,255,.5); display: block; margin-bottom: 8px;
+  }
+  #qb-collab-{{ section.id }} .cc-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px,5vw,60px); line-height: .95; color: #fff; margin: 0;
+  }
+  #qb-collab-{{ section.id }} .cards-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%;
+  }
+  #qb-collab-{{ section.id }} .b-card {
+    padding: 40px 36px; background: {{ section.settings.color_surface }};
+    border: 1px solid rgba(185,249,0,.1); border-radius: 16px;
+  }
+  #qb-collab-{{ section.id }} .b-card .card-logo {
+    height: 36px; object-fit: contain; margin-bottom: 24px; display: block;
+  }
+  #qb-collab-{{ section.id }} .b-card.mm .card-logo { filter: brightness(1.3) saturate(.6); }
+  #qb-collab-{{ section.id }} .c-eyebrow {
+    font-size: .55rem; letter-spacing: .2em; text-transform: uppercase;
+    color: rgba(255,255,255,.5); margin-bottom: 6px; display: block;
+  }
+  #qb-collab-{{ section.id }} .c-role {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(22px,2.5vw,34px); line-height: 1; margin-bottom: 16px;
+  }
+  #qb-collab-{{ section.id }} .b-card.qb54 .c-role { color: var(--qb); }
+  #qb-collab-{{ section.id }} .b-card.mm .c-role { color: var(--moon); }
+  #qb-collab-{{ section.id }} .c-desc {
+    font-size: .82rem; font-weight: 300; color: rgba(255,255,255,.75);
+    line-height: 1.8; margin-bottom: 28px;
+  }
+  #qb-collab-{{ section.id }} .c-stats {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  #qb-collab-{{ section.id }} .cs {
+    padding: 16px 18px; border: 1px solid rgba(185,249,0,.1);
+    border-radius: 10px; background: {{ section.settings.color_surface2 }};
+  }
+  #qb-collab-{{ section.id }} .cs .n {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; line-height: 1; margin-bottom: 2px;
+  }
+  #qb-collab-{{ section.id }} .b-card.qb54 .cs:nth-child(odd) .n { color: var(--qb); }
+  #qb-collab-{{ section.id }} .b-card.qb54 .cs:nth-child(even) .n { color: var(--gold); }
+  #qb-collab-{{ section.id }} .b-card.mm .cs .n { color: var(--moon); }
+  #qb-collab-{{ section.id }} .cs .l {
+    font-size: .56rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.5);
+  }
+
+  @media(max-width:800px){
+    #qb-collab-{{ section.id }} .cards-grid { grid-template-columns: 1fr; }
+  }
+  @media(max-width:640px){
+    #qb-collab-{{ section.id }} { padding: 56px 0; }
+    #qb-collab-{{ section.id }} .cc-inner { padding: 0 20px; gap: 36px; }
+    #qb-collab-{{ section.id }} .b-card { padding: 28px 22px; }
+  }
+</style>
+
+<section id="qb-collab-{{ section.id }}">
+  <div class="cc-inner">
+
+    <div class="cc-head">
+      <span class="cc-eyebrow">{{ section.settings.section_label }}</span>
+      <h2 class="cc-title">{{ section.settings.heading }}</h2>
+    </div>
+
+    <div class="cards-grid">
+
+      {%- comment -%} QB54 Card {%- endcomment -%}
+      <div class="b-card qb54">
+        {%- if section.settings.qb_logo != blank -%}
+          <img class="card-logo" src="{{ section.settings.qb_logo | image_url: width: 200 }}" alt="QB54">
+        {%- else -%}
+          <img class="card-logo" src="https://playqb54.com/cdn/shop/files/logo.png" alt="QB54">
+        {%- endif -%}
+        <span class="c-eyebrow">{{ section.settings.qb_eyebrow }}</span>
+        <h3 class="c-role">{{ section.settings.qb_role }}</h3>
+        <p class="c-desc">{{ section.settings.qb_desc }}</p>
+        <div class="c-stats">
+          {%- for i in (1..4) -%}
+            {%- assign stat_n_key = 'qb_stat' | append: i | append: '_n' -%}
+            {%- assign stat_l_key = 'qb_stat' | append: i | append: '_l' -%}
+            {%- if section.settings[stat_n_key] != blank -%}
+              <div class="cs">
+                <div class="n">{{ section.settings[stat_n_key] }}</div>
+                <div class="l">{{ section.settings[stat_l_key] }}</div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+
+      {%- comment -%} Moon Media Card {%- endcomment -%}
+      <div class="b-card mm">
+        {%- if section.settings.mm_logo != blank -%}
+          <img class="card-logo" src="{{ section.settings.mm_logo | image_url: width: 200 }}" alt="Moon Media">
+        {%- else -%}
+          <img class="card-logo" src="https://images.squarespace-cdn.com/content/v1/6111d9dc96344d4b722b4481/36343cc8-77de-44d0-a2a6-0d1123a10288/Moon-Media-Logo-Web.png" alt="Moon Media">
+        {%- endif -%}
+        <span class="c-eyebrow">{{ section.settings.mm_eyebrow }}</span>
+        <h3 class="c-role">{{ section.settings.mm_role }}</h3>
+        <p class="c-desc">{{ section.settings.mm_desc }}</p>
+        <div class="c-stats">
+          {%- for i in (1..4) -%}
+            {%- assign stat_n_key = 'mm_stat' | append: i | append: '_n' -%}
+            {%- assign stat_l_key = 'mm_stat' | append: i | append: '_l' -%}
+            {%- if section.settings[stat_n_key] != blank -%}
+              <div class="cs">
+                <div class="n">{{ section.settings[stat_n_key] }}</div>
+                <div class="l">{{ section.settings[stat_l_key] }}</div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "QB54 Collab Cards",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section heading"
+    },
+    {
+      "type": "text",
+      "id": "section_label",
+      "label": "Small label",
+      "default": "The Partnership"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Two Forces. One Goal."
+    },
+    {
+      "type": "header",
+      "content": "QB54 card"
+    },
+    {
+      "type": "image_picker",
+      "id": "qb_logo",
+      "label": "QB54 logo"
+    },
+    {
+      "type": "text",
+      "id": "qb_eyebrow",
+      "label": "Eyebrow",
+      "default": "The Game"
+    },
+    {
+      "type": "text",
+      "id": "qb_role",
+      "label": "Title",
+      "default": "The Viral Football Game"
+    },
+    {
+      "type": "textarea",
+      "id": "qb_desc",
+      "label": "Description",
+      "default": "QB54 is the backyard football game that went from a garage idea to Shark Tank, Good Morning America, and 100M+ social media views. The game that turns any gathering into a party — beach, backyard, park, tailgate. Wherever people are, QB54 takes over."
+    },
+    {
+      "type": "text",
+      "id": "qb_stat1_n",
+      "label": "Stat 1 number",
+      "default": "100M+"
+    },
+    {
+      "type": "text",
+      "id": "qb_stat1_l",
+      "label": "Stat 1 label",
+      "default": "Social Views"
+    },
+    {
+      "type": "text",
+      "id": "qb_stat2_n",
+      "label": "Stat 2 number",
+      "default": "60K+"
+    },
+    {
+      "type": "text",
+      "id": "qb_stat2_l",
+      "label": "Stat 2 label",
+      "default": "Sets Sold"
+    },
+    {
+      "type": "text",
+      "id": "qb_stat3_n",
+      "label": "Stat 3 number",
+      "default": "57K"
+    },
+    {
+      "type": "text",
+      "id": "qb_stat3_l",
+      "label": "Stat 3 label",
+      "default": "IG Followers"
+    },
+    {
+      "type": "text",
+      "id": "qb_stat4_n",
+      "label": "Stat 4 number",
+      "default": "2–8"
+    },
+    {
+      "type": "text",
+      "id": "qb_stat4_l",
+      "label": "Stat 4 label",
+      "default": "Players Per Game"
+    },
+    {
+      "type": "header",
+      "content": "Moon Media card"
+    },
+    {
+      "type": "image_picker",
+      "id": "mm_logo",
+      "label": "Moon Media logo"
+    },
+    {
+      "type": "text",
+      "id": "mm_eyebrow",
+      "label": "Eyebrow",
+      "default": "The Agency"
+    },
+    {
+      "type": "text",
+      "id": "mm_role",
+      "label": "Title",
+      "default": "The Content Machine"
+    },
+    {
+      "type": "textarea",
+      "id": "mm_desc",
+      "label": "Description",
+      "default": "Moon Media is the in-house social content agency that has cracked virality for product brands. No outsourcing. No freelancers. From scripting to filming to editing — they own every frame. The numbers prove it: 292M views for Popdarts in 200 days."
+    },
+    {
+      "type": "text",
+      "id": "mm_stat1_n",
+      "label": "Stat 1 number",
+      "default": "292M+"
+    },
+    {
+      "type": "text",
+      "id": "mm_stat1_l",
+      "label": "Stat 1 label",
+      "default": "Views (Popdarts)"
+    },
+    {
+      "type": "text",
+      "id": "mm_stat2_n",
+      "label": "Stat 2 number",
+      "default": "85K+"
+    },
+    {
+      "type": "text",
+      "id": "mm_stat2_l",
+      "label": "Stat 2 label",
+      "default": "Followers Built"
+    },
+    {
+      "type": "text",
+      "id": "mm_stat3_n",
+      "label": "Stat 3 number",
+      "default": "12+"
+    },
+    {
+      "type": "text",
+      "id": "mm_stat3_l",
+      "label": "Stat 3 label",
+      "default": "Brand Partners"
+    },
+    {
+      "type": "text",
+      "id": "mm_stat4_n",
+      "label": "Stat 4 number",
+      "default": "1000+"
+    },
+    {
+      "type": "text",
+      "id": "mm_stat4_l",
+      "label": "Stat 4 label",
+      "default": "Videos Created"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "color_bg",
+      "label": "Background",
+      "default": "#070d07"
+    },
+    {
+      "type": "color",
+      "id": "color_surface",
+      "label": "Card background",
+      "default": "#0b120b"
+    },
+    {
+      "type": "color",
+      "id": "color_surface2",
+      "label": "Stat tile background",
+      "default": "#101a10"
+    },
+    {
+      "type": "color",
+      "id": "color_qb",
+      "label": "QB54 green",
+      "default": "#b9f900"
+    },
+    {
+      "type": "color",
+      "id": "color_moon",
+      "label": "Moon Media pink",
+      "default": "#ff2d55"
+    },
+    {
+      "type": "color",
+      "id": "color_gold",
+      "label": "Gold accent",
+      "default": "#f5a623"
+    }
+  ],
+  "presets": [
+    {
+      "name": "QB54 Collab Cards"
+    }
+  ]
+}
+{% endschema %}

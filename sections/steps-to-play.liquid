@@ -1,0 +1,223 @@
+{% comment %}
+  HOW TO PLAY QBS4 – Custom Section
+{% endcomment %}
+
+<section class="qbs4-how-to-play" style="
+  --bg-color: {{ section.settings.bg_color }};
+  --accent-color: {{ section.settings.accent_color }};
+  --text-color: {{ section.settings.text_color }};
+">
+  <div class="qbs4-container">
+
+    <div class="qbs4-header">
+      <h2 class="qbs4-title">
+        <span class="qbs4-title-outline">{{ section.settings.heading_outline }}</span>
+        <span class="qbs4-title-solid">{{ section.settings.heading_solid }}</span>
+      </h2>
+
+      {% if section.settings.logo != blank %}
+        <div class="qbs4-logo">
+          <img src="{{ section.settings.logo | image_url: width: 400 }}" alt="QBS4 Logo">
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="qbs4-steps">
+
+      <div class="qbs4-step">
+        <div class="qbs4-step-number">1</div>
+        <div class="qbs4-step-content">
+          {{ section.settings.step_1 }}
+        </div>
+      </div>
+
+      <div class="qbs4-step">
+        <div class="qbs4-step-number">2</div>
+        <div class="qbs4-step-content">
+          {{ section.settings.step_2 }}
+        </div>
+      </div>
+
+      <div class="qbs4-step">
+        <div class="qbs4-step-number">3</div>
+        <div class="qbs4-step-content">
+          {{ section.settings.step_3 }}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<style>
+.qbs4-how-to-play {
+  background: var(--bg-color);
+  padding: 80px 20px;
+  color: var(--text-color);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+.qbs4-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.qbs4-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 60px;
+  flex-wrap: wrap;
+}
+
+.qbs4-title {
+  line-height: 1;
+}
+
+.qbs4-title-outline {
+  display: block;
+  font-size: 64px;
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 3px var(--accent-color);
+  letter-spacing: 4px;
+}
+
+.qbs4-title-solid {
+  display: block;
+  font-size: 72px;
+  font-weight: 900;
+  color: #fff;
+  background: var(--accent-color);
+  padding: 10px 20px;
+  margin-top: 10px;
+  width: fit-content;
+}
+
+.qbs4-logo img {
+  max-width: 260px;
+  height: auto;
+}
+
+.qbs4-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.qbs4-step {
+  background: var(--accent-color);
+  border-radius: 50px;
+  padding: 30px;
+  position: relative;
+  min-height: 160px;
+}
+
+.qbs4-step-number {
+  position: absolute;
+  top: -25px;
+  left: 25px;
+  background: #2b3550;
+  color: #fff;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 900;
+  border: 6px solid var(--accent-color);
+}
+
+.qbs4-step-content {
+  margin-top: 30px;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #1e2746;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .qbs4-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .qbs4-title-outline {
+    font-size: 48px;
+  }
+
+  .qbs4-title-solid {
+    font-size: 52px;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "How To Play – QBS4",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading_outline",
+      "label": "Top Outline Heading",
+      "default": "HOW"
+    },
+    {
+      "type": "text",
+      "id": "heading_solid",
+      "label": "Main Heading",
+      "default": "TO PLAY"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo Image"
+    },
+    {
+      "type": "textarea",
+      "id": "step_1",
+      "label": "Step 1 Text",
+      "default": "Set Chairs up 40 feet apart (adjust to skill level)"
+    },
+    {
+      "type": "textarea",
+      "id": "step_2",
+      "label": "Step 2 Text",
+      "default": "Play 1 vs 1 (opponents on opposite sides) or 2 vs 2 (teammates on same side)"
+    },
+    {
+      "type": "textarea",
+      "id": "step_3",
+      "label": "Step 3 Text",
+      "default": "Players alternate throws"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#2b3550"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color",
+      "default": "#f5c84c"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "How To Play – QBS4"
+    }
+  ]
+}
+{% endschema %}

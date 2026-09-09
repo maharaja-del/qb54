@@ -1,0 +1,286 @@
+{% liquid
+  assign sid = section.id
+%}
+
+<section class="feature-icons-{{ sid }}">
+  <div class="feature-icons__inner">
+    {% if section.settings.heading != blank %}
+      <h2 class="feature-icons__heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="feature-icons__grid">
+      {% for block in section.blocks %}
+        <div class="feature-icons__item" {{ block.shopify_attributes }}>
+          <div
+            class="feature-icons__icon"
+            style="background-color: {{ block.settings.icon_bg }};"
+          >
+            {% if block.settings.icon_image != blank %}
+              <img
+                src="{{ block.settings.icon_image | image_url: width: 120 }}"
+                alt="{{ block.settings.icon_alt | escape }}"
+                loading="lazy"
+                width="60"
+                height="60"
+              >
+            {% endif %}
+          </div>
+
+          {% if block.settings.title != blank %}
+            <h3 class="feature-icons__title">{{ block.settings.title }}</h3>
+          {% endif %}
+
+          {% if block.settings.text != blank %}
+            <p class="feature-icons__text">{{ block.settings.text }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+.feature-icons-{{ sid }} {
+  padding-top: {{ section.settings.padding_top }}px;
+  padding-bottom: {{ section.settings.padding_bottom }}px;
+  background: {{ section.settings.bg_color }};
+}
+
+.feature-icons-{{ sid }} .feature-icons__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.feature-icons-{{ sid }} .feature-icons__heading {
+  text-align: center;
+  margin-bottom: 40px;
+  color: {{ section.settings.heading_color }};
+  font-size: {{ section.settings.heading_size_mobile }}px;
+}
+
+.feature-icons-{{ sid }} .feature-icons__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px 20px;
+}
+
+.feature-icons-{{ sid }} .feature-icons__item {
+  text-align: center;
+}
+
+.feature-icons-{{ sid }} .feature-icons__icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 16px;
+  border-radius: {{ section.settings.icon_radius }}px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-icons-{{ sid }} .feature-icons__icon img {
+  max-width: 60%;
+  max-height: 60%;
+  display: block;
+}
+
+.feature-icons-{{ sid }} .feature-icons__title {
+  margin: 0 0 6px;
+  color: {{ section.settings.title_color }};
+  font-size: {{ section.settings.title_size_mobile }}px;
+}
+
+.feature-icons-{{ sid }} .feature-icons__text {
+  margin: 0;
+  color: {{ section.settings.text_color }};
+  font-size: {{ section.settings.text_size_mobile }}px;
+}
+
+@media (min-width: 768px) {
+  .feature-icons-{{ sid }} .feature-icons__heading {
+    font-size: {{ section.settings.heading_size_desktop }}px;
+  }
+
+  .feature-icons-{{ sid }} .feature-icons__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+  }
+
+  .feature-icons-{{ sid }} .feature-icons__title {
+    font-size: {{ section.settings.title_size_desktop }}px;
+  }
+
+  .feature-icons-{{ sid }} .feature-icons__text {
+    font-size: {{ section.settings.text_size_desktop }}px;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Feature Icons",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Why Families Love QB54"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#F4F2E8"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1F2D23"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#1F2D23"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#6F7F73"
+    },
+    {
+      "type": "range",
+      "id": "icon_radius",
+      "label": "Icon radius",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size mobile",
+      "min": 18,
+      "max": 36,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size desktop",
+      "min": 24,
+      "max": 56,
+      "step": 1,
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Title size mobile",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Title size desktop",
+      "min": 16,
+      "max": 26,
+      "step": 1,
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Text size mobile",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Text size desktop",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Icon item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Icon image"
+        },
+        {
+          "type": "text",
+          "id": "icon_alt",
+          "label": "Icon alt text",
+          "default": "Feature icon"
+        },
+        {
+          "type": "color",
+          "id": "icon_bg",
+          "label": "Icon background",
+          "default": "#3F6B47"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "All Ages"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Fun for the whole family"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Feature icons",
+      "blocks": [
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" }
+      ]
+    }
+  ]
+}
+{% endschema %}

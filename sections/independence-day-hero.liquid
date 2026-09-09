@@ -1,0 +1,859 @@
+{% comment %}
+  ID4-Hero — Overtime Sale / Independence Day Hero (extended)
+  Fireworks + waving stripes + star field + countdown + click-to-copy coupon
+  Section: sections/independence-day-hero.liquid
+  Brand: QB54 — navy + gold + patriotic red
+{% endcomment %}
+
+{%- liquid
+  # ---- OVERTIME CAMPAIGN AUTO-UPGRADE ----
+  # Shopify keeps old saved values on existing sections, so stale
+  # July 4th copy/dates are detected here and swapped for the
+  # extended-sale versions automatically. Values already edited to
+  # something new pass through untouched. Delete this block after
+  # the campaign ends.
+  assign eyebrow = section.settings.eyebrow
+  assign h1 = section.settings.heading_line1
+  assign h2 = section.settings.heading_line2
+  assign subtitle = section.settings.subtitle
+  assign cd_label = section.settings.countdown_label
+  assign target_date = section.settings.target_date
+  assign live_message = section.settings.live_message
+  assign cta1_label = section.settings.cta1_label
+  assign badge_text = section.settings.badge_text
+
+  assign eyebrow_down = eyebrow | downcase
+  if eyebrow_down contains 'independence day sale'
+    assign eyebrow = 'Sale Extended — Overtime Week'
+  endif
+
+  if h1 == 'Red, White' and h2 == '& QB54.'
+    assign h1 = 'The 4th Won.'
+    assign h2 = 'Overtime On.'
+  endif
+
+  assign sub_down = subtitle | downcase
+  if sub_down contains 'through the 4th'
+    assign subtitle = "You made our July 4th sale a hit — so the game's going into overtime. Up to 20% off the viral tailgate football game, extended through July 11."
+  endif
+
+  assign cdl_down = cd_label | downcase
+  if cdl_down contains 'sale ends in'
+    assign cd_label = 'Overtime ends in'
+  endif
+
+  if target_date contains '-07-04' or target_date contains '-07-05'
+    assign target_date = '2026-07-11'
+  endif
+
+  assign live_down = live_message | downcase
+  if live_down contains 'happy 4th'
+    assign live_message = '★ Overtime Complete — Thanks, America ★'
+  endif
+
+  assign cta1_down = cta1_label | downcase
+  if cta1_down contains '4th of july sale'
+    assign cta1_label = 'Shop the Overtime Sale'
+  endif
+
+  assign badge_down = badge_text | downcase
+  if badge_down == '4th of july'
+    assign badge_text = 'Sale Extended'
+  endif
+  # ---- END AUTO-UPGRADE ----
+-%}
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  #id4-hero-{{ section.id }} {
+    --bg:      {{ section.settings.color_bg }};
+    --text:    {{ section.settings.color_text }};
+    --red:     {{ section.settings.color_red }};
+    --blue:    {{ section.settings.color_blue }};
+    --spark:   {{ section.settings.color_spark }};
+    --muted:   color-mix(in srgb, {{ section.settings.color_text }} 64%, transparent);
+    --line:    color-mix(in srgb, {{ section.settings.color_text }} 14%, transparent);
+    --glass:   color-mix(in srgb, {{ section.settings.color_text }} 5%, transparent);
+
+    --pad-top:      {{ section.settings.padding_top }}px;
+    --pad-bottom:   {{ section.settings.padding_bottom }}px;
+    --pad-top-m:    {{ section.settings.padding_top_mobile }}px;
+    --pad-bottom-m: {{ section.settings.padding_bottom_mobile }}px;
+
+    position: relative;
+    background:
+      radial-gradient(ellipse 90% 70% at 50% -10%, color-mix(in srgb, var(--blue) 55%, var(--bg)) 0%, var(--bg) 60%),
+      var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    padding: var(--pad-top) 0 var(--pad-bottom);
+    font-family: 'Sora', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    isolation: isolate;
+  }
+
+  /* ── WAVING STRIPES (bottom band, like a furling flag) ── */
+  #id4-hero-{{ section.id }} .id4-stripes {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background: repeating-linear-gradient(
+      -8deg,
+      color-mix(in srgb, var(--red) 16%, transparent) 0px,
+      color-mix(in srgb, var(--red) 16%, transparent) 38px,
+      transparent 38px,
+      transparent 76px
+    );
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 120%, #000 10%, transparent 70%);
+    animation: id4-wave 9s ease-in-out infinite;
+  }
+  @keyframes id4-wave {
+    0%, 100% { transform: translateX(0) skewY(0deg); }
+    50%      { transform: translateX(-24px) skewY(-1.2deg); }
+  }
+
+  /* ── GRIDIRON FIELD (bottom horizon, yard lines in perspective) ── */
+  #id4-hero-{{ section.id }} .id4-field {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 160px; z-index: 0; pointer-events: none;
+    background:
+      repeating-linear-gradient(90deg,
+        transparent 0 56px,
+        color-mix(in srgb, #fff 22%, transparent) 56px 58px),
+      linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--blue) 22%, transparent) 100%);
+    transform: perspective(420px) rotateX(62deg); transform-origin: bottom center;
+    mask-image: linear-gradient(180deg, transparent 0%, #000 70%);
+    opacity: .5;
+  }
+  #id4-hero-{{ section.id }} .id4-field::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 34%; height: 3px;
+    background: var(--spark); box-shadow: 0 0 12px var(--spark); opacity: .6;
+  }
+
+  /* ── STAR FIELD ── */
+  #id4-hero-{{ section.id }} .id4-stars {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      radial-gradient(1.6px 1.6px at 12% 18%, #fff, transparent),
+      radial-gradient(1.2px 1.2px at 82% 22%, color-mix(in srgb, #fff 80%, transparent), transparent),
+      radial-gradient(1.8px 1.8px at 35% 30%, #fff, transparent),
+      radial-gradient(1.2px 1.2px at 65% 14%, var(--spark), transparent),
+      radial-gradient(2px 2px at 50% 9%, #fff, transparent),
+      radial-gradient(1.2px 1.2px at 8% 40%, color-mix(in srgb, #fff 70%, transparent), transparent),
+      radial-gradient(1.6px 1.6px at 90% 38%, var(--red), transparent),
+      radial-gradient(1.2px 1.2px at 24% 12%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 72% 34%, color-mix(in srgb, #fff 70%, transparent), transparent);
+    background-size: 100% 100%;
+    mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 85%);
+    animation: id4-twinkle 4.5s ease-in-out infinite;
+  }
+  @keyframes id4-twinkle {
+    0%, 100% { opacity: .9; }
+    50%      { opacity: .4; }
+  }
+
+  /* ── FIREWORKS ── */
+  #id4-hero-{{ section.id }} .id4-fw {
+    position: absolute; z-index: 0; pointer-events: none;
+    width: 6px; height: 6px; border-radius: 50%;
+    opacity: 0;
+  }
+  /* each firework = a dot that shoots particles via box-shadow burst */
+  #id4-hero-{{ section.id }} .id4-fw::before {
+    content: ''; position: absolute; inset: 0; border-radius: 50%;
+    box-shadow:
+      0 -42px 0 -2px currentColor, 0 42px 0 -2px currentColor,
+      42px 0 0 -2px currentColor, -42px 0 0 -2px currentColor,
+      30px -30px 0 -2px currentColor, -30px 30px 0 -2px currentColor,
+      30px 30px 0 -2px currentColor, -30px -30px 0 -2px currentColor,
+      0 -30px 0 -3px currentColor, 0 30px 0 -3px currentColor,
+      30px 0 0 -3px currentColor, -30px 0 0 -3px currentColor;
+  }
+  #id4-hero-{{ section.id }} .id4-fw-1 { top: 18%; left: 16%; color: var(--red);   animation: id4-burst 4.2s ease-out infinite; }
+  #id4-hero-{{ section.id }} .id4-fw-2 { top: 12%; left: 74%; color: #fff;          animation: id4-burst 4.2s ease-out .9s infinite; }
+  #id4-hero-{{ section.id }} .id4-fw-3 { top: 28%; left: 46%; color: var(--spark); animation: id4-burst 4.2s ease-out 1.8s infinite; }
+  #id4-hero-{{ section.id }} .id4-fw-4 { top: 8%;  left: 33%; color: color-mix(in srgb, var(--blue) 40%, #fff); animation: id4-burst 4.2s ease-out 2.7s infinite; }
+  #id4-hero-{{ section.id }} .id4-fw-5 { top: 22%; left: 88%; color: var(--red);   animation: id4-burst 4.2s ease-out 3.4s infinite; }
+  @keyframes id4-burst {
+    0%   { opacity: 0; transform: scale(.2); }
+    8%   { opacity: 1; }
+    45%  { opacity: .9; transform: scale(1.05); }
+    70%  { opacity: 0; transform: scale(1.25); }
+    100% { opacity: 0; transform: scale(1.25); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #id4-hero-{{ section.id }} .id4-fw,
+    #id4-hero-{{ section.id }} .id4-stripes,
+    #id4-hero-{{ section.id }} .id4-stars { animation: none; }
+    #id4-hero-{{ section.id }} .id4-fw { opacity: .35; }
+  }
+
+  /* glow orbs */
+  #id4-hero-{{ section.id }} .id4-orb {
+    position: absolute; border-radius: 50%; filter: blur(150px);
+    pointer-events: none; z-index: 0;
+  }
+  #id4-hero-{{ section.id }} .id4-orb-1 { width: 520px; height: 520px; top: -160px; right: -140px; background: var(--red);  opacity: .12; }
+  #id4-hero-{{ section.id }} .id4-orb-2 { width: 480px; height: 480px; bottom: -200px; left: -150px; background: var(--blue); opacity: .22; }
+
+  /* ── INNER LAYOUT ── */
+  #id4-hero-{{ section.id }} .id4-inner {
+    position: relative; z-index: 2;
+    max-width: 1240px; margin: 0 auto;
+    padding: 0 clamp(20px, 4vw, 56px);
+    display: grid; grid-template-columns: 1.1fr 1fr;
+    gap: clamp(40px, 5vw, 80px);
+    align-items: center;
+  }
+
+  /* ── EYEBROW IMAGE (small brand mark above the eyebrow) ── */
+  #id4-hero-{{ section.id }} .id4-eyebrow-img {
+    display: block;
+    width: 100px; height: auto;
+    border-radius: 10px;
+    margin: 0 0 20px;
+  }
+
+  /* ── EYEBROW (star · text · star) ── */
+  #id4-hero-{{ section.id }} .id4-eyebrow {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-size: 11px; font-weight: 800; letter-spacing: .26em;
+    text-transform: uppercase; color: var(--spark);
+    margin-bottom: 26px;
+  }
+  #id4-hero-{{ section.id }} .id4-eyebrow svg { width: 13px; height: 13px; fill: var(--spark); }
+  #id4-hero-{{ section.id }} .id4-eyebrow::before,
+  #id4-hero-{{ section.id }} .id4-eyebrow::after {
+    content: ''; width: 26px; height: 1px;
+    background: color-mix(in srgb, var(--spark) 60%, transparent);
+  }
+
+  /* ── HEADLINE ── */
+  #id4-hero-{{ section.id }} .id4-headline {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(52px, 8.4vw, 120px);
+    line-height: .82;
+    letter-spacing: .005em;
+    margin-bottom: 22px;
+    color: var(--text);
+    text-transform: uppercase;
+  }
+  /* striped text fill — the "stars & stripes" line */
+  #id4-hero-{{ section.id }} .id4-stripe-text {
+    background-image: repeating-linear-gradient(
+      180deg,
+      var(--red) 0, var(--red) 12%,
+      #fff 12%, #fff 24%
+    );
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    filter: drop-shadow(0 2px 14px color-mix(in srgb, var(--red) 45%, transparent));
+  }
+  #id4-hero-{{ section.id }} .id4-spark-text {
+    color: var(--spark);
+    text-shadow: 0 0 32px color-mix(in srgb, var(--spark) 55%, transparent);
+  }
+
+  #id4-hero-{{ section.id }} .id4-sub {
+    font-size: clamp(15px, 1.15vw, 17px);
+    line-height: 1.7; color: var(--muted);
+    max-width: 490px; margin-bottom: 34px; font-weight: 400;
+  }
+  #id4-hero-{{ section.id }} .id4-sub strong { color: var(--text); font-weight: 700; }
+
+  /* ── COUNTDOWN ── */
+  #id4-hero-{{ section.id }} .id4-count-label {
+    font-size: 10px; font-weight: 800; letter-spacing: .3em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 13px; display: flex; align-items: center; gap: 10px;
+  }
+  #id4-hero-{{ section.id }} .id4-count-label::before {
+    content: ''; width: 20px; height: 1px; background: var(--red);
+  }
+  #id4-hero-{{ section.id }} .id4-countdown {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px; max-width: 480px; margin-bottom: 36px;
+  }
+  #id4-hero-{{ section.id }} .id4-cell {
+    position: relative;
+    background:
+      linear-gradient(180deg, color-mix(in srgb, #000 16%, var(--bg)) 0%, color-mix(in srgb, #000 44%, var(--bg)) 100%);
+    border: 1px solid color-mix(in srgb, var(--spark) 22%, var(--line));
+    border-radius: 12px;
+    padding: 16px 8px 12px; text-align: center; overflow: hidden;
+    box-shadow: inset 0 2px 12px rgba(0,0,0,.55), 0 1px 0 color-mix(in srgb, #fff 8%, transparent);
+    transition: border-color .3s, transform .3s;
+  }
+  /* scoreboard LED rail on each cell */
+  #id4-hero-{{ section.id }} .id4-cell::before {
+    content: ''; position: absolute; top: 7px; left: 50%; transform: translateX(-50%);
+    width: 32px; height: 3px; border-radius: 2px;
+    background: var(--spark); box-shadow: 0 0 10px var(--spark); opacity: .9;
+  }
+  #id4-hero-{{ section.id }} .id4-cell:nth-child(even)::before {
+    background: var(--red); box-shadow: 0 0 10px var(--red);
+  }
+  #id4-hero-{{ section.id }} .id4-cell:hover {
+    border-color: color-mix(in srgb, var(--spark) 55%, transparent);
+    transform: translateY(-2px);
+  }
+  #id4-hero-{{ section.id }} .id4-num {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(38px, 5.2vw, 58px);
+    line-height: 1; color: var(--spark); letter-spacing: .03em;
+    display: block; margin: 8px 0 6px;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 18px color-mix(in srgb, var(--spark) 55%, transparent);
+  }
+  #id4-hero-{{ section.id }} .id4-unit {
+    font-size: 9px; font-weight: 800; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  #id4-hero-{{ section.id }} .id4-cell.id4-pulse .id4-num { animation: id4-tick .6s ease-out; }
+  @keyframes id4-tick {
+    0%   { transform: scale(1); color: #fff; }
+    50%  { transform: scale(1.12); }
+    100% { transform: scale(1); color: var(--spark); }
+  }
+
+  #id4-hero-{{ section.id }} .id4-live {
+    display: none;
+    background: linear-gradient(135deg, var(--red), color-mix(in srgb, var(--red) 70%, #ff8a3d));
+    color: #fff; font-weight: 800; padding: 18px 22px; border-radius: 14px;
+    text-align: center; font-size: 13px; letter-spacing: .18em;
+    text-transform: uppercase; margin-bottom: 36px;
+    box-shadow: 0 12px 40px color-mix(in srgb, var(--red) 40%, transparent);
+    animation: id4-live-pulse 1.6s ease-in-out infinite;
+  }
+  #id4-hero-{{ section.id }} .id4-countdown.id4-ended { display: none; }
+  #id4-hero-{{ section.id }} .id4-live.id4-on { display: block; }
+  @keyframes id4-live-pulse { 0%,100% { transform: scale(1);} 50% { transform: scale(1.02);} }
+
+  /* ── COUPON (ticket, click to copy) ── */
+  #id4-hero-{{ section.id }} .id4-coupon-wrap { max-width: 480px; margin-bottom: 32px; }
+  #id4-hero-{{ section.id }} .id4-coupon-label {
+    font-size: 10px; font-weight: 800; letter-spacing: .3em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 12px; display: flex; align-items: center; gap: 10px;
+  }
+  #id4-hero-{{ section.id }} .id4-coupon-label::before {
+    content: ''; width: 20px; height: 1px; background: var(--muted);
+  }
+  #id4-hero-{{ section.id }} .id4-coupon {
+    position: relative; display: flex; align-items: stretch; width: 100%;
+    background: linear-gradient(135deg, var(--glass) 0%, transparent 100%);
+    border: 1.5px dashed color-mix(in srgb, var(--spark) 55%, transparent);
+    border-radius: 14px; cursor: pointer; overflow: hidden; padding: 0;
+    color: var(--text); font-family: inherit;
+    transition: border-color .25s, transform .2s, box-shadow .25s;
+  }
+  #id4-hero-{{ section.id }} .id4-coupon:hover {
+    border-color: var(--spark); transform: translateY(-2px);
+    box-shadow: 0 12px 32px color-mix(in srgb, var(--spark) 22%, transparent);
+  }
+  #id4-hero-{{ section.id }} .id4-coupon::before,
+  #id4-hero-{{ section.id }} .id4-coupon::after {
+    content: ''; position: absolute; top: 50%; width: 14px; height: 14px;
+    background: var(--bg); border-radius: 50%; transform: translateY(-50%); z-index: 2;
+  }
+  #id4-hero-{{ section.id }} .id4-coupon::before { left: -7px; }
+  #id4-hero-{{ section.id }} .id4-coupon::after  { right: -7px; }
+  #id4-hero-{{ section.id }} .id4-coupon-tag {
+    display: flex; align-items: center; gap: 8px; padding: 16px 18px;
+    font-size: 10px; font-weight: 800; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--spark);
+    border-right: 1.5px dashed color-mix(in srgb, var(--spark) 35%, transparent);
+    white-space: nowrap;
+  }
+  #id4-hero-{{ section.id }} .id4-coupon-tag svg { width: 14px; height: 14px; }
+  #id4-hero-{{ section.id }} .id4-coupon-code {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(20px, 2.4vw, 26px); letter-spacing: .15em;
+    color: var(--text); padding: 14px 16px;
+    text-shadow: 0 0 20px color-mix(in srgb, var(--spark) 28%, transparent);
+  }
+  #id4-hero-{{ section.id }} .id4-coupon-action {
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px 18px; color: var(--muted); transition: color .2s;
+  }
+  #id4-hero-{{ section.id }} .id4-coupon:hover .id4-coupon-action { color: var(--spark); }
+  #id4-hero-{{ section.id }} .id4-coupon-action svg { width: 18px; height: 18px; }
+  #id4-hero-{{ section.id }} .id4-coupon-feedback {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--spark); color: #061a06; font-weight: 800; font-size: 12px;
+    letter-spacing: .2em; text-transform: uppercase;
+    opacity: 0; transform: scale(.96); pointer-events: none;
+    transition: opacity .25s, transform .25s; z-index: 3;
+  }
+  #id4-hero-{{ section.id }} .id4-coupon-feedback svg { width: 16px; height: 16px; }
+  #id4-hero-{{ section.id }} .id4-coupon.id4-copied { border-style: solid; border-color: var(--spark); }
+  #id4-hero-{{ section.id }} .id4-coupon.id4-copied .id4-coupon-feedback { opacity: 1; transform: scale(1); }
+  #id4-hero-{{ section.id }} .id4-coupon-help { margin-top: 12px; font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── CTAs ── */
+  #id4-hero-{{ section.id }} .id4-ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+  #id4-hero-{{ section.id }} .id4-btn {
+    display: inline-flex; align-items: center; gap: 10px; padding: 17px 32px;
+    font-family: 'Sora', sans-serif; font-weight: 800;
+    font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
+    border-radius: 999px; cursor: pointer; text-decoration: none;
+    transition: transform .2s, box-shadow .25s, gap .2s, background .2s;
+    border: none; white-space: nowrap;
+  }
+  #id4-hero-{{ section.id }} .id4-btn-primary {
+    background: var(--spark); color: #061a06;
+    box-shadow: 0 12px 32px color-mix(in srgb, var(--spark) 45%, transparent),
+                inset 0 0 0 1px color-mix(in srgb, #fff 15%, transparent);
+  }
+  #id4-hero-{{ section.id }} .id4-btn-primary:hover {
+    transform: translateY(-2px); gap: 14px;
+    box-shadow: 0 20px 50px color-mix(in srgb, var(--spark) 55%, transparent),
+                inset 0 0 0 1px color-mix(in srgb, #fff 25%, transparent);
+  }
+  #id4-hero-{{ section.id }} .id4-btn-ghost {
+    background: var(--glass); color: var(--text);
+    border: 1px solid color-mix(in srgb, var(--text) 20%, transparent);
+  }
+  #id4-hero-{{ section.id }} .id4-btn-ghost:hover {
+    background: color-mix(in srgb, var(--text) 8%, transparent);
+    border-color: color-mix(in srgb, var(--text) 38%, transparent);
+    transform: translateY(-2px); gap: 14px;
+  }
+
+  /* ── RIGHT: IMAGE with flag-wave frame + floating badge ── */
+  #id4-hero-{{ section.id }} .id4-img-col { position: relative; display: flex; justify-content: center; align-items: center; }
+  #id4-hero-{{ section.id }} .id4-img-glow {
+    position: absolute; inset: -8%; z-index: 0;
+    background:
+      radial-gradient(ellipse at 30% 30%, color-mix(in srgb, var(--red) 32%, transparent), transparent 60%),
+      radial-gradient(ellipse at 70% 70%, color-mix(in srgb, var(--blue) 45%, transparent), transparent 62%);
+    filter: blur(64px); opacity: .9;
+    animation: id4-glow-shift 8s ease-in-out infinite;
+  }
+  @keyframes id4-glow-shift { 0%,100% { transform: scale(1);} 50% { transform: scale(1.08);} }
+  #id4-hero-{{ section.id }} .id4-img-frame {
+    position: relative; z-index: 1; width: 100%; max-width: 480px;
+    border-radius: 22px; overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
+    box-shadow: 0 40px 100px rgba(0,0,0,.55), 0 0 0 1px color-mix(in srgb, var(--text) 5%, transparent);
+    background: var(--glass);
+  }
+  #id4-hero-{{ section.id }} .id4-img-frame img,
+  #id4-hero-{{ section.id }} .id4-img-frame video { width: 100%; height: auto; display: block; }
+  #id4-hero-{{ section.id }} .id4-img-frame video { background: #000; min-height: 220px; object-fit: cover; }
+
+  /* ── Sound (mute / unmute) toggle on autoplay video ── */
+  #id4-hero-{{ section.id }} .id4-sound-btn {
+    position: absolute; z-index: 4; bottom: 16px; right: 16px;
+    width: 42px; height: 42px; border-radius: 50%; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: color-mix(in srgb, #000 55%, transparent);
+    color: #fff; border: 1px solid color-mix(in srgb, #fff 30%, transparent);
+    cursor: pointer; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    transition: background .2s, transform .2s, border-color .2s;
+  }
+  #id4-hero-{{ section.id }} .id4-sound-btn:hover {
+    background: var(--red); border-color: color-mix(in srgb, #fff 50%, transparent); transform: scale(1.06);
+  }
+  #id4-hero-{{ section.id }} .id4-sound-btn svg { width: 18px; height: 18px; }
+  #id4-hero-{{ section.id }} .id4-sound-btn .id4-icon-unmuted { display: none; }
+  #id4-hero-{{ section.id }} .id4-sound-btn.id4-on .id4-icon-muted { display: none; }
+  #id4-hero-{{ section.id }} .id4-sound-btn.id4-on .id4-icon-unmuted { display: inline-flex; }
+  /* striped foil at the base of the frame */
+  #id4-hero-{{ section.id }} .id4-img-frame::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 10px; z-index: 2;
+    background: repeating-linear-gradient(90deg,
+      var(--red) 0 16.66%, #fff 16.66% 33.33%, var(--blue) 33.33% 50%);
+    opacity: .92;
+  }
+  #id4-hero-{{ section.id }} .id4-img-placeholder {
+    width: 100%; aspect-ratio: 3 / 4; display: flex; align-items: center; justify-content: center;
+    color: color-mix(in srgb, var(--text) 28%, transparent);
+    font-size: 12px; letter-spacing: .2em; text-transform: uppercase; font-weight: 800;
+  }
+  #id4-hero-{{ section.id }} .id4-img-badge {
+    position: absolute; z-index: 3; top: 18px; right: 18px;
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--red); color: #fff;
+    font-weight: 800; font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    padding: 9px 14px; border-radius: 999px;
+    box-shadow: 0 10px 26px color-mix(in srgb, var(--red) 50%, transparent);
+    border: 1px solid color-mix(in srgb, #fff 30%, transparent);
+  }
+  #id4-hero-{{ section.id }} .id4-img-badge svg { width: 12px; height: 12px; fill: #fff; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 960px) {
+    #id4-hero-{{ section.id }} .id4-inner { grid-template-columns: 1fr; gap: 44px; text-align: center; }
+    #id4-hero-{{ section.id }} .id4-eyebrow,
+    #id4-hero-{{ section.id }} .id4-count-label,
+    #id4-hero-{{ section.id }} .id4-coupon-label { justify-content: center; }
+    #id4-hero-{{ section.id }} .id4-eyebrow-img { margin-left: auto; margin-right: auto; }
+    #id4-hero-{{ section.id }} .id4-sub,
+    #id4-hero-{{ section.id }} .id4-countdown,
+    #id4-hero-{{ section.id }} .id4-coupon-wrap { margin-left: auto; margin-right: auto; }
+    #id4-hero-{{ section.id }} .id4-coupon-help { text-align: center; }
+    #id4-hero-{{ section.id }} .id4-ctas { justify-content: center; }
+    #id4-hero-{{ section.id }} .id4-img-col { order: -1; }
+    #id4-hero-{{ section.id }} .id4-img-frame { max-width: 380px; }
+  }
+  @media (max-width: 640px) {
+    #id4-hero-{{ section.id }} { padding: var(--pad-top-m) 0 var(--pad-bottom-m); }
+    #id4-hero-{{ section.id }} .id4-inner { gap: 36px; padding: 0 20px; }
+    #id4-hero-{{ section.id }} .id4-eyebrow { font-size: 10px; letter-spacing: .22em; margin-bottom: 18px; gap: 10px; }
+    #id4-hero-{{ section.id }} .id4-eyebrow::before, #id4-hero-{{ section.id }} .id4-eyebrow::after { width: 18px; }
+    #id4-hero-{{ section.id }} .id4-eyebrow-img { width: 84px; margin-bottom: 16px; }
+    #id4-hero-{{ section.id }} .id4-headline { font-size: clamp(46px, 12vw, 70px); margin-bottom: 16px; }
+    #id4-hero-{{ section.id }} .id4-sub { font-size: 14px; line-height: 1.65; margin-bottom: 26px; }
+    #id4-hero-{{ section.id }} .id4-cell { padding: 14px 4px 10px; border-radius: 10px; }
+    #id4-hero-{{ section.id }} .id4-num { font-size: clamp(30px, 9vw, 42px); }
+    #id4-hero-{{ section.id }} .id4-unit { font-size: 8px; letter-spacing: .18em; }
+    #id4-hero-{{ section.id }} .id4-countdown { gap: 6px; margin-bottom: 26px; }
+    #id4-hero-{{ section.id }} .id4-coupon-wrap { margin-bottom: 24px; }
+    #id4-hero-{{ section.id }} .id4-coupon-tag { padding: 12px 12px; font-size: 9px; letter-spacing: .16em; }
+    #id4-hero-{{ section.id }} .id4-coupon-tag svg { width: 12px; height: 12px; }
+    #id4-hero-{{ section.id }} .id4-coupon-code { font-size: 18px; letter-spacing: .12em; padding: 12px 10px; }
+    #id4-hero-{{ section.id }} .id4-coupon-action { padding: 12px 14px; }
+    #id4-hero-{{ section.id }} .id4-coupon-action svg { width: 16px; height: 16px; }
+    #id4-hero-{{ section.id }} .id4-img-frame { max-width: min(78vw, 340px); border-radius: 18px; }
+    #id4-hero-{{ section.id }} .id4-btn { padding: 14px 22px; font-size: 11px; justify-content: center; }
+    #id4-hero-{{ section.id }} .id4-ctas { flex-direction: column; align-items: stretch; gap: 10px; }
+  }
+  @media (max-width: 380px) {
+    #id4-hero-{{ section.id }} .id4-headline { font-size: clamp(40px, 13vw, 58px); }
+    #id4-hero-{{ section.id }} .id4-img-frame { max-width: 86vw; }
+  }
+</style>
+
+<section id="id4-hero-{{ section.id }}">
+  <div class="id4-stripes"></div>
+  <div class="id4-field"></div>
+  <div class="id4-stars"></div>
+  <div class="id4-orb id4-orb-1"></div>
+  <div class="id4-orb id4-orb-2"></div>
+  {% if section.settings.show_fireworks %}
+    <span class="id4-fw id4-fw-1"></span>
+    <span class="id4-fw id4-fw-2"></span>
+    <span class="id4-fw id4-fw-3"></span>
+    <span class="id4-fw id4-fw-4"></span>
+    <span class="id4-fw id4-fw-5"></span>
+  {% endif %}
+
+  <div class="id4-inner">
+
+    {%- comment -%} ── LEFT: TEXT + COUNTDOWN + COUPON ── {%- endcomment -%}
+    <div class="id4-left">
+
+      {% if section.settings.eyebrow_image != blank %}
+        <img
+          class="id4-eyebrow-img"
+          src="{{ section.settings.eyebrow_image | image_url: width: 200 }}"
+          alt="{{ section.settings.eyebrow_image.alt | escape }}"
+          width="100" height="{{ 100 | divided_by: section.settings.eyebrow_image.aspect_ratio | round }}"
+          loading="eager">
+      {% elsif section.settings.show_default_eyebrow_image %}
+        <img
+          class="id4-eyebrow-img"
+          src="https://cdn.shopify.com/s/files/1/1444/0224/files/IMG_2936.jpg?v=1781288641"
+          alt="" width="100" height="100" loading="eager">
+      {% endif %}
+
+      {% if eyebrow != blank %}
+        <div class="id4-eyebrow">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21.5l1.7-7L2 9.8l7.1-.6L12 2z"/></svg>
+          {{ eyebrow }}
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21.5l1.7-7L2 9.8l7.1-.6L12 2z"/></svg>
+        </div>
+      {% endif %}
+
+      <h1 class="id4-headline">
+        {% if h1 != blank %}
+          <span class="id4-stripe-text">{{ h1 }}</span><br>
+        {% endif %}
+        {% if h2 != blank %}
+          <span class="id4-spark-text">{{ h2 }}</span>
+        {% endif %}
+      </h1>
+
+      {% if subtitle != blank %}
+        <p class="id4-sub">{{ subtitle }}</p>
+      {% endif %}
+
+      {% if section.settings.show_countdown %}
+        <div class="id4-count-label">{{ cd_label }}</div>
+        <div class="id4-countdown" id="id4-cd-{{ section.id }}">
+          <div class="id4-cell"><span class="id4-num" data-unit="days">--</span><span class="id4-unit">Days</span></div>
+          <div class="id4-cell"><span class="id4-num" data-unit="hours">--</span><span class="id4-unit">Hours</span></div>
+          <div class="id4-cell"><span class="id4-num" data-unit="minutes">--</span><span class="id4-unit">Minutes</span></div>
+          <div class="id4-cell"><span class="id4-num" data-unit="seconds">--</span><span class="id4-unit">Seconds</span></div>
+        </div>
+        <div class="id4-live" id="id4-live-{{ section.id }}">{{ live_message }}</div>
+      {% endif %}
+
+      {% if section.settings.show_coupon and section.settings.coupon_code != blank %}
+        <div class="id4-coupon-wrap">
+          {% if section.settings.coupon_label != blank %}
+            <div class="id4-coupon-label">{{ section.settings.coupon_label }}</div>
+          {% endif %}
+          <button type="button" class="id4-coupon" id="id4-coupon-{{ section.id }}"
+            data-code="{{ section.settings.coupon_code | escape }}"
+            aria-label="Copy coupon code {{ section.settings.coupon_code | escape }}">
+            <span class="id4-coupon-tag">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                <line x1="7" y1="7" x2="7.01" y2="7"/>
+              </svg>
+              Code
+            </span>
+            <span class="id4-coupon-code">{{ section.settings.coupon_code }}</span>
+            <span class="id4-coupon-action" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+            </span>
+            <span class="id4-coupon-feedback">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              {{ section.settings.coupon_copied_text | default: 'Copied!' }}
+            </span>
+          </button>
+          {% if section.settings.coupon_help != blank %}
+            <div class="id4-coupon-help">{{ section.settings.coupon_help }}</div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="id4-ctas">
+        {% if cta1_label != blank %}
+          <a href="{{ section.settings.cta1_url | default: '#' }}" class="id4-btn id4-btn-primary">{{ cta1_label }} →</a>
+        {% endif %}
+        {% if section.settings.cta2_label != blank %}
+          <a href="{{ section.settings.cta2_url | default: '#' }}" class="id4-btn id4-btn-ghost">{{ section.settings.cta2_label }}</a>
+        {% endif %}
+      </div>
+
+    </div>
+
+    {%- comment -%} ── RIGHT: IMAGE ── {%- endcomment -%}
+    <div class="id4-img-col">
+      <div class="id4-img-glow"></div>
+      <div class="id4-img-frame">
+        {% if badge_text != blank %}
+          <span class="id4-img-badge">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21.5l1.7-7L2 9.8l7.1-.6L12 2z"/></svg>
+            {{ badge_text }}
+          </span>
+        {% endif %}
+        {%- if section.settings.media_type == 'video' and section.settings.hero_video != blank -%}
+          <video id="id4-video-{{ section.id }}" class="id4-hero-video" playsinline
+            poster="{{ section.settings.hero_video.preview_image | image_url: width: 960 }}"
+            {% if section.settings.video_autoplay %}autoplay muted{% else %}controls{% endif %}
+            {% if section.settings.video_loop %}loop{% endif %}
+            preload="{% if section.settings.video_autoplay %}auto{% else %}metadata{% endif %}">
+            {% for source in section.settings.hero_video.sources %}
+              <source src="{{ source.url }}" type="{{ source.mime_type }}">
+            {% endfor %}
+          </video>
+          {% if section.settings.video_autoplay and section.settings.show_sound_toggle %}
+            <button type="button" class="id4-sound-btn" id="id4-sound-{{ section.id }}" aria-label="Turn sound on or off" aria-pressed="false">
+              <span class="id4-icon-muted">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                  <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+                </svg>
+              </span>
+              <span class="id4-icon-unmuted">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                </svg>
+              </span>
+            </button>
+          {% endif %}
+        {%- elsif section.settings.media_type == 'image' and section.settings.hero_image != blank -%}
+          <img
+            srcset="{{ section.settings.hero_image | image_url: width: 480 }} 480w,
+                    {{ section.settings.hero_image | image_url: width: 720 }} 720w,
+                    {{ section.settings.hero_image | image_url: width: 960 }} 960w,
+                    {{ section.settings.hero_image | image_url: width: 1200 }} 1200w"
+            sizes="(max-width: 640px) 86vw, (max-width: 960px) 380px, 480px"
+            src="{{ section.settings.hero_image | image_url: width: 960 }}"
+            alt="{{ section.settings.hero_image.alt | default: h1 | escape }}"
+            loading="eager" fetchpriority="high"
+            width="{{ section.settings.hero_image.width }}" height="{{ section.settings.hero_image.height }}">
+        {%- else -%}
+          <div class="id4-img-placeholder">{% if section.settings.media_type == 'video' %}Add Hero Video{% else %}Add Hero Image{% endif %}</div>
+        {%- endif -%}
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function(){
+  var sectionId = '{{ section.id }}';
+
+  /* ── Countdown ── */
+  var targetIso = '{{ target_date }}T{{ section.settings.target_time }}:00';
+  var tzOffset  = '{{ section.settings.timezone_offset }}';
+  var target = tzOffset && tzOffset.length ? new Date(targetIso + tzOffset) : new Date(targetIso);
+
+  if (isNaN(target.getTime())) {
+    /* Fallback: end of the extended Overtime sale */
+    target = new Date('2026-07-11T23:59:00-04:00');
+  }
+
+  var cd = document.getElementById('id4-cd-' + sectionId);
+  var liveEl = document.getElementById('id4-live-' + sectionId);
+
+  if (cd) {
+    var cells = {
+      days:    cd.querySelector('[data-unit="days"]'),
+      hours:   cd.querySelector('[data-unit="hours"]'),
+      minutes: cd.querySelector('[data-unit="minutes"]'),
+      seconds: cd.querySelector('[data-unit="seconds"]')
+    };
+    var lastVals = { days: null, hours: null, minutes: null, seconds: null };
+    function pad(n){ return n < 10 ? '0' + n : '' + n; }
+    function tick(){
+      var diff = target.getTime() - Date.now();
+      if (diff <= 0) {
+        cd.classList.add('id4-ended');
+        if (liveEl) liveEl.classList.add('id4-on');
+        return false;
+      }
+      var vals = {
+        days:    Math.floor(diff / 86400000),
+        hours:   Math.floor((diff % 86400000) / 3600000),
+        minutes: Math.floor((diff % 3600000) / 60000),
+        seconds: Math.floor((diff % 60000) / 1000)
+      };
+      for (var k in cells) {
+        if (cells[k] && vals[k] !== lastVals[k]) {
+          cells[k].textContent = pad(vals[k]);
+          if (lastVals[k] !== null) {
+            var cell = cells[k].parentElement;
+            cell.classList.remove('id4-pulse'); void cell.offsetWidth; cell.classList.add('id4-pulse');
+          }
+          lastVals[k] = vals[k];
+        }
+      }
+      return true;
+    }
+    if (tick()) setInterval(tick, 1000);
+  }
+
+  /* ── Coupon click-to-copy ── */
+  var couponBtn = document.getElementById('id4-coupon-' + sectionId);
+  if (couponBtn) {
+    var resetTimer;
+    function fallbackCopy(text){
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.setAttribute('readonly',''); ta.style.position='absolute'; ta.style.left='-9999px';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch(e){}
+      document.body.removeChild(ta);
+    }
+    function showCopied(){
+      couponBtn.classList.add('id4-copied');
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(function(){ couponBtn.classList.remove('id4-copied'); }, 1800);
+    }
+    couponBtn.addEventListener('click', function(){
+      var code = couponBtn.getAttribute('data-code') || '';
+      if (!code) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(showCopied).catch(function(){ fallbackCopy(code); showCopied(); });
+      } else { fallbackCopy(code); showCopied(); }
+    });
+  }
+
+  /* ── Hero video: nudge autoplay + sound toggle ── */
+  var heroVideo = document.getElementById('id4-video-' + sectionId);
+  if (heroVideo) {
+    if (heroVideo.hasAttribute('autoplay')) {
+      var pp = heroVideo.play();
+      if (pp && pp.catch) pp.catch(function(){ /* browser blocked autoplay — ignore */ });
+    }
+    var soundBtn = document.getElementById('id4-sound-' + sectionId);
+    if (soundBtn) {
+      soundBtn.addEventListener('click', function(){
+        heroVideo.muted = !heroVideo.muted;
+        if (!heroVideo.muted) {
+          heroVideo.volume = 1;
+          var vp = heroVideo.play();
+          if (vp && vp.catch) vp.catch(function(){});
+        }
+        soundBtn.classList.toggle('id4-on', !heroVideo.muted);
+        soundBtn.setAttribute('aria-pressed', String(!heroVideo.muted));
+      });
+    }
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "4th of July Hero",
+  "tag": "div",
+  "class": "independence-day-hero-section",
+  "settings": [
+    { "type": "header", "content": "Headline" },
+    { "type": "image_picker", "id": "eyebrow_image", "label": "Small image above eyebrow", "info": "Shown at 100px wide with rounded corners. Leave empty to keep the current default image." },
+    { "type": "checkbox", "id": "show_default_eyebrow_image", "label": "Show default image when none is selected", "default": true },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow text", "info": "Leave blank to hide", "default": "Sale Extended — Overtime Week" },
+    { "type": "text", "id": "heading_line1", "label": "Heading line 1", "info": "Shown with red & white stripe fill", "default": "The 4th Won." },
+    { "type": "text", "id": "heading_line2", "label": "Heading line 2", "info": "Shown in spark/gold accent", "default": "Overtime On." },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "You made our July 4th sale a hit — so the game's going into overtime. Up to 20% off the viral tailgate football game, extended through July 11." },
+
+    { "type": "header", "content": "Countdown" },
+    { "type": "checkbox", "id": "show_countdown", "label": "Show countdown timer", "default": true },
+    { "type": "text", "id": "countdown_label", "label": "Label above countdown", "default": "Overtime ends in" },
+    { "type": "text", "id": "target_date", "label": "Target date (YYYY-MM-DD)", "default": "2026-07-11", "info": "End of the extended Overtime sale" },
+    { "type": "text", "id": "target_time", "label": "Target time (HH:MM, 24-hour)", "default": "23:59" },
+    { "type": "text", "id": "timezone_offset", "label": "Timezone offset", "info": "Examples: -04:00 (EDT), -07:00 (PDT). Leave blank for visitor's local time.", "default": "-04:00" },
+    { "type": "text", "id": "live_message", "label": "Message after timer ends", "default": "★ Overtime Complete — Thanks, America ★" },
+
+    { "type": "header", "content": "Coupon code" },
+    { "type": "checkbox", "id": "show_coupon", "label": "Show coupon code", "default": true },
+    { "type": "text", "id": "coupon_label", "label": "Label above coupon", "info": "Leave blank to hide", "default": "Use code at checkout" },
+    { "type": "text", "id": "coupon_code", "label": "Coupon code", "default": "FREEDOM" },
+    { "type": "text", "id": "coupon_help", "label": "Helper text below coupon", "info": "Optional — terms or quick details", "default": "20% off game sets. Tap the code to copy." },
+    { "type": "text", "id": "coupon_copied_text", "label": "\"Copied!\" message", "default": "Copied to clipboard" },
+
+    { "type": "header", "content": "Buttons" },
+    { "type": "text", "id": "cta1_label", "label": "Primary button text", "default": "Shop the Overtime Sale" },
+    { "type": "url", "id": "cta1_url", "label": "Primary button URL" },
+    { "type": "text", "id": "cta2_label", "label": "Secondary button text", "default": "How to Play" },
+    { "type": "url", "id": "cta2_url", "label": "Secondary button URL" },
+
+    { "type": "header", "content": "Hero media" },
+    { "type": "select", "id": "media_type", "label": "Show on the right", "options": [ { "value": "image", "label": "Image" }, { "value": "video", "label": "Video" } ], "default": "image" },
+    { "type": "image_picker", "id": "hero_image", "label": "Image", "info": "Used when \"Show on the right\" is Image. Portrait orientation (3:4) recommended" },
+    { "type": "video", "id": "hero_video", "label": "Video", "info": "Shopify-hosted video. Used when \"Show on the right\" is Video." },
+    { "type": "checkbox", "id": "video_autoplay", "label": "Autoplay video (muted)", "info": "Browsers require autoplay to start muted. When off, full playback controls are shown instead.", "default": true },
+    { "type": "checkbox", "id": "show_sound_toggle", "label": "Show unmute button on autoplay video", "default": true },
+    { "type": "checkbox", "id": "video_loop", "label": "Loop video", "default": true },
+    { "type": "text", "id": "badge_text", "label": "Media badge text", "info": "Leave blank to hide", "default": "Sale Extended" },
+
+    { "type": "header", "content": "Effects" },
+    { "type": "checkbox", "id": "show_fireworks", "label": "Show animated fireworks", "default": true },
+
+    { "type": "header", "content": "Section spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top padding (desktop)", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding (desktop)", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 100 },
+    { "type": "range", "id": "padding_top_mobile", "label": "Top padding (mobile)", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 44 },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "Bottom padding (mobile)", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 60 },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_bg", "label": "Background", "default": "#141c40" },
+    { "type": "color", "id": "color_text", "label": "Text", "default": "#ffffff" },
+    { "type": "color", "id": "color_red", "label": "Red", "default": "#e11d2f" },
+    { "type": "color", "id": "color_blue", "label": "Blue (glow)", "default": "#2a3f8f" },
+    { "type": "color", "id": "color_spark", "label": "Gold accent (QB54 gold)", "info": "Used for CTA, coupon, and highlight line", "default": "#f7b80d" }
+  ],
+  "presets": [ { "name": "4th of July Hero" } ]
+}
+{% endschema %}

@@ -1,0 +1,703 @@
+{
+  "sections": {
+    "main-product": {
+      "type": "main-product",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {
+            "title_size": "product-title-md",
+            "title_size_mobile": "product-title-md",
+            "show_price": true,
+            "show_rating": true
+          }
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "enable_dynamic_variants": true,
+            "show_variant_labels": true,
+            "picker_type": "button",
+            "enable_color_swatches": true,
+            "color_swatch_type": "variant",
+            "size_chart": ""
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_quantity_selector": true,
+            "show_price": true,
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": false,
+            "enable_back_in_stock": true,
+            "show_back_in_stock_name": true,
+            "show_back_in_stock_phone": true
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {
+            "text_size": "text-base"
+          }
+        },
+        "pickup_availability": {
+          "type": "pickup_availability",
+          "settings": {}
+        },
+        "share": {
+          "type": "share",
+          "settings": {
+            "share_label": "Share",
+            "show_help_desk": true,
+            "help_label": "Need help?",
+            "help_type": "drawer",
+            "help_page": "",
+            "help_page_external": false
+          }
+        },
+        "complementary": {
+          "type": "complementary",
+          "settings": {
+            "heading": "Pairs well with",
+            "product_limit": 4,
+            "show_vendor": false,
+            "show_price": true
+          }
+        },
+        "text-1": {
+          "type": "text",
+          "settings": {
+            "icon": "truck",
+            "iwidth": "custom",
+            "icon_width": 20,
+            "text": "In stock! Ships within 1-2 business days.",
+            "text_size": "text-sm"
+          }
+        },
+        "text-2": {
+          "type": "text",
+          "settings": {
+            "icon": "headphone",
+            "iwidth": "custom",
+            "icon_width": 20,
+            "text": "90-day risk-free trial",
+            "text_size": "text-sm"
+          }
+        },
+        "text-3": {
+          "type": "text",
+          "settings": {
+            "icon": "award",
+            "iwidth": "custom",
+            "icon_width": 20,
+            "text": "2-Year Warranty",
+            "text_size": "text-sm"
+          }
+        },
+        "text-4": {
+          "type": "text",
+          "settings": {
+            "icon": "box",
+            "iwidth": "custom",
+            "icon_width": 20,
+            "text": "Complimentary shipping & returns",
+            "text_size": "text-sm"
+          }
+        },
+        "sticky_buy_button": {
+          "type": "sticky_buy_button",
+          "settings": {}
+        },
+        "cro_badges": {
+          "type": "badges",
+          "settings": {
+            "show_sold_out": true,
+            "show_save_amount": true,
+            "save_type": "dollar"
+          }
+        },
+        "cro_inventory": {
+          "type": "inventory",
+          "settings": {
+            "inventory_threshold": 10,
+            "show_inventory_transfer": false,
+            "show_inventory_quantity": "low",
+            "color_scheme": "accent-2"
+          }
+        }
+      },
+      "block_order": [
+        "cro_badges",
+        "title",
+        "variant_picker",
+        "cro_inventory",
+        "buy_buttons",
+        "description",
+        "pickup_availability",
+        "share",
+        "complementary",
+        "text-1",
+        "text-2",
+        "text-3",
+        "text-4",
+        "sticky_buy_button"
+      ],
+      "settings": {
+        "enable_sticky_info": true,
+        "media_size": 66,
+        "gallery_layout": "thumbnail",
+        "thumbnail_position": "beside",
+        "image_ratio": "adapt_first",
+        "image_zoom": "lightbox",
+        "hide_variants": false,
+        "enable_video_autoplay": true,
+        "enable_video_looping": true,
+        "mobile_layout": "full_width",
+        "image_ratio_mobile": "adapt_first",
+        "mobile_thumbnail": false,
+        "padding_top": 0,
+        "padding_bottom": 84,
+        "divider": false,
+        "full_width": true,
+        "rounded": false
+      }
+    },
+    "help-drawer": {
+      "type": "help-drawer",
+      "blocks": {
+        "content-1": {
+          "type": "content",
+          "settings": {
+            "icon": "rocket",
+            "heading": "Shipping Information",
+            "text": "<p>Use this text to answer questions in as much detail as possible for your customers.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle",
+            "color_text": "#b45309",
+            "color_background": "#fffbeb",
+            "gradient_background": "",
+            "color_highlight": "#ffddbf",
+            "gradient_highlight": ""
+          }
+        },
+        "content-2": {
+          "type": "content",
+          "settings": {
+            "icon": "headphone",
+            "heading": "Customer Support",
+            "text": "<p>Use this text to answer questions in as much detail as possible for your customers.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle",
+            "color_text": "#0369a1",
+            "color_background": "#f0f9ff",
+            "gradient_background": "",
+            "color_highlight": "#ffddbf",
+            "gradient_highlight": ""
+          }
+        },
+        "content-3": {
+          "type": "content",
+          "settings": {
+            "icon": "chat_bubble",
+            "heading": "FAQ’s",
+            "text": "<p>Use this text to answer questions in as much detail as possible for your customers.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle",
+            "color_text": "#be123c",
+            "color_background": "#fff1f2",
+            "gradient_background": "",
+            "color_highlight": "#ffddbf",
+            "gradient_highlight": ""
+          }
+        },
+        "content-4": {
+          "type": "content",
+          "settings": {
+            "icon": "phone",
+            "heading": "Contact Us",
+            "text": "<p>Use this text to answer questions in as much detail as possible for your customers.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle",
+            "color_text": "#4d7c0f",
+            "color_background": "#f7fee7",
+            "gradient_background": "",
+            "color_highlight": "#ffddbf",
+            "gradient_highlight": ""
+          }
+        }
+      },
+      "block_order": [
+        "content-1",
+        "content-2",
+        "content-3",
+        "content-4"
+      ],
+      "disabled": true,
+      "settings": {
+        "heading": "Need help?",
+        "description": "<p>If you have any questions, you are always welcome to contact us. We'll get back to you as soon as possible, within 24 hours on weekdays.</p>"
+      }
+    },
+    "product-recommendations": {
+      "type": "product-recommendations",
+      "disabled": true,
+      "settings": {
+        "product_limit": 6,
+        "columns": 4,
+        "carousel_on_desktop": true,
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "heading": "You may also like",
+        "heading_size": "title-md",
+        "heading_alignment": "text-left md:items-end md:flex-row",
+        "heading_tag": "h2",
+        "subheading": "",
+        "description": "",
+        "highlighted_text": "none",
+        "highlighted_scribble": "circle",
+        "highlighted_reveal": false,
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "padding_top": 0,
+        "padding_bottom": 72,
+        "divider": false,
+        "full_width": false,
+        "rounded": true
+      }
+    },
+    "as_seen_on_media_R3ej7B": {
+      "type": "as-seen-on-media",
+      "blocks": {
+        "logo_MzWUD8": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/shark-tank-seeklogo.png",
+            "alt_text": "Media logo"
+          }
+        },
+        "logo_WGJ4RR": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/The_View_Logo.png",
+            "alt_text": "Media logo"
+          }
+        },
+        "logo_i7HxyN": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/good-morning-america-seeklogo.png",
+            "alt_text": "Media logo"
+          }
+        },
+        "logo_ffYzBz": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/logo-ABC-Logo.png",
+            "alt_text": "Media logo"
+          }
+        },
+        "logo_hbeDjp": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/logo-cropped-logo-3.png",
+            "alt_text": "Media logo"
+          }
+        }
+      },
+      "block_order": [
+        "logo_MzWUD8",
+        "logo_WGJ4RR",
+        "logo_i7HxyN",
+        "logo_ffYzBz",
+        "logo_hbeDjp"
+      ],
+      "disabled": true,
+      "name": "As Seen On – Media",
+      "settings": {
+        "eyebrow": "AS SEEN ON",
+        "heading": "",
+        "footer_text": "",
+        "columns_desktop": 5,
+        "background": "#ffffff",
+        "text_color": "#363a66",
+        "logo_opacity": 1,
+        "eyebrow_size_mobile": 12,
+        "eyebrow_size_desktop": 14,
+        "heading_size_mobile": 28,
+        "heading_size_desktop": 44,
+        "footer_size_mobile": 14,
+        "footer_size_desktop": 16,
+        "padding_top_mobile": 48,
+        "padding_bottom_mobile": 48,
+        "padding_top_desktop": 96,
+        "padding_bottom_desktop": 96
+      }
+    },
+    "video_embed_YaiYxe": {
+      "type": "video-embed",
+      "disabled": true,
+      "name": "Video Embed",
+      "settings": {
+        "heading": "See QB54 in Action",
+        "subheading": "Watch how easy it is to set up and play. The ultimate football experience for everyone!",
+        "video": "shopify://files/videos/How to play.mp4",
+        "video_url": "",
+        "background": "#faf9f5",
+        "subheading_color": "#6b7f72",
+        "radius": 20,
+        "max_width": 1000,
+        "heading_size_mobile": 32,
+        "heading_size_desktop": 48,
+        "subheading_size_mobile": 16,
+        "subheading_size_desktop": 18,
+        "padding_mobile": 64,
+        "padding_desktop": 120
+      }
+    },
+    "perfect_occasions_xU9Geg": {
+      "type": "perfect-occasions",
+      "blocks": {
+        "occasion_zi6QGV": {
+          "type": "occasion",
+          "settings": {
+            "title": "Tailgate Parties",
+            "text": "Bring QB54 to your next tailgate. Unfold, play, and fold back into chairs when the game starts."
+          }
+        },
+        "occasion_UQXDfa": {
+          "type": "occasion",
+          "settings": {
+            "title": "Tailgate Parties",
+            "text": "Bring QB54 to your next tailgate. Unfold, play, and fold back into chairs when the game starts."
+          }
+        },
+        "occasion_jnnbH6": {
+          "type": "occasion",
+          "settings": {
+            "title": "Tailgate Parties",
+            "text": "Bring QB54 to your next tailgate. Unfold, play, and fold back into chairs when the game starts."
+          }
+        },
+        "occasion_jHMEhG": {
+          "type": "occasion",
+          "settings": {
+            "title": "Tailgate Parties",
+            "text": "Bring QB54 to your next tailgate. Unfold, play, and fold back into chairs when the game starts."
+          }
+        }
+      },
+      "block_order": [
+        "occasion_zi6QGV",
+        "occasion_UQXDfa",
+        "occasion_jnnbH6",
+        "occasion_jHMEhG"
+      ],
+      "disabled": true,
+      "name": "Perfect Occasions",
+      "settings": {
+        "heading": "Perfect for Every Occasion",
+        "subheading": "From your backyard to the beach, QB54 turns any gathering into an unforgettable experience.",
+        "background": "#faf9f5",
+        "card_bg": "#ffffff",
+        "icon_bg": "#e7ede6",
+        "text_color": "#6b7f72",
+        "card_radius": 20,
+        "heading_size_mobile": 32,
+        "heading_size_desktop": 48,
+        "subheading_size_mobile": 16,
+        "subheading_size_desktop": 18,
+        "padding_mobile": 64,
+        "padding_desktop": 120
+      }
+    },
+    "feature_icons_LJdRP3": {
+      "type": "feature-icons",
+      "blocks": {
+        "item_xxJ9gB": {
+          "type": "item",
+          "settings": {
+            "icon_bg": "#3f6b47",
+            "title": "All Ages",
+            "text": "Fun for the whole family"
+          }
+        },
+        "item_k3ajJ7": {
+          "type": "item",
+          "settings": {
+            "icon_bg": "#3f6b47",
+            "title": "All Ages",
+            "text": "Fun for the whole family"
+          }
+        },
+        "item_KByyKK": {
+          "type": "item",
+          "settings": {
+            "icon_bg": "#3f6b47",
+            "title": "All Ages",
+            "text": "Fun for the whole family"
+          }
+        },
+        "item_9CMiwD": {
+          "type": "item",
+          "settings": {
+            "icon_bg": "#3f6b47",
+            "title": "All Ages",
+            "text": "Fun for the whole family"
+          }
+        }
+      },
+      "block_order": [
+        "item_xxJ9gB",
+        "item_k3ajJ7",
+        "item_KByyKK",
+        "item_9CMiwD"
+      ],
+      "disabled": true,
+      "name": "Feature icons",
+      "settings": {
+        "heading": "Why Families Love QB54",
+        "bg_color": "#f4f2e8",
+        "heading_color": "#1f2d23",
+        "title_color": "#1f2d23",
+        "text_color": "#6f7f73",
+        "icon_radius": 16,
+        "heading_size_mobile": 24,
+        "heading_size_desktop": 36,
+        "title_size_mobile": 16,
+        "title_size_desktop": 18,
+        "text_size_mobile": 14,
+        "text_size_desktop": 15,
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "how_to_play_steps_bdeRiD": {
+      "type": "how-to-play-steps",
+      "blocks": {
+        "step_XK6eNf": {
+          "type": "step",
+          "settings": {
+            "title": "Set Up",
+            "text": "Set chairs in game mode, approximately 40 feet apart."
+          }
+        },
+        "step_xFJCCf": {
+          "type": "step",
+          "settings": {
+            "title": "Set Up",
+            "text": "Set chairs in game mode, approximately 40 feet apart."
+          }
+        },
+        "step_4MhCde": {
+          "type": "step",
+          "settings": {
+            "title": "Set Up",
+            "text": "Set chairs in game mode, approximately 40 feet apart."
+          }
+        },
+        "step_9bQMwt": {
+          "type": "step",
+          "settings": {
+            "title": "Set Up",
+            "text": "Set chairs in game mode, approximately 40 feet apart."
+          }
+        },
+        "step_Q6qTLR": {
+          "type": "step",
+          "settings": {
+            "title": "Set Up",
+            "text": "Set chairs in game mode, approximately 40 feet apart."
+          }
+        },
+        "step_f9DRTB": {
+          "type": "step",
+          "settings": {
+            "title": "Set Up",
+            "text": "Set chairs in game mode, approximately 40 feet apart."
+          }
+        },
+        "step_dDCjUd": {
+          "type": "step",
+          "settings": {
+            "title": "Set Up",
+            "text": "Set chairs in game mode, approximately 40 feet apart."
+          }
+        },
+        "step_KJKqKn": {
+          "type": "step",
+          "settings": {
+            "title": "Set Up",
+            "text": "Set chairs in game mode, approximately 40 feet apart."
+          }
+        }
+      },
+      "block_order": [
+        "step_XK6eNf",
+        "step_xFJCCf",
+        "step_4MhCde",
+        "step_9bQMwt",
+        "step_Q6qTLR",
+        "step_f9DRTB",
+        "step_dDCjUd",
+        "step_KJKqKn"
+      ],
+      "disabled": true,
+      "name": "How to play",
+      "settings": {
+        "badge_text": "Easy to Learn",
+        "badge_bg": "#fbe9cc",
+        "badge_color": "#f4a62a",
+        "heading": "How to Play QB54",
+        "subheading": "QB54 is the ultimate football game built into two camping chairs. Score points by making completions, touchdowns, interceptions, and kicking extra points!",
+        "bg_color": "#faf9f3",
+        "card_bg": "#ffffff",
+        "heading_color": "#1f2d23",
+        "title_color": "#1f2d23",
+        "text_color": "#6f7f73",
+        "step_number_color": "#3f6b47",
+        "card_radius": 16,
+        "heading_size_mobile": 26,
+        "heading_size_desktop": 40,
+        "title_size_mobile": 16,
+        "title_size_desktop": 18,
+        "text_size_mobile": 14,
+        "text_size_desktop": 15,
+        "badge_size": 14,
+        "padding_top": 80,
+        "padding_bottom": 80
+      }
+    },
+    "pro_rules_accordian_L6RPeH": {
+      "type": "pro-rules-accordian",
+      "blocks": {
+        "rule_ezMFyE": {
+          "type": "rule",
+          "settings": {
+            "title": "Pick-6 Rule",
+            "content": "<p>If a pass is intercepted and returned into the bucket, it counts as 6 points.</p>"
+          }
+        },
+        "rule_6cy6N7": {
+          "type": "rule",
+          "settings": {
+            "title": "Pick-6 Rule",
+            "content": "<p>If a pass is intercepted and returned into the bucket, it counts as 6 points.</p>"
+          }
+        },
+        "rule_DAiwth": {
+          "type": "rule",
+          "settings": {
+            "title": "Pick-6 Rule",
+            "content": "<p>If a pass is intercepted and returned into the bucket, it counts as 6 points.</p>"
+          }
+        },
+        "rule_9HnpWg": {
+          "type": "rule",
+          "settings": {
+            "title": "Pick-6 Rule",
+            "content": "<p>If a pass is intercepted and returned into the bucket, it counts as 6 points.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "rule_ezMFyE",
+        "rule_6cy6N7",
+        "rule_DAiwth",
+        "rule_9HnpWg"
+      ],
+      "disabled": true,
+      "name": "Pro rules",
+      "settings": {
+        "heading": "Pro Rules (Advanced)",
+        "show_icon": true,
+        "bg_color": "#eff3ea",
+        "card_bg": "#ffffff",
+        "heading_color": "#1f2d23",
+        "title_color": "#1f2d23",
+        "text_color": "#6f7f73",
+        "heading_size": 22,
+        "text_size": 14,
+        "radius": 12,
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
+    },
+    "whats_included_xiQEiq": {
+      "type": "whats-included",
+      "blocks": {
+        "item_N46phk": {
+          "type": "item",
+          "settings": {
+            "title": "2 Goal Chairs",
+            "text": "Steel frame, supports 275 lbs each"
+          }
+        },
+        "item_XYFA9V": {
+          "type": "item",
+          "settings": {
+            "title": "2 Goal Chairs",
+            "text": "Steel frame, supports 275 lbs each"
+          }
+        },
+        "item_Ccawiz": {
+          "type": "item",
+          "settings": {
+            "title": "2 Goal Chairs",
+            "text": "Steel frame, supports 275 lbs each"
+          }
+        },
+        "item_mYpwK7": {
+          "type": "item",
+          "settings": {
+            "title": "2 Goal Chairs",
+            "text": "Steel frame, supports 275 lbs each"
+          }
+        }
+      },
+      "block_order": [
+        "item_N46phk",
+        "item_XYFA9V",
+        "item_Ccawiz",
+        "item_mYpwK7"
+      ],
+      "disabled": true,
+      "name": "What's included",
+      "settings": {
+        "heading": "What's Included",
+        "bg_color": "#ffffff",
+        "heading_color": "#363a66",
+        "title_color": "#ffffff",
+        "text_color": "#363a66",
+        "icon_bg": "#6f9477",
+        "icon_radius": 16,
+        "heading_size_mobile": 24,
+        "heading_size_desktop": 40,
+        "title_size_mobile": 16,
+        "title_size_desktop": 18,
+        "text_size_mobile": 14,
+        "text_size_desktop": 15,
+        "padding_top": 80,
+        "padding_bottom": 80
+      }
+    }
+  },
+  "order": [
+    "main-product",
+    "help-drawer",
+    "product-recommendations",
+    "as_seen_on_media_R3ej7B",
+    "video_embed_YaiYxe",
+    "perfect_occasions_xU9Geg",
+    "feature_icons_LJdRP3",
+    "how_to_play_steps_bdeRiD",
+    "pro_rules_accordian_L6RPeH",
+    "whats_included_xiQEiq"
+  ]
+}

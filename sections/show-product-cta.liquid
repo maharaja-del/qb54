@@ -1,0 +1,274 @@
+{%- assign product = section.settings.product -%}
+{%- style -%}
+  #shopify-section-{{ section.id }} .show-cta,
+  #shopify-section-{{ section.id }} .show-cta * { box-sizing: border-box; }
+
+  #shopify-section-{{ section.id }} .show-cta {
+    background: {{ section.settings.section_bg }};
+    padding: {{ section.settings.section_padding }}px 20px;
+  }
+  #shopify-section-{{ section.id }} .show-cta__inner {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ section.settings.column_gap }}px;
+    align-items: center;
+  }
+  #shopify-section-{{ section.id }} .show-cta--image-right .show-cta__media { order: 2; }
+
+  #shopify-section-{{ section.id }} .show-cta__media {
+    position: relative;
+    border-radius: {{ section.settings.image_radius }}px;
+    overflow: hidden;
+    background: #000;
+  }
+  #shopify-section-{{ section.id }} .show-cta__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  #shopify-section-{{ section.id }} .show-cta__flag {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: {{ section.settings.accent_color }};
+    color: #000;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 8px 14px;
+    border-radius: 4px;
+  }
+
+  #shopify-section-{{ section.id }} .show-cta__eyebrow {
+    color: {{ section.settings.accent_color }};
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin: 0 0 14px;
+  }
+  #shopify-section-{{ section.id }} .show-cta__title {
+    margin: 0 0 16px;
+    color: {{ section.settings.title_color }};
+    font-size: {{ section.settings.title_size }}px;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  #shopify-section-{{ section.id }} .show-cta__title .hl { color: {{ section.settings.accent_color }}; }
+  #shopify-section-{{ section.id }} .show-cta__desc {
+    margin: 0 0 24px;
+    color: {{ section.settings.text_color }};
+    font-size: {{ section.settings.text_size }}px;
+    line-height: 1.6;
+  }
+  #shopify-section-{{ section.id }} .show-cta__price {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0 0 24px;
+  }
+  #shopify-section-{{ section.id }} .show-cta__price-now {
+    color: {{ section.settings.accent_color }};
+    font-size: {{ section.settings.price_size }}px;
+    font-weight: 800;
+  }
+  #shopify-section-{{ section.id }} .show-cta__price-note {
+    color: {{ section.settings.text_color }};
+    font-size: 14px;
+  }
+
+  #shopify-section-{{ section.id }} .show-cta__list {
+    list-style: none;
+    margin: 0 0 28px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  #shopify-section-{{ section.id }} .show-cta__list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: {{ section.settings.text_color }};
+    font-size: 16px;
+    line-height: 1.4;
+  }
+  #shopify-section-{{ section.id }} .show-cta__check {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+    color: {{ section.settings.accent_color }};
+  }
+  #shopify-section-{{ section.id }} .show-cta__check svg { width: 100%; height: 100%; }
+
+  #shopify-section-{{ section.id }} .show-cta__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: {{ section.settings.btn_bg }};
+    color: {{ section.settings.btn_text_color }};
+    padding: {{ section.settings.btn_padding_y }}px {{ section.settings.btn_padding_x }}px;
+    border-radius: {{ section.settings.btn_radius }}px;
+    font-size: {{ section.settings.btn_font_size }}px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    transition: all 0.25s ease;
+  }
+  #shopify-section-{{ section.id }} .show-cta__btn:hover {
+    background: {{ section.settings.btn_hover_bg }};
+    transform: translateY(-2px);
+  }
+  #shopify-section-{{ section.id }} .show-cta__btn-icon { width: 16px; height: 16px; }
+  #shopify-section-{{ section.id }} .show-cta__btn-icon svg { width: 100%; height: 100%; }
+
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .show-cta__inner { grid-template-columns: 1fr; gap: 32px; }
+    #shopify-section-{{ section.id }} .show-cta--image-right .show-cta__media { order: 0; }
+    #shopify-section-{{ section.id }} .show-cta__title { font-size: {{ section.settings.mobile_title_size }}px; }
+    #shopify-section-{{ section.id }} .show-cta__btn { width: 100%; justify-content: center; }
+  }
+{%- endstyle -%}
+
+<section class="show-cta {% if section.settings.image_position == 'right' %}show-cta--image-right{% endif %}">
+  <div class="show-cta__inner">
+    <div class="show-cta__media">
+      {%- if section.settings.flag_text != blank -%}
+        <span class="show-cta__flag">{{ section.settings.flag_text }}</span>
+      {%- endif -%}
+      {%- if section.settings.image != blank -%}
+        {{ section.settings.image | image_url: width: 1000 | image_tag: loading: 'lazy', alt: section.settings.title }}
+      {%- elsif product != blank and product.featured_image -%}
+        {{ product.featured_image | image_url: width: 1000 | image_tag: loading: 'lazy', alt: product.title }}
+      {%- endif -%}
+    </div>
+
+    <div class="show-cta__text">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="show-cta__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      {%- if section.settings.title != blank -%}
+        <h2 class="show-cta__title">{{ section.settings.title }}</h2>
+      {%- endif -%}
+      {%- if section.settings.description != blank -%}
+        <p class="show-cta__desc">{{ section.settings.description }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.show_price and product != blank -%}
+        <div class="show-cta__price">
+          <span class="show-cta__price-now">{{ product.price | money }}</span>
+          {%- if section.settings.price_note != blank -%}
+            <span class="show-cta__price-note">{{ section.settings.price_note }}</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        <ul class="show-cta__list">
+          {%- for block in section.blocks -%}
+            <li {{ block.shopify_attributes }}>
+              <span class="show-cta__check">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </span>
+              <span>{{ block.settings.text }}</span>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      {%- liquid
+        assign btn_link = section.settings.btn_link
+        if btn_link == blank and product != blank
+          assign btn_link = product.url
+        endif
+      -%}
+      {%- if section.settings.btn_text != blank -%}
+        <a href="{{ btn_link | default: '#' }}" class="show-cta__btn">
+          {{ section.settings.btn_text }}
+          <span class="show-cta__btn-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </span>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Show Product CTA",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Product" },
+    { "type": "paragraph", "content": "Pick a product to auto-fill the image, price, and shop link — or set them manually below." },
+    { "type": "product", "id": "product", "label": "Product" },
+    { "type": "checkbox", "id": "show_price", "label": "Show live product price", "default": true },
+    { "type": "text", "id": "price_note", "label": "Price note", "default": "Free shipping included" },
+
+    { "type": "header", "content": "Section" },
+    { "type": "color", "id": "section_bg", "label": "Section background", "default": "#0f0f0f" },
+    { "type": "color", "id": "accent_color", "label": "Accent color", "default": "#9aff00" },
+    { "type": "range", "id": "section_padding", "label": "Section padding (Y)", "min": 40, "max": 160, "step": 4, "default": 96 },
+    { "type": "range", "id": "max_width", "label": "Max width", "min": 800, "max": 1500, "step": 20, "default": 1140 },
+    { "type": "range", "id": "column_gap", "label": "Column gap", "min": 24, "max": 100, "step": 4, "default": 64 },
+    { "type": "select", "id": "image_position", "label": "Image position (desktop)", "default": "left", "options": [
+      { "value": "left", "label": "Left" },
+      { "value": "right", "label": "Right" }
+    ] },
+
+    { "type": "header", "content": "Image" },
+    { "type": "image_picker", "id": "image", "label": "Image (overrides product image)" },
+    { "type": "range", "id": "image_radius", "label": "Image radius", "min": 0, "max": 40, "step": 2, "default": 16 },
+    { "type": "text", "id": "flag_text", "label": "Image flag text", "default": "AS SEEN ON THE SHOW" },
+
+    { "type": "header", "content": "Copy" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "GET YOUR OWN" },
+    { "type": "text", "id": "title", "label": "Title (wrap words in <span class='hl'>…</span> to highlight)", "default": "The QB54 <span class='hl'>Game Set</span>" },
+    { "type": "color", "id": "title_color", "label": "Title color", "default": "#ffffff" },
+    { "type": "range", "id": "title_size", "label": "Title size", "min": 28, "max": 64, "step": 2, "default": 44 },
+    { "type": "range", "id": "mobile_title_size", "label": "Mobile title size", "min": 22, "max": 44, "step": 2, "default": 30 },
+    { "type": "textarea", "id": "description", "label": "Description", "default": "Everything you need for the ultimate backyard football game — packs into a carrying bag and converts into two chairs for game day." },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#cfcfcf" },
+    { "type": "range", "id": "text_size", "label": "Text size", "min": 14, "max": 22, "step": 1, "default": 17 },
+    { "type": "range", "id": "price_size", "label": "Price size", "min": 20, "max": 48, "step": 2, "default": 30 },
+
+    { "type": "header", "content": "Button" },
+    { "type": "text", "id": "btn_text", "label": "Button text", "default": "SHOP NOW" },
+    { "type": "url", "id": "btn_link", "label": "Button link (defaults to product page)" },
+    { "type": "color", "id": "btn_bg", "label": "Button background", "default": "#9aff00" },
+    { "type": "color", "id": "btn_text_color", "label": "Button text color", "default": "#000000" },
+    { "type": "color", "id": "btn_hover_bg", "label": "Button hover background", "default": "#c3ff00" },
+    { "type": "range", "id": "btn_font_size", "label": "Button font size", "min": 12, "max": 20, "step": 1, "default": 15 },
+    { "type": "range", "id": "btn_padding_y", "label": "Button padding Y", "min": 10, "max": 24, "step": 2, "default": 16 },
+    { "type": "range", "id": "btn_padding_x", "label": "Button padding X", "min": 16, "max": 56, "step": 2, "default": 36 },
+    { "type": "range", "id": "btn_radius", "label": "Button radius", "min": 0, "max": 40, "step": 2, "default": 4 }
+  ],
+  "blocks": [
+    {
+      "type": "bullet",
+      "name": "Feature bullet",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Bullet text", "default": "2 chairs, 2 goal posts, football & carry bag" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Show Product CTA",
+      "blocks": [
+        { "type": "bullet", "settings": { "text": "Includes 2 chairs, 2 goal posts, football & carry bag" } },
+        { "type": "bullet", "settings": { "text": "2 to 8 players — fun for all ages" } },
+        { "type": "bullet", "settings": { "text": "Folds flat and goes anywhere" } },
+        { "type": "bullet", "settings": { "text": "Durable 600D nylon — supports 275 lbs" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

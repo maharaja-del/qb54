@@ -1,0 +1,32 @@
+{%- liquid
+  assign team_token = team_key | append: '|' | prepend: '|'
+-%}
+
+{%- if available_teams contains team_token -%}
+  <button
+    id="TailgateTeam-{{ section_id }}-{{ team_key }}"
+    class="tailgate-team{% if initial_team == team_key %} is-active{% endif %}"
+    type="button"
+    role="tab"
+    aria-selected="{% if initial_team == team_key %}true{% else %}false{% endif %}"
+    aria-controls="TailgateResults-{{ section_id }}"
+    tabindex="{% if initial_team == team_key %}0{% else %}-1{% endif %}"
+    data-tailgate-team
+    data-team="{{ team_key | escape }}"
+    data-team-name="{{ team_name | escape }}"
+  >
+    <span class="tailgate-team__logo-frame">
+      <span class="tailgate-team__monogram" aria-hidden="true">{{ abbreviation | escape }}</span>
+      <img
+        class="tailgate-team__logo"
+        src="{{ logo_url }}"
+        alt=""
+        width="160"
+        height="160"
+        loading="lazy"
+        data-tailgate-team-logo
+      >
+    </span>
+    <span class="tailgate-team__name">{{ short_name | default: team_name | escape }}</span>
+  </button>
+{%- endif -%}

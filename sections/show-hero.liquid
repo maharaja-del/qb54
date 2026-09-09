@@ -1,0 +1,570 @@
+{%- liquid
+  assign has_video = false
+  if section.settings.hero_video != blank
+    assign has_video = true
+  endif
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .show-hero,
+  #shopify-section-{{ section.id }} .show-hero * { box-sizing: border-box; }
+
+  #shopify-section-{{ section.id }} .show-hero {
+    position: relative;
+    width: 100%;
+    min-height: {{ section.settings.section_height }}px;
+    display: flex;
+    align-items: center;
+    background: {{ section.settings.section_bg | default: '#000000' }};
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .show-hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  #shopify-section-{{ section.id }} .show-hero__bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness({{ 100 | minus: section.settings.overlay_opacity }}%);
+  }
+  #shopify-section-{{ section.id }} .show-hero__bg--mobile { display: none; }
+
+  #shopify-section-{{ section.id }} .show-hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: {{ section.settings.overlay_color | default: '#171717' }};
+    opacity: {{ section.settings.overlay_opacity | default: 65 | divided_by: 100.0 }};
+    pointer-events: none;
+  }
+
+  /* ---------- Inner wrapper (handles split layout when a video is present) ---------- */
+  #shopify-section-{{ section.id }} .show-hero__inner {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: {{ section.settings.content_max_width }}px;
+    margin: 0 auto;
+    padding: {{ section.settings.content_padding_y }}px {{ section.settings.content_padding_x }}px;
+  }
+
+  #shopify-section-{{ section.id }} .show-hero__content {
+    width: 100%;
+    text-align: center;
+  }
+
+  {%- if has_video -%}
+  #shopify-section-{{ section.id }} .show-hero__inner--split {
+    display: flex;
+    align-items: center;
+    gap: {{ section.settings.split_gap }}px;
+    {%- if section.settings.video_position == 'left' %}flex-direction: row-reverse;{%- endif %}
+  }
+  #shopify-section-{{ section.id }} .show-hero__inner--split .show-hero__content {
+    flex: 1 1 {{ 100 | minus: section.settings.video_width }}%;
+    min-width: 0;
+    text-align: {{ section.settings.split_text_align }};
+  }
+  {%- if section.settings.split_text_align == 'left' -%}
+  #shopify-section-{{ section.id }} .show-hero__inner--split .show-hero__lockup,
+  #shopify-section-{{ section.id }} .show-hero__inner--split .show-hero__buttons { justify-content: flex-start; }
+  #shopify-section-{{ section.id }} .show-hero__inner--split .show-hero__heading,
+  #shopify-section-{{ section.id }} .show-hero__inner--split .show-hero__text { margin-left: 0; margin-right: 0; }
+  {%- endif -%}
+
+  /* ---------- Video panel ---------- */
+  #shopify-section-{{ section.id }} .show-hero__media {
+    flex: 1 1 {{ section.settings.video_width }}%;
+    min-width: 0;
+  }
+  #shopify-section-{{ section.id }} .show-hero__media-frame {
+    position: relative;
+    {%- if section.settings.video_aspect != 'natural' %}
+    width: min(100%, calc({{ section.settings.video_max_height }}px * ({{ section.settings.video_aspect }})));
+    margin: 0 auto;
+    aspect-ratio: {{ section.settings.video_aspect }};
+    {%- else %}
+    width: 100%;
+    max-height: {{ section.settings.video_max_height }}px;
+    {%- endif %}
+    border-radius: {{ section.settings.video_radius }}px;
+    overflow: hidden;
+    {%- if section.settings.video_glow %}box-shadow: 0 0 0 2px {{ section.settings.video_glow_color }}, 0 24px 60px -12px {{ section.settings.video_glow_color | color_modify: 'alpha', 0.35 }};{%- endif %}
+    background: #000;
+  }
+  #shopify-section-{{ section.id }} .show-hero__media-frame video,
+  #shopify-section-{{ section.id }} .show-hero__media-frame img {
+    width: 100%;
+    height: 100%;
+    {%- if section.settings.video_aspect != 'natural' %}object-fit: cover; position: absolute; inset: 0;{%- else %}max-height: {{ section.settings.video_max_height }}px; object-fit: contain; height: auto;{%- endif %}
+    display: block;
+  }
+  #shopify-section-{{ section.id }} .show-hero__media-caption {
+    margin-top: 10px;
+    text-align: center;
+    color: {{ section.settings.video_caption_color }};
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+  {%- endif -%}
+
+  #shopify-section-{{ section.id }} .show-hero__lockup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: {{ section.settings.lockup_gap }}px;
+    margin-bottom: {{ section.settings.lockup_margin_bottom }}px;
+    flex-wrap: wrap;
+  }
+  #shopify-section-{{ section.id }} .show-hero__logo img { display: block; height: auto; }
+  #shopify-section-{{ section.id }} .show-hero__logo--qb54 img { width: {{ section.settings.qb54_logo_width }}px; }
+  #shopify-section-{{ section.id }} .show-hero__logo--show img { width: {{ section.settings.show_logo_width }}px; }
+  #shopify-section-{{ section.id }} .show-hero__x {
+    color: {{ section.settings.lockup_x_color }};
+    font-size: {{ section.settings.lockup_x_size }}px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  #shopify-section-{{ section.id }} .show-hero__logo-placeholder {
+    width: {{ section.settings.show_logo_width }}px;
+    height: {{ section.settings.qb54_logo_width | divided_by: 2 }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed {{ section.settings.lockup_x_color }};
+    border-radius: 8px;
+    color: {{ section.settings.lockup_x_color }};
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: center;
+    padding: 8px;
+  }
+
+  #shopify-section-{{ section.id }} .show-hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: {{ section.settings.badge_bg }};
+    color: {{ section.settings.badge_text_color }};
+    padding: {{ section.settings.badge_padding_y }}px {{ section.settings.badge_padding_x }}px;
+    border-radius: {{ section.settings.badge_radius }}px;
+    font-size: {{ section.settings.badge_font_size }}px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: {{ section.settings.badge_margin_bottom }}px;
+  }
+
+  #shopify-section-{{ section.id }} .show-hero__heading {
+    margin: 0 auto {{ section.settings.heading_margin_bottom }}px;
+    max-width: {{ section.settings.heading_max_width }}px;
+    color: {{ section.settings.heading_color }};
+    font-size: {{ section.settings.heading_font_size }}px;
+    font-weight: {{ section.settings.heading_font_weight }};
+    line-height: {{ section.settings.heading_line_height | divided_by: 100.0 }};
+    letter-spacing: {{ section.settings.heading_letter_spacing | divided_by: 100.0 }}em;
+  }
+  #shopify-section-{{ section.id }} .show-hero__heading .hl { color: {{ section.settings.heading_highlight_color }}; }
+
+  #shopify-section-{{ section.id }} .show-hero__text {
+    margin: 0 auto {{ section.settings.text_margin_bottom }}px;
+    max-width: {{ section.settings.text_max_width }}px;
+    color: {{ section.settings.text_color }};
+    font-size: {{ section.settings.text_font_size }}px;
+    line-height: {{ section.settings.text_line_height | divided_by: 100.0 }};
+  }
+
+  #shopify-section-{{ section.id }} .show-hero__buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: {{ section.settings.button_gap }}px;
+    flex-wrap: wrap;
+  }
+  #shopify-section-{{ section.id }} .show-hero__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: {{ section.settings.button_padding_y }}px {{ section.settings.button_padding_x }}px;
+    border-radius: {{ section.settings.button_radius }}px;
+    font-size: {{ section.settings.button_font_size }}px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+  }
+  #shopify-section-{{ section.id }} .show-hero__btn--primary {
+    background: {{ section.settings.primary_btn_bg }};
+    color: {{ section.settings.primary_btn_text_color }};
+    border: 2px solid {{ section.settings.primary_btn_bg }};
+  }
+  #shopify-section-{{ section.id }} .show-hero__btn--primary:hover {
+    background: {{ section.settings.primary_btn_hover_bg }};
+    border-color: {{ section.settings.primary_btn_hover_bg }};
+    transform: translateY(-2px);
+  }
+  #shopify-section-{{ section.id }} .show-hero__btn--secondary {
+    background: transparent;
+    color: {{ section.settings.secondary_btn_text_color }};
+    border: 2px solid {{ section.settings.secondary_btn_border }};
+  }
+  #shopify-section-{{ section.id }} .show-hero__btn--secondary:hover {
+    background: {{ section.settings.secondary_btn_hover_bg }};
+    color: {{ section.settings.secondary_btn_hover_text }};
+    transform: translateY(-2px);
+  }
+  #shopify-section-{{ section.id }} .show-hero__btn-icon { width: 16px; height: 16px; flex-shrink: 0; }
+  #shopify-section-{{ section.id }} .show-hero__btn-icon svg { width: 100%; height: 100%; }
+
+  #shopify-section-{{ section.id }} .show-hero__scan {
+    margin-top: {{ section.settings.scan_margin_top }}px;
+    color: {{ section.settings.scan_color }};
+    font-size: {{ section.settings.scan_font_size }}px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.9;
+  }
+
+  /* ---------- Tablet: tighten the split before stacking ---------- */
+  @media (max-width: 1024px) and (min-width: 769px) {
+    #shopify-section-{{ section.id }} .show-hero__inner--split { gap: {{ section.settings.split_gap | times: 0.6 | round }}px; }
+    #shopify-section-{{ section.id }} .show-hero__inner--split .show-hero__heading { font-size: {{ section.settings.heading_font_size | times: 0.85 | round }}px; }
+  }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .show-hero { min-height: {{ section.settings.mobile_section_height }}px; }
+    #shopify-section-{{ section.id }} .show-hero__bg--desktop { display: none; }
+    #shopify-section-{{ section.id }} .show-hero__bg--mobile { display: block; }
+    #shopify-section-{{ section.id }} .show-hero__inner {
+      padding: {{ section.settings.mobile_content_padding_y }}px {{ section.settings.mobile_content_padding_x }}px;
+    }
+
+    {%- if has_video -%}
+    /* Stack content + video vertically */
+    #shopify-section-{{ section.id }} .show-hero__inner--split {
+      flex-direction: column;
+      gap: {{ section.settings.mobile_split_gap }}px;
+    }
+    #shopify-section-{{ section.id }} .show-hero__inner--split .show-hero__content {
+      flex: 1 1 auto;
+      text-align: center;
+    }
+    #shopify-section-{{ section.id }} .show-hero__inner--split .show-hero__lockup,
+    #shopify-section-{{ section.id }} .show-hero__inner--split .show-hero__buttons { justify-content: center; }
+    #shopify-section-{{ section.id }} .show-hero__inner--split .show-hero__heading,
+    #shopify-section-{{ section.id }} .show-hero__inner--split .show-hero__text { margin-left: auto; margin-right: auto; }
+    #shopify-section-{{ section.id }} .show-hero__media {
+      flex: 1 1 auto;
+      width: 100%;
+      max-width: {{ section.settings.mobile_video_max_width }}px;
+      margin: 0 auto;
+      {%- if section.settings.mobile_video_position == 'above' %}order: -1;{%- endif %}
+      {%- unless section.settings.show_video_mobile %}display: none;{%- endunless %}
+    }
+    #shopify-section-{{ section.id }} .show-hero__media-frame {
+      {%- if section.settings.mobile_video_aspect != 'natural' %}aspect-ratio: {{ section.settings.mobile_video_aspect }};{%- endif %}
+    }
+    {%- endif -%}
+
+    #shopify-section-{{ section.id }} .show-hero__logo--qb54 img { width: {{ section.settings.qb54_logo_width | times: 0.8 | round }}px; }
+    #shopify-section-{{ section.id }} .show-hero__logo--show img,
+    #shopify-section-{{ section.id }} .show-hero__logo-placeholder { width: {{ section.settings.show_logo_width | times: 0.8 | round }}px; }
+    #shopify-section-{{ section.id }} .show-hero__heading { font-size: {{ section.settings.mobile_heading_font_size }}px; max-width: 100%; }
+    #shopify-section-{{ section.id }} .show-hero__text { font-size: {{ section.settings.mobile_text_font_size }}px; max-width: 100%; }
+    #shopify-section-{{ section.id }} .show-hero__buttons { flex-direction: column; gap: 12px; }
+    #shopify-section-{{ section.id }} .show-hero__btn { width: 100%; max-width: 320px; }
+  }
+{%- endstyle -%}
+
+<section class="show-hero">
+  <div class="show-hero__bg show-hero__bg--desktop">
+    {%- if section.settings.desktop_bg_image != blank -%}
+      {{ section.settings.desktop_bg_image | image_url: width: 1920 | image_tag: loading: 'eager', fetchpriority: 'high', alt: '' }}
+    {%- endif -%}
+  </div>
+  <div class="show-hero__bg show-hero__bg--mobile">
+    {%- if section.settings.mobile_bg_image != blank -%}
+      {{ section.settings.mobile_bg_image | image_url: width: 900 | image_tag: loading: 'eager', alt: '' }}
+    {%- elsif section.settings.desktop_bg_image != blank -%}
+      {{ section.settings.desktop_bg_image | image_url: width: 900 | image_tag: loading: 'eager', alt: '' }}
+    {%- endif -%}
+  </div>
+
+  {%- if section.settings.show_overlay -%}
+    <div class="show-hero__overlay"></div>
+  {%- endif -%}
+
+  <div class="show-hero__inner{% if has_video %} show-hero__inner--split{% endif %}">
+    <div class="show-hero__content">
+      {%- if section.settings.qb54_logo != blank or section.settings.show_logo != blank or section.settings.show_logo_placeholder != blank -%}
+        <div class="show-hero__lockup">
+          {%- if section.settings.qb54_logo != blank -%}
+            <span class="show-hero__logo show-hero__logo--qb54">
+              {{ section.settings.qb54_logo | image_url: width: 600 | image_tag: loading: 'eager', alt: 'QB54' }}
+            </span>
+          {%- endif -%}
+
+          {%- if section.settings.show_logo != blank or section.settings.show_logo_placeholder != blank -%}
+            <span class="show-hero__x">&times;</span>
+          {%- endif -%}
+
+          {%- if section.settings.show_logo != blank -%}
+            <span class="show-hero__logo show-hero__logo--show">
+              {{ section.settings.show_logo | image_url: width: 600 | image_tag: loading: 'eager', alt: section.settings.show_logo_placeholder }}
+            </span>
+          {%- elsif section.settings.show_logo_placeholder != blank -%}
+            <span class="show-hero__logo-placeholder">{{ section.settings.show_logo_placeholder }}</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.badge_text != blank -%}
+        <div class="show-hero__badge">{{ section.settings.badge_text }}</div>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h1 class="show-hero__heading">{{ section.settings.heading }}</h1>
+      {%- endif -%}
+
+      {%- if section.settings.text != blank -%}
+        <p class="show-hero__text">{{ section.settings.text }}</p>
+      {%- endif -%}
+
+      <div class="show-hero__buttons">
+        {%- if section.settings.primary_btn_text != blank -%}
+          <a href="{{ section.settings.primary_btn_link | default: '#' }}" class="show-hero__btn show-hero__btn--primary">
+            {{ section.settings.primary_btn_text }}
+            {%- if section.settings.show_primary_btn_icon -%}
+              <span class="show-hero__btn-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </span>
+            {%- endif -%}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.secondary_btn_text != blank -%}
+          <a href="{{ section.settings.secondary_btn_link | default: '#' }}" class="show-hero__btn show-hero__btn--secondary">{{ section.settings.secondary_btn_text }}</a>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.scan_text != blank -%}
+        <p class="show-hero__scan">{{ section.settings.scan_text }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- if has_video -%}
+      <div class="show-hero__media">
+        <div class="show-hero__media-frame">
+          {%- liquid
+            assign vid_autoplay = section.settings.video_autoplay
+            assign vid_muted = section.settings.video_autoplay
+            if vid_autoplay
+              assign vid_preload = 'auto'
+            else
+              assign vid_preload = 'metadata'
+            endif
+          -%}
+          {{
+            section.settings.hero_video
+            | video_tag:
+              autoplay: vid_autoplay,
+              loop: section.settings.video_loop,
+              muted: vid_muted,
+              controls: section.settings.video_controls,
+              playsinline: true,
+              preload: vid_preload,
+              image_size: '1100x'
+          }}
+        </div>
+        {%- if section.settings.video_caption != blank -%}
+          <p class="show-hero__media-caption">{{ section.settings.video_caption }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Show Hero",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Hero Video" },
+    { "type": "paragraph", "content": "Upload or pick a Shopify-hosted video. When a video is set, the hero switches to a split layout (content on one side, video on the other). On mobile it stacks vertically." },
+    { "type": "video", "id": "hero_video", "label": "Shopify-hosted video" },
+    {
+      "type": "select",
+      "id": "video_position",
+      "label": "Video position (desktop)",
+      "options": [
+        { "value": "right", "label": "Right" },
+        { "value": "left", "label": "Left" }
+      ],
+      "default": "right"
+    },
+    { "type": "range", "id": "video_width", "label": "Video column width (%)", "min": 25, "max": 60, "step": 5, "default": 35 },
+    {
+      "type": "select",
+      "id": "video_aspect",
+      "label": "Video aspect ratio (desktop)",
+      "options": [
+        { "value": "9 / 16", "label": "9:16 (vertical / reels)" },
+        { "value": "4 / 5", "label": "4:5 (portrait)" },
+        { "value": "16 / 9", "label": "16:9 (landscape)" },
+        { "value": "1 / 1", "label": "1:1 (square)" },
+        { "value": "natural", "label": "Natural (no crop)" }
+      ],
+      "default": "9 / 16"
+    },
+    { "type": "range", "id": "video_max_height", "label": "Video max height (desktop)", "min": 320, "max": 760, "step": 20, "default": 540 },
+    { "type": "range", "id": "video_radius", "label": "Video corner radius", "min": 0, "max": 32, "step": 2, "default": 12 },
+    { "type": "checkbox", "id": "video_autoplay", "label": "Autoplay (muted, loops best with this on)", "default": true },
+    { "type": "checkbox", "id": "video_loop", "label": "Loop", "default": true },
+    { "type": "checkbox", "id": "video_controls", "label": "Show player controls", "default": false },
+    { "type": "checkbox", "id": "video_glow", "label": "Accent glow / border around video", "default": true },
+    { "type": "color", "id": "video_glow_color", "label": "Glow color", "default": "#9aff00" },
+    { "type": "text", "id": "video_caption", "label": "Caption under video (optional)", "default": "Watch QB54 in action" },
+    { "type": "color", "id": "video_caption_color", "label": "Caption color", "default": "#cccccc" },
+    { "type": "range", "id": "split_gap", "label": "Gap between content and video (desktop)", "min": 24, "max": 100, "step": 4, "default": 56 },
+    {
+      "type": "select",
+      "id": "split_text_align",
+      "label": "Content alignment in split layout",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left"
+    },
+
+    { "type": "header", "content": "Hero Video — Mobile" },
+    { "type": "checkbox", "id": "show_video_mobile", "label": "Show video on mobile", "default": true },
+    {
+      "type": "select",
+      "id": "mobile_video_position",
+      "label": "Video position on mobile",
+      "options": [
+        { "value": "below", "label": "Below content" },
+        { "value": "above", "label": "Above content" }
+      ],
+      "default": "below"
+    },
+    {
+      "type": "select",
+      "id": "mobile_video_aspect",
+      "label": "Video aspect ratio (mobile)",
+      "options": [
+        { "value": "9 / 16", "label": "9:16 (vertical / reels)" },
+        { "value": "4 / 5", "label": "4:5 (portrait)" },
+        { "value": "16 / 9", "label": "16:9 (landscape)" },
+        { "value": "1 / 1", "label": "1:1 (square)" },
+        { "value": "natural", "label": "Natural (no crop)" }
+      ],
+      "default": "9 / 16"
+    },
+    { "type": "range", "id": "mobile_video_max_width", "label": "Video max width on mobile", "min": 200, "max": 600, "step": 20, "default": 300 },
+    { "type": "range", "id": "mobile_split_gap", "label": "Gap between content and video (mobile)", "min": 16, "max": 64, "step": 4, "default": 32 },
+
+    { "type": "header", "content": "Co-Brand Logo Lockup" },
+    { "type": "paragraph", "content": "Add the QB54 logo and the show's logo. If you don't have the show logo yet, leave it blank and type a placeholder name below." },
+    { "type": "image_picker", "id": "qb54_logo", "label": "QB54 logo" },
+    { "type": "range", "id": "qb54_logo_width", "label": "QB54 logo width", "min": 60, "max": 320, "step": 10, "default": 150 },
+    { "type": "image_picker", "id": "show_logo", "label": "Show logo" },
+    { "type": "range", "id": "show_logo_width", "label": "Show logo width", "min": 60, "max": 320, "step": 10, "default": 150 },
+    { "type": "text", "id": "show_logo_placeholder", "label": "Show name (placeholder until logo arrives)", "default": "[SHOW LOGO]" },
+    { "type": "color", "id": "lockup_x_color", "label": "Separator / placeholder color", "default": "#9aff00" },
+    { "type": "range", "id": "lockup_x_size", "label": "Separator size", "min": 16, "max": 64, "step": 2, "default": 32 },
+    { "type": "range", "id": "lockup_gap", "label": "Lockup gap", "min": 8, "max": 48, "step": 2, "default": 24 },
+    { "type": "range", "id": "lockup_margin_bottom", "label": "Lockup margin bottom", "min": 0, "max": 60, "step": 4, "default": 28 },
+
+    { "type": "header", "content": "Background" },
+    { "type": "image_picker", "id": "desktop_bg_image", "label": "Desktop background image" },
+    { "type": "image_picker", "id": "mobile_bg_image", "label": "Mobile background image (optional)" },
+    { "type": "checkbox", "id": "show_overlay", "label": "Show dark overlay", "default": true },
+    { "type": "color", "id": "section_bg", "label": "Section background", "default": "#000000" },
+    { "type": "color", "id": "overlay_color", "label": "Overlay color", "default": "#171717" },
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay opacity (%)", "min": 0, "max": 90, "step": 5, "default": 65 },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "section_height", "label": "Section height (desktop)", "min": 360, "max": 820, "step": 20, "default": 660 },
+    { "type": "range", "id": "mobile_section_height", "label": "Section height (mobile)", "min": 360, "max": 760, "step": 20, "default": 600 },
+    { "type": "range", "id": "content_max_width", "label": "Content max width", "min": 600, "max": 1400, "step": 20, "default": 1280 },
+    { "type": "range", "id": "content_padding_y", "label": "Content padding Y", "min": 40, "max": 140, "step": 4, "default": 80 },
+    { "type": "range", "id": "content_padding_x", "label": "Content padding X", "min": 16, "max": 80, "step": 4, "default": 40 },
+    { "type": "range", "id": "mobile_content_padding_y", "label": "Mobile content padding Y", "min": 20, "max": 100, "step": 4, "default": 60 },
+    { "type": "range", "id": "mobile_content_padding_x", "label": "Mobile content padding X", "min": 12, "max": 60, "step": 4, "default": 24 },
+
+    { "type": "header", "content": "Badge" },
+    { "type": "text", "id": "badge_text", "label": "Badge text", "default": "AS SEEN ON [SHOW NAME]" },
+    { "type": "color", "id": "badge_bg", "label": "Badge background", "default": "#c3ff00" },
+    { "type": "color", "id": "badge_text_color", "label": "Badge text color", "default": "#000000" },
+    { "type": "range", "id": "badge_font_size", "label": "Badge font size", "min": 10, "max": 18, "step": 1, "default": 12 },
+    { "type": "range", "id": "badge_padding_y", "label": "Badge padding Y", "min": 4, "max": 16, "step": 2, "default": 8 },
+    { "type": "range", "id": "badge_padding_x", "label": "Badge padding X", "min": 8, "max": 32, "step": 2, "default": 16 },
+    { "type": "range", "id": "badge_radius", "label": "Badge radius", "min": 0, "max": 40, "step": 2, "default": 4 },
+    { "type": "range", "id": "badge_margin_bottom", "label": "Badge margin bottom", "min": 8, "max": 40, "step": 2, "default": 24 },
+
+    { "type": "header", "content": "Heading" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "You Just Saw QB54 in the Backyard Olympics" },
+    { "type": "color", "id": "heading_color", "label": "Heading color", "default": "#ffffff" },
+    { "type": "color", "id": "heading_highlight_color", "label": "Highlight color (wrap text in <span class='hl'>…</span>)", "default": "#9aff00" },
+    { "type": "range", "id": "heading_font_size", "label": "Heading font size", "min": 28, "max": 76, "step": 2, "default": 48 },
+    { "type": "range", "id": "heading_font_weight", "label": "Heading font weight", "min": 400, "max": 900, "step": 100, "default": 800 },
+    { "type": "range", "id": "heading_line_height", "label": "Heading line height (%)", "min": 100, "max": 150, "step": 5, "default": 110 },
+    { "type": "range", "id": "heading_letter_spacing", "label": "Heading letter spacing (0.01em)", "min": -5, "max": 5, "step": 1, "default": -1 },
+    { "type": "range", "id": "heading_max_width", "label": "Heading max width", "min": 400, "max": 900, "step": 20, "default": 760 },
+    { "type": "range", "id": "heading_margin_bottom", "label": "Heading margin bottom", "min": 12, "max": 48, "step": 2, "default": 24 },
+    { "type": "range", "id": "mobile_heading_font_size", "label": "Mobile heading font size", "min": 22, "max": 48, "step": 2, "default": 32 },
+
+    { "type": "header", "content": "Text" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Welcome to the QB54 family! QB54 is the pass, kick, and score football game that folds into two chairs — pack it up and play anywhere." },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#cccccc" },
+    { "type": "range", "id": "text_font_size", "label": "Text font size", "min": 14, "max": 24, "step": 1, "default": 18 },
+    { "type": "range", "id": "text_line_height", "label": "Text line height (%)", "min": 120, "max": 180, "step": 5, "default": 150 },
+    { "type": "range", "id": "text_max_width", "label": "Text max width", "min": 400, "max": 800, "step": 20, "default": 620 },
+    { "type": "range", "id": "text_margin_bottom", "label": "Text margin bottom", "min": 16, "max": 60, "step": 2, "default": 40 },
+    { "type": "range", "id": "mobile_text_font_size", "label": "Mobile text font size", "min": 12, "max": 20, "step": 1, "default": 16 },
+
+    { "type": "header", "content": "Primary Button" },
+    { "type": "text", "id": "primary_btn_text", "label": "Primary button text", "default": "SHOP THE GAME SET" },
+    { "type": "url", "id": "primary_btn_link", "label": "Primary button link" },
+    { "type": "checkbox", "id": "show_primary_btn_icon", "label": "Show arrow icon", "default": true },
+    { "type": "color", "id": "primary_btn_bg", "label": "Background", "default": "#9aff00" },
+    { "type": "color", "id": "primary_btn_text_color", "label": "Text color", "default": "#000000" },
+    { "type": "color", "id": "primary_btn_hover_bg", "label": "Hover background", "default": "#c3ff00" },
+
+    { "type": "header", "content": "Secondary Button" },
+    { "type": "text", "id": "secondary_btn_text", "label": "Secondary button text", "default": "HOW TO PLAY" },
+    { "type": "url", "id": "secondary_btn_link", "label": "Secondary button link" },
+    { "type": "color", "id": "secondary_btn_text_color", "label": "Text color", "default": "#ffffff" },
+    { "type": "color", "id": "secondary_btn_border", "label": "Border color", "default": "#ffffff" },
+    { "type": "color", "id": "secondary_btn_hover_bg", "label": "Hover background", "default": "#ffffff" },
+    { "type": "color", "id": "secondary_btn_hover_text", "label": "Hover text", "default": "#000000" },
+
+    { "type": "header", "content": "Button Styling" },
+    { "type": "range", "id": "button_font_size", "label": "Font size", "min": 12, "max": 20, "step": 1, "default": 14 },
+    { "type": "range", "id": "button_padding_y", "label": "Padding Y", "min": 10, "max": 24, "step": 2, "default": 16 },
+    { "type": "range", "id": "button_padding_x", "label": "Padding X", "min": 16, "max": 48, "step": 2, "default": 32 },
+    { "type": "range", "id": "button_radius", "label": "Radius", "min": 0, "max": 40, "step": 2, "default": 4 },
+    { "type": "range", "id": "button_gap", "label": "Gap between buttons", "min": 8, "max": 32, "step": 2, "default": 20 },
+
+    { "type": "header", "content": "QR Scan Microcopy" },
+    { "type": "text", "id": "scan_text", "label": "Scan line (under buttons)", "default": "📱 You scanned it — now claim your game" },
+    { "type": "color", "id": "scan_color", "label": "Scan text color", "default": "#9aff00" },
+    { "type": "range", "id": "scan_font_size", "label": "Scan font size", "min": 10, "max": 18, "step": 1, "default": 13 },
+    { "type": "range", "id": "scan_margin_top", "label": "Scan margin top", "min": 8, "max": 48, "step": 2, "default": 28 }
+  ],
+  "presets": [{ "name": "Show Hero" }]
+}
+{% endschema %}

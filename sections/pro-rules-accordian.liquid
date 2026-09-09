@@ -1,0 +1,265 @@
+{% assign sid = section.id %}
+
+<section class="pro-rules-{{ sid }}">
+  <div class="pro-rules__inner">
+    {% if section.settings.heading != blank %}
+      <h2 class="pro-rules__heading">
+        {% if section.settings.show_icon %}
+          <span class="pro-rules__icon">🏆</span>
+        {% endif %}
+        {{ section.settings.heading }}
+      </h2>
+    {% endif %}
+
+    <div class="pro-rules__accordion">
+      {% for block in section.blocks %}
+        <details class="pro-rules__item" {{ block.shopify_attributes }}>
+          <summary class="pro-rules__summary">
+            <span>{{ block.settings.title }}</span>
+            <span class="pro-rules__chevron">⌄</span>
+          </summary>
+
+          <div class="pro-rules__content">
+            {{ block.settings.content }}
+          </div>
+        </details>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+.pro-rules-{{ sid }} {
+  background: {{ section.settings.bg_color }};
+  padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+}
+
+.pro-rules-{{ sid }} .pro-rules__inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.pro-rules-{{ sid }} .pro-rules__heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: {{ section.settings.heading_size }}px;
+  color: {{ section.settings.heading_color }};
+  margin-bottom: 24px;
+}
+
+.pro-rules-{{ sid }} .pro-rules__icon {
+  font-size: 20px;
+}
+
+.pro-rules-{{ sid }} .pro-rules__accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pro-rules-{{ sid }} .pro-rules__item {
+  background: {{ section.settings.card_bg }};
+  border-radius: {{ section.settings.radius }}px;
+  overflow: hidden;
+}
+
+.pro-rules-{{ sid }} .pro-rules__summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 16px 20px;
+  font-weight: 600;
+  color: {{ section.settings.title_color }};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pro-rules-{{ sid }} .pro-rules__summary::-webkit-details-marker {
+  display: none;
+}
+
+.pro-rules-{{ sid }} .pro-rules__chevron {
+  transition: transform 0.2s ease;
+}
+
+.pro-rules-{{ sid }} details[open] .pro-rules__chevron {
+  transform: rotate(180deg);
+}
+
+/* ===============================
+   RICH TEXT CONTENT FIX (KEY PART)
+   =============================== */
+
+.pro-rules-{{ sid }} .pro-rules__content {
+  padding: 0 20px 16px;
+  color: {{ section.settings.text_color }};
+  font-size: {{ section.settings.text_size }}px;
+  line-height: 1.6;
+}
+
+/* Paragraph spacing */
+.pro-rules-{{ sid }} .pro-rules__content p {
+  margin: 0 0 12px;
+}
+
+/* Remove last margin */
+.pro-rules-{{ sid }} .pro-rules__content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Lists */
+.pro-rules-{{ sid }} .pro-rules__content ul,
+.pro-rules-{{ sid }} .pro-rules__content ol {
+  margin: 0 0 12px 20px;
+  padding: 0;
+}
+
+.pro-rules-{{ sid }} .pro-rules__content li {
+  margin-bottom: 6px;
+}
+
+/* Emphasis */
+.pro-rules-{{ sid }} .pro-rules__content strong {
+  font-weight: 600;
+  color: {{ section.settings.title_color }};
+}
+
+.pro-rules-{{ sid }} .pro-rules__content em {
+  font-style: italic;
+}
+
+/* Links if used */
+.pro-rules-{{ sid }} .pro-rules__content a {
+  color: {{ section.settings.title_color }};
+  text-decoration: underline;
+}
+</style>
+
+{% schema %}
+{
+  "name": "Pro rules",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Pro Rules (Advanced)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon",
+      "label": "Show icon",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#EFF3EA"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Card background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1F2D23"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#1F2D23"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#6F7F73"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 18,
+      "max": 36,
+      "step": 1,
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "radius",
+      "label": "Card radius",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "rule",
+      "name": "Rule",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Pick-6 Rule"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>If a pass is intercepted and returned into the bucket, it counts as 6 points.</p>"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 10,
+  "presets": [
+    {
+      "name": "Pro rules",
+      "blocks": [
+        { "type": "rule" },
+        { "type": "rule" },
+        { "type": "rule" },
+        { "type": "rule" }
+      ]
+    }
+  ]
+}
+{% endschema %}

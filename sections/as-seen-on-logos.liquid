@@ -1,0 +1,241 @@
+{%- style -%}
+  .as-seen-on, .as-seen-on * { box-sizing: border-box; }
+  
+  .as-seen-on {
+    background: {{ section.settings.section_bg }};
+    padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px;
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  .as-seen-on__container {
+    max-width: {{ section.settings.container_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center;
+  }
+  
+  .as-seen-on__heading {
+    font-size: {{ section.settings.heading_size }}px;
+    font-weight: {{ section.settings.heading_weight }};
+    color: {{ section.settings.heading_color }};
+    letter-spacing: {{ section.settings.heading_spacing | divided_by: 100.0 }}em;
+    text-transform: uppercase;
+    margin: 0 0 {{ section.settings.heading_margin }}px 0;
+    line-height: 1.2;
+  }
+  
+  .as-seen-on__logos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: {{ section.settings.logo_gap }}px;
+    flex-wrap: wrap;
+  }
+  
+  .as-seen-on__logo {
+    font-size: {{ section.settings.logo_size }}px;
+    font-weight: {{ section.settings.logo_weight }};
+    color: {{ section.settings.logo_color }};
+    letter-spacing: {{ section.settings.logo_spacing | divided_by: 100.0 }}em;
+    text-transform: uppercase;
+    opacity: {{ section.settings.logo_opacity | divided_by: 100.0 }};
+    transition: opacity 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .as-seen-on__logo:hover {
+    opacity: 1;
+  }
+  
+  @media (max-width: 768px) {
+    .as-seen-on {
+      padding: {{ section.settings.mobile_section_padding_top }}px 0 {{ section.settings.mobile_section_padding_bottom }}px;
+    }
+    
+    .as-seen-on__container {
+      padding: 0 16px;
+    }
+    
+    .as-seen-on__heading {
+      font-size: {{ section.settings.mobile_heading_size }}px;
+      margin: 0 0 {{ section.settings.mobile_heading_margin }}px 0;
+    }
+    
+    .as-seen-on__logos {
+      gap: {{ section.settings.mobile_logo_gap }}px;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .as-seen-on__logo {
+      font-size: {{ section.settings.mobile_logo_size }}px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .as-seen-on {
+      padding: {{ section.settings.mobile_section_padding_top | times: 3 | divided_by: 4 }}px 0 {{ section.settings.mobile_section_padding_bottom | times: 3 | divided_by: 4 }}px;
+    }
+    
+    .as-seen-on__heading {
+      font-size: {{ section.settings.mobile_heading_size | times: 7 | divided_by: 8 }}px;
+    }
+    
+    .as-seen-on__logo {
+      font-size: {{ section.settings.mobile_logo_size | times: 7 | divided_by: 8 }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="as-seen-on">
+  <div class="as-seen-on__container">
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when 'heading' %}
+          <h2 class="as-seen-on__heading" {{ block.shopify_attributes }}>{{ block.settings.heading_text }}</h2>
+        
+        {% when 'logos_row' %}
+          <div class="as-seen-on__logos" {{ block.shopify_attributes }}>
+            {% if block.settings.logo_1_text != blank %}
+              {% if block.settings.logo_1_link != blank %}
+                <a href="{{ block.settings.logo_1_link }}" class="as-seen-on__logo">{{ block.settings.logo_1_text }}</a>
+              {% else %}
+                <span class="as-seen-on__logo">{{ block.settings.logo_1_text }}</span>
+              {% endif %}
+            {% endif %}
+            
+            {% if block.settings.logo_2_text != blank %}
+              {% if block.settings.logo_2_link != blank %}
+                <a href="{{ block.settings.logo_2_link }}" class="as-seen-on__logo">{{ block.settings.logo_2_text }}</a>
+              {% else %}
+                <span class="as-seen-on__logo">{{ block.settings.logo_2_text }}</span>
+              {% endif %}
+            {% endif %}
+            
+            {% if block.settings.logo_3_text != blank %}
+              {% if block.settings.logo_3_link != blank %}
+                <a href="{{ block.settings.logo_3_link }}" class="as-seen-on__logo">{{ block.settings.logo_3_text }}</a>
+              {% else %}
+                <span class="as-seen-on__logo">{{ block.settings.logo_3_text }}</span>
+              {% endif %}
+            {% endif %}
+            
+            {% if block.settings.logo_4_text != blank %}
+              {% if block.settings.logo_4_link != blank %}
+                <a href="{{ block.settings.logo_4_link }}" class="as-seen-on__logo">{{ block.settings.logo_4_text }}</a>
+              {% else %}
+                <span class="as-seen-on__logo">{{ block.settings.logo_4_text }}</span>
+              {% endif %}
+            {% endif %}
+            
+            {% if block.settings.logo_5_text != blank %}
+              {% if block.settings.logo_5_link != blank %}
+                <a href="{{ block.settings.logo_5_link }}" class="as-seen-on__logo">{{ block.settings.logo_5_text }}</a>
+              {% else %}
+                <span class="as-seen-on__logo">{{ block.settings.logo_5_text }}</span>
+              {% endif %}
+            {% endif %}
+            
+            {% if block.settings.logo_6_text != blank %}
+              {% if block.settings.logo_6_link != blank %}
+                <a href="{{ block.settings.logo_6_link }}" class="as-seen-on__logo">{{ block.settings.logo_6_text }}</a>
+              {% else %}
+                <span class="as-seen-on__logo">{{ block.settings.logo_6_text }}</span>
+              {% endif %}
+            {% endif %}
+          </div>
+      {% endcase %}
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "As Seen On Logos",
+  "settings": [
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "container_width", "label": "Container max width", "min": 800, "max": 1400, "step": 20, "default": 1200 },
+    { "type": "range", "id": "section_padding_top", "label": "Section padding top", "min": 20, "max": 120, "step": 4, "default": 60 },
+    { "type": "range", "id": "section_padding_bottom", "label": "Section padding bottom", "min": 20, "max": 120, "step": 4, "default": 60 },
+    { "type": "range", "id": "mobile_section_padding_top", "label": "Mobile section padding top", "min": 20, "max": 80, "step": 4, "default": 40 },
+    { "type": "range", "id": "mobile_section_padding_bottom", "label": "Mobile section padding bottom", "min": 20, "max": 80, "step": 4, "default": 40 },
+    
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "section_bg", "label": "Section background", "default": "#1a1a1a" },
+    { "type": "color", "id": "heading_color", "label": "Heading color", "default": "#888888" },
+    { "type": "color", "id": "logo_color", "label": "Logo text color", "default": "#666666" },
+    
+    { "type": "header", "content": "Heading" },
+    { "type": "range", "id": "heading_size", "label": "Heading font size", "min": 10, "max": 24, "step": 1, "default": 14 },
+    { "type": "range", "id": "heading_weight", "label": "Heading font weight", "min": 300, "max": 900, "step": 100, "default": 500 },
+    { "type": "range", "id": "heading_spacing", "label": "Heading letter spacing (x0.01em)", "min": 0, "max": 20, "step": 1, "default": 8 },
+    { "type": "range", "id": "heading_margin", "label": "Heading bottom margin", "min": 20, "max": 80, "step": 4, "default": 40 },
+    { "type": "range", "id": "mobile_heading_size", "label": "Mobile heading font size", "min": 8, "max": 18, "step": 1, "default": 12 },
+    { "type": "range", "id": "mobile_heading_margin", "label": "Mobile heading bottom margin", "min": 16, "max": 60, "step": 4, "default": 24 },
+    
+    { "type": "header", "content": "Logos" },
+    { "type": "range", "id": "logo_size", "label": "Logo font size", "min": 12, "max": 32, "step": 1, "default": 18 },
+    { "type": "range", "id": "logo_weight", "label": "Logo font weight", "min": 300, "max": 900, "step": 100, "default": 600 },
+    { "type": "range", "id": "logo_spacing", "label": "Logo letter spacing (x0.01em)", "min": 0, "max": 15, "step": 1, "default": 5 },
+    { "type": "range", "id": "logo_opacity", "label": "Logo opacity (%)", "min": 30, "max": 100, "step": 5, "default": 70 },
+    { "type": "range", "id": "logo_gap", "label": "Logo spacing (desktop)", "min": 20, "max": 100, "step": 4, "default": 60 },
+    { "type": "range", "id": "mobile_logo_size", "label": "Mobile logo font size", "min": 10, "max": 24, "step": 1, "default": 14 },
+    { "type": "range", "id": "mobile_logo_gap", "label": "Mobile logo spacing", "min": 8, "max": 40, "step": 2, "default": 16 }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Heading",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "heading_text", "label": "Heading text", "default": "AS SEEN ON" }
+      ]
+    },
+    {
+      "type": "logos_row",
+      "name": "Logos Row",
+      "limit": 2,
+      "settings": [
+        { "type": "text", "id": "logo_1_text", "label": "Logo 1 text", "default": "ABC" },
+        { "type": "url", "id": "logo_1_link", "label": "Logo 1 link" },
+        { "type": "text", "id": "logo_2_text", "label": "Logo 2 text", "default": "SHARK TANK" },
+        { "type": "url", "id": "logo_2_link", "label": "Logo 2 link" },
+        { "type": "text", "id": "logo_3_text", "label": "Logo 3 text", "default": "GMA" },
+        { "type": "url", "id": "logo_3_link", "label": "Logo 3 link" },
+        { "type": "text", "id": "logo_4_text", "label": "Logo 4 text", "default": "THE VIEW" },
+        { "type": "url", "id": "logo_4_link", "label": "Logo 4 link" },
+        { "type": "text", "id": "logo_5_text", "label": "Logo 5 text", "default": "SPORTS ILLUSTRATED" },
+        { "type": "url", "id": "logo_5_link", "label": "Logo 5 link" },
+        { "type": "text", "id": "logo_6_text", "label": "Logo 6 text", "default": "OPTIONAL" },
+        { "type": "url", "id": "logo_6_link", "label": "Logo 6 link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "As Seen On Logos",
+      "blocks": [
+        {
+          "type": "heading",
+          "settings": {
+            "heading_text": "AS SEEN ON"
+          }
+        },
+        {
+          "type": "logos_row",
+          "settings": {
+            "logo_1_text": "ABC",
+            "logo_2_text": "SHARK TANK",
+            "logo_3_text": "GMA",
+            "logo_4_text": "THE VIEW",
+            "logo_5_text": "SPORTS ILLUSTRATED",
+            "logo_6_text": "OPTIONAL"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

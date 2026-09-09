@@ -1,0 +1,816 @@
+{% comment %}
+  QB54 × RV OVERNIGHTS — Hero Section (v5)
+  File: sections/qb54-rvo-hero.liquid
+
+  Rewrite goals (v5):
+  - Images render as static <img> tags from Liquid — visible BEFORE JS loads.
+  - CSS Grid layout — no nested flexbox overflow issues.
+  - CSS opacity fade between slides — no GSAP transform math.
+  - Liquid-level image fallback — empty block.image gets a real CDN URL.
+  - Title cycling animation degrades gracefully if GSAP fails to load.
+{% endcomment %}
+
+{% assign slide_blocks = section.blocks | where: 'type', 'slide' %}
+
+{%- comment -%} Fallback URLs used when a slide block has no image uploaded {%- endcomment -%}
+{%- assign fallback_img_1 = 'https://playqb54.com/cdn/shop/files/Tailgaiting_1.jpg?v=1768569220&width=1400' -%}
+{%- assign fallback_img_2 = 'https://playqb54.com/cdn/shop/files/QB54_Park_Play.jpg?v=1768569299&width=1400' -%}
+{%- assign fallback_img_3 = 'https://playqb54.com/cdn/shop/files/QB54_Backyard_Screenshot.jpg?v=1768569252&width=1400' -%}
+{%- assign fallback_img_4 = 'https://playqb54.com/cdn/shop/files/QB54_Beach_Play.png?v=1768569330&width=1400' -%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,700;0,900;1,700;1,900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+
+<style>
+  #hero-{{ section.id }} {
+    background: {{ section.settings.background_color }};
+    font-family: 'Barlow', sans-serif;
+    color: {{ section.settings.text_color }};
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 28px {{ section.settings.padding_x }}px;
+    min-height: {{ section.settings.min_height }}px;
+    box-sizing: border-box;
+  }
+
+  /* Subtle accent-color glow on dark backgrounds */
+  #hero-{{ section.id }}::before {
+    content: '';
+    position: absolute;
+    inset: -10% auto auto -10%;
+    width: 60%;
+    height: 80%;
+    background: radial-gradient(circle, {{ section.settings.accent_color }}1F 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+    {% unless section.settings.show_glow %}display: none;{% endunless %}
+  }
+
+  .hero-content-{{ section.id }} {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .hero-badge-{{ section.id }} {
+    align-self: flex-start;
+    display: {% if section.settings.show_badge %}inline-flex{% else %}none{% endif %};
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+   
+    background: {{ section.settings.accent_color }}1A;
+    color: {{ section.settings.accent_color }};
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+ 
+
+  .hero-prefix-{{ section.id }} {
+    font-size: clamp({{ section.settings.subtext_min_size }}px, 2.4vw, {{ section.settings.subtext_max_size }}px);
+    font-weight: 700;
+    letter-spacing: .04em;
+    line-height: 1.1;
+    text-transform: uppercase;
+    color: {{ section.settings.accent_color }};
+    margin-bottom: 6px;
+  }
+
+  .hero-title-{{ section.id }} {
+    font-size: calc(clamp(40px, {{ section.settings.title_fluid_size }}vw, {{ section.settings.title_max_size }}px) * var(--qb-title-scale, 1));
+    font-weight: 900;
+    {% if section.settings.title_italic %}font-style: italic;{% endif %}
+    letter-spacing: -.02em;
+    line-height: .85;
+    text-transform: uppercase;
+    color: {{ section.settings.title_color }};
+    overflow: hidden;
+    position: relative;
+    white-space: nowrap;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    margin: {{ section.settings.title_margin }}px 0;
+    padding: 5px 0;
+  }
+  .hero-title-{{ section.id }} span {
+    display: inline-block;
+    will-change: transform;
+  }
+
+  .hero-suffix-{{ section.id }} {
+    font-size: clamp({{ section.settings.subtext_min_size }}px, 2.4vw, {{ section.settings.subtext_max_size }}px);
+    font-weight: 700;
+    letter-spacing: .02em;
+    line-height: 1.1;
+    text-transform: uppercase;
+    color: {{ section.settings.text_color }};
+    margin-bottom: 14px;
+  }
+
+  .hero-desc-{{ section.id }} {
+    display: {% if section.settings.show_description %}block{% else %}none{% endif %};
+    font-size: {{ section.settings.desc_size }}px;
+    line-height: 1.6;
+    color: {{ section.settings.desc_color }};
+    max-width: {{ section.settings.desc_max_width }}px;
+    margin-bottom: {{ section.settings.desc_margin_bottom }}px;
+  }
+
+  .hero-btns-{{ section.id }} {
+    display: {% if section.settings.show_cta %}flex{% else %}none{% endif %};
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .hero-pill-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Barlow', sans-serif;
+    font-weight: 700;
+    font-size: {{ section.settings.cta_font_size }}px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: {{ section.settings.cta_padding_v }}px {{ section.settings.cta_padding_h }}px;
+    border-radius: 999px;
+    background: {{ section.settings.cta_bg }};
+    color: {{ section.settings.cta_text_color }};
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background .25s, transform .2s, box-shadow .25s;
+  }
+  .hero-pill-{{ section.id }}:hover {
+    background: {{ section.settings.cta_hover_bg }};
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px {{ section.settings.accent_color }}40;
+  }
+
+  /* Media (image slideshow) */
+  .hero-media-{{ section.id }} {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    aspect-ratio: 1.4;
+    border-radius: {{ section.settings.slide_radius }}px;
+    overflow: hidden;
+    background: #1a1a1a;
+    box-shadow: 0 30px 60px rgba(0,0,0,.45);
+  }
+  .hero-image-{{ section.id }} {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness({{ section.settings.image_brightness | divided_by: 100.0 }});
+    opacity: 0;
+    transition: opacity .9s ease;
+    display: block;
+  }
+  .hero-image-{{ section.id }}.is-active {
+    opacity: 1;
+  }
+
+  /* Desktop layout */
+  @media (min-width: 1024px) {
+    #hero-{{ section.id }} {
+      grid-template-columns: {{ section.settings.left_column_width }}% 1fr;
+      gap: 48px;
+      align-items: center;
+      padding: 40px {{ section.settings.padding_x }}px;
+    }
+    .hero-media-{{ section.id }} {
+      aspect-ratio: 1.25;
+      max-height: calc({{ section.settings.min_height }}px - 80px);
+    }
+  }
+
+  /* Tablet */
+  @media (max-width: 1023px) and (min-width: 641px) {
+    #hero-{{ section.id }} {
+      padding: 32px 40px;
+      gap: 28px;
+    }
+  }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    #hero-{{ section.id }} {
+      padding: 20px;
+      gap: 18px;
+    }
+    .hero-title-{{ section.id }} {
+      font-size: calc(clamp(36px, 14vw, 80px) * var(--qb-title-scale, 1));
+    }
+    .hero-prefix-{{ section.id }},
+    .hero-suffix-{{ section.id }} {
+      font-size: clamp(14px, 4vw, 22px);
+    }
+    .hero-desc-{{ section.id }} {
+      font-size: 14px;
+    }
+    .hero-pill-{{ section.id }} {
+      font-size: 13px;
+      padding: 12px 22px;
+    }
+  }
+</style>
+
+<section id="hero-{{ section.id }}">
+
+  <div class="hero-content-{{ section.id }}">
+
+    {%- if section.settings.show_badge and section.settings.badge_text != blank -%}
+      <div class="hero-badge-{{ section.id }}">{{ section.settings.badge_text }}</div>
+    {%- endif -%}
+
+    {%- if section.settings.prefix != blank -%}
+      <div class="hero-prefix-{{ section.id }}">{{ section.settings.prefix }}</div>
+    {%- endif -%}
+
+    <h1 class="hero-title-{{ section.id }}" id="hero-title-{{ section.id }}" aria-live="polite"></h1>
+
+    {%- if section.settings.suffix != blank -%}
+      <div class="hero-suffix-{{ section.id }}">{{ section.settings.suffix }}</div>
+    {%- endif -%}
+
+    {%- if section.settings.show_description and section.settings.description != blank -%}
+      <p class="hero-desc-{{ section.id }}">{{ section.settings.description }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.show_cta and section.settings.cta_text != blank -%}
+      <div class="hero-btns-{{ section.id }}">
+        <a
+          class="hero-pill-{{ section.id }}"
+          href="{{ section.settings.cta_url | default: '#' }}"
+          {% if section.settings.cta_new_tab %}target="_blank" rel="noopener"{% endif %}
+        >
+          {%- if section.settings.cta_emoji != blank -%}{{ section.settings.cta_emoji }} {% endif -%}
+          {{ section.settings.cta_text }}
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+
+  <div class="hero-media-{{ section.id }}" id="hero-media-{{ section.id }}">
+    {%- if slide_blocks.size > 0 -%}
+      {%- for block in slide_blocks -%}
+        {%- assign img_url = block.settings.image | image_url: width: 1400 -%}
+        {%- if img_url == blank -%}
+          {%- assign fb_idx = forloop.index0 | modulo: 4 -%}
+          {%- case fb_idx -%}
+            {%- when 0 -%}{%- assign img_url = fallback_img_1 -%}
+            {%- when 1 -%}{%- assign img_url = fallback_img_2 -%}
+            {%- when 2 -%}{%- assign img_url = fallback_img_3 -%}
+            {%- when 3 -%}{%- assign img_url = fallback_img_4 -%}
+          {%- endcase -%}
+        {%- endif -%}
+        <img
+          class="hero-image-{{ section.id }}{% if forloop.first %} is-active{% endif %}"
+          src="{{ img_url }}"
+          alt="{{ block.settings.slide_label | default: 'QB54' }}"
+          loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+          data-slide-name="{{ block.settings.slide_label | default: 'QB54' }}"
+        />
+      {%- endfor -%}
+    {%- else -%}
+      <img
+        class="hero-image-{{ section.id }} is-active"
+        src="{{ fallback_img_1 }}"
+        alt="QB54"
+        loading="eager"
+        data-slide-name="QB54"
+      />
+      <img
+        class="hero-image-{{ section.id }}"
+        src="{{ fallback_img_2 }}"
+        alt="RV OVERNIGHTS"
+        loading="lazy"
+        data-slide-name="RV OVERNIGHTS"
+      />
+    {%- endif -%}
+  </div>
+
+</section>
+
+<script>
+(function() {
+  const sid = '{{ section.id }}';
+  const AUTOPLAY_MS = {{ section.settings.autoplay_interval | times: 1000 }};
+
+  const heroEl  = document.getElementById('hero-'  + sid);
+  const titleEl = document.getElementById('hero-title-' + sid);
+  const mediaEl = document.getElementById('hero-media-' + sid);
+  if (!heroEl || !titleEl || !mediaEl) return;
+
+  const images = [...mediaEl.querySelectorAll('img')];
+  const slides = images.map(img => ({
+    name: (img.dataset.slideName || img.alt || '').toString(),
+    el: img
+  }));
+  if (slides.length === 0) return;
+
+  // Auto-shrink the cycling title based on the longest cycling word.
+  // Long words like "RV OVERNIGHTS" (13 chars) scale to fit the column.
+  const maxLen = Math.max(...slides.map(s => s.name.length));
+  const TARGET_CHARS = 8;
+  const scale = maxLen > TARGET_CHARS ? TARGET_CHARS / maxLen : 1;
+  heroEl.style.setProperty('--qb-title-scale', scale.toFixed(3));
+
+  function buildLine(text) {
+    const line = document.createElement('div');
+    [...text].forEach(ch => {
+      const s = document.createElement('span');
+      s.textContent = ch === ' ' ? '\u00A0' : ch;
+      line.appendChild(s);
+    });
+    return line;
+  }
+
+  let currentIdx  = 0;
+  let currentLine = buildLine(slides[0].name);
+  titleEl.appendChild(currentLine);
+
+  let animating = false;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function swapTitleInstant(newText) {
+    titleEl.innerHTML = '';
+    currentLine = buildLine(newText);
+    titleEl.appendChild(currentLine);
+  }
+
+  function animateTitle(newText, direction) {
+    return new Promise(resolve => {
+      // No GSAP? Just swap text and resolve.
+      if (!window.gsap) {
+        swapTitleInstant(newText);
+        resolve();
+        return;
+      }
+
+      const h    = titleEl.offsetHeight;
+      const dir  = direction === 'next' ? 1 : -1;
+      const oldLine  = currentLine;
+      const oldChars = [...oldLine.querySelectorAll('span')];
+
+      titleEl.style.height = h + 'px';
+      oldLine.style.cssText = 'position:absolute;top:0;left:0;width:100%';
+
+      const newLine = buildLine(newText);
+      newLine.style.cssText = 'position:absolute;top:0;left:0;width:100%';
+      titleEl.appendChild(newLine);
+      const newChars = [...newLine.querySelectorAll('span')];
+
+      gsap.set(newChars, { y: h * dir });
+
+      const dur  = reducedMotion ? 0.01 : 0.9;
+      const stag = reducedMotion ? 0 : 0.04;
+
+      gsap.timeline({
+        onComplete: () => {
+          oldLine.remove();
+          newLine.style.cssText = '';
+          gsap.set(newChars, { clearProps: 'all' });
+          titleEl.style.height = '';
+          currentLine = newLine;
+          resolve();
+        }
+      })
+      .to(oldChars, { y: -h * dir, stagger: stag, duration: dur, ease: 'expo.inOut' }, 0)
+      .to(newChars, { y: 0,         stagger: stag, duration: dur, ease: 'expo.inOut' }, 0);
+    });
+  }
+
+  function go(direction) {
+    if (animating || slides.length < 2) return;
+    animating = true;
+
+    const nextIdx = direction === 'next'
+      ? (currentIdx + 1) % slides.length
+      : (currentIdx - 1 + slides.length) % slides.length;
+
+    // CSS handles the image fade
+    slides[currentIdx].el.classList.remove('is-active');
+    slides[nextIdx].el.classList.add('is-active');
+
+    animateTitle(slides[nextIdx].name, direction).then(() => {
+      currentIdx = nextIdx;
+      animating = false;
+    });
+  }
+
+  // Autoplay
+  let autoplayId = null;
+  function startAutoplay() {
+    stopAutoplay();
+    if (slides.length < 2) return;
+    autoplayId = setInterval(() => go('next'), AUTOPLAY_MS);
+  }
+  function stopAutoplay() {
+    if (autoplayId) { clearInterval(autoplayId); autoplayId = null; }
+  }
+
+  heroEl.addEventListener('mouseenter', stopAutoplay);
+  heroEl.addEventListener('mouseleave', startAutoplay);
+  document.addEventListener('visibilitychange', () => {
+    document.visibilityState === 'hidden' ? stopAutoplay() : startAutoplay();
+  });
+
+  startAutoplay();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "QB54 × RVO Hero",
+  "tag": "div",
+  "class": "qb54-rvo-hero-section",
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "🏷️ Partnership Badge"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badge",
+      "label": "Show partnership badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "Official Partnership · 15% Off Members Only"
+    },
+
+    {
+      "type": "header",
+      "content": "📝 Content"
+    },
+    {
+      "type": "text",
+      "id": "prefix",
+      "label": "Prefix text (above title)",
+      "default": "The exclusive collab between"
+    },
+    {
+      "type": "text",
+      "id": "suffix",
+      "label": "Suffix text (below title)",
+      "default": "Members save 15% on the QB54 Game Set"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Pack it up. Play it anywhere — even at your next overnight stop. As seen on Shark Tank with 100M+ views, QB54's chair-football set turns every tailgate, campsite, and backyard into game day. Now exclusively 15% off for RV Overnights members."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show description",
+      "default": true
+    },
+
+    {
+      "type": "header",
+      "content": "🔗 Call to Action"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta",
+      "label": "Show button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_emoji",
+      "label": "Button emoji (optional)",
+      "default": "🏈"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "default": "Get My 15% Member Discount"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "cta_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "cta_bg",
+      "label": "Button background",
+      "default": "#A3E635"
+    },
+    {
+      "type": "color",
+      "id": "cta_hover_bg",
+      "label": "Button hover background",
+      "default": "#B5E64C"
+    },
+    {
+      "type": "color",
+      "id": "cta_text_color",
+      "label": "Button text color",
+      "default": "#0a0a0a"
+    },
+    {
+      "type": "range",
+      "id": "cta_font_size",
+      "label": "Button font size",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "cta_padding_v",
+      "label": "Button padding vertical",
+      "min": 8,
+      "max": 24,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "cta_padding_h",
+      "label": "Button padding horizontal",
+      "min": 16,
+      "max": 56,
+      "step": 2,
+      "default": 34,
+      "unit": "px"
+    },
+
+    {
+      "type": "header",
+      "content": "🎨 Colors & Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#0a0a0a"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color (prefix, badge, glow)",
+      "default": "#A3E635"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Cycling title color",
+      "default": "#A3E635"
+    },
+    {
+      "type": "checkbox",
+      "id": "title_italic",
+      "label": "Italic title",
+      "default": true,
+      "info": "Matches the 'Game Set' italic accent in QB54 branding."
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Suffix text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "desc_color",
+      "label": "Description text color",
+      "default": "#c0c0c0"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_glow",
+      "label": "Show background glow",
+      "default": true
+    },
+
+    {
+      "type": "header",
+      "content": "📐 Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_fluid_size",
+      "label": "Title fluid size (vw)",
+      "min": 6,
+      "max": 14,
+      "step": 1,
+      "default": 8,
+      "unit": "vw"
+    },
+    {
+      "type": "range",
+      "id": "title_max_size",
+      "label": "Title max size",
+      "min": 60,
+      "max": 200,
+      "step": 4,
+      "default": 132,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "title_margin",
+      "label": "Title top & bottom spacing",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 8,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "subtext_min_size",
+      "label": "Prefix / suffix min size",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "subtext_max_size",
+      "label": "Prefix / suffix max size",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "default": 28,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "desc_size",
+      "label": "Description font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "desc_max_width",
+      "label": "Description max width",
+      "min": 200,
+      "max": 600,
+      "step": 20,
+      "default": 380,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "desc_margin_bottom",
+      "label": "Space below description",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 24,
+      "unit": "px"
+    },
+
+    {
+      "type": "header",
+      "content": "📏 Layout"
+    },
+    {
+      "type": "range",
+      "id": "padding_x",
+      "label": "Horizontal padding",
+      "min": 16,
+      "max": 100,
+      "step": 4,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "left_column_width",
+      "label": "Left column width (desktop)",
+      "min": 30,
+      "max": 60,
+      "step": 2,
+      "default": 44,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "label": "Section height (desktop)",
+      "min": 400,
+      "max": 900,
+      "step": 20,
+      "default": 600,
+      "unit": "px"
+    },
+
+    {
+      "type": "header",
+      "content": "🖼️ Images"
+    },
+    {
+      "type": "range",
+      "id": "slide_radius",
+      "label": "Image border radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_brightness",
+      "label": "Image brightness",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "default": 95,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "autoplay_interval",
+      "label": "Autoplay interval",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 4,
+      "unit": "s"
+    }
+
+  ],
+
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "Leave empty to use a QB54 fallback lifestyle photo."
+        },
+        {
+          "type": "text",
+          "id": "slide_label",
+          "label": "Cycling word (shown in big title)",
+          "default": "QB54",
+          "info": "For the partnership reveal effect, alternate QB54 and RV OVERNIGHTS. The title auto-shrinks to fit any length. Uppercase only."
+        }
+      ]
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "QB54 × RVO Hero",
+      "blocks": [
+        { "type": "slide", "settings": { "slide_label": "QB54" } },
+        { "type": "slide", "settings": { "slide_label": "RV OVERNIGHTS" } }
+      ]
+    }
+  ],
+
+  "enabled_on": {
+    "templates": ["*"]
+  }
+}
+{% endschema %}

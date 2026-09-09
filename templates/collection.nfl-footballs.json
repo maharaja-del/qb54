@@ -1,0 +1,1358 @@
+{
+  "sections": {
+    "main_collection_banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "transparent_header": false,
+        "show_image": true,
+        "image_height": "650px",
+        "content_position": "md:items-end md:justify-start",
+        "text_alignment": "left",
+        "image_height_mobile": "auto",
+        "content_position_mobile": "items-end justify-start",
+        "text_alignment_mobile": "left",
+        "color_text": "#ffffff",
+        "color_background": "",
+        "gradient_background": "",
+        "color_overlay": "#1f1f1f",
+        "overlay_opacity": 60,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "divider": false,
+        "full_width": true,
+        "rounded": false,
+        "enable_parallax": true,
+        "parallax_direction": "vertical"
+      }
+    },
+    "hero": {
+      "type": "hero-collection",
+      "blocks": {
+        "badge": {
+          "type": "badge",
+          "settings": {
+            "text": "The Next Addition To Your Collection"
+          }
+        },
+        "subheading": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "The Missing Piece In Your Fan Cave",
+            "subheading_size": "subtitle-md",
+            "secondary_color": true
+          }
+        },
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Football Fandom, Made Personal",
+            "heading_size": "title-xl tracking-heading",
+            "heading_tag": "h1",
+            "highlighted_text": "text",
+            "highlighted_scribble": "circle",
+            "highlighted_reveal": false
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Official team-inspired design. Featured player name, number, and signature — on every ball.</p>",
+            "text_font": "body",
+            "text_size": "subtext-lg",
+            "secondary_color": false,
+            "highlighted_text": "none"
+          }
+        },
+        "button_primary": {
+          "type": "button",
+          "settings": {
+            "button_label": "Choose Your Team",
+            "button_link": "#shop-by-team",
+            "button_style": "primary",
+            "button_size": "lg",
+            "button_external": false,
+            "button_icon": true
+          }
+        },
+        "button_secondary": {
+          "type": "link",
+          "disabled": true,
+          "settings": {
+            "label": "Choose Your Team",
+            "link": "",
+            "external": false
+          }
+        }
+      },
+      "block_order": [
+        "badge",
+        "subheading",
+        "heading",
+        "text",
+        "button_primary",
+        "button_secondary"
+      ],
+      "settings": {
+        "transparent_header": false,
+        "image": "shopify://shop_images/ChatGPT_Image_Jul_24_2026_12_15_01_AM.png",
+        "image_height": "800px",
+        "video_url": "",
+        "video_description": "",
+        "enable_video_autoplay": true,
+        "enable_video_looping": true,
+        "image_mobile": "shopify://shop_images/ChatGPT_Image_Jul_24_2026_12_29_13_AM.png",
+        "image_height_mobile": "500px",
+        "content_position_mobile": "items-end justify-center",
+        "text_alignment_mobile": "center",
+        "content_width": "medium",
+        "content_position": "md:items-end md:justify-center",
+        "text_alignment": "center",
+        "color_text": "#ffffff",
+        "color_background": "#0a0a0a",
+        "gradient_background": "",
+        "color_highlight": "#a3e635",
+        "gradient_highlight": "",
+        "color_button_text": "#0a0a0a",
+        "color_button_background": "#a3e635",
+        "color_button_gradient": "",
+        "color_overlay": "#0a0a0a",
+        "overlay_opacity": 55,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "divider": false,
+        "full_width": true,
+        "rounded": false,
+        "enable_parallax": false,
+        "parallax_direction": "vertical"
+      }
+    },
+    "choose_your_team": {
+      "type": "team-logo-grid",
+      "blocks": {
+        "panthers": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/Carolina_Panthers_Logo.png?v=1785311202",
+            "team_name": "Carolina Panthers",
+            "accent_color": "#0085ca",
+            "player_name": "Bryce Young",
+            "player_number": "9",
+            "product": "cinncinati-bengals-9-player-football-williams-copy",
+            "link": "shopify://products/cinncinati-bengals-9-player-football-williams-copy"
+          }
+        },
+        "bears": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/Chicago_Bears_Logo.png?v=1785311202",
+            "team_name": "Chicago Bears",
+            "accent_color": "#c83803",
+            "player_name": "Caleb Williams",
+            "player_number": "18",
+            "product": "cinncinati-bengals-9-player-football-burrows-copy",
+            "link": "shopify://products/cinncinati-bengals-9-player-football-burrows-copy"
+          }
+        },
+        "bengals": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/Cinncinati_Bengals_Logo.png?v=1785311202",
+            "team_name": "Cincinnati Bengals",
+            "accent_color": "#fb4f14",
+            "player_name": "Joe Burrow",
+            "player_number": "9",
+            "product": "cleveland-browns-9-player-football-garrett-copy",
+            "link": "shopify://products/cleveland-browns-9-player-football-garrett-copy"
+          }
+        },
+        "browns": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/Cleveland_Browns_Logo.png?v=1785311203",
+            "team_name": "Cleveland Browns",
+            "accent_color": "#ff3c00",
+            "player_name": "Myles Garrett",
+            "player_number": "95",
+            "product": "dallas-cowboys-9-player-football-prescott-copy",
+            "link": "shopify://products/dallas-cowboys-9-player-football-prescott-copy"
+          }
+        },
+        "cowboys": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/Dallas_Cowboys_Logo.png?v=1785311202",
+            "team_name": "Dallas Cowboys",
+            "accent_color": "#003594",
+            "player_name": "Dak Prescott",
+            "player_number": "4",
+            "product": "denver-broncos-9-player-football",
+            "link": "shopify://products/denver-broncos-9-player-football"
+          }
+        },
+        "broncos": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/Denver_Broncos_Logo.png?v=1785311202",
+            "team_name": "Denver Broncos",
+            "accent_color": "#fb4f14",
+            "player_name": "Bo Nix",
+            "player_number": "10",
+            "product": "detroit-lions-9-player-football-goff-copy",
+            "link": "shopify://products/detroit-lions-9-player-football-goff-copy"
+          }
+        },
+        "lions": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/Detroit_Lions_Logo.png?v=1785311203",
+            "team_name": "Detroit Lions",
+            "accent_color": "#0076b6",
+            "player_name": "Jared Goff",
+            "player_number": "16",
+            "product": "green-bay-packers-9-player-football-love-copy",
+            "link": "shopify://products/green-bay-packers-9-player-football-love-copy"
+          }
+        },
+        "packers": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/Green_Bay_Packers_Logo.png?v=1785311202",
+            "team_name": "Green Bay Packers",
+            "accent_color": "#203731",
+            "player_name": "Jordan Love",
+            "player_number": "10",
+            "product": "indianapolis-colts-9-player-football-taylor-copy",
+            "link": "shopify://products/indianapolis-colts-9-player-football-taylor-copy"
+          }
+        },
+        "colts": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/Indianapolis_Colts_Logo.png?v=1785311202",
+            "team_name": "Indianapolis Colts",
+            "accent_color": "#002c5f",
+            "player_name": "Jonathan Taylor",
+            "player_number": "28",
+            "product": "jacksonville-jaguars-9-player-football-taylor",
+            "link": "shopify://products/jacksonville-jaguars-9-player-football-taylor"
+          }
+        },
+        "jaguars": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/Jacksonville_Jaguars_Logo.png?v=1785311202",
+            "team_name": "Jacksonville Jaguars",
+            "accent_color": "#00a5b5",
+            "player_name": "Trevor Lawrence",
+            "player_number": "16",
+            "product": "kansas-city-chiefs-9-player-football-mahomes-copy",
+            "link": "shopify://products/kansas-city-chiefs-9-player-football-mahomes-copy"
+          }
+        },
+        "chiefs": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/Kansas_City_Chiefs_Logo.png?v=1785311203",
+            "team_name": "Kansas City Chiefs",
+            "accent_color": "#e31837",
+            "player_name": "Patrick Mahomes",
+            "player_number": "15",
+            "product": "oakland-raiders-9-player-football-copy",
+            "link": "shopify://products/oakland-raiders-9-player-football-copy"
+          }
+        },
+        "raiders": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/Las_Vegas_Raiders_Logo.png?v=1785311202",
+            "team_name": "Las Vegas Raiders",
+            "accent_color": "#000000",
+            "player_name": "Brock Bowers",
+            "player_number": "89",
+            "product": "miami-dolphins-9-player-football-copy",
+            "link": "shopify://products/miami-dolphins-9-player-football-copy"
+          }
+        },
+        "dolphins": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/Miami_Dolphins_Logo.png?v=1785311203",
+            "team_name": "Miami Dolphins",
+            "accent_color": "#008e97",
+            "player_name": "Tua Tagovailoa",
+            "player_number": "1",
+            "product": "new-england-patriots-9-player-football-copy",
+            "link": "shopify://products/new-england-patriots-9-player-football-copy"
+          }
+        },
+        "patriots": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/New_England_Patriots_Logo.png?v=1785311202",
+            "team_name": "New England Patriots",
+            "accent_color": "#c60c30",
+            "player_name": "Drake Maye",
+            "player_number": "10",
+            "product": "philadelphia-eagles-9-player-football-copy",
+            "link": "shopify://products/philadelphia-eagles-9-player-football-copy"
+          }
+        },
+        "eagles": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/Philadelphia_Eagles_Logo.png?v=1785311202",
+            "team_name": "Philadelphia Eagles",
+            "accent_color": "#004c54",
+            "player_name": "Jalen Hurts",
+            "player_number": "1",
+            "product": "san-francisco-49ers-9-player-football-copy",
+            "link": "shopify://products/san-francisco-49ers-9-player-football-copy"
+          }
+        },
+        "forty_niners": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/San_Francisco_49ers_logo.png?v=1785311202",
+            "team_name": "San Francisco 49ers",
+            "accent_color": "#aa0000",
+            "player_name": "Brock Purdy",
+            "player_number": "13",
+            "product": "tampa-bay-buccaneers-9-player-football-copy",
+            "link": "shopify://products/tampa-bay-buccaneers-9-player-football-copy"
+          }
+        },
+        "buccaneers": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/Tampa_Bay_Buccaneers_Logo.png?v=1785311202",
+            "team_name": "Tampa Bay Buccaneers",
+            "accent_color": "#d50a0a",
+            "player_name": "Baker Mayfield",
+            "player_number": "6",
+            "product": "buffalo-bills-9-player-football-copy",
+            "link": "shopify://products/buffalo-bills-9-player-football-copy"
+          }
+        },
+        "bills": {
+          "type": "team",
+          "settings": {
+            "logo_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/Buffalo_Bills_Logo.png?v=1785311202",
+            "team_name": "Buffalo Bills",
+            "accent_color": "#00338d",
+            "player_name": "Josh Allen",
+            "player_number": "17",
+            "product": "buffalo-bills-player-football",
+            "link": "shopify://products/buffalo-bills-player-football"
+          }
+        }
+      },
+      "block_order": [
+        "panthers",
+        "bears",
+        "bengals",
+        "browns",
+        "cowboys",
+        "broncos",
+        "lions",
+        "packers",
+        "colts",
+        "jaguars",
+        "chiefs",
+        "raiders",
+        "dolphins",
+        "patriots",
+        "eagles",
+        "forty_niners",
+        "buccaneers",
+        "bills"
+      ],
+      "settings": {
+        "heading": "Choose Your Team",
+        "heading_size": "title-md",
+        "heading_alignment": "text-center md:items-center",
+        "heading_tag": "h2",
+        "subheading": "Find Your Featured Player",
+        "description": "<p>Pick your favorite team to see its featured player football and add it to your cart.</p>",
+        "columns_desktop": 6,
+        "columns_mobile": "3",
+        "color_text": "#171717",
+        "color_background": "#f4f2e8",
+        "gradient_background": "",
+        "color_highlight": "#f59e0b",
+        "color_button_text": "#ffffff",
+        "color_button_background": "#363a66",
+        "gradient_highlight": "",
+        "color_button_gradient": "",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "divider": false,
+        "full_width": false,
+        "rounded": false
+      }
+    },
+    "featured_grid": {
+      "type": "main-collection",
+      "blocks": {
+        "description": {
+          "type": "description",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "description"
+      ],
+      "settings": {
+        "products_per_page": 24,
+        "columns": 4,
+        "columns_mobile": "2",
+        "pagination": "click",
+        "enable_filtering": true,
+        "filter_type": "drawer",
+        "filter_collapsed": false,
+        "filter_color_swatches": false,
+        "enable_sorting": true,
+        "show_on_model": false,
+        "buttons_style": "secondary",
+        "padding_top": 32,
+        "padding_bottom": 64,
+        "divider": false,
+        "full_width": false,
+        "rounded": false
+      }
+    },
+    "why_these_footballs": {
+      "type": "multicolumn-with-icons",
+      "blocks": {
+        "col_1": {
+          "type": "column",
+          "settings": {
+            "icon": "shield",
+            "custom_icon": "",
+            "heading": "Official Team Design",
+            "text": "<p>Team-inspired colors and details on every ball.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "col_2": {
+          "type": "column",
+          "settings": {
+            "icon": "star",
+            "custom_icon": "",
+            "heading": "Featured Player",
+            "text": "<p>Each ball highlights a featured player's name and number.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "col_3": {
+          "type": "column",
+          "settings": {
+            "icon": "lightning",
+            "custom_icon": "",
+            "heading": "Built To Play",
+            "text": "<p>Made to take real snaps with your QB54 set, not just sit on a shelf.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "col_4": {
+          "type": "column",
+          "settings": {
+            "icon": "gift",
+            "custom_icon": "",
+            "heading": "Perfect Gift",
+            "text": "<p>Gift-ready for the fan in your life.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "col_5": {
+          "type": "column",
+          "settings": {
+            "icon": "trophy",
+            "custom_icon": "",
+            "heading": "Built For Game Day",
+            "text": "<p>Sized and balanced to work with every QB54 set.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "col_6": {
+          "type": "column",
+          "settings": {
+            "icon": "chat_bubble",
+            "custom_icon": "",
+            "heading": "Conversation Starter",
+            "text": "<p>A fan-cave centerpiece people notice.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        }
+      },
+      "block_order": [
+        "col_1",
+        "col_2",
+        "col_3",
+        "col_4",
+        "col_5",
+        "col_6"
+      ],
+      "settings": {
+        "style": "with-border",
+        "columns": 3,
+        "text_alignment": "left",
+        "heading": "Why These Footballs",
+        "heading_size": "title-md",
+        "heading_alignment": "text-center md:items-center",
+        "heading_tag": "h2",
+        "subheading": "",
+        "description": "",
+        "button_label": "",
+        "button_link": "",
+        "button_external": false,
+        "button_icon": true,
+        "highlighted_text": "none",
+        "highlighted_scribble": "circle",
+        "highlighted_reveal": false,
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "divider": false,
+        "full_width": false,
+        "rounded": false
+      }
+    },
+    "featured_collection_banner": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Built For Fans",
+            "heading_size": "title-lg tracking-heading",
+            "heading_tag": "h2",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle",
+            "highlighted_reveal": false
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Every football in the collection is individually designed around a team and a featured player — the same size as your traditional QB54 football, and just as ready for game day.</p>",
+            "text_font": "body",
+            "text_size": "subtext-lg",
+            "text_max_size": 32,
+            "text_line_height": 1.6,
+            "text_letter_spacing": 0,
+            "text_capitalize": false,
+            "secondary_color": false,
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "button_label": "Choose Your Team",
+            "button_link": "#shop-by-team",
+            "button_style": "primary",
+            "button_size": "md",
+            "button_external": false,
+            "button_icon": true
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "text",
+        "button"
+      ],
+      "settings": {
+        "image": "shopify://shop_images/ChatGPT_Image_Jul_24_2026_12_43_39_AM.png",
+        "image_height": "650px",
+        "image_width": "medium",
+        "layout": "image_first",
+        "text_alignment": "left",
+        "content_position": "align-self-center",
+        "image_height_mobile": "auto",
+        "text_alignment_mobile": "left",
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_background_2": "",
+        "gradient_background_2": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "divider": false,
+        "full_width": false,
+        "rounded": false,
+        "enable_parallax": true,
+        "parallax_direction": "vertical"
+      }
+    },
+    "product_carousel": {
+      "type": "featured-collection",
+      "settings": {
+        "collection": "nfl-football",
+        "products": [],
+        "product_limit": 10,
+        "columns": 4,
+        "carousel_on_desktop": true,
+        "show_view_all": false,
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "heading": "Game Day Ready",
+        "heading_size": "title-md",
+        "heading_alignment": "text-left md:items-end md:flex-row",
+        "heading_tag": "h2",
+        "subheading": "Fan favorites, ready to ship",
+        "description": "",
+        "highlighted_text": "none",
+        "highlighted_scribble": "circle",
+        "highlighted_reveal": false,
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "divider": false,
+        "full_width": false,
+        "rounded": false
+      }
+    },
+    "gift_section": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Perfect Gift For NFL Fans",
+            "heading_size": "title-lg tracking-heading",
+            "heading_tag": "h2",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle",
+            "highlighted_reveal": false
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Give the fan in your life something they'll actually display. Every football arrives gift-ready.</p>",
+            "text_font": "body",
+            "text_size": "subtext-lg",
+            "text_max_size": 32,
+            "text_line_height": 1.6,
+            "text_letter_spacing": 0,
+            "text_capitalize": false,
+            "secondary_color": false,
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "button_label": "Choose Their Team",
+            "button_link": "#shop-by-team",
+            "button_style": "primary",
+            "button_size": "md",
+            "button_external": false,
+            "button_icon": true
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "text",
+        "button"
+      ],
+      "settings": {
+        "image": "shopify://shop_images/ChatGPT_Image_Jul_24_2026_12_48_36_AM.png",
+        "image_height": "650px",
+        "image_width": "medium",
+        "layout": "text_first",
+        "text_alignment": "left",
+        "content_position": "align-self-center",
+        "image_mobile": "shopify://shop_images/ChatGPT_Image_Jul_24_2026_12_48_36_AM.png",
+        "image_height_mobile": "auto",
+        "text_alignment_mobile": "left",
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_background_2": "",
+        "gradient_background_2": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "divider": false,
+        "full_width": false,
+        "rounded": false,
+        "enable_parallax": true,
+        "parallax_direction": "vertical"
+      }
+    },
+    "image_gallery": {
+      "type": "collage-grid",
+      "blocks": {
+        "img_1": {
+          "type": "image",
+          "settings": {
+            "column_size": 2,
+            "row_size": 2,
+            "subheading": "",
+            "heading": "",
+            "link": "",
+            "invert_subheading_heading": false,
+            "content_position": "md:items-end md:justify-start",
+            "text_alignment": "left",
+            "content_position_mobile": "items-end justify-start",
+            "text_alignment_mobile": "left",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle",
+            "color_text": "#ffffff",
+            "color_highlight": "",
+            "gradient_highlight": "",
+            "color_overlay": "#171717",
+            "overlay_opacity": 10,
+            "color_text_hover": "",
+            "color_highlight_hover": "",
+            "gradient_highlight_hover": "",
+            "color_overlay_hover": "",
+            "overlay_opacity_hover": 10
+          }
+        },
+        "img_2": {
+          "type": "image",
+          "settings": {
+            "column_size": 1,
+            "row_size": 1,
+            "subheading": "",
+            "heading": "",
+            "link": "",
+            "invert_subheading_heading": false,
+            "content_position": "md:items-end md:justify-start",
+            "text_alignment": "left",
+            "content_position_mobile": "items-end justify-start",
+            "text_alignment_mobile": "left",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle",
+            "color_text": "#ffffff",
+            "color_highlight": "",
+            "gradient_highlight": "",
+            "color_overlay": "#171717",
+            "overlay_opacity": 10,
+            "color_text_hover": "",
+            "color_highlight_hover": "",
+            "gradient_highlight_hover": "",
+            "color_overlay_hover": "",
+            "overlay_opacity_hover": 10
+          }
+        },
+        "img_3": {
+          "type": "image",
+          "settings": {
+            "column_size": 1,
+            "row_size": 1,
+            "subheading": "",
+            "heading": "",
+            "link": "",
+            "invert_subheading_heading": false,
+            "content_position": "md:items-end md:justify-start",
+            "text_alignment": "left",
+            "content_position_mobile": "items-end justify-start",
+            "text_alignment_mobile": "left",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle",
+            "color_text": "#ffffff",
+            "color_highlight": "",
+            "gradient_highlight": "",
+            "color_overlay": "#171717",
+            "overlay_opacity": 10,
+            "color_text_hover": "",
+            "color_highlight_hover": "",
+            "gradient_highlight_hover": "",
+            "color_overlay_hover": "",
+            "overlay_opacity_hover": 10
+          }
+        },
+        "img_4": {
+          "type": "image",
+          "settings": {
+            "column_size": 2,
+            "row_size": 1,
+            "subheading": "",
+            "heading": "",
+            "link": "",
+            "invert_subheading_heading": false,
+            "content_position": "md:items-end md:justify-start",
+            "text_alignment": "left",
+            "content_position_mobile": "items-end justify-start",
+            "text_alignment_mobile": "left",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle",
+            "color_text": "#ffffff",
+            "color_highlight": "",
+            "gradient_highlight": "",
+            "color_overlay": "#171717",
+            "overlay_opacity": 10,
+            "color_text_hover": "",
+            "color_highlight_hover": "",
+            "gradient_highlight_hover": "",
+            "color_overlay_hover": "",
+            "overlay_opacity_hover": 10
+          }
+        }
+      },
+      "block_order": [
+        "img_1",
+        "img_2",
+        "img_3",
+        "img_4"
+      ],
+      "disabled": true,
+      "settings": {
+        "grid_columns": "10",
+        "row_height": 300,
+        "row_height_mobile": 150,
+        "heading": "Display Your Team Pride",
+        "heading_size": "title-md",
+        "heading_alignment": "text-left md:items-end md:flex-row",
+        "heading_tag": "h2",
+        "subheading": "",
+        "description": "<p>Share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>",
+        "button_label": "",
+        "button_link": "",
+        "button_external": false,
+        "button_icon": true,
+        "highlighted_text": "none",
+        "highlighted_scribble": "circle",
+        "highlighted_reveal": false,
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "divider": false,
+        "full_width": false,
+        "rounded": false,
+        "enable_parallax": true
+      }
+    },
+    "product_comparison": {
+      "type": "product-comparison",
+      "blocks": {
+        "regular_football": {
+          "type": "product",
+          "settings": {
+            "product": "chicago-bears-9-throwback-football-vintage-logo",
+            "heading_1": "Player Signature",
+            "value_1": "<p>false</p>",
+            "heading_2": "Team Logo",
+            "value_2": "<p>false</p>",
+            "heading_3": "Display Ready",
+            "value_3": "<p>false</p>",
+            "heading_4": "Gift Worthy",
+            "value_4": "<p>false</p>",
+            "heading_5": "Collectible",
+            "value_5": "<p>false</p>",
+            "heading_6": "Premium Finish",
+            "value_6": "<p>false</p>",
+            "heading_7": "",
+            "value_7": "",
+            "heading_8": "",
+            "value_8": "",
+            "heading_9": "",
+            "value_9": "",
+            "heading_10": "",
+            "value_10": "",
+            "heading_11": "",
+            "value_11": "",
+            "heading_12": "",
+            "value_12": "",
+            "heading_13": "",
+            "value_13": "",
+            "heading_14": "",
+            "value_14": "",
+            "heading_15": "",
+            "value_15": "",
+            "heading_16": "",
+            "value_16": "",
+            "heading_17": "",
+            "value_17": "",
+            "heading_18": "",
+            "value_18": "",
+            "heading_19": "",
+            "value_19": "",
+            "heading_20": "",
+            "value_20": "",
+            "heading_21": "",
+            "value_21": "",
+            "heading_22": "",
+            "value_22": "",
+            "heading_23": "",
+            "value_23": "",
+            "heading_24": "",
+            "value_24": "",
+            "heading_25": "",
+            "value_25": "",
+            "text_size": "text-sm"
+          }
+        },
+        "qb54_football": {
+          "type": "product",
+          "settings": {
+            "product": "",
+            "heading_1": "Player Signature",
+            "value_1": "<p>true</p>",
+            "heading_2": "Team Logo",
+            "value_2": "<p>true</p>",
+            "heading_3": "Display Ready",
+            "value_3": "<p>true</p>",
+            "heading_4": "Gift Worthy",
+            "value_4": "<p>true</p>",
+            "heading_5": "Collectible",
+            "value_5": "<p>true</p>",
+            "heading_6": "Premium Finish",
+            "value_6": "<p>true</p>",
+            "heading_7": "",
+            "value_7": "",
+            "heading_8": "",
+            "value_8": "",
+            "heading_9": "",
+            "value_9": "",
+            "heading_10": "",
+            "value_10": "",
+            "heading_11": "",
+            "value_11": "",
+            "heading_12": "",
+            "value_12": "",
+            "heading_13": "",
+            "value_13": "",
+            "heading_14": "",
+            "value_14": "",
+            "heading_15": "",
+            "value_15": "",
+            "heading_16": "",
+            "value_16": "",
+            "heading_17": "",
+            "value_17": "",
+            "heading_18": "",
+            "value_18": "",
+            "heading_19": "",
+            "value_19": "",
+            "heading_20": "",
+            "value_20": "",
+            "heading_21": "",
+            "value_21": "",
+            "heading_22": "",
+            "value_22": "",
+            "heading_23": "",
+            "value_23": "",
+            "heading_24": "",
+            "value_24": "",
+            "heading_25": "",
+            "value_25": "",
+            "text_size": "text-sm"
+          }
+        }
+      },
+      "block_order": [
+        "regular_football",
+        "qb54_football"
+      ],
+      "disabled": true,
+      "settings": {
+        "highlight_differences": true,
+        "sticky_product_info": true,
+        "first_available_variant": true,
+        "show_vendor": true,
+        "show_price": true,
+        "heading": "See The Difference",
+        "heading_size": "title-md",
+        "heading_alignment": "text-center md:items-center",
+        "heading_tag": "h2",
+        "subheading": "",
+        "description": "",
+        "button_label": "",
+        "button_link": "",
+        "button_external": false,
+        "button_icon": true,
+        "highlighted_text": "none",
+        "highlighted_scribble": "circle",
+        "highlighted_reveal": false,
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "divider": false,
+        "full_width": true,
+        "rounded": false
+      }
+    },
+    "testimonials": {
+      "type": "testimonial-reviews-section",
+      "blocks": {
+        "review_1": {
+          "type": "review",
+          "settings": {
+            "review_text": "The signature looks incredible, and the football arrived in perfect condition.",
+            "reviewer_name": "Marcus T",
+            "verified_text": "Verified Buyer"
+          }
+        },
+        "review_2": {
+          "type": "review",
+          "settings": {
+            "review_text": "A fantastic collectible and an amazing gift for any football fan.",
+            "reviewer_name": "Daniel R",
+            "verified_text": "Verified Buyer"
+          }
+        },
+        "review_3": {
+          "type": "review",
+          "settings": {
+            "review_text": "Great quality, fast delivery, and even better than the photos.",
+            "reviewer_name": "Chris M",
+            "verified_text": "Verified Buyer"
+          }
+        }
+      },
+      "block_order": [
+        "review_1",
+        "review_2",
+        "review_3"
+      ],
+      "settings": {
+        "section_padding": 80,
+        "desktop_columns": 3,
+        "grid_gap": 24,
+        "hero_bottom_margin": 80,
+        "header_bottom_margin": 48,
+        "section_bg": "#1a1a1a",
+        "hero_text_color": "#ffffff",
+        "hero_highlight_color": "#9aff00",
+        "eyebrow_color": "#9aff00",
+        "main_heading_color": "#ffffff",
+        "card_bg": "#2a2a2a",
+        "card_border_color": "#3a3a3a",
+        "star_color": "#9aff00",
+        "review_text_color": "#ffffff",
+        "reviewer_name_color": "#ffffff",
+        "verified_text_color": "#888888",
+        "hero_font_size": 48,
+        "mobile_hero_font_size": 32,
+        "eyebrow_font_size": 12,
+        "main_heading_font_size": 42,
+        "mobile_main_heading_font_size": 24,
+        "review_text_size": 16,
+        "card_padding": 32,
+        "card_border_radius": 8,
+        "show_hero_text": true,
+        "hero_line_1": "Thousands of Fans, One Collection",
+        "hero_line_2_before": "",
+        "hero_line_2_highlight": "󠀮󠀩󠀮󠁕SEE WHAT THEY'RE SAYING",
+        "hero_line_2_after": ".",
+        "eyebrow_text": "WALL OF HYPE",
+        "main_heading": "Hundreds of 5-Star Reviews",
+        "enable_mobile_slider": true
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "title": "What's included with each NFL Player football?",
+            "text": "<p>Every football in this NFL Player Collection features a team-inspired design, the team logo, a featured player's name and number, and their signature. Our standard QB54 football carries the QB54 logo only.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "title": "Are these footballs meant for display or for play?",
+            "text": "<p>Both. Each NFL Player football is the same size as our traditional QB54 football and is fully game-ready — perfect for play with your QB54 set. It also looks great on display in your fan cave.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "title": "Do you add new teams and players over time?",
+            "text": "<p>Yes — check back as we continue adding to the collection.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "q4": {
+          "type": "question",
+          "settings": {
+            "title": "Are these a good gift?",
+            "text": "<p>Every football arrives gift-ready, making it an easy pick for the NFL fan in your life.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4"
+      ],
+      "settings": {
+        "style": "with-border",
+        "heading": "Frequently Asked Questions",
+        "heading_size": "title-md",
+        "heading_alignment": "text-left md:items-end md:flex-row",
+        "heading_tag": "h2",
+        "subheading": "",
+        "description": "",
+        "button_label": "",
+        "button_link": "",
+        "button_external": false,
+        "button_icon": true,
+        "highlighted_text": "none",
+        "highlighted_scribble": "circle",
+        "highlighted_reveal": false,
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "color_overlay": "#ffffff",
+        "overlay_opacity": 4,
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "divider": false,
+        "narrow": true,
+        "rounded": false
+      }
+    },
+    "featured_products": {
+      "type": "featured-collection",
+      "settings": {
+        "collection": "nfl-football",
+        "products": [],
+        "product_limit": 6,
+        "columns": 3,
+        "carousel_on_desktop": false,
+        "show_view_all": false,
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "heading": "Staff Picks",
+        "heading_size": "title-md",
+        "heading_alignment": "text-left md:items-end md:flex-row",
+        "heading_tag": "h2",
+        "subheading": "",
+        "description": "",
+        "highlighted_text": "none",
+        "highlighted_scribble": "circle",
+        "highlighted_reveal": false,
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "divider": false,
+        "full_width": false,
+        "rounded": false
+      }
+    },
+    "recently_viewed": {
+      "type": "recently-viewed",
+      "settings": {
+        "product_limit": 8,
+        "columns": 4,
+        "carousel_on_desktop": true,
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "heading": "Recently Viewed",
+        "heading_size": "title-md",
+        "heading_alignment": "text-left md:items-end md:flex-row",
+        "heading_tag": "h2",
+        "subheading": "",
+        "description": "",
+        "highlighted_text": "none",
+        "highlighted_scribble": "circle",
+        "highlighted_reveal": false,
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "divider": false,
+        "full_width": false,
+        "rounded": false
+      }
+    },
+    "instagram_ugc": {
+      "type": "shop-the-feed",
+      "disabled": true,
+      "settings": {
+        "columns": 5,
+        "carousel_on_desktop": true,
+        "image_ratio": "portrait",
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "account_name": "@Concept",
+        "show_vendor": false,
+        "show_price": true,
+        "heading": "Tag Us In Your Fan Cave",
+        "heading_size": "title-md",
+        "heading_alignment": "text-left md:items-end md:flex-row",
+        "heading_tag": "h2",
+        "subheading": "",
+        "description": "<p>Discover premium audio from our Instagram and shop now.</p>",
+        "button_label": "Follow",
+        "button_link": "",
+        "button_external": false,
+        "button_icon": false,
+        "highlighted_text": "none",
+        "highlighted_scribble": "circle",
+        "highlighted_reveal": false,
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "padding_top": 80,
+        "padding_bottom": 100,
+        "divider": false,
+        "full_width": false,
+        "rounded": false
+      }
+    },
+    "final_cta": {
+      "type": "image-with-text-overlay",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Display Your Team Pride",
+            "heading_size": "title-xl tracking-heading",
+            "heading_tag": "h2",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle",
+            "highlighted_reveal": false
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "button_label": "Choose Your Team",
+            "button_link": "#shop-by-team",
+            "button_style": "primary",
+            "button_size": "lg",
+            "button_external": false,
+            "button_icon": true
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "button"
+      ],
+      "settings": {
+        "transparent_header": false,
+        "image": "shopify://shop_images/ChatGPT_Image_Jul_24_2026_12_15_01_AM.png",
+        "image_height": "650px",
+        "content_width": "medium",
+        "content_position": "md:items-center md:justify-center",
+        "text_alignment": "center",
+        "image_height_mobile": "auto",
+        "content_position_mobile": "items-end justify-start",
+        "text_alignment_mobile": "left",
+        "color_text": "#ffffff",
+        "color_background": "",
+        "gradient_background": "",
+        "color_highlight": "#e0a580",
+        "gradient_highlight": "",
+        "color_button_text": "#171717",
+        "color_button_background": "#ffffff",
+        "color_button_gradient": "",
+        "color_overlay": "#0a0a0a",
+        "overlay_opacity": 55,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "divider": false,
+        "full_width": true,
+        "rounded": false,
+        "enable_parallax": true,
+        "parallax_direction": "vertical"
+      }
+    }
+  },
+  "order": [
+    "main_collection_banner",
+    "hero",
+    "choose_your_team",
+    "featured_grid",
+    "why_these_footballs",
+    "featured_collection_banner",
+    "product_carousel",
+    "gift_section",
+    "image_gallery",
+    "product_comparison",
+    "testimonials",
+    "faq",
+    "featured_products",
+    "recently_viewed",
+    "instagram_ugc",
+    "final_cta"
+  ]
+}

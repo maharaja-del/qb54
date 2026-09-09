@@ -1,0 +1,107 @@
+{%- doc -%}
+  Renders gift wrapping selector (checkbox/switch/radio) for cart line items.
+
+  Manages gift wrap preferences and quantities in cart attributes.
+
+  @param {object} gift_wrap_variant - The gift wrap product variant object
+  @param {object} line_item - Cart line item object that can be gift wrapped
+  @param {object} gift_line_item - Gift line item
+  @param {string} section_id - Section identifier for unique field IDs
+  @param {string} context - Rendering context, affects UI behavior (e.g., 'drawer' for cart drawer)
+
+  @example
+  {% render 'gift-wrap-item',
+    gift_wrap_variant: product.first_available_variant,
+    line_item: item,
+    gift_line_item: gift_line_item,
+    section_id: section.id,
+    context: 'drawer'
+  %}
+{%- enddoc -%}
+
+{%- liquid
+  assign gift_wrap_attribute = 'cart.gift_wrapping.attributes.gift_wrap' | t
+  assign boolean_true = 'cart.gift_wrapping.boolean.true' | t
+  assign boolean_false = 'cart.gift_wrapping.boolean.false' | t
+-%}
+{%- capture gift_wrap_selector -%}
+  {%- case settings.gift_wrap_per_product_type -%}
+    {%- when 'checkbox' -%}
+      <input id="GiftWrap-{{ line_item.index | plus: 1 }}" name="gift-wrap-{{ line_item.index | plus: 1 }}" type="checkbox" value="{{ boolean_true | escape }}"{% if line_item.properties[gift_wrap_attribute] == boolean_true %} checked{% endif %}>
+
+    {%- when 'switch' -%}
+      <input class="switch" id="GiftWrap-{{ line_item.index | plus: 1 }}" name="gift-wrap-{{ line_item.index | plus: 1 }}" type="checkbox" value="{{ boolean_true | escape }}"{% if line_item.properties[gift_wrap_attribute] == boolean_true %} checked{% endif %}>
+
+    {%- when 'radio' -%}
+      <div class="flex items-center gap-2d5 text-xs text-opacity leading-tight">
+        <label for="GiftWrapNo-{{ line_item.index | plus: 1 }}" class="inline-flex items-center gap-1d5">
+          <input
+            type="radio"
+            id="GiftWrapNo-{{ line_item.index | plus: 1 }}"
+            name="gift-wrap-{{ line_item.index | plus: 1 }}"
+            value="{{ boolean_false | escape }}"
+            {% unless line_item.properties[gift_wrap_attribute] == boolean_true %}checked{% endunless %}
+          />
+          {{- boolean_false -}}
+        </label>
+        <label for="GiftWrap-{{ line_item.index | plus: 1 }}" class="inline-flex items-center gap-1d5">
+          <input
+            type="radio"
+            id="GiftWrap-{{ line_item.index | plus: 1 }}"
+            name="gift-wrap-{{ line_item.index | plus: 1 }}"
+            value="{{ boolean_true | escape }}"
+            {% if line_item.properties[gift_wrap_attribute] == boolean_true %}checked{% endif %}
+          />
+          {{- boolean_true -}}
+        </label>
+      </div>
+  {%- endcase -%}
+{%- endcapture -%}
+<gift-wrap-item class="cart-quantity__info flex flex-wrap items-center{% if settings.gift_wrap_per_product_type == 'radio' %} gap-4{% else %} gap-2{% endif %}"
+  data-gift-wrap-id="{{ gift_wrap_variant.id }}"
+  {% if gift_line_item %}data-gift-item-index="{{ gift_line_item.index | plus: 1 }}"{% endif %}
+  data-line-item-index="{{ line_item.index | plus: 1 }}"
+  data-section-id="{{ section_id }}"
+>
+  <script type="application/json" data-line-item>{{ line_item | json }}</script>
+  {%- if gift_line_item -%}
+    <script type="application/json" data-gift-item>{{ gift_line_item | json }}</script>
+  {%- endif -%}
+  {%- liquid
+    if settings.gift_wrap_per_product_type == 'checkbox'
+      echo gift_wrap_selector
+    endif
+  -%}
+  <div class="flex items-center gap-1 text-xs text-opacity leading-tight">
+    {%- if settings.gift_wrap_per_product_type == 'radio' -%}
+      {{- 'cart.gift_wrapping.gift_wrapping_label' | t -}}
+    {%- else -%}
+      <label for="GiftWrap-{{ line_item.index | plus: 1 }}">{{ 'cart.gift_wrapping.gift_wrapping_label' | t }}</label>
+    {%- endif -%}
+
+    {%- if settings.gift_wrap_per_product_message != blank -%}
+      {%- if context == 'drawer' -%}
+        <button type="button" class="flex items-center justify-center relative cursor-pointer" aria-controls="GiftWrapInfo-{{ section_id }}" aria-expanded="false">
+          {%- render 'icon', icon: 'info', size: 'xs' -%}
+        </button>
+      {%- else -%}
+        <hover-element class="hotspot hidden md:flex items-center justify-center relative cursor-pointer">
+          {%- render 'icon', icon: 'info', size: 'xs' -%}
+          <div class="hotspot__content absolute z-1 pointer-events-none cursor-default">
+            <div class="rte text-sm leading-tight grid gap-2 md:gap-3 text-left">
+              {{- settings.gift_wrap_per_product_message -}}
+            </div>
+          </div>
+        </hover-element>
+        <button type="button" class="flex md:hidden items-center justify-center relative cursor-pointer" aria-controls="GiftWrapInfo-{{ section_id }}" aria-expanded="false">
+          {%- render 'icon', icon: 'info', size: 'xs' -%}
+        </button>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+  {%- liquid
+    if settings.gift_wrap_per_product_type != 'checkbox'
+      echo gift_wrap_selector
+    endif
+  -%}
+</gift-wrap-item>

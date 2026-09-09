@@ -1,0 +1,195 @@
+{% comment %} QB54 × @germanpackerscave — Collab Story / Partnership Section {% endcomment %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  #gpc-story-{{ section.id }} {
+    --qb: {{ section.settings.color_qb }};
+    --gpc: {{ section.settings.color_gpc }};
+    padding: 88px 0;
+    background: {{ section.settings.color_bg }};
+    border-top: 1px solid rgba(255,182,18,.1);
+    font-family: 'Sora', sans-serif;
+    overflow: hidden;
+  }
+  #gpc-story-{{ section.id }} .st-inner {
+    max-width: 1180px; margin: 0 auto; padding: 0 48px;
+    display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(40px,5vw,80px);
+    align-items: center;
+  }
+
+  /* ─── Media side ─── */
+  #gpc-story-{{ section.id }} .st-media { position: relative; }
+  #gpc-story-{{ section.id }} .st-frame {
+    position: relative; border-radius: 20px; overflow: hidden;
+    aspect-ratio: 4/5; background: #111;
+    border: 1px solid rgba(255,255,255,.08);
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,.8);
+  }
+  #gpc-story-{{ section.id }} .st-frame img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  #gpc-story-{{ section.id }} .st-frame .ph {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: rgba(255,255,255,.25);
+    background: repeating-linear-gradient(45deg,#141714,#141714 12px,#181c18 12px,#181c18 24px);
+  }
+  #gpc-story-{{ section.id }} .st-frame::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(to top, rgba(10,14,10,.55) 0%, transparent 40%);
+  }
+  #gpc-story-{{ section.id }} .st-tag {
+    position: absolute; left: 18px; bottom: 18px; z-index: 2;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(10,14,10,.7); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,182,18,.3); border-radius: 100px;
+    padding: 8px 16px; font-size: .62rem; letter-spacing: .14em;
+    text-transform: uppercase; color: #fff;
+  }
+  #gpc-story-{{ section.id }} .st-tag b { color: var(--gpc); }
+  /* Flag chip top-right */
+  #gpc-story-{{ section.id }} .st-flag {
+    position: absolute; top: 16px; right: 16px; z-index: 2;
+    font-size: 1.6rem; line-height: 1;
+    background: rgba(10,14,10,.6); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.12); border-radius: 10px;
+    padding: 8px 12px;
+  }
+
+  /* ─── Copy side ─── */
+  #gpc-story-{{ section.id }} .st-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: .6rem; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--gpc); margin-bottom: 18px;
+  }
+  #gpc-story-{{ section.id }} .st-eyebrow::before { content: ''; width: 26px; height: 1px; background: var(--gpc); opacity: .6; }
+  #gpc-story-{{ section.id }} .st-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(38px,5vw,68px); line-height: .94; color: #fff; margin: 0 0 22px;
+  }
+  #gpc-story-{{ section.id }} .st-title span {
+    -webkit-text-fill-color: transparent;
+    background: linear-gradient(90deg, var(--qb), var(--gpc));
+    -webkit-background-clip: text; background-clip: text;
+  }
+  #gpc-story-{{ section.id }} .st-body {
+    font-size: .92rem; font-weight: 300; color: rgba(255,255,255,.78);
+    line-height: 1.85; margin-bottom: 30px;
+  }
+  #gpc-story-{{ section.id }} .st-body p { margin: 0 0 16px; }
+  #gpc-story-{{ section.id }} .st-body b { color: #fff; font-weight: 600; }
+
+  /* Stats strip */
+  #gpc-story-{{ section.id }} .st-stats {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 32px;
+  }
+  #gpc-story-{{ section.id }} .st-stat {
+    padding: 18px 16px; border-radius: 12px;
+    background: {{ section.settings.color_surface }};
+    border: 1px solid rgba(255,255,255,.07);
+  }
+  #gpc-story-{{ section.id }} .st-stat .n {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2rem; line-height: 1; margin-bottom: 4px; color: var(--qb);
+  }
+  #gpc-story-{{ section.id }} .st-stat:nth-child(2) .n { color: var(--gpc); }
+  #gpc-story-{{ section.id }} .st-stat .l {
+    font-size: .56rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.5);
+  }
+
+  #gpc-story-{{ section.id }} .st-cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--qb); color: #000;
+    font-weight: 800; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+    text-decoration: none; padding: 15px 32px; border-radius: 4px;
+    transition: transform .2s, box-shadow .3s;
+  }
+  #gpc-story-{{ section.id }} .st-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(185,249,0,.3); }
+
+  @media(max-width:860px){
+    #gpc-story-{{ section.id }} .st-inner { grid-template-columns: 1fr; gap: 40px; }
+    #gpc-story-{{ section.id }} .st-media { max-width: 460px; margin: 0 auto; width: 100%; }
+  }
+  @media(max-width:640px){
+    #gpc-story-{{ section.id }} { padding: 60px 0; }
+    #gpc-story-{{ section.id }} .st-inner { padding: 0 20px; }
+    #gpc-story-{{ section.id }} .st-stats { grid-template-columns: 1fr 1fr; }
+    #gpc-story-{{ section.id }} .st-cta { width: 100%; justify-content: center; }
+  }
+</style>
+
+<section id="gpc-story-{{ section.id }}">
+  <div class="st-inner">
+
+    <div class="st-media">
+      <div class="st-frame">
+        {%- if section.settings.image != blank -%}
+          <img src="{{ section.settings.image | image_url: width: 900 }}" alt="{{ section.settings.image_tag | escape }}" loading="lazy">
+        {%- else -%}
+          <div class="ph">Add creator photo</div>
+        {%- endif -%}
+        {%- if section.settings.flag != blank -%}<div class="st-flag">{{ section.settings.flag }}</div>{%- endif -%}
+        {%- if section.settings.image_tag != blank -%}
+          <div class="st-tag"><b>●</b> {{ section.settings.image_tag }}</div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="st-copy">
+      <span class="st-eyebrow">{{ section.settings.eyebrow }}</span>
+      <h2 class="st-title">{{ section.settings.title }}</h2>
+      <div class="st-body">{{ section.settings.body }}</div>
+
+      <div class="st-stats">
+        {%- for i in (1..3) -%}
+          {%- assign nk = 'stat' | append: i | append: '_n' -%}
+          {%- assign lk = 'stat' | append: i | append: '_l' -%}
+          {%- if section.settings[nk] != blank -%}
+            <div class="st-stat">
+              <div class="n">{{ section.settings[nk] }}</div>
+              <div class="l">{{ section.settings[lk] }}</div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      {%- if section.settings.cta_label != blank -%}
+        <a href="{{ section.settings.cta_url }}" class="st-cta">{{ section.settings.cta_label }}</a>
+      {%- endif -%}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "QB54 × GPC Story",
+  "tag": "div",
+  "settings": [
+    { "type": "header", "content": "Photo" },
+    { "type": "image_picker", "id": "image", "label": "Creator photo (4:5 portrait works best)" },
+    { "type": "text", "id": "flag", "label": "Flag emoji (corner chip)", "default": "🇩🇪" },
+    { "type": "text", "id": "image_tag", "label": "Photo caption tag", "default": "On tour with @germanpackerscave" },
+    { "type": "header", "content": "Copy" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The Collab" },
+    { "type": "text", "id": "title", "label": "Title", "default": "Two Flags. <span>One Field.</span>" },
+    { "type": "richtext", "id": "body", "label": "Body", "default": "<p><b>German Packers Cave</b> built a community out of pure love for American football — thousands of miles from any NFL stadium. When you can't get to the game, you bring the game to you.</p><p>That's exactly what QB54 is for. Together we're putting a real gridiron in every backyard, park and rooftop across Europe — proving the home field travels with you.</p>" },
+    { "type": "header", "content": "Stats" },
+    { "type": "text", "id": "stat1_n", "label": "Stat 1 number", "default": "10+" },
+    { "type": "text", "id": "stat1_l", "label": "Stat 1 label", "default": "Countries Played" },
+    { "type": "text", "id": "stat2_n", "label": "Stat 2 number", "default": "1" },
+    { "type": "text", "id": "stat2_l", "label": "Stat 2 label", "default": "Game, Zero Borders" },
+    { "type": "text", "id": "stat3_n", "label": "Stat 3 number", "default": "2–8" },
+    { "type": "text", "id": "stat3_l", "label": "Stat 3 label", "default": "Players Per Game" },
+    { "type": "header", "content": "CTA Button" },
+    { "type": "text", "id": "cta_label", "label": "Button label", "default": "Shop the Collab" },
+    { "type": "url", "id": "cta_url", "label": "Button URL" },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_bg", "label": "Background", "default": "#0a0e0a" },
+    { "type": "color", "id": "color_surface", "label": "Stat tile background", "default": "#121712" },
+    { "type": "color", "id": "color_qb", "label": "QB54 green", "default": "#b9f900" },
+    { "type": "color", "id": "color_gpc", "label": "Creator gold", "default": "#ffb612" }
+  ],
+  "presets": [{ "name": "QB54 × GPC Story" }]
+}
+{% endschema %}

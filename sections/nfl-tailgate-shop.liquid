@@ -1,0 +1,1945 @@
+{%- liquid
+  assign available_teams = '|'
+  assign initial_team = blank
+  assign total_products = 0
+
+  for block in section.blocks
+    assign category_collection = block.settings.collection
+    if category_collection != blank
+      assign total_products = total_products | plus: category_collection.products_count
+
+      for product in category_collection.products limit: 50
+        capture team_key
+          render 'tailgate-team-key', title: product.title
+        endcapture
+        assign team_key = team_key | strip
+
+        assign team_token = team_key | append: '|' | prepend: '|'
+        unless available_teams contains team_token
+          assign available_teams = available_teams | append: team_key | append: '|'
+          if initial_team == blank
+            assign initial_team = team_key
+          endif
+        endunless
+      endfor
+    endif
+  endfor
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --hub-ink: {{ section.settings.color_ink }};
+    --hub-paper: {{ section.settings.color_paper }};
+    --hub-cream: {{ section.settings.color_cream }};
+    --hub-accent: {{ section.settings.color_accent }};
+    --hub-line: {{ section.settings.color_line }};
+    --hub-white: #ffffff;
+  }
+
+  #shopify-section-{{ section.id }} .nfl-tailgate-shop {
+    color: var(--hub-ink);
+    background: var(--hub-paper);
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shell {
+    width: min(100% - 40px, 1440px);
+    margin-inline: auto;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-kicker {
+    display: inline-block;
+    margin: 0 0 20px;
+    font-family: var(--font-heading-family, inherit);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-display {
+    margin: 0;
+    font-size: clamp(48px, 7vw, 104px);
+    font-weight: 900;
+    letter-spacing: -0.055em;
+    line-height: 0.88;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-display em {
+    color: var(--hub-accent);
+    font-style: normal;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-hero {
+    position: relative;
+    isolation: isolate;
+    color: var(--hub-white);
+    background: var(--hub-ink);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-hero::after {
+    position: absolute;
+    z-index: -1;
+    top: 8%;
+    right: -12%;
+    width: 46vw;
+    height: 46vw;
+    background: var(--hub-accent);
+    border-radius: 50%;
+    content: '';
+    filter: blur(120px);
+    opacity: 0.16;
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-hero__inner {
+    display: grid;
+    min-height: 760px;
+    padding-block: clamp(72px, 8vw, 126px) 64px;
+    grid-template-columns: minmax(0, 1.05fr) minmax(520px, 0.95fr);
+    align-items: center;
+    gap: clamp(40px, 6vw, 96px);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-hero__copy {
+    position: relative;
+    z-index: 2;
+    max-width: 780px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-hero__copy .tailgate-kicker {
+    color: var(--hub-accent);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-hero__intro {
+    max-width: 650px;
+    margin: 28px 0 0;
+    color: rgb(255 255 255/0.74);
+    font-size: clamp(16px, 1.5vw, 20px);
+    line-height: 1.6;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-hero__actions {
+    display: flex;
+    margin-top: 34px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-button {
+    display: inline-flex;
+    min-height: 56px;
+    padding: 14px 24px;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--hub-ink);
+    background: var(--hub-accent);
+    border: 1px solid var(--hub-accent);
+    border-radius: 2px;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+    transition: transform 180ms ease, background 180ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-button:hover {
+    background: var(--hub-white);
+    border-color: var(--hub-white);
+    transform: translateY(-2px);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-hero__meta {
+    display: grid;
+    max-width: 650px;
+    margin-top: 42px;
+    padding-top: 22px;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid rgb(255 255 255/0.18);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-stat {
+    padding-right: 22px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-stat + .tailgate-hub-stat {
+    padding-left: 22px;
+    border-left: 1px solid rgb(255 255 255/0.18);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-stat strong {
+    display: block;
+    color: var(--hub-accent);
+    font-size: clamp(24px, 3vw, 40px);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-stat span {
+    display: block;
+    margin-top: 7px;
+    color: rgb(255 255 255/0.58);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.11em;
+    line-height: 1.25;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-hero__visual {
+    position: relative;
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hero-stack {
+    position: relative;
+    height: 590px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hero-card {
+    position: absolute;
+    display: flex;
+    width: 38%;
+    aspect-ratio: 0.88;
+    padding: 14px;
+    flex-direction: column;
+    color: var(--hub-ink);
+    background: var(--hub-paper);
+    border: 1px solid rgb(255 255 255/0.45);
+    box-shadow: 0 24px 55px rgb(0 0 0/0.35);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hero-card:nth-child(1) {
+    z-index: 5;
+    top: 22px;
+    left: 26%;
+    width: 48%;
+    transform: rotate(-2deg);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hero-card:nth-child(2) {
+    z-index: 3;
+    top: 112px;
+    left: 0;
+    transform: rotate(-8deg);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hero-card:nth-child(3) {
+    z-index: 4;
+    top: 102px;
+    right: 0;
+    transform: rotate(7deg);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hero-card:nth-child(4) {
+    z-index: 2;
+    bottom: 0;
+    left: 12%;
+    width: 34%;
+    transform: rotate(5deg);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hero-card:nth-child(5) {
+    z-index: 2;
+    right: 11%;
+    bottom: 0;
+    width: 34%;
+    transform: rotate(-5deg);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hero-card__media {
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    background: var(--hub-cream);
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hero-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 280ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hero-card:hover .tailgate-hero-card__image {
+    transform: scale(1.04);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hero-card__label {
+    display: flex;
+    padding-top: 12px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hero-card__label span:last-child {
+    color: rgb(15 20 36/0.45);
+    font-size: 9px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-ticker {
+    color: var(--hub-ink);
+    background: var(--hub-accent);
+    border-block: 1px solid var(--hub-ink);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-ticker__inner {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px 26px;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-ticker__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 26px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-ticker__item:not(:last-child)::after {
+    display: inline-block;
+    width: 1px;
+    height: 12px;
+    background: currentColor;
+    content: '';
+    opacity: 0.35;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-showcase {
+    padding-block: clamp(76px, 8vw, 124px);
+    background: var(--hub-cream);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-section-head {
+    display: flex;
+    margin-bottom: 44px;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-section-head__copy {
+    max-width: 760px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-section-head .tailgate-kicker {
+    color: var(--hub-ink);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-section-title {
+    margin: 0;
+    font-size: clamp(38px, 5vw, 72px);
+    font-weight: 900;
+    letter-spacing: -0.045em;
+    line-height: 0.96;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-section-copy {
+    max-width: 560px;
+    margin: 18px 0 0;
+    color: rgb(15 20 36/0.66);
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    border-top: 1px solid var(--hub-line);
+    border-left: 1px solid var(--hub-line);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-card {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    padding: 18px;
+    flex-direction: column;
+    color: var(--hub-ink);
+    background: var(--hub-paper);
+    border-right: 1px solid var(--hub-line);
+    border-bottom: 1px solid var(--hub-line);
+    transition: background 180ms ease, color 180ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-card:hover {
+    color: var(--hub-white);
+    background: var(--hub-ink);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-card__media {
+    display: flex;
+    aspect-ratio: 1;
+    align-items: center;
+    justify-content: center;
+    background: var(--hub-cream);
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 240ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-card:hover .tailgate-category-card__image {
+    transform: scale(1.06);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-card__content {
+    padding-top: 20px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-card__count {
+    color: rgb(15 20 36/0.5);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-card:hover .tailgate-category-card__count {
+    color: rgb(255 255 255/0.58);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-card__title {
+    margin: 8px 0 0;
+    font-family: var(--font-heading-family, inherit);
+    font-size: clamp(22px, 2vw, 30px);
+    font-weight: 900;
+    letter-spacing: -0.035em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-card__kicker {
+    min-height: 42px;
+    margin: 12px 0 0;
+    color: rgb(15 20 36/0.62);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-card:hover .tailgate-category-card__kicker {
+    color: rgb(255 255 255/0.68);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-card__action {
+    display: flex;
+    margin-top: 20px;
+    align-items: center;
+    justify-content: space-between;
+    color: inherit;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-card__action svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-showcase {
+    padding-block: clamp(64px, 7vw, 108px);
+    background: var(--hub-paper);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-showcase-row {
+    margin-top: 48px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-showcase-row:first-of-type {
+    margin-top: 0;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-showcase-row__head {
+    display: flex;
+    margin-bottom: 18px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-showcase-row__title {
+    margin: 0;
+    font-family: var(--font-heading-family, inherit);
+    font-size: clamp(19px, 1.6vw, 24px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-showcase-row__link {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 6px;
+    color: var(--hub-ink);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-showcase-row__link svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-showcase-rail {
+    display: flex;
+    padding-bottom: 6px;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-showcase-rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-showcase-card {
+    display: flex;
+    width: 220px;
+    flex: 0 0 auto;
+    flex-direction: column;
+    color: var(--hub-ink);
+    scroll-snap-align: start;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-showcase-card__media {
+    display: flex;
+    aspect-ratio: 1;
+    align-items: center;
+    justify-content: center;
+    background: var(--hub-cream);
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-showcase-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 240ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-showcase-card:hover .tailgate-showcase-card__image {
+    transform: scale(1.05);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-showcase-card__title {
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-showcase-card__price {
+    margin-top: 4px;
+    color: rgb(15 20 36/0.6);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team-shop {
+    padding-block: clamp(80px, 9vw, 140px);
+    background: var(--hub-paper);
+    scroll-margin-top: 80px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team-shop__intro {
+    display: grid;
+    margin-bottom: 48px;
+    grid-template-columns: minmax(0, 0.8fr) minmax(320px, 0.4fr);
+    align-items: end;
+    gap: 60px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team-shop__note {
+    margin: 0 0 4px;
+    padding-left: 20px;
+    color: rgb(15 20 36/0.64);
+    border-left: 3px solid var(--hub-accent);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team-grid {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    border-top: 1px solid var(--hub-line);
+    border-left: 1px solid var(--hub-line);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team {
+    appearance: none;
+    display: flex;
+    min-width: 0;
+    min-height: 144px;
+    padding: 18px 10px 14px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--hub-ink);
+    background: var(--hub-white);
+    border: 0;
+    border-right: 1px solid var(--hub-line);
+    border-bottom: 1px solid var(--hub-line);
+    cursor: pointer;
+    transition: color 180ms ease, background 180ms ease, transform 180ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team:hover,
+  #shopify-section-{{ section.id }} .tailgate-team.is-active {
+    z-index: 1;
+    color: var(--hub-white);
+    background: var(--hub-ink);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team.is-active {
+    box-shadow: inset 0 -5px 0 var(--hub-accent);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team:focus-visible {
+    z-index: 2;
+    outline: 3px solid var(--hub-accent);
+    outline-offset: -3px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team__logo-frame {
+    position: relative;
+    display: flex;
+    width: 76px;
+    height: 76px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team__monogram {
+    position: absolute;
+    display: flex;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    color: var(--hub-accent);
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    font-size: 17px;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team__logo {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team__name {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+    text-align: center;
+    text-transform: uppercase;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team-locker {
+    margin-top: 64px;
+    padding-top: 44px;
+    border-top: 6px solid var(--hub-ink);
+    scroll-margin-top: 80px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team-locker__head {
+    display: flex;
+    margin-bottom: 34px;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team-locker__label {
+    margin: 0 0 8px;
+    color: rgb(15 20 36/0.52);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team-locker__title {
+    margin: 0;
+    font-size: clamp(38px, 5vw, 70px);
+    font-weight: 900;
+    letter-spacing: -0.045em;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team-locker__count {
+    flex: 0 0 auto;
+    color: rgb(15 20 36/0.58);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-filters {
+    display: flex;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-filter {
+    appearance: none;
+    display: inline-flex;
+    min-height: 42px;
+    padding: 10px 14px;
+    align-items: center;
+    gap: 9px;
+    color: var(--hub-ink);
+    background: transparent;
+    border: 1px solid var(--hub-line);
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 160ms ease, background 160ms ease, opacity 160ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-filter span {
+    display: inline-flex;
+    min-width: 20px;
+    height: 20px;
+    padding-inline: 5px;
+    align-items: center;
+    justify-content: center;
+    background: rgb(15 20 36/0.08);
+    border-radius: 999px;
+    font-size: 9px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-filter:hover,
+  #shopify-section-{{ section.id }} .tailgate-category-filter.is-active {
+    color: var(--hub-white);
+    background: var(--hub-ink);
+    border-color: var(--hub-ink);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-filter:hover span,
+  #shopify-section-{{ section.id }} .tailgate-category-filter.is-active span {
+    background: rgb(255 255 255/0.16);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-category-filter:disabled {
+    cursor: not-allowed;
+    opacity: 0.32;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 28px 18px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card {
+    min-width: 0;
+    color: var(--hub-ink);
+    background: var(--hub-white);
+    border: 1px solid var(--hub-line);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card[hidden] {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__media {
+    position: relative;
+    display: block;
+    aspect-ratio: 1;
+    background: var(--hub-cream);
+    border-bottom: 1px solid var(--hub-line);
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 240ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card:hover .tailgate-hub-card__image {
+    transform: scale(1.045);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__category,
+  #shopify-section-{{ section.id }} .tailgate-hub-card__sale {
+    position: absolute;
+    top: 12px;
+    display: inline-flex;
+    min-height: 28px;
+    padding: 7px 9px;
+    align-items: center;
+    color: var(--hub-white);
+    background: var(--hub-ink);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.09em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__category {
+    left: 12px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__sale {
+    right: 12px;
+    color: var(--hub-ink);
+    background: var(--hub-accent);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__content {
+    padding: 18px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__meta {
+    display: flex;
+    color: rgb(15 20 36/0.48);
+    gap: 7px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__title {
+    min-height: 48px;
+    margin: 9px 0 0;
+    font-family: var(--font-heading-family, inherit);
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    text-transform: none;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__title a {
+    color: inherit;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__price {
+    margin-top: 12px;
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__actions {
+    display: grid;
+    margin-top: 18px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__add,
+  #shopify-section-{{ section.id }} .tailgate-hub-card__view {
+    display: inline-flex;
+    min-height: 46px;
+    padding: 10px 14px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.07em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__add {
+    width: 100%;
+    color: var(--hub-white);
+    background: var(--hub-ink);
+    border: 1px solid var(--hub-ink);
+    transition: color 160ms ease, background 160ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__add:hover {
+    color: var(--hub-ink);
+    background: var(--hub-accent);
+    border-color: var(--hub-accent);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__add svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__view {
+    color: var(--hub-ink);
+    background: transparent;
+    border: 1px solid var(--hub-line);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product-empty {
+    padding: 56px 24px;
+    color: rgb(15 20 36/0.62);
+    background: var(--hub-cream);
+    border: 1px solid var(--hub-line);
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product-empty[hidden] {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-proof-strip {
+    color: var(--hub-white);
+    background: var(--hub-ink);
+    border-top: 1px solid rgb(255 255 255/0.16);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-proof-strip__inner {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-proof {
+    display: grid;
+    min-height: 160px;
+    padding: 34px;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: 20px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-proof + .tailgate-proof {
+    border-left: 1px solid rgb(255 255 255/0.16);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-proof__icon {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    color: var(--hub-accent);
+    background: rgb(255 255 255/0.08);
+    border-radius: 50%;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-proof__icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-proof h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-proof p {
+    margin: 9px 0 0;
+    color: rgb(255 255 255/0.62);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-final-cta {
+    position: relative;
+    color: var(--hub-ink);
+    background: var(--hub-accent);
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-final-cta::after {
+    position: absolute;
+    right: -60px;
+    bottom: -120px;
+    color: rgb(15 20 36/0.08);
+    content: '54';
+    font-size: clamp(240px, 38vw, 560px);
+    font-weight: 900;
+    letter-spacing: -0.12em;
+    line-height: 0.7;
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-final-cta__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    min-height: 360px;
+    padding-block: 72px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 48px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-final-cta__title {
+    max-width: 900px;
+    margin: 0;
+    font-size: clamp(48px, 7vw, 100px);
+    font-weight: 900;
+    letter-spacing: -0.055em;
+    line-height: 0.86;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-final-cta .tailgate-hub-button {
+    flex: 0 0 auto;
+    color: var(--hub-white);
+    background: var(--hub-ink);
+    border-color: var(--hub-ink);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-final-cta .tailgate-hub-button:hover {
+    color: var(--hub-ink);
+    background: var(--hub-white);
+    border-color: var(--hub-white);
+  }
+
+  @media screen and (max-width: 1199px) {
+    #shopify-section-{{ section.id }} .tailgate-hub-hero__inner {
+      min-height: 700px;
+      grid-template-columns: minmax(0, 1fr) minmax(420px, 0.8fr);
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-category-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-team-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-product-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    #shopify-section-{{ section.id }} .tailgate-hub-hero__inner {
+      grid-template-columns: 1fr;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-hero__copy {
+      max-width: 760px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-hero__visual {
+      width: min(100%, 640px);
+      margin: 0 auto;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-team-shop__intro {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-team-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-proof-strip__inner {
+      grid-template-columns: 1fr;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-proof + .tailgate-proof {
+      border-top: 1px solid rgb(255 255 255/0.16);
+      border-left: 0;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-final-cta__inner {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .tailgate-shell {
+      width: min(100% - 28px, 1440px);
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-showcase-card {
+      width: 156px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-hero__inner {
+      min-height: 0;
+      padding-block: 64px 48px;
+      gap: 42px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-display {
+      font-size: clamp(48px, 15vw, 72px);
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-hero__intro {
+      margin-top: 22px;
+      font-size: 16px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-button {
+      width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-hero__meta {
+      margin-top: 34px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-stat {
+      padding-right: 12px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-stat + .tailgate-hub-stat {
+      padding-left: 12px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-stat strong {
+      font-size: 24px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-stat span {
+      font-size: 8px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hero-stack {
+      height: 430px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hero-card {
+      padding: 9px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hero-card__label {
+      padding-top: 8px;
+      font-size: 8px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-category-ticker__inner {
+      min-height: 54px;
+      padding-block: 10px;
+      gap: 8px 16px;
+      font-size: 9px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-category-ticker__item {
+      gap: 16px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-section-head {
+      margin-bottom: 30px;
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-category-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-category-card {
+      padding: 12px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-category-card:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-category-card__title {
+      font-size: 21px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-category-card__kicker {
+      min-height: 0;
+      font-size: 12px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-team-shop__intro {
+      margin-bottom: 32px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-team-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-team {
+      min-height: 116px;
+      padding: 12px 6px 10px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-team__logo-frame {
+      width: 58px;
+      height: 58px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-team-locker {
+      margin-top: 46px;
+      padding-top: 30px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-team-locker__head {
+      margin-bottom: 24px;
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-team-locker__title {
+      font-size: 40px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-category-filters {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-category-filters::-webkit-scrollbar {
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-category-filter {
+      flex: 0 0 auto;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-product-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px 10px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-card__content {
+      padding: 12px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-card__meta {
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-card__title {
+      min-height: 42px;
+      margin-top: 0;
+      font-size: 14px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-card__price {
+      margin-top: 8px;
+      font-size: 13px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-card__actions {
+      grid-template-columns: 1fr;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-card__view {
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-card__add {
+      min-height: 42px;
+      padding-inline: 8px;
+      font-size: 9px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-card__add svg {
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-proof {
+      min-height: 0;
+      padding: 28px 0;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-final-cta__inner {
+      min-height: 340px;
+      padding-block: 60px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-final-cta__title {
+      font-size: 52px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .tailgate-hub-button,
+    #shopify-section-{{ section.id }} .tailgate-hero-card__image,
+    #shopify-section-{{ section.id }} .tailgate-category-card,
+    #shopify-section-{{ section.id }} .tailgate-category-card__image,
+    #shopify-section-{{ section.id }} .tailgate-team,
+    #shopify-section-{{ section.id }} .tailgate-hub-card__image,
+    #shopify-section-{{ section.id }} .tailgate-hub-card__add {
+      transition: none;
+    }
+  }
+</style>
+
+<nfl-tailgate-shop class="nfl-tailgate-shop" data-initial-team="{{ initial_team | escape }}">
+  <section class="tailgate-hub-hero">
+    <div class="tailgate-shell tailgate-hub-hero__inner">
+      <div class="tailgate-hub-hero__copy">
+        <p class="tailgate-kicker">{{ section.settings.eyebrow | escape }}</p>
+        <h1 class="tailgate-display">
+          {{ section.settings.heading_line_1 | escape }}
+          <em>{{ section.settings.heading_line_2 | escape }}</em>
+        </h1>
+        <div class="tailgate-hub-hero__intro rte">{{ section.settings.intro }}</div>
+
+        <div class="tailgate-hub-hero__actions">
+          <a class="tailgate-hub-button" href="#choose-your-team">
+            Choose Your Team
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M10 3v13M5 11l5 5 5-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+            </svg>
+          </a>
+        </div>
+
+        <div class="tailgate-hub-hero__meta" aria-label="Collection highlights">
+          <div class="tailgate-hub-stat">
+            <strong>{{ section.blocks.size }}</strong>
+            <span>Product categories</span>
+          </div>
+          <div class="tailgate-hub-stat">
+            <strong>{{ total_products }}</strong>
+            <span>Team products</span>
+          </div>
+          <div class="tailgate-hub-stat">
+            <strong>1</strong>
+            <span>Complete game-day shop</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tailgate-hub-hero__visual" aria-label="Tailgate product categories">
+        <div class="tailgate-hero-stack">
+          {%- for block in section.blocks limit: 5 -%}
+            {%- assign sample_product = block.settings.collection.products.first -%}
+            <a class="tailgate-hero-card" href="#choose-your-team" data-category-intent="{{ block.settings.category_key | escape }}">
+              <span class="tailgate-hero-card__media">
+                {%- if sample_product.featured_image != blank -%}
+                  {{- sample_product.featured_image
+                    | image_url: width: 700
+                    | image_tag:
+                      loading: 'eager',
+                      widths: '240,360,480,600,700',
+                      sizes: '(max-width: 749px) 42vw, 24vw',
+                      alt: sample_product.featured_image.alt | default: sample_product.title,
+                      class: 'tailgate-hero-card__image'
+                  -}}
+                {%- else -%}
+                  {{- 'product-1' | placeholder_svg_tag: 'tailgate-hero-card__image placeholder' -}}
+                {%- endif -%}
+              </span>
+              <span class="tailgate-hero-card__label">
+                <span>{{ block.settings.label | escape }}</span>
+                <span>Shop by team</span>
+              </span>
+            </a>
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="tailgate-category-ticker" aria-label="Available categories">
+    <div class="tailgate-shell tailgate-category-ticker__inner">
+      {%- for block in section.blocks -%}
+        <span class="tailgate-category-ticker__item">{{ block.settings.label | escape }}</span>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  {%- liquid
+    assign category_count = section.blocks.size
+    case category_count
+      when 1
+        assign category_count_word = 'One'
+      when 2
+        assign category_count_word = 'Two'
+      when 3
+        assign category_count_word = 'Three'
+      when 4
+        assign category_count_word = 'Four'
+      when 5
+        assign category_count_word = 'Five'
+      when 6
+        assign category_count_word = 'Six'
+      else
+        assign category_count_word = category_count
+    endcase
+  -%}
+  <section class="tailgate-category-showcase" aria-labelledby="TailgateCategories-{{ section.id }}">
+    <div class="tailgate-shell">
+      <header class="tailgate-section-head">
+        <div class="tailgate-section-head__copy">
+          <p class="tailgate-kicker">The complete setup</p>
+          <h2 id="TailgateCategories-{{ section.id }}" class="tailgate-section-title">{{ category_count_word }} ways to show up.</h2>
+          <p class="tailgate-section-copy">Start with a category or go straight to your team. Every product below stays connected to the collection you manage in Shopify.</p>
+        </div>
+      </header>
+
+      <div class="tailgate-category-grid">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign category_collection = block.settings.collection
+            assign sample_product = category_collection.products.first
+          -%}
+          <a
+            class="tailgate-category-card"
+            href="#choose-your-team"
+            data-category-intent="{{ block.settings.category_key | escape }}"
+            {{ block.shopify_attributes }}
+          >
+            <span class="tailgate-category-card__media">
+              {%- if sample_product.featured_image != blank -%}
+                {{- sample_product.featured_image
+                  | image_url: width: 700
+                  | image_tag:
+                    loading: 'lazy',
+                    widths: '240,360,480,600,700',
+                    sizes: '(max-width: 749px) 50vw, 20vw',
+                    alt: sample_product.featured_image.alt | default: sample_product.title,
+                    class: 'tailgate-category-card__image'
+                -}}
+              {%- else -%}
+                {{- 'product-1' | placeholder_svg_tag: 'tailgate-category-card__image placeholder' -}}
+              {%- endif -%}
+            </span>
+            <span class="tailgate-category-card__content">
+              <span class="tailgate-category-card__count">{{ category_collection.products_count }} products</span>
+              <span class="tailgate-category-card__title">{{ block.settings.label | escape }}</span>
+              <span class="tailgate-category-card__kicker">{{ block.settings.kicker | escape }}</span>
+              <span class="tailgate-category-card__action">
+                Choose a team
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M4 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+                </svg>
+              </span>
+            </span>
+          </a>
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+
+  <section class="tailgate-showcase" aria-labelledby="TailgateShowcase-{{ section.id }}">
+    <div class="tailgate-shell">
+      <header class="tailgate-section-head">
+        <div class="tailgate-section-head__copy">
+          <p class="tailgate-kicker">Shop the full lineup</p>
+          <h2 id="TailgateShowcase-{{ section.id }}" class="tailgate-section-title">A closer look at every category.</h2>
+          <p class="tailgate-section-copy">Real products, straight from your collections. Browse by category now, or jump to your team below.</p>
+        </div>
+      </header>
+
+      {%- for block in section.blocks -%}
+        {%- assign category_collection = block.settings.collection -%}
+        {%- if category_collection.products_count > 0 -%}
+          <div class="tailgate-showcase-row">
+            <div class="tailgate-showcase-row__head">
+              <h3 class="tailgate-showcase-row__title">{{ block.settings.label | escape }}</h3>
+              <a class="tailgate-showcase-row__link" href="{{ category_collection.url }}">
+                View all
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M4 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+                </svg>
+              </a>
+            </div>
+            <div class="tailgate-showcase-rail">
+              {%- for product in category_collection.products limit: 8 -%}
+                <a class="tailgate-showcase-card" href="{{ product.url }}">
+                  <span class="tailgate-showcase-card__media">
+                    {%- if product.featured_image != blank -%}
+                      {{- product.featured_image
+                        | image_url: width: 500
+                        | image_tag:
+                          loading: 'lazy',
+                          widths: '240,320,400,500',
+                          sizes: '(max-width: 749px) 46vw, 220px',
+                          alt: product.featured_image.alt | default: product.title,
+                          class: 'tailgate-showcase-card__image'
+                      -}}
+                    {%- else -%}
+                      {{- 'product-1' | placeholder_svg_tag: 'tailgate-showcase-card__image placeholder' -}}
+                    {%- endif -%}
+                  </span>
+                  <span class="tailgate-showcase-card__title">{{ product.title | escape }}</span>
+                  <span class="tailgate-showcase-card__price">{%- render 'product-price', product: product -%}</span>
+                </a>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </section>
+
+  <section id="choose-your-team" class="tailgate-team-shop" aria-labelledby="TailgateTeamHeading-{{ section.id }}">
+    <div class="tailgate-shell">
+      <header class="tailgate-team-shop__intro">
+        <div>
+          <p class="tailgate-kicker">No searching. No guessing.</p>
+          <h2 id="TailgateTeamHeading-{{ section.id }}" class="tailgate-section-title">Pick your team.<br>Build your lineup.</h2>
+        </div>
+        <p class="tailgate-team-shop__note">Choose one logo and every available product for that team appears together—from the blanket on your chair to the table holding the spread.</p>
+      </header>
+
+      {%- if initial_team != blank -%}
+        <div class="tailgate-team-grid" role="tablist" aria-label="Choose an NFL team">
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'cardinals', team_name: 'Arizona Cardinals', short_name: 'Cardinals', abbreviation: 'ARI', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Arizona_cardinals.jpg?v=1785794140' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'falcons', team_name: 'Atlanta Falcons', short_name: 'Falcons', abbreviation: 'ATL', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Atlanta_Falcons_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'ravens', team_name: 'Baltimore Ravens', short_name: 'Ravens', abbreviation: 'BAL', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Baltimore_Ravens_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'bills', team_name: 'Buffalo Bills', short_name: 'Bills', abbreviation: 'BUF', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Buffalo_Bills_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'panthers', team_name: 'Carolina Panthers', short_name: 'Panthers', abbreviation: 'CAR', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Carolina_Panthers_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'bears', team_name: 'Chicago Bears', short_name: 'Bears', abbreviation: 'CHI', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Chicago_Bears_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'bengals', team_name: 'Cincinnati Bengals', short_name: 'Bengals', abbreviation: 'CIN', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Cinncinati_Bengals_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'browns', team_name: 'Cleveland Browns', short_name: 'Browns', abbreviation: 'CLE', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Cleveland_Browns_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'cowboys', team_name: 'Dallas Cowboys', short_name: 'Cowboys', abbreviation: 'DAL', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Dallas_Cowboys_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'broncos', team_name: 'Denver Broncos', short_name: 'Broncos', abbreviation: 'DEN', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Denver_Broncos_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'lions', team_name: 'Detroit Lions', short_name: 'Lions', abbreviation: 'DET', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Detroit_Lions_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'packers', team_name: 'Green Bay Packers', short_name: 'Packers', abbreviation: 'GB', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Green_Bay_Packers_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'texans', team_name: 'Houston Texans', short_name: 'Texans', abbreviation: 'HOU', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Houston_Texans_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'colts', team_name: 'Indianapolis Colts', short_name: 'Colts', abbreviation: 'IND', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Indianapolis_Colts_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'jaguars', team_name: 'Jacksonville Jaguars', short_name: 'Jaguars', abbreviation: 'JAX', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Jacksonville_Jaguars_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'chiefs', team_name: 'Kansas City Chiefs', short_name: 'Chiefs', abbreviation: 'KC', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Kansas_City_Chiefs_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'raiders', team_name: 'Las Vegas Raiders', short_name: 'Raiders', abbreviation: 'LV', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Las_Vegas_Raiders_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'chargers', team_name: 'Los Angeles Chargers', short_name: 'Chargers', abbreviation: 'LAC', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Los_Angeles_Chargers_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'rams', team_name: 'Los Angeles Rams', short_name: 'Rams', abbreviation: 'LAR', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Los_Angeles_Rams_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'dolphins', team_name: 'Miami Dolphins', short_name: 'Dolphins', abbreviation: 'MIA', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Miami_Dolphins_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'vikings', team_name: 'Minnesota Vikings', short_name: 'Vikings', abbreviation: 'MIN', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Minnesota_Vikings_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'patriots', team_name: 'New England Patriots', short_name: 'Patriots', abbreviation: 'NE', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/New_England_Patriots_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'saints', team_name: 'New Orleans Saints', short_name: 'Saints', abbreviation: 'NO', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/New_Orleans_Saints.jpg?v=1785794140' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'giants', team_name: 'New York Giants', short_name: 'Giants', abbreviation: 'NYG', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/New_York_Giants.jpg?v=1785794141' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'jets', team_name: 'New York Jets', short_name: 'Jets', abbreviation: 'NYJ', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/New_York_jets.jpg?v=1785794141' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'eagles', team_name: 'Philadelphia Eagles', short_name: 'Eagles', abbreviation: 'PHI', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Philadelphia_Eagles_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'steelers', team_name: 'Pittsburgh Steelers', short_name: 'Steelers', abbreviation: 'PIT', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Pittsburgh_Steelers_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: '49ers', team_name: 'San Francisco 49ers', short_name: '49ers', abbreviation: 'SF', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/San_Francisco_49ers_logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'seahawks', team_name: 'Seattle Seahawks', short_name: 'Seahawks', abbreviation: 'SEA', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Seattle_Seahawks_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'buccaneers', team_name: 'Tampa Bay Buccaneers', short_name: 'Buccaneers', abbreviation: 'TB', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Tampa_Bay_Buccaneers_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'titans', team_name: 'Tennessee Titans', short_name: 'Titans', abbreviation: 'TEN', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Tennessee_TItans_Logo.png' -%}
+          {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'commanders', team_name: 'Washington Commanders', short_name: 'Commanders', abbreviation: 'WAS', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Washington_Commanders_Logo.png' -%}
+        </div>
+
+        <div id="TailgateResults-{{ section.id }}" class="tailgate-team-locker" role="tabpanel" aria-live="polite">
+          <header class="tailgate-team-locker__head">
+            <div>
+              <p class="tailgate-team-locker__label">Your team locker</p>
+              <h3 class="tailgate-team-locker__title" data-selected-team>Team Products</h3>
+            </div>
+            <p class="tailgate-team-locker__count"><span data-results-count>0</span> products available</p>
+          </header>
+
+          <div class="tailgate-category-filters" role="group" aria-label="Filter selected team products by category">
+            <button class="tailgate-category-filter is-active" type="button" data-category-filter="all">
+              All <span data-category-count>0</span>
+            </button>
+            {%- for block in section.blocks -%}
+              <button class="tailgate-category-filter" type="button" data-category-filter="{{ block.settings.category_key | escape }}">
+                {{ block.settings.label | escape }} <span data-category-count>0</span>
+              </button>
+            {%- endfor -%}
+          </div>
+
+          <div class="tailgate-product-grid" data-product-grid>
+            {%- for block in section.blocks -%}
+              {%- assign category_collection = block.settings.collection -%}
+              {%- for product in category_collection.products limit: 50 -%}
+                {%- render 'tailgate-hub-product-card', product: product, category_key: block.settings.category_key, category_label: block.settings.singular_label, section_id: section.id -%}
+              {%- endfor -%}
+            {%- endfor -%}
+          </div>
+
+          <div class="tailgate-product-empty" data-product-empty hidden>
+            No products are currently available for this team and category.
+          </div>
+        </div>
+      {%- else -%}
+        <div class="tailgate-product-empty">
+          Add active Online Store products to the five selected collections to populate this page.
+        </div>
+      {%- endif -%}
+
+      <noscript>
+        <div class="tailgate-product-empty">JavaScript is required for team filtering. Use the collection links above to browse products.</div>
+      </noscript>
+    </div>
+  </section>
+
+  <section class="tailgate-proof-strip" aria-label="Shopping benefits">
+    <div class="tailgate-shell tailgate-proof-strip__inner">
+      <div class="tailgate-proof">
+        <span class="tailgate-proof__icon" aria-hidden="true">
+          <svg viewBox="0 0 20 20"><path d="M4 10.5l4 4L16 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div>
+          <h3>One team, one view</h3>
+          <p>No jumping between collections. Every available product for the selected team appears together.</p>
+        </div>
+      </div>
+      <div class="tailgate-proof">
+        <span class="tailgate-proof__icon" aria-hidden="true">
+          <svg viewBox="0 0 20 20"><path d="M4 10.5l4 4L16 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div>
+          <h3>Fast add to cart</h3>
+          <p>Shop directly from the team locker or open the full product page when you want more detail.</p>
+        </div>
+      </div>
+      <div class="tailgate-proof">
+        <span class="tailgate-proof__icon" aria-hidden="true">
+          <svg viewBox="0 0 20 20"><path d="M4 10.5l4 4L16 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div>
+          <h3>Always up to date</h3>
+          <p>Products appear automatically from the five Shopify collections selected in the page editor.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tailgate-final-cta">
+    <div class="tailgate-shell tailgate-final-cta__inner">
+      <h2 class="tailgate-final-cta__title">Your team.<br>Your setup.<br>Your Sunday.</h2>
+      <a class="tailgate-hub-button" href="#choose-your-team">
+        Find Your Team
+        <svg viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M4 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+</nfl-tailgate-shop>
+
+<script>
+  if (!customElements.get('nfl-tailgate-shop')) {
+    customElements.define(
+      'nfl-tailgate-shop',
+      class NflTailgateShop extends HTMLElement {
+        connectedCallback() {
+          this.teamButtons = Array.from(this.querySelectorAll('[data-tailgate-team]'));
+          this.categoryButtons = Array.from(this.querySelectorAll('[data-category-filter]'));
+          this.categoryIntents = Array.from(this.querySelectorAll('[data-category-intent]'));
+          this.productCards = Array.from(this.querySelectorAll('[data-tailgate-product]'));
+          this.selectedTeamLabel = this.querySelector('[data-selected-team]');
+          this.resultsCount = this.querySelector('[data-results-count]');
+          this.emptyState = this.querySelector('[data-product-empty]');
+          this.teamSection = this.querySelector('#choose-your-team');
+          this.resultsSection = this.querySelector('.tailgate-team-locker');
+          this.activeCategory = 'all';
+
+          this.querySelectorAll('[data-tailgate-team-logo]').forEach((logo) => {
+            const hideBrokenLogo = () => { logo.hidden = true; };
+            logo.addEventListener('error', hideBrokenLogo, { once: true });
+            if (logo.complete && logo.naturalWidth === 0) hideBrokenLogo();
+          });
+
+          this.teamButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+              this.selectTeam(button.dataset.team, button.dataset.teamName);
+              this.resultsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+            button.addEventListener('keydown', (event) => this.onTeamKeydown(event, index));
+          });
+
+          this.categoryButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+              if (!button.disabled) this.selectCategory(button.dataset.categoryFilter);
+            });
+          });
+
+          this.categoryIntents.forEach((link) => {
+            link.addEventListener('click', (event) => {
+              event.preventDefault();
+              const category = link.dataset.categoryIntent;
+              const currentHasCategory = this.productCards.some(
+                (card) => card.dataset.team === this.activeTeam && card.dataset.category === category
+              );
+
+              if (!currentHasCategory) {
+                const firstMatch = this.productCards.find((card) => card.dataset.category === category);
+                if (firstMatch) {
+                  const matchingButton = this.teamButtons.find((button) => button.dataset.team === firstMatch.dataset.team);
+                  if (matchingButton) this.selectTeam(matchingButton.dataset.team, matchingButton.dataset.teamName);
+                }
+              }
+
+              this.selectCategory(category);
+              this.teamSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+          });
+
+          const initialButton = this.teamButtons.find((button) => button.dataset.team === this.dataset.initialTeam) || this.teamButtons[0];
+          if (initialButton) this.selectTeam(initialButton.dataset.team, initialButton.dataset.teamName);
+        }
+
+        selectTeam(team, teamName) {
+          this.activeTeam = team;
+
+          this.teamButtons.forEach((button) => {
+            const active = button.dataset.team === team;
+            button.classList.toggle('is-active', active);
+            button.setAttribute('aria-selected', active ? 'true' : 'false');
+            button.setAttribute('tabindex', active ? '0' : '-1');
+          });
+
+          if (this.selectedTeamLabel) this.selectedTeamLabel.textContent = teamName;
+          this.updateCategoryAvailability();
+          this.renderProducts();
+        }
+
+        selectCategory(category) {
+          const targetButton = this.categoryButtons.find((button) => button.dataset.categoryFilter === category);
+          if (!targetButton || targetButton.disabled) category = 'all';
+          this.activeCategory = category;
+
+          this.categoryButtons.forEach((button) => {
+            const active = button.dataset.categoryFilter === category;
+            button.classList.toggle('is-active', active);
+            button.setAttribute('aria-pressed', active ? 'true' : 'false');
+          });
+
+          this.renderProducts();
+        }
+
+        updateCategoryAvailability() {
+          const teamCards = this.productCards.filter((card) => card.dataset.team === this.activeTeam);
+
+          this.categoryButtons.forEach((button) => {
+            const category = button.dataset.categoryFilter;
+            const count = category === 'all'
+              ? teamCards.length
+              : teamCards.filter((card) => card.dataset.category === category).length;
+            const counter = button.querySelector('[data-category-count]');
+            if (counter) counter.textContent = count;
+            button.disabled = count === 0;
+          });
+
+          const activeButton = this.categoryButtons.find((button) => button.dataset.categoryFilter === this.activeCategory);
+          if (!activeButton || activeButton.disabled) this.activeCategory = 'all';
+
+          this.categoryButtons.forEach((button) => {
+            const active = button.dataset.categoryFilter === this.activeCategory;
+            button.classList.toggle('is-active', active);
+            button.setAttribute('aria-pressed', active ? 'true' : 'false');
+          });
+        }
+
+        renderProducts() {
+          let visibleCount = 0;
+
+          this.productCards.forEach((card) => {
+            const teamMatch = card.dataset.team === this.activeTeam;
+            const categoryMatch = this.activeCategory === 'all' || card.dataset.category === this.activeCategory;
+            const visible = teamMatch && categoryMatch;
+            card.hidden = !visible;
+            card.setAttribute('aria-hidden', visible ? 'false' : 'true');
+            if (visible) visibleCount += 1;
+          });
+
+          if (this.resultsCount) this.resultsCount.textContent = visibleCount;
+          if (this.emptyState) this.emptyState.hidden = visibleCount !== 0;
+        }
+
+        onTeamKeydown(event, index) {
+          let nextIndex = index;
+
+          if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+            nextIndex = (index + 1) % this.teamButtons.length;
+          } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+            nextIndex = (index - 1 + this.teamButtons.length) % this.teamButtons.length;
+          } else if (event.key === 'Home') {
+            nextIndex = 0;
+          } else if (event.key === 'End') {
+            nextIndex = this.teamButtons.length - 1;
+          } else {
+            return;
+          }
+
+          event.preventDefault();
+          const nextButton = this.teamButtons[nextIndex];
+          this.selectTeam(nextButton.dataset.team, nextButton.dataset.teamName);
+          nextButton.focus();
+        }
+      }
+    );
+  }
+</script>
+
+{% schema %}
+{
+  "name": "NFL Tailgate Shop",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Hero eyebrow",
+      "default": "QB54 / NFL Tailgate Collection"
+    },
+    {
+      "type": "text",
+      "id": "heading_line_1",
+      "label": "Heading line 1",
+      "default": "One Team."
+    },
+    {
+      "type": "text",
+      "id": "heading_line_2",
+      "label": "Heading line 2",
+      "default": "Every Essential."
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Hero introduction",
+      "default": "<p>Choose your team once. See every available blanket, tumbler, cooler, caddy, table, and signed football together—built for the way game day actually happens.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "color_ink",
+      "label": "Dark color",
+      "default": "#171717"
+    },
+    {
+      "type": "color",
+      "id": "color_paper",
+      "label": "Page background",
+      "default": "#f4f2e8"
+    },
+    {
+      "type": "color",
+      "id": "color_cream",
+      "label": "Secondary background",
+      "default": "#ece7d8"
+    },
+    {
+      "type": "color",
+      "id": "color_accent",
+      "label": "Accent",
+      "default": "#a3e635"
+    },
+    {
+      "type": "color",
+      "id": "color_line",
+      "label": "Border color",
+      "default": "#ddd8c7"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Product category",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "select",
+          "id": "category_key",
+          "label": "Category key",
+          "options": [
+            { "value": "blanket", "label": "Blanket" },
+            { "value": "tumbler", "label": "Tumbler" },
+            { "value": "cooler", "label": "Cooler" },
+            { "value": "caddy", "label": "Caddy" },
+            { "value": "table", "label": "Table" },
+            { "value": "football", "label": "Football" }
+          ],
+          "default": "blanket"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Plural label",
+          "default": "Blankets"
+        },
+        {
+          "type": "text",
+          "id": "singular_label",
+          "label": "Singular label",
+          "default": "Blanket"
+        },
+        {
+          "type": "text",
+          "id": "kicker",
+          "label": "Short description",
+          "default": "Game-day gear in your team's colors."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "NFL Tailgate Shop",
+      "category": "Collections",
+      "blocks": [
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["footer", "header", "custom.overlay"]
+  }
+}
+{% endschema %}

@@ -1,0 +1,296 @@
+{% comment %}
+  ID4-Showcase — Hero product / bundle spotlight for 4th of July
+  Split layout: patriotic media panel + value props, savings badge, price, CTA
+  Section: sections/independence-day-showcase.liquid
+  Brand: QB54 — navy + gold + patriotic red
+{% endcomment %}
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  #id4-show-{{ section.id }} {
+    --bg:    {{ section.settings.color_bg }};
+    --panel: {{ section.settings.color_panel }};
+    --text:  {{ section.settings.color_text }};
+    --red:   {{ section.settings.color_red }};
+    --blue:  {{ section.settings.color_blue }};
+    --spark: {{ section.settings.color_spark }};
+    --muted: color-mix(in srgb, {{ section.settings.color_text }} 64%, transparent);
+    --line:  color-mix(in srgb, {{ section.settings.color_text }} 12%, transparent);
+
+    position: relative;
+    background:
+      radial-gradient(ellipse 70% 60% at 80% 10%, color-mix(in srgb, var(--blue) 40%, var(--bg)) 0%, var(--bg) 55%),
+      var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    font-family: 'Sora', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    isolation: isolate;
+  }
+
+  #id4-show-{{ section.id }} .id4s-stars {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .5;
+    background-image:
+      radial-gradient(1.5px 1.5px at 15% 25%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 85% 18%, var(--spark), transparent),
+      radial-gradient(1.5px 1.5px at 70% 60%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 25% 80%, var(--red), transparent),
+      radial-gradient(1.5px 1.5px at 50% 40%, color-mix(in srgb, #fff 60%, transparent), transparent);
+  }
+
+  #id4-show-{{ section.id }} .id4s-inner {
+    position: relative; z-index: 2;
+    max-width: 1240px; margin: 0 auto;
+    padding: 0 clamp(20px, 4vw, 56px);
+    display: grid; grid-template-columns: 1.05fr 1fr;
+    gap: clamp(32px, 5vw, 72px); align-items: center;
+  }
+  {% if section.settings.media_position == 'right' %}
+  #id4-show-{{ section.id }} .id4s-media { order: 2; }
+  #id4-show-{{ section.id }} .id4s-copy  { order: 1; }
+  {% endif %}
+
+  /* ── MEDIA PANEL ── */
+  #id4-show-{{ section.id }} .id4s-media {
+    position: relative; border-radius: 22px; overflow: hidden;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    box-shadow: 0 30px 80px rgba(0,0,0,.45);
+    {% if section.settings.image_fit == 'cover' %}aspect-ratio: {{ section.settings.image_aspect }};{% endif %}
+  }
+  #id4-show-{{ section.id }} .id4s-media::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 8px;
+    background: repeating-linear-gradient(90deg,
+      var(--red) 0 12%, #fff 12% 24%, var(--blue) 24% 36%, transparent 36% 50%);
+    z-index: 3;
+  }
+  {% if section.settings.image_fit == 'cover' %}
+  #id4-show-{{ section.id }} .id4s-media img {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  {% else %}
+  /* natural height — full image, never cropped */
+  #id4-show-{{ section.id }} .id4s-media img {
+    display: block; width: 100%; height: auto;
+    {% if section.settings.image_max_height > 0 %}max-height: {{ section.settings.image_max_height }}px; object-fit: contain; margin: 0 auto;{% endif %}
+  }
+  {% endif %}
+  #id4-show-{{ section.id }} .id4s-media .id4s-ph {
+    {% if section.settings.image_fit == 'cover' %}position: absolute; inset: 0;{% else %}position: relative; min-height: 420px;{% endif %}
+    display: grid; place-items: center;
+    color: var(--muted); font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--blue) 30%, var(--panel)), var(--panel));
+  }
+  #id4-show-{{ section.id }} .id4s-savebadge {
+    position: absolute; top: 18px; left: 18px; z-index: 4;
+    display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 92px; height: 92px; border-radius: 50%;
+    background: var(--red); color: #fff; text-align: center;
+    box-shadow: 0 10px 30px color-mix(in srgb, var(--red) 50%, transparent);
+    border: 2px solid color-mix(in srgb, #fff 70%, transparent);
+    transform: rotate(-8deg);
+  }
+  #id4-show-{{ section.id }} .id4s-savebadge b {
+    font-family: 'Anton', sans-serif; font-size: 30px; line-height: .9; letter-spacing: .02em;
+  }
+  #id4-show-{{ section.id }} .id4s-savebadge span { font-size: 9px; letter-spacing: .18em; text-transform: uppercase; font-weight: 700; }
+
+  /* ── COPY ── */
+  #id4-show-{{ section.id }} .id4s-eyebrow {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-size: 11px; font-weight: 800; letter-spacing: .24em; text-transform: uppercase;
+    color: var(--spark); margin-bottom: 16px;
+  }
+  #id4-show-{{ section.id }} .id4s-eyebrow svg { width: 14px; height: 14px; fill: var(--spark); }
+  #id4-show-{{ section.id }} .id4s-title {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(38px, 5.4vw, 66px); line-height: .94; letter-spacing: .01em;
+    text-transform: uppercase; margin: 0 0 16px;
+  }
+  #id4-show-{{ section.id }} .id4s-title .spark { color: var(--spark); }
+  #id4-show-{{ section.id }} .id4s-sub {
+    font-size: clamp(15px, 1.5vw, 17px); line-height: 1.6; color: var(--muted);
+    max-width: 46ch; margin: 0 0 26px;
+  }
+
+  #id4-show-{{ section.id }} .id4s-feats { list-style: none; margin: 0 0 28px; padding: 0; display: grid; gap: 12px; }
+  #id4-show-{{ section.id }} .id4s-feats li { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; line-height: 1.45; }
+  #id4-show-{{ section.id }} .id4s-feats svg { width: 20px; height: 20px; flex-shrink: 0; fill: none; stroke: var(--spark); stroke-width: 2.4; margin-top: 1px; }
+
+  /* price row */
+  #id4-show-{{ section.id }} .id4s-pricerow {
+    display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 22px;
+    padding: 16px 20px; border-radius: 14px;
+    background: color-mix(in srgb, var(--text) 4%, transparent);
+    border: 1px solid var(--line); width: fit-content;
+  }
+  #id4-show-{{ section.id }} .id4s-price { font-family: 'Anton', sans-serif; font-size: 44px; line-height: 1; color: var(--spark); }
+  #id4-show-{{ section.id }} .id4s-compare { font-size: 19px; color: var(--muted); text-decoration: line-through; }
+  #id4-show-{{ section.id }} .id4s-pricetag { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--red); font-weight: 800; }
+
+  #id4-show-{{ section.id }} .id4s-ctas { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  #id4-show-{{ section.id }} .id4s-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 16px 30px; border-radius: 999px; font-weight: 800; font-size: 15px;
+    letter-spacing: .02em; text-decoration: none; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease;
+  }
+  #id4-show-{{ section.id }} .id4s-btn.primary {
+    background: var(--spark); color: #11183b;
+    box-shadow: 0 12px 30px color-mix(in srgb, var(--spark) 40%, transparent);
+  }
+  #id4-show-{{ section.id }} .id4s-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 18px 40px color-mix(in srgb, var(--spark) 55%, transparent); }
+  #id4-show-{{ section.id }} .id4s-btn.ghost { background: transparent; color: var(--text); border: 1.5px solid var(--line); }
+  #id4-show-{{ section.id }} .id4s-btn.ghost:hover { border-color: var(--spark); color: var(--spark); }
+
+  @media (max-width: 860px) {
+    #id4-show-{{ section.id }} .id4s-inner { grid-template-columns: 1fr; }
+    #id4-show-{{ section.id }} .id4s-media { order: 1 !important; }
+    #id4-show-{{ section.id }} .id4s-copy  { order: 2 !important; }
+  }
+</style>
+
+{%- assign flag_svg = '<svg viewBox="0 0 24 24"><path d="M4 2v20M4 4h13l-2 3 2 3H4"/></svg>' -%}
+
+<div id="id4-show-{{ section.id }}">
+  <div class="id4s-stars"></div>
+  <div class="id4s-inner">
+
+    <div class="id4s-media">
+      {%- if section.settings.savings_text != blank -%}
+        <div class="id4s-savebadge"><b>{{ section.settings.savings_text }}</b><span>{{ section.settings.savings_label }}</span></div>
+      {%- endif -%}
+      {%- if section.settings.image != blank -%}
+        <img src="{{ section.settings.image | image_url: width: 1200 }}" alt="{{ section.settings.image.alt | escape }}" loading="lazy" width="1200" height="1020">
+      {%- else -%}
+        <div class="id4s-ph">Add product image</div>
+      {%- endif -%}
+    </div>
+
+    <div class="id4s-copy">
+      {%- if section.settings.eyebrow != blank -%}
+        <div class="id4s-eyebrow">
+          <svg viewBox="0 0 24 24"><path d="M12 1.5l2.9 6.4 7 .7-5.2 4.7 1.5 6.9L12 17.8 5.8 20.9l1.5-6.9L2.1 8.6l7-.7z"/></svg>
+          {{ section.settings.eyebrow }}
+        </div>
+      {%- endif -%}
+      <h2 class="id4s-title">{{ section.settings.title }}</h2>
+      {%- if section.settings.subtitle != blank -%}<p class="id4s-sub">{{ section.settings.subtitle }}</p>{%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        <ul class="id4s-feats">
+          {%- for block in section.blocks -%}
+            <li {{ block.shopify_attributes }}>
+              <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>{{ block.settings.text }}</span>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      {%- if section.settings.price != blank -%}
+        <div class="id4s-pricerow">
+          <span class="id4s-price">{{ section.settings.price }}</span>
+          {%- if section.settings.compare_price != blank -%}<span class="id4s-compare">{{ section.settings.compare_price }}</span>{%- endif -%}
+          {%- if section.settings.price_tag != blank -%}<span class="id4s-pricetag">{{ section.settings.price_tag }}</span>{%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <div class="id4s-ctas">
+        {%- if section.settings.cta1_label != blank -%}
+          <a class="id4s-btn primary" href="{{ section.settings.cta1_url | default: '#' }}">{{ section.settings.cta1_label }}</a>
+        {%- endif -%}
+        {%- if section.settings.cta2_label != blank -%}
+          <a class="id4s-btn ghost" href="{{ section.settings.cta2_url | default: '#' }}">{{ section.settings.cta2_label }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "4th of July Showcase",
+  "tag": "div",
+  "class": "independence-day-showcase-section",
+  "settings": [
+    { "type": "header", "content": "Layout" },
+    {
+      "type": "select", "id": "media_position", "label": "Image position", "default": "left",
+      "options": [ { "value": "left", "label": "Left" }, { "value": "right", "label": "Right" } ]
+    },
+
+    { "type": "header", "content": "Media" },
+    { "type": "image_picker", "id": "image", "label": "Product image" },
+    {
+      "type": "select", "id": "image_fit", "label": "Image display", "default": "natural",
+      "info": "Show full image keeps portrait photos uncropped.",
+      "options": [
+        { "value": "natural", "label": "Show full image (no crop)" },
+        { "value": "cover", "label": "Fill panel (may crop)" }
+      ]
+    },
+    { "type": "range", "id": "image_max_height", "label": "Max image height (full-image mode)", "min": 0, "max": 900, "step": 20, "unit": "px", "default": 0, "info": "0 = no limit (use the image's natural height)." },
+    {
+      "type": "select", "id": "image_aspect", "label": "Crop shape (fill-panel mode)", "default": "4 / 5",
+      "options": [
+        { "value": "3 / 4", "label": "Tall portrait (3:4)" },
+        { "value": "4 / 5", "label": "Portrait (4:5)" },
+        { "value": "1 / 1", "label": "Square (1:1)" },
+        { "value": "4 / 3.4", "label": "Landscape (4:3.4)" }
+      ]
+    },
+    { "type": "text", "id": "savings_text", "label": "Savings badge — big", "info": "Leave blank to hide", "default": "SAVE 30%" },
+    { "type": "text", "id": "savings_label", "label": "Savings badge — small", "default": "This Week" },
+
+    { "type": "header", "content": "Copy" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Best Seller — 4th of July Edition" },
+    { "type": "text", "id": "title", "label": "Title", "default": "The QB54 Game Set" },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "The viral backyard football game built for cookouts, tailgates, and driveway showdowns. Set up in seconds, play for hours." },
+    { "type": "text", "id": "price", "label": "Price", "default": "$69" },
+    { "type": "text", "id": "compare_price", "label": "Compare-at price", "info": "Shown struck-through", "default": "$99" },
+    { "type": "text", "id": "price_tag", "label": "Price tag text", "default": "Lowest price of summer" },
+
+    { "type": "header", "content": "Buttons" },
+    { "type": "text", "id": "cta1_label", "label": "Primary button", "default": "Add to Cart — Save 30%" },
+    { "type": "url", "id": "cta1_url", "label": "Primary button URL" },
+    { "type": "text", "id": "cta2_label", "label": "Secondary button", "default": "See How It Works" },
+    { "type": "url", "id": "cta2_url", "label": "Secondary button URL" },
+
+    { "type": "header", "content": "Section spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 88 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 88 },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_bg", "label": "Background", "default": "#141c40" },
+    { "type": "color", "id": "color_panel", "label": "Media panel background", "default": "#212c54" },
+    { "type": "color", "id": "color_text", "label": "Text", "default": "#ffffff" },
+    { "type": "color", "id": "color_red", "label": "Red", "default": "#e11d2f" },
+    { "type": "color", "id": "color_blue", "label": "Blue (glow)", "default": "#2a3f8f" },
+    { "type": "color", "id": "color_spark", "label": "Gold accent (QB54 gold)", "default": "#f7b80d" }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature line",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "Ships free before the 4th" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "4th of July Showcase",
+      "blocks": [
+        { "type": "feature", "settings": { "text": "Sets up in under 60 seconds — no tools" } },
+        { "type": "feature", "settings": { "text": "Durable for grass, sand, driveway & turf" } },
+        { "type": "feature", "settings": { "text": "Free fast shipping — arrives before July 4" } },
+        { "type": "feature", "settings": { "text": "Loved by 25,000+ backyard champions" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

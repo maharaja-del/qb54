@@ -1,0 +1,66 @@
+{%- doc -%}
+  Renders a scrolling marquee announcement bar.
+
+  Supports icons, highlighted text, mobile-specific content, and optional links.
+
+  @param {object} section - Section settings object
+  @param {number} announcements_count - The total number of announcements
+
+  @example
+  {% render 'announcements-marquee', section: section %}
+{%- enddoc -%}
+
+<div class="announcement-bar h-full flex relative overflow-hidden">
+  <marquee-element id="Slider-{{ section.id }}" class="scrolling-text scrolling-text--{{ section.settings.direction }} flex items-center w-full" data-speed="{{ section.settings.speed }}" data-direction="{{ section.settings.direction }}">
+    <div class="marquee with-dot h-full flex items-center shrink-0 whitespace-nowrap">
+      {%- liquid
+        assign with_gradient = false
+        if section.settings.gradient_highlight != blank and section.settings.gradient_highlight != 'rgba(0,0,0,0)'
+          assign with_gradient = true
+        endif
+      -%}
+      {%- for block in section.blocks -%}
+        <div class="scrolling-text__item with-text flex items-center shrink-0" {{ block.shopify_attributes }}>
+          {%- capture announcement_content -%}
+            {%- if block.settings.icon != 'none' -%}
+              <span class="announcement-icon{% if block.settings.hide_icon_mobile %} hidden md:block{% endif %}">
+                {%- render 'icon-announcement', icon: block.settings.icon, size: 'xs', class: 'stroke-1' -%}
+              </span>
+            {%- endif -%}
+
+            {%- if block.settings.text_mobile != blank -%}
+              <p class="announcement-text leading-tight md:hidden">
+                {%- render 'highlighted-text', content: block.settings.text_mobile, style: block.settings.highlighted_text, scribble: block.settings.highlighted_scribble, gradient: with_gradient -%}
+              </p>
+              <p class="announcement-text leading-tight hidden md:block">
+                {%- render 'highlighted-text', content: block.settings.text, style: block.settings.highlighted_text, scribble: block.settings.highlighted_scribble, gradient: with_gradient -%}
+              </p>
+            {%- else -%}
+              <p class="announcement-text leading-tight">
+                {%- render 'highlighted-text', content: block.settings.text, style: block.settings.highlighted_text, scribble: block.settings.highlighted_scribble, gradient: with_gradient -%}
+              </p>
+            {%- endif -%}
+          {%- endcapture -%}
+
+          {%- if block.settings.link != blank -%}
+            {%- liquid
+              assign accessibility = true
+              if announcements_count > 1
+                unless forloop.first
+                  assign accessibility = false
+                endunless
+              endif
+            -%}
+            <a class="announcement__content flex items-center gap-2" href="{{ block.settings.link }}"{% unless accessibility %} tabindex="-1"{% endunless %}>
+              {{- announcement_content -}}
+            </a>
+          {%- else -%}
+            <div class="announcement__content flex items-center gap-2 rte">
+              {{- announcement_content -}}
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </marquee-element>
+</div>

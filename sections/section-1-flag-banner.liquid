@@ -1,0 +1,675 @@
+{% comment %}
+  QB54 — 4th of July Flag Banner (Section 1)
+  Full-width waving-flag promo ribbon with star field, animated stripes,
+  rotating badge messages, and a click-to-copy coupon.
+  
+  USAGE: Add to Homepage template above hero / header group.
+  sections/qb54-july4-flag-banner.liquid
+{% endcomment %}
+
+{%- liquid
+  assign show_section = true
+  if section.settings.hide_on_homepage and request.page_type == 'index'
+    assign show_section = false
+  endif
+  if section.settings.hide_on_product and request.page_type == 'product'
+    assign show_section = false
+  endif
+  if section.settings.hide_on_collection and request.page_type == 'collection'
+    assign show_section = false
+  endif
+-%}
+
+{%- if show_section -%}
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@700;800&display=swap" rel="stylesheet">
+
+<style>
+  /* ── RESET WRAPPER ── */
+  #qb54-july4-banner-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    isolation: isolate;
+    font-family: 'Sora', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── STICKY OPTION ── */
+  #qb54-july4-banner-{{ section.id }}.is-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+
+  /* ── STRIPE CANVAS (SVG background) ── */
+  #qb54-july4-banner-{{ section.id }} .qb54-flag-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ── WAVING OVERLAY ── */
+  #qb54-july4-banner-{{ section.id }} .qb54-wave-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      92deg,
+      rgba(255,255,255,0) 0px,
+      rgba(255,255,255,0.07) 20px,
+      rgba(255,255,255,0) 40px,
+      rgba(0,0,0,0.04) 60px,
+      rgba(255,255,255,0) 80px
+    );
+    background-size: 200% 100%;
+    animation: qb54-wave-slide 4s ease-in-out infinite;
+  }
+  @keyframes qb54-wave-slide {
+    0%, 100% { background-position: 0% 0%; transform: skewX(0deg); }
+    50%       { background-position: 100% 0%; transform: skewX(-0.6deg); }
+  }
+
+  /* ── STAR SHIMMER ── */
+  #qb54-july4-banner-{{ section.id }} .qb54-star-shimmer {
+    position: absolute;
+    top: 0; left: 0;
+    width: 38%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    background-image:
+      radial-gradient(1.8px 1.8px at 8%  30%, rgba(255,255,255,0.95), transparent),
+      radial-gradient(1.3px 1.3px at 18% 65%, rgba(255,255,255,0.85), transparent),
+      radial-gradient(2px   2px   at 27% 20%, rgba(255,255,255,0.9),  transparent),
+      radial-gradient(1.4px 1.4px at 32% 75%, rgba(255,255,255,0.7),  transparent),
+      radial-gradient(1.7px 1.7px at 5%  80%, rgba(255,255,255,0.85), transparent),
+      radial-gradient(1.2px 1.2px at 22% 45%, rgba(255,255,255,0.75), transparent),
+      radial-gradient(1.5px 1.5px at 14% 12%, rgba(255,255,255,0.88), transparent),
+      radial-gradient(1.3px 1.3px at 36% 55%, rgba(255,255,255,0.72), transparent),
+      radial-gradient(2.2px 2.2px at 12% 50%, rgba(255,255,255,0.6),  transparent);
+    background-size: 100% 100%;
+    animation: qb54-star-twinkle 2.8s ease-in-out infinite;
+  }
+  @keyframes qb54-star-twinkle {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.45; }
+  }
+
+  /* ── FIREWORK SPARKS ── */
+  #qb54-july4-banner-{{ section.id }} .qb54-spark {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    opacity: 0;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-spark::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    box-shadow:
+      0 -28px 0 -2px currentColor,
+       28px 0 0 -2px currentColor,
+       0  28px 0 -2px currentColor,
+      -28px 0 0 -2px currentColor,
+       20px -20px 0 -2.5px currentColor,
+      -20px -20px 0 -2.5px currentColor,
+       20px  20px 0 -2.5px currentColor,
+      -20px  20px 0 -2.5px currentColor;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-spark-1 {
+    top: 50%; left: 4%;
+    color: #f7b80d;
+    animation: qb54-spark-burst 3.6s ease-out infinite;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-spark-2 {
+    top: 50%; right: 4%;
+    color: #e11d2f;
+    animation: qb54-spark-burst 3.6s ease-out 1.2s infinite;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-spark-3 {
+    top: 50%; left: 50%;
+    color: #fff;
+    animation: qb54-spark-burst 3.6s ease-out 2.1s infinite;
+  }
+  @keyframes qb54-spark-burst {
+    0%   { opacity: 0; transform: scale(0.15); }
+    10%  { opacity: 1; }
+    50%  { opacity: 0.7; transform: scale(1); }
+    75%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  /* ── CONTENT LAYER ── */
+  #qb54-july4-banner-{{ section.id }} .qb54-content {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: {{ section.settings.bar_height }}px;
+    padding: 0 20px;
+    text-align: center;
+    gap: 16px;
+  }
+
+  /* ── SLIDE CONTAINER ── */
+  #qb54-july4-banner-{{ section.id }} .qb54-slides {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 40px;
+    overflow: hidden;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-slide {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+    pointer-events: none;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-slide.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-slide.exit {
+    opacity: 0;
+    transform: translateY(-16px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  /* ── BADGE ── */
+  #qb54-july4-banner-{{ section.id }} .qb54-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    background: rgba(178, 34, 52, 0.92);
+    color: #fff;
+    font-family: 'Sora', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 8px 22px;
+    border-radius: 4px;
+    border: 1.5px solid rgba(255,255,255,0.55);
+    white-space: nowrap;
+    line-height: 1.4;
+    text-decoration: none;
+    box-shadow: 0 2px 18px rgba(178,34,52,0.38);
+    transition: background 0.2s, transform 0.2s;
+  }
+  #qb54-july4-banner-{{ section.id }} a.qb54-badge:hover {
+    background: #c01b2a;
+    transform: scale(1.03);
+    color: #fff;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-badge-star {
+    font-size: 11px;
+    opacity: 0.85;
+  }
+
+  /* ── COUPON CHIP (optional, inline) ── */
+  #qb54-july4-banner-{{ section.id }} .qb54-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    border: 1.5px dashed rgba(247,184,13,0.65);
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+    background: rgba(0,0,0,0.28);
+    position: relative;
+    vertical-align: middle;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-chip:hover {
+    border-color: #f7b80d;
+    transform: translateY(-1px);
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-chip-label {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #f7b80d;
+    padding: 5px 9px;
+    border-right: 1px dashed rgba(247,184,13,0.4);
+    white-space: nowrap;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-chip-code {
+    font-family: 'Anton', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    color: #ffffff;
+    padding: 5px 10px;
+    white-space: nowrap;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-chip-copy {
+    padding: 5px 9px;
+    color: rgba(255,255,255,0.55);
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-chip:hover .qb54-chip-copy {
+    color: #f7b80d;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-chip-copy svg {
+    width: 12px; height: 12px;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-chip-feedback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f7b80d;
+    color: #061a06;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-chip.copied .qb54-chip-feedback {
+    opacity: 1;
+  }
+
+  /* ── DOT INDICATORS ── */
+  #qb54-july4-banner-{{ section.id }} .qb54-dots {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transition: background 0.3s, transform 0.3s;
+    cursor: pointer;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-dot.active {
+    background: #f7b80d;
+    transform: scale(1.3);
+  }
+
+  /* ── CLOSE BUTTON ── */
+  #qb54-july4-banner-{{ section.id }} .qb54-close {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    z-index: 10;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    padding: 6px;
+    line-height: 1;
+    border-radius: 50%;
+    transition: color 0.2s, background 0.2s;
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-close:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.12);
+  }
+  #qb54-july4-banner-{{ section.id }} .qb54-close svg {
+    width: 14px; height: 14px;
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 640px) {
+    #qb54-july4-banner-{{ section.id }} .qb54-content {
+      min-height: auto;
+      padding: 8px 36px 8px 16px;
+    }
+    #qb54-july4-banner-{{ section.id }} .qb54-dots { display: none; }
+    #qb54-july4-banner-{{ section.id }} .qb54-badge {
+      font-size: 10px;
+      padding: 7px 14px;
+      letter-spacing: 0.12em;
+      white-space: normal;
+      word-break: break-word;
+      text-align: center;
+      max-width: 78vw;
+      border-radius: 4px;
+    }
+    #qb54-july4-banner-{{ section.id }} .qb54-chip { display: none; }
+    #qb54-july4-banner-{{ section.id }} .qb54-slide {
+      flex-direction: column;
+      gap: 6px;
+    }
+    #qb54-july4-banner-{{ section.id }} .qb54-star-shimmer { width: 100%; opacity: 0.5; }
+    #qb54-july4-banner-{{ section.id }} .qb54-spark { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #qb54-july4-banner-{{ section.id }} .qb54-wave-overlay,
+    #qb54-july4-banner-{{ section.id }} .qb54-star-shimmer,
+    #qb54-july4-banner-{{ section.id }} .qb54-spark { animation: none !important; }
+    #qb54-july4-banner-{{ section.id }} .qb54-spark { opacity: 0.2; }
+  }
+</style>
+
+<div id="qb54-july4-banner-{{ section.id }}"{% if section.settings.sticky %} class="is-sticky"{% endif %}>
+
+  <!-- Flag SVG Background — red/white stripes + navy canton -->
+  <svg class="qb54-flag-bg" aria-hidden="true" viewBox="0 0 1440 56" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Red base -->
+    <rect width="1440" height="56" fill="#B22234"/>
+    <!-- 7 white stripes, 13 total: alternating red/white each ~4.3px of 56px -->
+    <rect width="1440" height="4" y="0"  fill="#FFFFFF"/>
+    <rect width="1440" height="4" y="8"  fill="#FFFFFF"/>
+    <rect width="1440" height="4" y="16" fill="#FFFFFF"/>
+    <rect width="1440" height="4" y="24" fill="#FFFFFF"/>
+    <rect width="1440" height="4" y="32" fill="#FFFFFF"/>
+    <rect width="1440" height="4" y="40" fill="#FFFFFF"/>
+    <rect width="1440" height="4" y="48" fill="#FFFFFF"/>
+    <!-- Navy canton (union) — covers top 7 stripes, left ~38% -->
+    <rect width="548" height="56" fill="#3C3B6E" opacity="0.97"/>
+    <!-- Star grid 6×5 in canton (simplified) -->
+    {% assign star_y_positions = '11,22,33,44' | split: ',' %}
+    {% assign star_x_positions = '28,68,108,148,188,228,268,308,348,388' | split: ',' %}
+    {% for sy in star_y_positions %}
+      {% for sx in star_x_positions %}
+        <text x="{{ sx }}" y="{{ sy }}" text-anchor="middle" dominant-baseline="middle" font-size="10" fill="rgba(255,255,255,0.92)" font-family="Arial,sans-serif">★</text>
+      {% endfor %}
+    {% endfor %}
+    <!-- Extra half-offset row -->
+    {% assign star_x_offset = '48,88,128,168,208,248,288,328,368' | split: ',' %}
+    {% for sx in star_x_offset %}
+      <text x="{{ sx }}" y="6"  text-anchor="middle" dominant-baseline="middle" font-size="9" fill="rgba(255,255,255,0.7)" font-family="Arial,sans-serif">★</text>
+      <text x="{{ sx }}" y="50" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="rgba(255,255,255,0.7)" font-family="Arial,sans-serif">★</text>
+    {% endfor %}
+  </svg>
+
+  <div class="qb54-wave-overlay"></div>
+  <div class="qb54-star-shimmer"></div>
+  <span class="qb54-spark qb54-spark-1"></span>
+  <span class="qb54-spark qb54-spark-2"></span>
+  <span class="qb54-spark qb54-spark-3"></span>
+
+  <div class="qb54-content">
+
+    <div class="qb54-slides" id="qb54-slides-{{ section.id }}">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'announcement' -%}
+          <div class="qb54-slide{% if forloop.first %} active{% endif %}" {{ block.shopify_attributes }}>
+            {%- if block.settings.link != blank -%}
+              <a href="{{ block.settings.link }}" class="qb54-badge">
+                <span class="qb54-badge-star">★</span>
+                {{ block.settings.text }}
+                <span class="qb54-badge-star">★</span>
+              </a>
+            {%- else -%}
+              <span class="qb54-badge">
+                <span class="qb54-badge-star">★</span>
+                {{ block.settings.text }}
+                <span class="qb54-badge-star">★</span>
+              </span>
+            {%- endif -%}
+            {%- if block.settings.show_coupon and block.settings.coupon_code != blank -%}
+              <button
+                type="button"
+                class="qb54-chip"
+                data-code="{{ block.settings.coupon_code | escape }}"
+                aria-label="Copy coupon code {{ block.settings.coupon_code | escape }}">
+                <span class="qb54-chip-label">Code</span>
+                <span class="qb54-chip-code">{{ block.settings.coupon_code }}</span>
+                <span class="qb54-chip-copy" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                  </svg>
+                </span>
+                <span class="qb54-chip-feedback">✓ Copied!</span>
+              </button>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- assign block_count = section.blocks | where: 'type', 'announcement' | size -%}
+    {%- if block_count > 1 -%}
+      <div class="qb54-dots" id="qb54-dots-{{ section.id }}">
+        {%- for i in (1..block_count) -%}
+          <div class="qb54-dot{% if forloop.first %} active{% endif %}"></div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+  </div>
+
+  {% if section.settings.show_close %}
+    <button type="button" class="qb54-close" aria-label="Close announcement" id="qb54-close-{{ section.id }}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  {% endif %}
+
+</div>
+
+<script>
+(function(){
+  var id = '{{ section.id }}';
+  var bar = document.getElementById('qb54-july4-banner-' + id);
+  if (!bar) return;
+
+  /* Slides rotation */
+  var slidesWrap = document.getElementById('qb54-slides-' + id);
+  var dotsWrap   = document.getElementById('qb54-dots-' + id);
+  if (slidesWrap) {
+    var slides = slidesWrap.querySelectorAll('.qb54-slide');
+    var dots   = dotsWrap ? dotsWrap.querySelectorAll('.qb54-dot') : [];
+    if (slides.length > 1) {
+      var current = 0;
+      var intervalMs = {{ section.settings.rotation_speed | times: 1000 | default: 4000 }};
+      function goTo(n) {
+        slides[current].classList.add('exit');
+        slides[current].classList.remove('active');
+        if (dots[current]) dots[current].classList.remove('active');
+        setTimeout(function(){
+          slides[current].classList.remove('exit');
+          current = n;
+          slides[current].classList.add('active');
+          if (dots[current]) dots[current].classList.add('active');
+        }, 420);
+      }
+      var timer = setInterval(function(){ goTo((current + 1) % slides.length); }, intervalMs);
+      if (dotsWrap) {
+        dots.forEach(function(d, i){
+          d.addEventListener('click', function(){
+            clearInterval(timer);
+            goTo(i);
+            timer = setInterval(function(){ goTo((current + 1) % slides.length); }, intervalMs);
+          });
+        });
+      }
+    }
+  }
+
+  /* Coupon copy */
+  bar.querySelectorAll('.qb54-chip').forEach(function(chip){
+    var resetT;
+    chip.addEventListener('click', function(){
+      var code = chip.dataset.code || '';
+      if (!code) return;
+      function show(){ chip.classList.add('copied'); clearTimeout(resetT); resetT = setTimeout(function(){ chip.classList.remove('copied'); }, 1700); }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(show).catch(function(){ fallback(code); show(); });
+      } else { fallback(code); show(); }
+      function fallback(t){ var ta = document.createElement('textarea'); ta.value=t; ta.style.position='absolute'; ta.style.left='-9999px'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); }
+    });
+  });
+
+  /* Close button */
+  var closeBtn = document.getElementById('qb54-close-' + id);
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function(){
+      bar.style.transition = 'height 0.35s ease, opacity 0.35s ease';
+      bar.style.overflow = 'hidden';
+      bar.style.height = bar.offsetHeight + 'px';
+      requestAnimationFrame(function(){
+        bar.style.height = '0px';
+        bar.style.opacity = '0';
+      });
+      setTimeout(function(){ bar.remove(); }, 380);
+    });
+  }
+})();
+</script>
+
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "🇺🇸 Flag Banner",
+  "class": "qb54-flag-banner-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_homepage",
+      "label": "Hide on homepage",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_product",
+      "label": "Hide on product pages",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_collection",
+      "label": "Hide on collection pages",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "Sticky (stays at top while scrolling)",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_close",
+      "label": "Show dismiss (×) button",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Rotation"
+    },
+    {
+      "type": "range",
+      "id": "rotation_speed",
+      "label": "Seconds per slide",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "bar_height",
+      "label": "Bar height (px)",
+      "min": 40,
+      "max": 80,
+      "step": 2,
+      "default": 52,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Announcement",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Message",
+          "default": "4th of July Sale — 20% OFF Everything"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional — wraps badge)"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_coupon",
+          "label": "Show inline coupon chip",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "coupon_code",
+          "label": "Coupon code",
+          "default": "FREEDOM"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "🇺🇸 Flag Banner",
+      "blocks": [
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "4th of July Sale — 20% OFF All Game Sets",
+            "show_coupon": true,
+            "coupon_code": "FREEDOM"
+          }
+        },
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "Free Shipping on Orders $199+"
+          }
+        },
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "🎇 Sale Ends July 4th at Midnight — Shop Now 🎇"
+          }
+        }
+      ]
+    }
+  ],
+  "enabled_on": {
+    "groups": ["header", "footer"],
+    "templates": ["*"]
+  }
+}
+{% endschema %}

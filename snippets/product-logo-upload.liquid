@@ -1,0 +1,185 @@
+{%- comment -%}
+  Renders the customer logo upload block with live preview + print-quality checks.
+
+  Accepts:
+  - block: {Object} the logo_upload block
+  - product: {Object}
+  - section_id: {String}
+  - product_form_id: {String}
+
+  Usage:
+  {%- render 'product-logo-upload', block: block, product: product, section_id: section.id, product_form_id: product_form_id -%}
+{%- endcomment -%}
+
+{%- liquid
+  assign lu_id = 'LogoUpload-' | append: section_id | append: '-' | append: product.id | append: '-' | append: block.id
+  assign property_name = block.settings.property_name | default: 'Custom Logo'
+-%}
+
+<logo-upload
+  id="{{ lu_id }}"
+  class="logo-upload field block w-full"
+  data-form-id="{{ product_form_id }}"
+  data-section-id="{{ section_id }}"
+  {{ block.shopify_attributes }}
+>
+  <script type="application/json" data-logo-upload-config>
+    {
+      "required": {{ block.settings.required | json }},
+      "minWidth": {{ block.settings.min_width_px | default: 1500 }},
+      "warnWidth": {{ block.settings.warn_width_px | default: 1000 }},
+      "maxFileMB": {{ block.settings.max_file_mb | default: 20 }},
+      "enablePreview": {{ block.settings.enable_preview | json }},
+      "previewMediaPosition": {{ block.settings.preview_media_position | default: 1 }},
+      "showPlaceholder": {{ block.settings.show_placeholder | json }},
+      "previewBlend": {{ block.settings.preview_blend | default: 'normal' | json }},
+      "box": {
+        "top": {{ block.settings.box_top | default: 27 }},
+        "left": {{ block.settings.box_left | default: 41 }},
+        "width": {{ block.settings.box_width | default: 25 }},
+        "height": {{ block.settings.box_height | default: 20 }}
+      },
+      "boxes": [
+        {
+          "top": {{ block.settings.box_top | default: 27 }},
+          "left": {{ block.settings.box_left | default: 41 }},
+          "width": {{ block.settings.box_width | default: 25 }},
+          "height": {{ block.settings.box_height | default: 20 }}
+        }
+        {%- if block.settings.enable_box_2 -%}
+        ,{
+          "top": {{ block.settings.box2_top | default: 27 }},
+          "left": {{ block.settings.box2_left | default: 41 }},
+          "width": {{ block.settings.box2_width | default: 25 }},
+          "height": {{ block.settings.box2_height | default: 20 }}
+        }
+        {%- endif -%}
+      ],
+      "afterAdd": {{ block.settings.after_add | default: 'cart' | json }},
+      "messages": {
+        "badFormat": "That file type isn\u2019t supported. Please upload a PNG, JPG, SVG, PDF, or WebP file.",
+        "heic": "iPhone HEIC photos aren\u2019t supported. In your Photos app, share the image as a JPG or PNG \u2014 or better, upload your original logo file.",
+        "tooLarge": "That file is over {max} MB. Please upload a smaller file.",
+        "tooSmall": "This image is only {width} px wide \u2014 too small to print clearly. Please upload a file at least {min} px wide, or a vector file (SVG or PDF).",
+        "lowRes": "This image is {width} px wide. It can be printed, but it may look soft and might need manual cleanup by our team.",
+        "opaqueBg": "Your logo appears to have a solid background. It will print as a visible box on the product \u2014 check the preview. A transparent PNG or a vector file works best.",
+        "jpgBg": "JPG files can\u2019t have a transparent background, so any background in your image will be printed. A transparent PNG or a vector file works best.",
+        "vectorPass": "Vector file \u2014 print-ready at any size.",
+        "rasterPass": "Looks good \u2014 high enough resolution to print.",
+        "pdfNoPreview": "PDF files can\u2019t be previewed on the product image, but they\u2019re perfect for printing. We\u2019ll use your file exactly as uploaded.",
+        "required": "Please upload your logo before adding to cart.",
+        "ackRequired": "Please confirm you understand the note about your file quality.",
+        "rightsRequired": "Please confirm you have the rights to use this artwork.",
+        "readError": "We couldn\u2019t read that file. Please try a different one.",
+        "adding": "Adding to cart\u2026"
+      }
+    }
+  </script>
+
+  {%- if block.settings.title != blank -%}
+    <p class="logo-upload__title font-medium leading-tight" id="{{ lu_id }}-label">{{ block.settings.title | escape }}</p>
+  {%- endif -%}
+
+  {%- if block.settings.helper_text != blank -%}
+    <div class="logo-upload__helper rte text-sm text-opacity">{{ block.settings.helper_text }}</div>
+  {%- endif -%}
+
+  {%- comment -%} The real file input. Associated with the product form so it submits as a line item property. {%- endcomment -%}
+  <input
+    type="file"
+    class="logo-upload__input sr-only"
+    id="{{ lu_id }}-input"
+    name="properties[{{ property_name | escape }}]"
+    form="{{ product_form_id }}"
+    accept=".png,.jpg,.jpeg,.svg,.pdf,.webp,image/png,image/jpeg,image/svg+xml,application/pdf,image/webp"
+    aria-describedby="{{ lu_id }}-status"
+  />
+
+  {%- comment -%} Dropzone (shown when no file). A <label> so tap/click/keyboard all open the picker. {%- endcomment -%}
+  <label
+    for="{{ lu_id }}-input"
+    class="logo-upload__dropzone flex flex-col items-center justify-center gap-2 text-center"
+    data-dropzone
+    role="button"
+    tabindex="0"
+    aria-labelledby="{% if block.settings.title != blank %}{{ lu_id }}-label{% else %}{{ lu_id }}-dz-text{% endif %}"
+  >
+    <svg class="logo-upload__icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+    </svg>
+    <span class="font-medium" id="{{ lu_id }}-dz-text" data-dropzone-text>
+      <span data-desktop-only>Drag &amp; drop your logo, or click to browse</span><span data-mobile-only>Tap to upload your logo</span>
+    </span>
+    <span class="text-xs text-opacity">PNG, JPG, SVG, PDF or WebP &middot; up to {{ block.settings.max_file_mb | default: 20 }} MB</span>
+  </label>
+
+  {%- comment -%} File card (shown once a file is chosen) {%- endcomment -%}
+  <div class="logo-upload__card" data-file-card hidden>
+    <div class="logo-upload__card-main flex items-center gap-4">
+      <div class="logo-upload__thumb flex items-center justify-center shrink-0" data-thumb>
+        <img alt="" hidden data-thumb-img />
+        <svg data-thumb-icon width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false" hidden>
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+        </svg>
+      </div>
+      <div class="logo-upload__meta grid gap-1 min-w-0">
+        <span class="logo-upload__filename font-medium" data-filename></span>
+        <span class="text-xs text-opacity" data-filemeta></span>
+        <span class="logo-upload__badge" data-badge hidden></span>
+      </div>
+    </div>
+    <div class="logo-upload__actions flex gap-3">
+      <button type="button" class="logo-upload__action" data-replace>Replace</button>
+      <button type="button" class="logo-upload__action" data-remove>Remove</button>
+    </div>
+  </div>
+
+  {%- comment -%} Live status / error region {%- endcomment -%}
+  <div class="logo-upload__status text-sm" id="{{ lu_id }}-status" data-status role="status" aria-live="polite"></div>
+
+  {%- comment -%} Low-quality acknowledgment (only revealed in warning state) {%- endcomment -%}
+  <label class="logo-upload__check flex items-start gap-3 text-sm" data-ack-wrap hidden>
+    <input type="checkbox" data-ack />
+    <span>I understand low-quality files may require manual cleanup, which can add 1&ndash;2 business days to my order.</span>
+  </label>
+
+  {%- if block.settings.show_rights_checkbox -%}
+    <label class="logo-upload__check flex items-start gap-3 text-sm" data-rights-wrap>
+      <input
+        type="checkbox"
+        data-rights
+        name="properties[Artwork rights confirmed]"
+        value="Yes"
+        form="{{ product_form_id }}"
+      />
+      <span>I own or have permission to use this artwork.</span>
+    </label>
+  {%- endif -%}
+
+  {%- comment -%} Hidden QC properties for the order admin. Disabled until populated so blanks never submit. Leading underscore hides them from customers. {%- endcomment -%}
+  <input type="hidden" name="properties[_Logo Filename]"   value="" form="{{ product_form_id }}" data-prop-filename disabled />
+  <input type="hidden" name="properties[_Logo Dimensions]" value="" form="{{ product_form_id }}" data-prop-dimensions disabled />
+  <input type="hidden" name="properties[_Logo Format]"     value="" form="{{ product_form_id }}" data-prop-format disabled />
+  <input type="hidden" name="properties[_Logo QC]"         value="" form="{{ product_form_id }}" data-prop-qc disabled />
+
+  {%- comment -%} Overlay template — injected by JS into the chosen gallery media item {%- endcomment -%}
+  <template data-overlay-template>
+    <div class="logo-upload-overlay" aria-hidden="true">
+      <div class="logo-upload-overlay__box">
+        <span class="logo-upload-overlay__tag">Your design</span>
+        <img class="logo-upload-overlay__img" alt="" hidden />
+        <span class="logo-upload-overlay__placeholder" hidden>Your logo here</span>
+      </div>
+      <span class="logo-upload-overlay__note" hidden>Preview is for placement only &mdash; we print from your original file.</span>
+    </div>
+  </template>
+</logo-upload>
+
+{%- if block.settings.hide_dynamic_checkout -%}
+  <style>
+    #shopify-section-{{ section_id }} .shopify-payment-button,
+    #shopify-section-{{ section_id }} [data-shopify="payment-button"] {
+      display: none !important;
+    }
+  </style>
+{%- endif -%}

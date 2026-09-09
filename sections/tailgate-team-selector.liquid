@@ -1,0 +1,981 @@
+{%- liquid
+  assign fallback_accent = section.settings.color_highlight | default: '#363a66'
+  assign product_type_label = section.settings.product_type_label | default: 'Item'
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --section-padding-top: {{ section.settings.padding_top }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+    {%- render 'section-variables', section: section -%}
+  }
+
+  #shopify-section-{{ section.id }} #shop-by-team {
+    scroll-margin-top: 100px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector {
+    display: grid;
+    gap: clamp(28px, 4vw, 52px);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__instruction {
+    max-width: 720px;
+    margin: -14px auto 0;
+    color: rgb(var(--color-foreground)/0.7);
+    font-size: 14px;
+    line-height: 1.55;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_desktop }}, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__team {
+    appearance: none;
+    display: flex;
+    min-width: 0;
+    min-height: 126px;
+    padding: 14px 10px 12px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    overflow: hidden;
+    color: rgb(var(--color-foreground));
+    background: rgb(var(--color-background));
+    border: 1px solid rgb(var(--color-foreground)/0.13);
+    border-radius: 14px;
+    box-shadow: 0 3px 14px rgb(0 0 0/0.05);
+    cursor: pointer;
+    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, background 180ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__team:hover {
+    border-color: var(--team-accent);
+    box-shadow: 0 10px 26px rgb(0 0 0/0.1);
+    transform: translateY(-2px);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__team[aria-selected='true'] {
+    background: rgb(var(--color-foreground)/0.045);
+    border-color: var(--team-accent);
+    box-shadow: inset 0 0 0 2px var(--team-accent), 0 10px 28px rgb(0 0 0/0.1);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__team:focus-visible {
+    outline: 3px solid var(--team-accent);
+    outline-offset: 3px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__logo-wrap {
+    display: flex;
+    width: 72px;
+    height: 72px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__logo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__team-name {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__result {
+    min-height: 410px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__panel {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    overflow: hidden;
+    background: rgb(var(--color-background));
+    border: 1px solid rgb(var(--color-foreground)/0.13);
+    border-radius: 24px;
+    box-shadow: 0 18px 55px rgb(0 0 0/0.1);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__panel[hidden] {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__product-media {
+    position: relative;
+    display: flex;
+    min-height: 410px;
+    padding: clamp(24px, 4vw, 52px);
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: rgb(var(--color-foreground)/0.045);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__product-media::after {
+    position: absolute;
+    right: -60px;
+    bottom: -70px;
+    width: 220px;
+    height: 220px;
+    background: var(--team-accent);
+    border-radius: 50%;
+    content: '';
+    filter: blur(80px);
+    opacity: 0.18;
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__product-image {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: min(100%, 440px);
+    height: auto;
+    max-height: 360px;
+    object-fit: contain;
+    filter: drop-shadow(0 20px 22px rgb(0 0 0/0.2));
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__placeholder {
+    width: min(72%, 270px);
+    aspect-ratio: 1;
+    opacity: 0.75;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__product-content {
+    display: flex;
+    padding: clamp(28px, 5vw, 64px);
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__eyebrow {
+    display: inline-flex;
+    margin: 0 0 16px;
+    padding: 7px 11px;
+    color: rgb(var(--color-foreground));
+    background: rgb(var(--color-foreground)/0.06);
+    border: 1px solid var(--team-accent);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__product-title {
+    margin: 0;
+    font-size: clamp(30px, 4vw, 52px);
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__description {
+    max-width: 540px;
+    margin: 16px 0 0;
+    color: rgb(var(--color-foreground)/0.7);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__price {
+    margin-top: 20px;
+    font-size: 22px;
+    font-weight: 800;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__actions {
+    display: flex;
+    width: 100%;
+    max-width: 520px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__form {
+    flex: 1 1 220px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__add,
+  #shopify-section-{{ section.id }} .tailgate-selector__details {
+    display: inline-flex;
+    min-height: 52px;
+    padding: 12px 22px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    text-align: center;
+    text-transform: uppercase;
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__add {
+    width: 100%;
+    color: rgb(var(--color-button-text));
+    background: rgb(var(--color-button-background));
+    border: 1px solid rgb(var(--color-button-background));
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__add[disabled] {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__details {
+    flex: 1 1 180px;
+    color: rgb(var(--color-foreground));
+    background: transparent;
+    border: 1px solid rgb(var(--color-foreground)/0.23);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__add:not([disabled]):hover,
+  #shopify-section-{{ section.id }} .tailgate-selector__details:hover {
+    transform: translateY(-2px);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__trust {
+    display: flex;
+    margin: 18px 0 0;
+    padding: 0;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    color: rgb(var(--color-foreground)/0.64);
+    font-size: 12px;
+    font-weight: 600;
+    list-style: none;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__trust li::before {
+    margin-right: 6px;
+    color: var(--team-accent);
+    content: '✓';
+    font-weight: 900;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-selector__empty {
+    padding: 44px 24px;
+    color: rgb(var(--color-foreground)/0.72);
+    background: rgb(var(--color-background));
+    border: 1px solid rgb(var(--color-foreground)/0.13);
+    border-radius: 18px;
+    text-align: center;
+  }
+
+  @media screen and (max-width: 989px) {
+    #shopify-section-{{ section.id }} .tailgate-selector__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .tailgate-selector {
+      gap: 28px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-selector__grid {
+      grid-template-columns: repeat({{ section.settings.columns_mobile }}, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-selector__team {
+      min-height: 108px;
+      padding: 12px 8px 10px;
+      border-radius: 12px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-selector__logo-wrap {
+      width: 58px;
+      height: 58px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-selector__panel {
+      grid-template-columns: 1fr;
+      border-radius: 18px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-selector__result,
+    #shopify-section-{{ section.id }} .tailgate-selector__product-media {
+      min-height: 0;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-selector__product-media {
+      aspect-ratio: 1.15;
+      padding: 28px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-selector__product-image {
+      max-height: 270px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-selector__product-content {
+      padding: 28px 22px 30px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-selector__product-title {
+      font-size: 32px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-selector__actions {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .tailgate-selector__team,
+    #shopify-section-{{ section.id }} .tailgate-selector__add,
+    #shopify-section-{{ section.id }} .tailgate-selector__details {
+      transition: none;
+    }
+  }
+</style>
+
+<div id="shop-by-team" class="section section--padding{% if section.settings.divider %} section--divider{% endif %}{% if section.settings.rounded %} section--rounded relative{% endif %}">
+  <div class="page-width{% if section.settings.full_width %} page-width--full{% endif %} relative">
+    {%- render 'section-heading', section: section -%}
+
+    {%- if collection.products_count > 0 -%}
+      <tailgate-team-selector class="tailgate-selector">
+        <p id="TailgateSelectorInstruction-{{ section.id }}" class="tailgate-selector__instruction">
+          {{ section.settings.instruction | escape }}
+        </p>
+
+        <div
+          class="tailgate-selector__grid"
+          role="tablist"
+          aria-label="Choose your favorite team"
+          aria-describedby="TailgateSelectorInstruction-{{ section.id }}"
+        >
+          {%- for product in collection.products limit: 50 -%}
+            {%- liquid
+              assign team_key = product.title | strip | split: ' ' | first
+              assign team_name = team_key
+              assign logo_url = blank
+              assign team_accent = fallback_accent
+
+              case team_key
+                when 'Cardinal', 'Cardinals'
+                  assign team_name = 'Cardinals'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Arizona_cardinals.jpg?v=1785794140'
+                  assign team_accent = '#97233f'
+                when 'Falcons'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Atlanta_Falcons_Logo.png'
+                  assign team_accent = '#a71930'
+                when 'Ravens'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Baltimore_Ravens_Logo.png'
+                  assign team_accent = '#241773'
+                when 'Bills', 'Biils'
+                  assign team_name = 'Bills'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Buffalo_Bills_Logo.png'
+                  assign team_accent = '#00338d'
+                when 'Panthers'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Carolina_Panthers_Logo.png'
+                  assign team_accent = '#0085ca'
+                when 'Bears'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Chicago_Bears_Logo.png'
+                  assign team_accent = '#c83803'
+                when 'Bengals'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Cinncinati_Bengals_Logo.png'
+                  assign team_accent = '#fb4f14'
+                when 'Browns'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Cleveland_Browns_Logo.png'
+                  assign team_accent = '#ff3c00'
+                when 'Cowboys'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Dallas_Cowboys_Logo.png'
+                  assign team_accent = '#003594'
+                when 'Broncos'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Denver_Broncos_Logo.png'
+                  assign team_accent = '#fb4f14'
+                when 'Lions'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Detroit_Lions_Logo.png'
+                  assign team_accent = '#0076b6'
+                when 'Packers'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Green_Bay_Packers_Logo.png'
+                  assign team_accent = '#203731'
+                when 'Texans'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Houston_Texans_Logo.png'
+                  assign team_accent = '#03202f'
+                when 'Colts'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Indianapolis_Colts_Logo.png'
+                  assign team_accent = '#002c5f'
+                when 'Jaguars'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Jacksonville_Jaguars_Logo.png'
+                  assign team_accent = '#00a5b5'
+                when 'Chiefs'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Kansas_City_Chiefs_Logo.png'
+                  assign team_accent = '#e31837'
+                when 'Raiders'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Las_Vegas_Raiders_Logo.png'
+                  assign team_accent = '#000000'
+                when 'Chargers'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Los_Angeles_Chargers_Logo.png'
+                  assign team_accent = '#0080c6'
+                when 'Rams'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Los_Angeles_Rams_Logo.png'
+                  assign team_accent = '#003594'
+                when 'Dolphins'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Miami_Dolphins_Logo.png'
+                  assign team_accent = '#008e97'
+                when 'Vikings'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Minnesota_Vikings_Logo.png'
+                  assign team_accent = '#4f2683'
+                when 'Patriots'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/New_England_Patriots_Logo.png'
+                  assign team_accent = '#c60c30'
+                when 'Saints'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/New_Orleans_Saints_Logo.png'
+                  assign team_accent = '#d3bc8d'
+                when 'Giants'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/New_York_Giants_Logo.png'
+                  assign team_accent = '#0b2265'
+                when 'Jets'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/New_York_Jets_Logo.png'
+                  assign team_accent = '#125740'
+                when 'Eagles'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Philadelphia_Eagles_Logo.png'
+                  assign team_accent = '#004c54'
+                when 'Steelers'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Pittsburgh_Steelers_Logo.png'
+                  assign team_accent = '#ffb612'
+                when '49ers'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/San_Francisco_49ers_logo.png'
+                  assign team_accent = '#aa0000'
+                when 'Seahawks'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Seattle_Seahawks_Logo.png'
+                  assign team_accent = '#002244'
+                when 'Buccaneers'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Tampa_Bay_Buccaneers_Logo.png'
+                  assign team_accent = '#d50a0a'
+                when 'Titans'
+                  assign logo_url = 'https://cdn.shopify.com/s/files/1/1444/0224/files/Tennessee_TItans_Logo.png'
+                  assign team_accent = '#4b92db'
+              endcase
+
+              assign panel_id = 'TailgatePanel-' | append: section.id | append: '-' | append: forloop.index0
+            -%}
+            <button
+              id="TailgateTab-{{ section.id }}-{{ forloop.index0 }}"
+              class="tailgate-selector__team"
+              type="button"
+              role="tab"
+              aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+              aria-controls="{{ panel_id }}"
+              tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+              data-tailgate-tab
+              style="--team-accent: {{ team_accent }};"
+            >
+              <span class="tailgate-selector__logo-wrap">
+                {%- if logo_url != blank -%}
+                  <img
+                    class="tailgate-selector__logo"
+                    src="{{ logo_url }}"
+                    alt="{{ team_name | escape }}"
+                    width="160"
+                    height="160"
+                    loading="lazy"
+                    data-tailgate-logo
+                  >
+                  {%- if product.featured_image != blank -%}
+                    <img
+                      class="tailgate-selector__logo"
+                      src="{{ product.featured_image | image_url: width: 180 }}"
+                      srcset="{{ product.featured_image | image_url: width: 80 }} 80w, {{ product.featured_image | image_url: width: 120 }} 120w, {{ product.featured_image | image_url: width: 180 }} 180w"
+                      sizes="(max-width: 749px) 58px, 72px"
+                      alt="{{ team_name | escape }}"
+                      width="180"
+                      height="180"
+                      loading="lazy"
+                      data-tailgate-logo-fallback
+                      hidden
+                    >
+                  {%- endif -%}
+                {%- elsif product.featured_image != blank -%}
+                  {{- product.featured_image
+                    | image_url: width: 180
+                    | image_tag:
+                      loading: 'lazy',
+                      widths: '80,120,180',
+                      sizes: '(max-width: 749px) 58px, 72px',
+                      alt: team_name,
+                      class: 'tailgate-selector__logo'
+                  -}}
+                {%- endif -%}
+              </span>
+              <span class="tailgate-selector__team-name">{{ team_name | escape }}</span>
+            </button>
+          {%- endfor -%}
+        </div>
+
+        <div class="tailgate-selector__result" aria-live="polite">
+          {%- for product in collection.products limit: 50 -%}
+            {%- liquid
+              assign team_key = product.title | strip | split: ' ' | first
+              assign team_name = team_key
+              assign team_accent = fallback_accent
+
+              case team_key
+                when 'Cardinal', 'Cardinals'
+                  assign team_name = 'Cardinals'
+                  assign team_accent = '#97233f'
+                when 'Falcons'
+                  assign team_accent = '#a71930'
+                when 'Ravens'
+                  assign team_accent = '#241773'
+                when 'Bills', 'Biils'
+                  assign team_name = 'Bills'
+                  assign team_accent = '#00338d'
+                when 'Panthers'
+                  assign team_accent = '#0085ca'
+                when 'Bears'
+                  assign team_accent = '#c83803'
+                when 'Bengals'
+                  assign team_accent = '#fb4f14'
+                when 'Browns'
+                  assign team_accent = '#ff3c00'
+                when 'Cowboys'
+                  assign team_accent = '#003594'
+                when 'Broncos'
+                  assign team_accent = '#fb4f14'
+                when 'Lions'
+                  assign team_accent = '#0076b6'
+                when 'Packers'
+                  assign team_accent = '#203731'
+                when 'Texans'
+                  assign team_accent = '#03202f'
+                when 'Colts'
+                  assign team_accent = '#002c5f'
+                when 'Jaguars'
+                  assign team_accent = '#00a5b5'
+                when 'Chiefs'
+                  assign team_accent = '#e31837'
+                when 'Raiders'
+                  assign team_accent = '#000000'
+                when 'Chargers'
+                  assign team_accent = '#0080c6'
+                when 'Rams'
+                  assign team_accent = '#003594'
+                when 'Dolphins'
+                  assign team_accent = '#008e97'
+                when 'Vikings'
+                  assign team_accent = '#4f2683'
+                when 'Patriots'
+                  assign team_accent = '#c60c30'
+                when 'Saints'
+                  assign team_accent = '#d3bc8d'
+                when 'Giants'
+                  assign team_accent = '#0b2265'
+                when 'Jets'
+                  assign team_accent = '#125740'
+                when 'Eagles'
+                  assign team_accent = '#004c54'
+                when 'Steelers'
+                  assign team_accent = '#ffb612'
+                when '49ers'
+                  assign team_accent = '#aa0000'
+                when 'Seahawks'
+                  assign team_accent = '#002244'
+                when 'Buccaneers'
+                  assign team_accent = '#d50a0a'
+                when 'Titans'
+                  assign team_accent = '#4b92db'
+              endcase
+
+              assign panel_id = 'TailgatePanel-' | append: section.id | append: '-' | append: forloop.index0
+              assign product_form_id = 'TailgateProductForm-' | append: section.id | append: '-' | append: product.id
+              assign selected_variant = product.selected_or_first_available_variant
+            -%}
+            <article
+              id="{{ panel_id }}"
+              class="tailgate-selector__panel"
+              role="tabpanel"
+              aria-labelledby="TailgateTab-{{ section.id }}-{{ forloop.index0 }}"
+              data-tailgate-panel
+              style="--team-accent: {{ team_accent }};"
+              {% unless forloop.first %}hidden{% endunless %}
+            >
+              <div class="tailgate-selector__product-media">
+                {%- if product.featured_image != blank -%}
+                  {{- product.featured_image
+                    | image_url: width: 900
+                    | image_tag:
+                      loading: 'lazy',
+                      widths: '320,480,640,800,900',
+                      sizes: '(max-width: 749px) calc(100vw - 100px), 42vw',
+                      alt: product.featured_image.alt | default: product.title,
+                      class: 'tailgate-selector__product-image'
+                  -}}
+                {%- else -%}
+                  {{- 'product-1' | placeholder_svg_tag: 'tailgate-selector__placeholder placeholder' -}}
+                {%- endif -%}
+              </div>
+
+              <div class="tailgate-selector__product-content">
+                <p class="tailgate-selector__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+                <h3 class="tailgate-selector__product-title heading">{{ product.title | escape }}</h3>
+
+                {%- if section.settings.product_description != blank -%}
+                  <div class="tailgate-selector__description rte">{{ section.settings.product_description }}</div>
+                {%- elsif product.description != blank -%}
+                  <div class="tailgate-selector__description rte">{{ product.description | strip_html | truncatewords: 30 }}</div>
+                {%- endif -%}
+
+                <div class="tailgate-selector__price">
+                  {%- render 'product-price', product: product -%}
+                </div>
+
+                <div class="tailgate-selector__actions">
+                  {%- form 'product',
+                    product,
+                    id: product_form_id,
+                    class: 'tailgate-selector__form product-form',
+                    data-type: 'add-to-cart-form',
+                    is: 'product-form'
+                  -%}
+                    <input type="hidden" name="id" value="{{ selected_variant.id }}">
+                    <button
+                      class="tailgate-selector__add"
+                      type="submit"
+                      name="add"
+                      {% unless selected_variant.available %}disabled{% endunless %}
+                    >
+                      {%- if selected_variant.available -%}
+                        Add {{ product_type_label | escape }} to Cart
+                      {%- else -%}
+                        Sold Out
+                      {%- endif -%}
+                    </button>
+                    <div class="product-form__error-message alert alert--error text-sm font-medium leading-tight" role="alert" hidden></div>
+                  {%- endform -%}
+
+                  <a class="tailgate-selector__details" href="{{ product.url }}">View {{ product_type_label | escape }}</a>
+                </div>
+
+                <ul class="tailgate-selector__trust" aria-label="Product benefits">
+                  {%- if section.settings.benefit_1 != blank %}<li>{{ section.settings.benefit_1 | escape }}</li>{% endif -%}
+                  {%- if section.settings.benefit_2 != blank %}<li>{{ section.settings.benefit_2 | escape }}</li>{% endif -%}
+                  {%- if section.settings.benefit_3 != blank %}<li>{{ section.settings.benefit_3 | escape }}</li>{% endif -%}
+                </ul>
+              </div>
+            </article>
+          {%- endfor -%}
+        </div>
+      </tailgate-team-selector>
+    {%- else -%}
+      <div class="tailgate-selector__empty">
+        Products will appear here automatically when they are active, published to the Online Store, and included in this collection.
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+<script>
+  if (!customElements.get('tailgate-team-selector')) {
+    customElements.define(
+      'tailgate-team-selector',
+      class TailgateTeamSelector extends HTMLElement {
+        connectedCallback() {
+          this.tabs = Array.from(this.querySelectorAll('[data-tailgate-tab]'));
+          this.panels = Array.from(this.querySelectorAll('[data-tailgate-panel]'));
+
+          this.querySelectorAll('[data-tailgate-logo]').forEach((logo) => {
+            const showFallback = () => {
+              const fallback = logo.parentElement.querySelector('[data-tailgate-logo-fallback]');
+              logo.hidden = true;
+              if (fallback) fallback.hidden = false;
+            };
+
+            logo.addEventListener('error', showFallback, { once: true });
+            if (logo.complete && logo.naturalWidth === 0) showFallback();
+          });
+
+          this.tabs.forEach((tab, index) => {
+            tab.addEventListener('click', () => this.selectTab(index));
+            tab.addEventListener('keydown', (event) => this.onKeydown(event, index));
+          });
+        }
+
+        selectTab(index, moveFocus = false) {
+          this.tabs.forEach((tab, tabIndex) => {
+            const isSelected = tabIndex === index;
+            tab.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+            tab.setAttribute('tabindex', isSelected ? '0' : '-1');
+          });
+
+          this.panels.forEach((panel, panelIndex) => {
+            panel.hidden = panelIndex !== index;
+          });
+
+          if (moveFocus) this.tabs[index].focus();
+
+          if (window.matchMedia('(max-width: 749px)').matches) {
+            window.requestAnimationFrame(() => {
+              this.panels[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
+          }
+        }
+
+        onKeydown(event, index) {
+          let nextIndex = index;
+
+          if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+            nextIndex = (index + 1) % this.tabs.length;
+          } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+            nextIndex = (index - 1 + this.tabs.length) % this.tabs.length;
+          } else if (event.key === 'Home') {
+            nextIndex = 0;
+          } else if (event.key === 'End') {
+            nextIndex = this.tabs.length - 1;
+          } else {
+            return;
+          }
+
+          event.preventDefault();
+          this.selectTab(nextIndex, true);
+        }
+      }
+    );
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Tailgate Team Selector",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Choose Your Team"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "title-sm", "label": "Small" },
+        { "value": "title-md", "label": "Medium" },
+        { "value": "title-lg tracking-heading", "label": "Large" },
+        { "value": "title-xl tracking-heading", "label": "Extra large" }
+      ],
+      "default": "title-md",
+      "label": "Heading size"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "text-left md:items-end md:flex-row", "label": "Left" },
+        { "value": "text-center md:items-center", "label": "Center" },
+        { "value": "text-right md:items-end md:flex-row-reverse", "label": "Right" }
+      ],
+      "default": "text-center md:items-center"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "div", "label": "Div" }
+      ],
+      "default": "h2",
+      "label": "Heading tag"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Find your favorite team"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Section description"
+    },
+    {
+      "type": "text",
+      "id": "instruction",
+      "label": "Selector instruction",
+      "default": "Select a team logo to reveal its product."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Product eyebrow",
+      "default": "Your team. Your gear."
+    },
+    {
+      "type": "text",
+      "id": "product_type_label",
+      "label": "Singular product label",
+      "default": "Item"
+    },
+    {
+      "type": "richtext",
+      "id": "product_description",
+      "label": "Shared product description"
+    },
+    {
+      "type": "text",
+      "id": "benefit_1",
+      "label": "Benefit 1",
+      "default": "Official team design"
+    },
+    {
+      "type": "text",
+      "id": "benefit_2",
+      "label": "Benefit 2",
+      "default": "Secure checkout"
+    },
+    {
+      "type": "text",
+      "id": "benefit_3",
+      "label": "Benefit 3",
+      "default": "Game-day ready"
+    },
+    {
+      "type": "header",
+      "content": "Grid layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 4,
+      "max": 6,
+      "step": 1,
+      "default": 6,
+      "label": "Teams per row on desktop"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" }
+      ],
+      "default": "3",
+      "label": "Teams per row on mobile"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "Text",
+      "default": "#171717"
+    },
+    {
+      "type": "color",
+      "id": "color_background",
+      "label": "Background",
+      "default": "#f4f2e8"
+    },
+    {
+      "type": "color_background",
+      "id": "gradient_background",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "color_highlight",
+      "label": "Default team accent",
+      "default": "#363a66"
+    },
+    {
+      "type": "color",
+      "id": "color_button_text",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "color_button_background",
+      "label": "Button background",
+      "default": "#363a66"
+    },
+    {
+      "type": "color_background",
+      "id": "gradient_highlight",
+      "label": "Highlight gradient"
+    },
+    {
+      "type": "color_background",
+      "id": "color_button_gradient",
+      "label": "Button gradient"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 72
+    },
+    {
+      "type": "checkbox",
+      "id": "divider",
+      "label": "Show divider",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "rounded",
+      "label": "Rounded section",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tailgate Team Selector",
+      "category": "Collections"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["footer", "header", "custom.overlay"]
+  }
+}
+{% endschema %}

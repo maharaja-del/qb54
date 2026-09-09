@@ -1,0 +1,442 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  /* ─── TOKENS ─────────────────────────────────────────── */
+  #qb54-promo-{{ section.id }} {
+    --lime:      #9aff00;
+    --lime-glow: rgba(154,255,0,0.22);
+    --dark:      #0d0d0d;
+    --white:     #ffffff;
+    --white-80:  rgba(255,255,255,0.82);
+    --white-50:  rgba(255,255,255,0.50);
+    --white-15:  rgba(255,255,255,0.15);
+    --white-08:  rgba(255,255,255,0.08);
+  }
+  #qb54-promo-{{ section.id }} *,
+  #qb54-promo-{{ section.id }} *::before,
+  #qb54-promo-{{ section.id }} *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* ─── SECTION ─────────────────────────────────────────── */
+  #qb54-promo-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    background: var(--dark);
+    border-top:    1px solid var(--white-15);
+    border-bottom: 1px solid var(--white-15);
+    overflow: hidden;
+    font-family: "Inter", sans-serif;
+    color: var(--white);
+  }
+  /* Lime bottom accent */
+  #qb54-promo-{{ section.id }}::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 2px;
+    background: var(--lime);
+    box-shadow: 0 0 20px rgba(154,255,0,0.30);
+  }
+  /* Radial glow */
+  #qb54-promo-{{ section.id }} .promo-glow {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 640px; height: 240px;
+    background: radial-gradient(ellipse at center, rgba(154,255,0,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── INNER ───────────────────────────────────────────── */
+  #qb54-promo-{{ section.id }} .promo-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: clamp(24px, 3.5vw, 40px) clamp(20px, 5vw, 60px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(16px, 3vw, 40px);
+    flex-wrap: wrap;
+  }
+
+  /* ─── LEFT — DISCOUNT + LABEL ─────────────────────────── */
+  #qb54-promo-{{ section.id }} .promo-text {
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 2vw, 20px);
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  #qb54-promo-{{ section.id }} .promo-discount {
+    font-family: "Anton", sans-serif;
+    font-size: clamp(40px, 5vw, 64px);
+    letter-spacing: -0.01em;
+    line-height: 1;
+    color: var(--lime);
+    text-shadow: 0 0 40px rgba(154,255,0,0.22), 0 0 80px rgba(154,255,0,0.08);
+    flex-shrink: 0;
+  }
+  #qb54-promo-{{ section.id }} .promo-label-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+  #qb54-promo-{{ section.id }} .promo-label-main {
+    font-family: "Oswald", sans-serif;
+    font-size: clamp(14px, 1.5vw, 18px);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--white);
+    line-height: 1.2;
+  }
+  #qb54-promo-{{ section.id }} .promo-label-sub {
+    font-family: "Inter", sans-serif;
+    font-size: clamp(11px, 0.9vw, 13px);
+    font-weight: 400;
+    color: var(--white-50);
+    line-height: 1.5;
+  }
+
+  /* ─── DIVIDER ─────────────────────────────────────────── */
+  #qb54-promo-{{ section.id }} .promo-divider {
+    width: 1px; height: 44px;
+    background: var(--white-15);
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  /* ─── CODE PILL ───────────────────────────────────────── */
+  #qb54-promo-{{ section.id }} .promo-code-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+    flex-shrink: 0;
+  }
+  #qb54-promo-{{ section.id }} .promo-code-label {
+    font-family: "Oswald", sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--white-50);
+  }
+  #qb54-promo-{{ section.id }} .promo-code-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--white-08);
+    border: 1px solid rgba(154,255,0,0.35);
+    border-radius: 6px;
+    padding: 9px 16px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+    position: relative;
+  }
+  #qb54-promo-{{ section.id }} .promo-code-pill:hover {
+    background: rgba(154,255,0,0.08);
+    border-color: rgba(154,255,0,0.65);
+    box-shadow: 0 0 20px rgba(154,255,0,0.15);
+  }
+  #qb54-promo-{{ section.id }} .promo-code-text {
+    font-family: "Oswald", sans-serif;
+    font-size: clamp(16px, 1.8vw, 24px);
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--lime);
+    line-height: 1;
+    user-select: all;
+  }
+  #qb54-promo-{{ section.id }} .promo-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: "Oswald", sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--white-50);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    min-width: 44px;
+    min-height: 36px;
+    justify-content: center;
+    transition: color 0.15s;
+  }
+  #qb54-promo-{{ section.id }} .promo-copy-btn:hover { color: var(--white-80); }
+  #qb54-promo-{{ section.id }} .promo-copy-btn.copied { color: var(--lime); }
+  #qb54-promo-{{ section.id }} .promo-copy-btn svg {
+    width: 11px; height: 11px;
+    stroke: currentColor; fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  #qb54-promo-{{ section.id }} .promo-copied-flash {
+    position: absolute;
+    top: -30px; left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: var(--lime);
+    color: #0a1400;
+    font-family: "Oswald", sans-serif;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+    z-index: 10;
+  }
+  #qb54-promo-{{ section.id }} .promo-copied-flash.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ─── CTA ─────────────────────────────────────────────── */
+  #qb54-promo-{{ section.id }} .promo-cta {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+  #qb54-promo-{{ section.id }} .promo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    background: var(--lime);
+    color: #0a1400;
+    font-family: "Oswald", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 12px 24px;
+    border-radius: 7px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: transform 0.18s cubic-bezier(.22,1,.36,1), box-shadow 0.18s;
+    box-shadow: 0 4px 24px var(--lime-glow);
+    /* Solid tap target */
+    min-height: 44px;
+  }
+  #qb54-promo-{{ section.id }} .promo-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 36px rgba(154,255,0,0.30);
+  }
+  #qb54-promo-{{ section.id }} .promo-btn svg {
+    width: 12px; height: 12px;
+    stroke: currentColor; fill: none;
+    stroke-width: 2.2;
+    stroke-linecap: round; stroke-linejoin: round;
+    transition: transform 0.15s;
+  }
+  #qb54-promo-{{ section.id }} .promo-btn:hover svg { transform: translateX(3px); }
+  #qb54-promo-{{ section.id }} .promo-fine {
+    font-size: 10px;
+    color: var(--white-50);
+    text-align: right;
+    line-height: 1.5;
+  }
+
+  /* ─── MOBILE ──────────────────────────────────────────── */
+  @media (max-width: 600px) {
+    #qb54-promo-{{ section.id }} .promo-inner {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 20px;
+      padding: 24px 16px 28px;
+    }
+    #qb54-promo-{{ section.id }} .promo-divider { display: none; }
+    #qb54-promo-{{ section.id }} .promo-text { gap: 14px; }
+    #qb54-promo-{{ section.id }} .promo-discount { font-size: clamp(44px, 14vw, 60px); }
+    #qb54-promo-{{ section.id }} .promo-code-wrap { width: 100%; }
+    #qb54-promo-{{ section.id }} .promo-code-pill { width: 100%; justify-content: space-between; }
+    #qb54-promo-{{ section.id }} .promo-code-text { font-size: 20px; }
+    #qb54-promo-{{ section.id }} .promo-cta { align-items: stretch; }
+    #qb54-promo-{{ section.id }} .promo-btn { width: 100%; justify-content: center; font-size: 14px; }
+    #qb54-promo-{{ section.id }} .promo-fine { text-align: center; }
+  }
+
+  /* ─── TABLET ──────────────────────────────────────────── */
+  @media (min-width: 601px) and (max-width: 960px) {
+    #qb54-promo-{{ section.id }} .promo-divider { display: none; }
+    #qb54-promo-{{ section.id }} .promo-inner { flex-wrap: wrap; gap: 20px 24px; }
+    #qb54-promo-{{ section.id }} .promo-cta { align-items: flex-start; }
+    #qb54-promo-{{ section.id }} .promo-fine { text-align: left; }
+  }
+</style>
+
+<section id="qb54-promo-{{ section.id }}" aria-label="{{ section.settings.section_label }}">
+  <div class="promo-glow" aria-hidden="true"></div>
+
+  <div class="promo-inner">
+
+    <!-- Discount + label -->
+    <div class="promo-text">
+      <span class="promo-discount">{{ section.settings.discount_amount }}</span>
+      <div class="promo-label-group">
+        <span class="promo-label-main">{{ section.settings.label_main }}</span>
+        {% if section.settings.label_sub != blank %}
+          <span class="promo-label-sub">{{ section.settings.label_sub }}</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="promo-divider" aria-hidden="true"></div>
+
+    <!-- Promo code pill -->
+    <div class="promo-code-wrap">
+      <span class="promo-code-label">Promo Code</span>
+      <div
+        class="promo-code-pill"
+        id="qb54-pill-{{ section.id }}"
+        title="Click to copy"
+        onclick="
+          (function(){
+            var code = '{{ section.settings.promo_code }}';
+            navigator.clipboard.writeText(code).catch(function(){
+              var ta = document.createElement('textarea');
+              ta.value = code; document.body.appendChild(ta); ta.select();
+              document.execCommand('copy'); document.body.removeChild(ta);
+            });
+            var btn   = document.getElementById('qb54-cbtn-{{ section.id }}');
+            var flash = document.getElementById('qb54-flash-{{ section.id }}');
+            btn.classList.add('copied');
+            flash.classList.add('show');
+            btn.querySelector('.copy-lbl').textContent = 'COPIED!';
+            setTimeout(function(){
+              btn.classList.remove('copied');
+              flash.classList.remove('show');
+              btn.querySelector('.copy-lbl').textContent = 'COPY';
+            }, 2200);
+          })();
+        "
+      >
+        <span class="promo-code-text">{{ section.settings.promo_code }}</span>
+        <button
+          class="promo-copy-btn"
+          id="qb54-cbtn-{{ section.id }}"
+          aria-label="Copy promo code {{ section.settings.promo_code }}"
+          onclick="event.stopPropagation();"
+        >
+          <svg viewBox="0 0 16 16">
+            <rect x="5" y="5" width="8" height="10" rx="1"/>
+            <path d="M3 11V3a1 1 0 0 1 1-1h8"/>
+          </svg>
+          <span class="copy-lbl">COPY</span>
+        </button>
+        <div class="promo-copied-flash" id="qb54-flash-{{ section.id }}" aria-live="polite">✓ Copied!</div>
+      </div>
+    </div>
+
+    <div class="promo-divider" aria-hidden="true"></div>
+
+    <!-- CTA -->
+    {% if section.settings.cta_text != blank %}
+      <div class="promo-cta">
+        <a href="{{ section.settings.cta_url }}" class="promo-btn">
+          {{ section.settings.cta_text }}
+          <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </a>
+        {% if section.settings.fine_print != blank %}
+          <span class="promo-fine">{{ section.settings.fine_print }}</span>
+        {% endif %}
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "QB54 Promo CTA",
+  "tag": "section",
+  "class": "qb54-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_label",
+      "label": "Accessibility Label",
+      "default": "Promotional Offer"
+    },
+    {
+      "type": "header",
+      "content": "— Discount"
+    },
+    {
+      "type": "text",
+      "id": "discount_amount",
+      "label": "Discount Amount (large, lime)",
+      "default": "$30 OFF"
+    },
+    {
+      "type": "text",
+      "id": "label_main",
+      "label": "Main Label",
+      "default": "Sets — Limited Time Deal"
+    },
+    {
+      "type": "text",
+      "id": "label_sub",
+      "label": "Sub Label",
+      "info": "Leave blank to hide.",
+      "default": "Applied at checkout. One use per order."
+    },
+    {
+      "type": "header",
+      "content": "— Promo Code"
+    },
+    {
+      "type": "text",
+      "id": "promo_code",
+      "label": "Promo Code",
+      "default": "PICK"
+    },
+    {
+      "type": "header",
+      "content": "— Call to Action"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button Text",
+      "default": "Shop Sets"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "text",
+      "id": "fine_print",
+      "label": "Fine Print (below button)",
+      "info": "Leave blank to hide.",
+      "default": "Discount applied to sets only. Limited time."
+    }
+  ],
+  "presets": [
+    {
+      "name": "QB54 Promo CTA"
+    }
+  ]
+}
+{% endschema %}

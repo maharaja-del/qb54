@@ -1,0 +1,265 @@
+{%- style -%}
+  #shopify-section-{{ section.id }} .show-events,
+  #shopify-section-{{ section.id }} .show-events * { box-sizing: border-box; }
+
+  #shopify-section-{{ section.id }} .show-events {
+    background: {{ section.settings.section_bg }};
+    padding: {{ section.settings.section_padding_top }}px 20px {{ section.settings.section_padding_bottom }}px;
+  }
+  #shopify-section-{{ section.id }} .show-events__inner {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+  }
+  #shopify-section-{{ section.id }} .show-events__header {
+    text-align: center;
+    margin-bottom: {{ section.settings.header_margin_bottom }}px;
+  }
+  #shopify-section-{{ section.id }} .show-events__eyebrow {
+    display: inline-block;
+    color: {{ section.settings.eyebrow_color }};
+    font-size: {{ section.settings.eyebrow_size }}px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 14px;
+  }
+  #shopify-section-{{ section.id }} .show-events__title {
+    margin: 0 auto 16px;
+    color: {{ section.settings.title_color }};
+    font-size: {{ section.settings.title_size }}px;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    max-width: 900px;
+  }
+  #shopify-section-{{ section.id }} .show-events__subtitle {
+    margin: 0 auto;
+    color: {{ section.settings.subtitle_color }};
+    font-size: {{ section.settings.subtitle_size }}px;
+    line-height: 1.5;
+    max-width: 640px;
+  }
+
+  #shopify-section-{{ section.id }} .show-events__grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.desktop_columns }}, minmax(0, 1fr));
+    gap: {{ section.settings.grid_gap }}px;
+  }
+
+  #shopify-section-{{ section.id }} .show-events__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: {{ section.settings.card_bg }};
+    border: 1px solid {{ section.settings.card_border }};
+    border-radius: {{ section.settings.card_radius }}px;
+    overflow: hidden;
+    transition: transform 0.25s ease, border-color 0.25s ease;
+  }
+  #shopify-section-{{ section.id }} .show-events__card:hover {
+    transform: translateY(-4px);
+    border-color: {{ section.settings.accent_color }};
+  }
+  #shopify-section-{{ section.id }} .show-events__card--featured {
+    border-color: {{ section.settings.accent_color }};
+    box-shadow: 0 0 0 2px {{ section.settings.accent_color }};
+  }
+  #shopify-section-{{ section.id }} .show-events__media {
+    position: relative;
+    aspect-ratio: {{ section.settings.image_ratio }};
+    background: #000;
+    overflow: hidden;
+  }
+  #shopify-section-{{ section.id }} .show-events__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  #shopify-section-{{ section.id }} .show-events__emoji {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    background: {{ section.settings.emoji_bg }};
+  }
+  #shopify-section-{{ section.id }} .show-events__flag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: {{ section.settings.accent_color }};
+    color: #000;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 6px 12px;
+    border-radius: 4px;
+    z-index: 2;
+  }
+  #shopify-section-{{ section.id }} .show-events__body {
+    padding: {{ section.settings.card_padding }}px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+  #shopify-section-{{ section.id }} .show-events__card-title {
+    margin: 0;
+    color: {{ section.settings.card_title_color }};
+    font-size: {{ section.settings.card_title_size }}px;
+    font-weight: 700;
+  }
+  #shopify-section-{{ section.id }} .show-events__card-text {
+    margin: 0;
+    color: {{ section.settings.card_text_color }};
+    font-size: {{ section.settings.card_text_size }}px;
+    line-height: 1.5;
+  }
+  #shopify-section-{{ section.id }} .show-events__card-link {
+    margin-top: auto;
+    padding-top: 12px;
+    color: {{ section.settings.accent_color }};
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+  #shopify-section-{{ section.id }} .show-events__card-link:hover { text-decoration: underline; }
+
+  @media (max-width: 990px) {
+    #shopify-section-{{ section.id }} .show-events__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 600px) {
+    #shopify-section-{{ section.id }} .show-events { padding-top: {{ section.settings.mobile_section_padding_top }}px; padding-bottom: {{ section.settings.mobile_section_padding_bottom }}px; }
+    #shopify-section-{{ section.id }} .show-events__grid { grid-template-columns: 1fr; }
+    #shopify-section-{{ section.id }} .show-events__title { font-size: {{ section.settings.mobile_title_size }}px; }
+  }
+{%- endstyle -%}
+
+<section class="show-events">
+  <div class="show-events__inner">
+    <div class="show-events__header">
+      {%- if section.settings.eyebrow != blank -%}
+        <span class="show-events__eyebrow">{{ section.settings.eyebrow }}</span>
+      {%- endif -%}
+      {%- if section.settings.title != blank -%}
+        <h2 class="show-events__title">{{ section.settings.title }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subtitle != blank -%}
+        <p class="show-events__subtitle">{{ section.settings.subtitle }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="show-events__grid">
+      {%- for block in section.blocks -%}
+        <div class="show-events__card {% if block.settings.featured %}show-events__card--featured{% endif %}" {{ block.shopify_attributes }}>
+          <div class="show-events__media">
+            {%- if block.settings.featured and block.settings.flag_text != blank -%}
+              <span class="show-events__flag">{{ block.settings.flag_text }}</span>
+            {%- endif -%}
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', alt: block.settings.title }}
+            {%- else -%}
+              <div class="show-events__emoji">{{ block.settings.emoji | default: '🏆' }}</div>
+            {%- endif -%}
+          </div>
+          <div class="show-events__body">
+            {%- if block.settings.title != blank -%}
+              <h3 class="show-events__card-title">{{ block.settings.title }}</h3>
+            {%- endif -%}
+            {%- if block.settings.text != blank -%}
+              <p class="show-events__card-text">{{ block.settings.text }}</p>
+            {%- endif -%}
+            {%- if block.settings.link_text != blank -%}
+              <a href="{{ block.settings.link | default: '#' }}" class="show-events__card-link">{{ block.settings.link_text }} →</a>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Show Events Lineup",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Section" },
+    { "type": "color", "id": "section_bg", "label": "Section background", "default": "#1a1a1a" },
+    { "type": "color", "id": "accent_color", "label": "Accent color", "default": "#9aff00" },
+    { "type": "range", "id": "max_width", "label": "Max width", "min": 800, "max": 1600, "step": 20, "default": 1200 },
+    { "type": "range", "id": "section_padding_top", "label": "Padding top", "min": 40, "max": 160, "step": 4, "default": 100 },
+    { "type": "range", "id": "section_padding_bottom", "label": "Padding bottom", "min": 40, "max": 160, "step": 4, "default": 100 },
+    { "type": "range", "id": "mobile_section_padding_top", "label": "Mobile padding top", "min": 24, "max": 100, "step": 4, "default": 60 },
+    { "type": "range", "id": "mobile_section_padding_bottom", "label": "Mobile padding bottom", "min": 24, "max": 100, "step": 4, "default": 60 },
+
+    { "type": "header", "content": "Header" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "THE BACKYARD OLYMPICS LINEUP" },
+    { "type": "color", "id": "eyebrow_color", "label": "Eyebrow color", "default": "#9aff00" },
+    { "type": "range", "id": "eyebrow_size", "label": "Eyebrow size", "min": 10, "max": 18, "step": 1, "default": 12 },
+    { "type": "text", "id": "title", "label": "Title", "default": "Every Great Backyard Needs a Champion" },
+    { "type": "color", "id": "title_color", "label": "Title color", "default": "#ffffff" },
+    { "type": "range", "id": "title_size", "label": "Title size", "min": 28, "max": 72, "step": 2, "default": 48 },
+    { "type": "range", "id": "mobile_title_size", "label": "Mobile title size", "min": 22, "max": 44, "step": 2, "default": 30 },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "From cornhole to QB54, these are the yard games that turn any backyard into a stadium. Guess which one steals the show." },
+    { "type": "color", "id": "subtitle_color", "label": "Subtitle color", "default": "#9a9a9a" },
+    { "type": "range", "id": "subtitle_size", "label": "Subtitle size", "min": 14, "max": 24, "step": 1, "default": 18 },
+    { "type": "range", "id": "header_margin_bottom", "label": "Header margin bottom", "min": 24, "max": 100, "step": 4, "default": 56 },
+
+    { "type": "header", "content": "Grid" },
+    { "type": "range", "id": "desktop_columns", "label": "Desktop columns", "min": 2, "max": 4, "step": 1, "default": 3 },
+    { "type": "range", "id": "grid_gap", "label": "Grid gap", "min": 12, "max": 48, "step": 2, "default": 24 },
+    { "type": "select", "id": "image_ratio", "label": "Card image ratio", "default": "4 / 3", "options": [
+      { "value": "1 / 1", "label": "Square" },
+      { "value": "4 / 3", "label": "Landscape 4:3" },
+      { "value": "16 / 9", "label": "Wide 16:9" },
+      { "value": "3 / 4", "label": "Portrait 3:4" }
+    ] },
+
+    { "type": "header", "content": "Card styling" },
+    { "type": "color", "id": "card_bg", "label": "Card background", "default": "#0f0f0f" },
+    { "type": "color", "id": "card_border", "label": "Card border", "default": "#2a2a2a" },
+    { "type": "range", "id": "card_radius", "label": "Card radius", "min": 0, "max": 32, "step": 2, "default": 16 },
+    { "type": "range", "id": "card_padding", "label": "Card padding", "min": 12, "max": 40, "step": 2, "default": 24 },
+    { "type": "color", "id": "emoji_bg", "label": "Emoji tile background", "default": "#222222" },
+    { "type": "color", "id": "card_title_color", "label": "Card title color", "default": "#ffffff" },
+    { "type": "range", "id": "card_title_size", "label": "Card title size", "min": 16, "max": 32, "step": 1, "default": 22 },
+    { "type": "color", "id": "card_text_color", "label": "Card text color", "default": "#9a9a9a" },
+    { "type": "range", "id": "card_text_size", "label": "Card text size", "min": 12, "max": 20, "step": 1, "default": 15 }
+  ],
+  "blocks": [
+    {
+      "type": "event",
+      "name": "Event card",
+      "settings": [
+        { "type": "checkbox", "id": "featured", "label": "Highlight as featured (QB54)", "default": false },
+        { "type": "text", "id": "flag_text", "label": "Featured flag text", "default": "THE MAIN EVENT" },
+        { "type": "image_picker", "id": "image", "label": "Image (optional)" },
+        { "type": "text", "id": "emoji", "label": "Emoji (used if no image)", "default": "🏈" },
+        { "type": "text", "id": "title", "label": "Title", "default": "QB54" },
+        { "type": "textarea", "id": "text", "label": "Description", "default": "Pass, kick, and score in the football game that folds into two chairs. The backyard game everyone's talking about." },
+        { "type": "text", "id": "link_text", "label": "Link text (optional)" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Show Events Lineup",
+      "blocks": [
+        { "type": "event", "settings": { "featured": true, "flag_text": "THE MAIN EVENT", "emoji": "🏈", "title": "QB54", "text": "Pass, kick, and score in the football game that folds into two chairs. The backyard game everyone's talking about.", "link_text": "Shop QB54" } },
+        { "type": "event", "settings": { "emoji": "🌽", "title": "Cornhole Toss", "text": "A backyard classic — but does it convert into a chair? We didn't think so." } },
+        { "type": "event", "settings": { "emoji": "🥏", "title": "Disc Golf", "text": "Great for a stroll. Not so great when the whole crew wants in on the action." } },
+        { "type": "event", "settings": { "emoji": "🏐", "title": "Spikeball", "text": "Fast and fun for four — QB54 keeps up to 8 players in the game." } },
+        { "type": "event", "settings": { "emoji": "🪃", "title": "Ladder Toss", "text": "Solid tailgate energy. QB54 brings the stadium." } },
+        { "type": "event", "settings": { "emoji": "🏆", "title": "Your Backyard", "text": "Crown a champion. First team to exactly 54 points takes the gold." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

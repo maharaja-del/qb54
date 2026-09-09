@@ -1,0 +1,281 @@
+{% liquid
+  assign id = section.id
+%}
+
+<section class="how-to-play-{{ id }}">
+  <div class="page-width">
+    <div class="header">
+      <h2 class="heading">
+        {{ section.settings.heading_prefix }}
+        <span>{{ section.settings.heading_highlight }}</span>
+      </h2>
+      <p class="subheading">{{ section.settings.subheading }}</p>
+    </div>
+
+    <div class="steps">
+      {% for block in section.blocks %}
+        {% if block.type == 'step' %}
+          <div class="step-card" {{ block.shopify_attributes }}>
+            <div class="step-number">{{ forloop.index }}</div>
+
+            <div class="step-icon">
+              {% if block.settings.icon != blank %}
+                <img
+                  src="{{ block.settings.icon | image_url: width: 80 }}"
+                  alt=""
+                  width="40"
+                  height="40"
+                  loading="lazy">
+              {% endif %}
+            </div>
+
+            <h3 class="step-title">{{ block.settings.title }}</h3>
+            <p class="step-text">{{ block.settings.text }}</p>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {% if section.settings.button_text != blank %}
+      <div class="how-to-play-cta">
+        <a href="{{ section.settings.button_url }}" class="how-to-play-btn">
+          {{ section.settings.button_text }}
+        </a>
+      </div>
+    {% endif %}
+
+    {% if section.settings.show_scoring %}
+      <div class="scoring">
+        <h3 class="scoring-heading">{{ section.settings.scoring_heading }}</h3>
+
+        <div class="scoring-grid">
+          {% for block in section.blocks %}
+            {% if block.type == 'score' %}
+              <div class="score-item" {{ block.shopify_attributes }}>
+                <div class="score-value">{{ block.settings.points }}</div>
+                <div class="score-text">{{ block.settings.description }}</div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <style>
+    .how-to-play-{{ id }} {
+      background: {{ section.settings.background }};
+      padding: {{ section.settings.padding_mobile }}px 0;
+      text-align: center;
+    }
+
+    .how-to-play-{{ id }} .heading {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+      margin-bottom: 12px;
+    }
+
+    .how-to-play-{{ id }} .heading span {
+      color: {{ section.settings.highlight_color }};
+    }
+
+    .how-to-play-{{ id }} .subheading {
+      max-width: 720px;
+      margin: 0 auto 56px;
+      font-size: {{ section.settings.subheading_size_mobile }}px;
+      color: {{ section.settings.subheading_color }};
+    }
+
+    .how-to-play-{{ id }} .steps {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .how-to-play-{{ id }} .step-card {
+      background: {{ section.settings.card_bg }};
+      border-radius: {{ section.settings.card_radius }}px;
+      padding: 32px 24px;
+    }
+
+    .how-to-play-{{ id }} .step-number {
+      width: 36px;
+      height: 36px;
+      background: {{ section.settings.step_number_bg }};
+      color: {{ section.settings.step_number_color }};
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      margin: 0 auto 20px;
+    }
+
+    .how-to-play-{{ id }} .step-icon {
+      background: {{ section.settings.icon_bg }};
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .how-to-play-{{ id }} .step-title {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .how-to-play-{{ id }} .step-text {
+      color: {{ section.settings.step_text_color }};
+      font-size: 15px;
+    }
+
+    .how-to-play-{{ id }} .how-to-play-cta {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 72px;
+    }
+
+    .how-to-play-{{ id }} .how-to-play-btn {
+      background: {{ section.settings.button_bg }};
+      color: {{ section.settings.button_color }};
+      padding: 16px 36px;
+      border-radius: {{ section.settings.button_radius }}px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+    }
+
+    .how-to-play-{{ id }} .scoring {
+      background: {{ section.settings.scoring_bg }};
+      border-radius: {{ section.settings.scoring_radius }}px;
+      padding: 40px 24px;
+      color: {{ section.settings.scoring_text_color }};
+    }
+
+    .how-to-play-{{ id }} .scoring-heading {
+      font-size: 24px;
+      margin-bottom: 32px;
+    }
+
+    .how-to-play-{{ id }} .scoring-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .how-to-play-{{ id }} .score-value {
+      font-size: 48px;
+      font-weight: 700;
+      color: {{ section.settings.score_number_color }};
+      margin-bottom: 6px;
+    }
+
+    @media (min-width: 750px) {
+      .how-to-play-{{ id }} {
+        padding: {{ section.settings.padding_desktop }}px 0;
+      }
+
+      .how-to-play-{{ id }} .heading {
+        font-size: {{ section.settings.heading_size_desktop }}px;
+      }
+
+      .how-to-play-{{ id }} .subheading {
+        font-size: {{ section.settings.subheading_size_desktop }}px;
+      }
+
+      .how-to-play-{{ id }} .steps {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 32px;
+      }
+
+      .how-to-play-{{ id }} .scoring-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "How to Play QB54",
+  "settings": [
+    { "type": "text", "id": "heading_prefix", "label": "Heading prefix", "default": "How to Play" },
+    { "type": "text", "id": "heading_highlight", "label": "Heading highlight", "default": "QB54" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Simple rules, endless fun. Anyone can play in minutes!" },
+
+    { "type": "text", "id": "button_text", "label": "Button text", "default": "Watch How to Play" },
+    { "type": "url", "id": "button_url", "label": "Button link" },
+    { "type": "color", "id": "button_bg", "label": "Button background", "default": "#3f6b4a" },
+    { "type": "color", "id": "button_color", "label": "Button text color", "default": "#ffffff" },
+    { "type": "range", "id": "button_radius", "label": "Button radius", "min": 0, "max": 40, "step": 2, "default": 20 },
+
+    { "type": "color", "id": "background", "label": "Background", "default": "#faf9f5" },
+    { "type": "color", "id": "highlight_color", "label": "Highlight color", "default": "#3f6b4a" },
+    { "type": "color", "id": "subheading_color", "label": "Subheading color", "default": "#6b7f72" },
+
+    { "type": "color", "id": "card_bg", "label": "Step card background", "default": "#ffffff" },
+    { "type": "color", "id": "icon_bg", "label": "Icon background", "default": "#e7ede6" },
+    { "type": "color", "id": "step_text_color", "label": "Step text color", "default": "#6b7f72" },
+
+    { "type": "color", "id": "step_number_bg", "label": "Step number background", "default": "#3f6b4a" },
+    { "type": "color", "id": "step_number_color", "label": "Step number text", "default": "#ffffff" },
+
+    { "type": "range", "id": "card_radius", "label": "Card radius", "min": 0, "max": 40, "step": 2, "default": 20 },
+
+    { "type": "checkbox", "id": "show_scoring", "label": "Show scoring system", "default": true },
+    { "type": "text", "id": "scoring_heading", "label": "Scoring heading", "default": "Scoring System" },
+    { "type": "color", "id": "scoring_bg", "label": "Scoring background", "default": "#3f6b4a" },
+    { "type": "color", "id": "scoring_text_color", "label": "Scoring text color", "default": "#ffffff" },
+    { "type": "color", "id": "score_number_color", "label": "Score number color", "default": "#f0b44c" },
+    { "type": "range", "id": "scoring_radius", "label": "Scoring radius", "min": 0, "max": 40, "step": 2, "default": 24 },
+
+    { "type": "range", "id": "heading_size_mobile", "label": "Heading size mobile", "min": 24, "max": 48, "step": 2, "default": 32 },
+    { "type": "range", "id": "heading_size_desktop", "label": "Heading size desktop", "min": 36, "max": 72, "step": 2, "default": 56 },
+    { "type": "range", "id": "subheading_size_mobile", "label": "Subheading size mobile", "min": 14, "max": 22, "step": 1, "default": 16 },
+    { "type": "range", "id": "subheading_size_desktop", "label": "Subheading size desktop", "min": 16, "max": 26, "step": 1, "default": 18 },
+
+    { "type": "range", "id": "padding_mobile", "label": "Padding mobile", "min": 40, "max": 120, "step": 4, "default": 64 },
+    { "type": "range", "id": "padding_desktop", "label": "Padding desktop", "min": 80, "max": 200, "step": 4, "default": 120 }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        { "type": "image_picker", "id": "icon", "label": "Icon" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Set Up" },
+        { "type": "textarea", "id": "text", "label": "Description", "default": "Unfold the two QB54 chairs and place them 40 feet apart." }
+      ]
+    },
+    {
+      "type": "score",
+      "name": "Score item",
+      "settings": [
+        { "type": "text", "id": "points", "label": "Points", "default": "3" },
+        { "type": "text", "id": "description", "label": "Description", "default": "Points – Ball stays in bucket" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "How to Play QB54",
+      "blocks": [
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "score" },
+        { "type": "score" },
+        { "type": "score" }
+      ]
+    }
+  ]
+}
+{% endschema %}

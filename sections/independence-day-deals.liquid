@@ -1,0 +1,337 @@
+{% comment %}
+  ID4-Deals — "Star-Spangled Deals" strip for 4th of July
+  Block-based promo/value cards with patriotic styling + QB54 lime spark
+  Section: sections/independence-day-deals.liquid
+{% endcomment %}
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  #id4-deals-{{ section.id }} {
+    --bg:     {{ section.settings.color_bg }};
+    --card:   {{ section.settings.color_card }};
+    --text:   {{ section.settings.color_text }};
+    --red:    {{ section.settings.color_red }};
+    --blue:   {{ section.settings.color_blue }};
+    --spark:  {{ section.settings.color_spark }};
+    --muted:  color-mix(in srgb, {{ section.settings.color_text }} 62%, transparent);
+    --line:   color-mix(in srgb, {{ section.settings.color_text }} 12%, transparent);
+
+    position: relative;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    font-family: 'Sora', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    isolation: isolate;
+  }
+
+  /* top + bottom flag rule */
+  #id4-deals-{{ section.id }} .id4d-rule {
+    position: absolute; left: 0; right: 0; height: 4px; z-index: 1;
+    background: repeating-linear-gradient(90deg,
+      var(--red) 0 14%, #fff 14% 28%, var(--blue) 28% 42%, transparent 42% 56%);
+    opacity: .9;
+  }
+  #id4-deals-{{ section.id }} .id4d-rule.top { top: 0; }
+  #id4-deals-{{ section.id }} .id4d-rule.bottom { bottom: 0; }
+
+  /* faint star pattern bg */
+  #id4-deals-{{ section.id }} .id4d-bgstars {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .5;
+    background-image:
+      radial-gradient(1.4px 1.4px at 10% 20%, color-mix(in srgb, #fff 50%, transparent), transparent),
+      radial-gradient(1.4px 1.4px at 80% 30%, color-mix(in srgb, var(--spark) 60%, transparent), transparent),
+      radial-gradient(1.4px 1.4px at 60% 75%, color-mix(in srgb, #fff 40%, transparent), transparent),
+      radial-gradient(1.4px 1.4px at 30% 85%, color-mix(in srgb, var(--red) 50%, transparent), transparent);
+  }
+
+  #id4-deals-{{ section.id }} .id4d-inner {
+    position: relative; z-index: 2;
+    max-width: 1240px; margin: 0 auto;
+    padding: 0 clamp(20px, 4vw, 56px);
+  }
+
+  /* header */
+  #id4-deals-{{ section.id }} .id4d-head { text-align: center; margin-bottom: clamp(36px, 5vw, 56px); }
+  #id4-deals-{{ section.id }} .id4d-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 11px; font-weight: 800; letter-spacing: .26em; text-transform: uppercase;
+    color: var(--spark); margin-bottom: 16px;
+  }
+  #id4-deals-{{ section.id }} .id4d-eyebrow svg { width: 13px; height: 13px; fill: var(--spark); }
+  #id4-deals-{{ section.id }} .id4d-title {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(38px, 5.6vw, 68px); line-height: .92; letter-spacing: .01em;
+    text-transform: uppercase; margin: 0 0 14px;
+  }
+  #id4-deals-{{ section.id }} .id4d-title .hl {
+    color: var(--red);
+    text-shadow: 0 2px 18px color-mix(in srgb, var(--red) 40%, transparent);
+  }
+  #id4-deals-{{ section.id }} .id4d-subtitle {
+    font-size: clamp(15px, 1.1vw, 17px); line-height: 1.6; color: var(--muted);
+    max-width: 620px; margin: 0 auto;
+  }
+
+  /* grid */
+  #id4-deals-{{ section.id }} .id4d-grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns }}, minmax(0, 1fr));
+    gap: clamp(16px, 2vw, 24px);
+  }
+
+  /* card */
+  #id4-deals-{{ section.id }} .id4d-card {
+    position: relative;
+    background: linear-gradient(165deg, color-mix(in srgb, var(--card) 92%, #fff) 0%, var(--card) 70%);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 30px 26px 28px;
+    overflow: hidden;
+    transition: transform .3s, border-color .3s, box-shadow .3s;
+  }
+  #id4-deals-{{ section.id }} .id4d-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--red), #fff, var(--blue));
+    opacity: .85;
+  }
+  #id4-deals-{{ section.id }} .id4d-card:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--spark) 40%, transparent);
+    box-shadow: 0 24px 50px rgba(0,0,0,.4);
+  }
+  /* burst glow */
+  #id4-deals-{{ section.id }} .id4d-card::after {
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 140px; height: 140px; border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--red) 28%, transparent), transparent 70%);
+    opacity: 0; transition: opacity .35s; pointer-events: none;
+  }
+  #id4-deals-{{ section.id }} .id4d-card:hover::after { opacity: 1; }
+
+  #id4-deals-{{ section.id }} .id4d-icon {
+    position: relative; z-index: 1;
+    width: 54px; height: 54px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    background: color-mix(in srgb, var(--spark) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--spark) 35%, transparent);
+    margin-bottom: 20px;
+  }
+  #id4-deals-{{ section.id }} .id4d-icon svg { width: 26px; height: 26px; stroke: var(--spark); fill: none; stroke-width: 2; }
+
+  #id4-deals-{{ section.id }} .id4d-deal {
+    display: inline-block; font-family: 'Anton', sans-serif;
+    font-size: clamp(30px, 3.4vw, 44px); line-height: 1; color: var(--text);
+    letter-spacing: .02em; margin-bottom: 8px;
+  }
+  #id4-deals-{{ section.id }} .id4d-name {
+    font-size: 16px; font-weight: 700; color: var(--text); margin: 0 0 8px;
+  }
+  #id4-deals-{{ section.id }} .id4d-desc { font-size: 14px; line-height: 1.6; color: var(--muted); margin: 0 0 18px; }
+
+  #id4-deals-{{ section.id }} .id4d-code {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--spark);
+    border: 1.5px dashed color-mix(in srgb, var(--spark) 45%, transparent);
+    border-radius: 999px; padding: 8px 14px; background: transparent;
+    cursor: pointer; font-family: inherit; transition: background .2s, color .2s, border-color .2s;
+  }
+  #id4-deals-{{ section.id }} .id4d-code:hover { background: var(--spark); color: #061a06; border-color: var(--spark); }
+  #id4-deals-{{ section.id }} .id4d-code.copied { background: var(--spark); color: #061a06; border-style: solid; }
+  #id4-deals-{{ section.id }} .id4d-code svg { width: 13px; height: 13px; }
+
+  /* CTA row */
+  #id4-deals-{{ section.id }} .id4d-cta-row { text-align: center; margin-top: clamp(32px, 4vw, 48px); }
+  #id4-deals-{{ section.id }} .id4d-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--spark); color: #061a06;
+    font-weight: 800; font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
+    padding: 17px 38px; border-radius: 999px; text-decoration: none;
+    box-shadow: 0 12px 32px color-mix(in srgb, var(--spark) 40%, transparent);
+    transition: transform .2s, box-shadow .25s, gap .2s;
+  }
+  #id4-deals-{{ section.id }} .id4d-btn:hover {
+    transform: translateY(-2px); gap: 14px;
+    box-shadow: 0 20px 48px color-mix(in srgb, var(--spark) 55%, transparent);
+  }
+
+  @media (max-width: 900px) {
+    #id4-deals-{{ section.id }} .id4d-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 560px) {
+    #id4-deals-{{ section.id }} .id4d-grid { grid-template-columns: 1fr; }
+    #id4-deals-{{ section.id }} .id4d-card { padding: 26px 22px 24px; }
+  }
+</style>
+
+<section id="id4-deals-{{ section.id }}">
+  <span class="id4d-rule top"></span>
+  <div class="id4d-bgstars"></div>
+
+  <div class="id4d-inner">
+    {% if section.settings.eyebrow != blank or section.settings.title != blank or section.settings.subtitle != blank %}
+      <div class="id4d-head">
+        {% if section.settings.eyebrow != blank %}
+          <div class="id4d-eyebrow">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21.5l1.7-7L2 9.8l7.1-.6L12 2z"/></svg>
+            {{ section.settings.eyebrow }}
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21.5l1.7-7L2 9.8l7.1-.6L12 2z"/></svg>
+          </div>
+        {% endif %}
+        {% if section.settings.title != blank %}
+          <h2 class="id4d-title">{{ section.settings.title }}</h2>
+        {% endif %}
+        {% if section.settings.subtitle != blank %}
+          <p class="id4d-subtitle">{{ section.settings.subtitle }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="id4d-grid">
+      {% for block in section.blocks %}
+        <div class="id4d-card" {{ block.shopify_attributes }}>
+          <div class="id4d-icon">
+            {% case block.settings.icon %}
+              {% when 'fireworks' %}
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg>
+              {% when 'tag' %}
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              {% when 'truck' %}
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="13" height="11" rx="1"/><path d="M14 9h4l3 3v5h-7"/><circle cx="6" cy="18" r="2"/><circle cx="17.5" cy="18" r="2"/></svg>
+              {% when 'gift' %}
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M3 12h18M12 8v13M12 8S10 3 7.5 4.5 9 8 12 8zM12 8s2-5 4.5-3.5S15 8 12 8z"/></svg>
+              {% when 'star' %}
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21.5l1.7-7L2 9.8l7.1-.6L12 2z"/></svg>
+              {% when 'flag' %}
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4M4 4s2-1 5-1 5 2 8 2 3-1 3-1v9s-1 1-3 1-5-2-8-2-5 1-5 1"/></svg>
+              {% when 'football' %}
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20C2 14 4 5 12 4c8-1 10 8 8 16-6 2-15 0-16 0zM8 16l8-8M9 11l2 2M11 9l2 2"/></svg>
+              {% else %}
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7L12 17.8 5.7 21.5l1.7-7L2 9.8l7.1-.6L12 2z"/></svg>
+            {% endcase %}
+          </div>
+
+          {% if block.settings.deal != blank %}<span class="id4d-deal">{{ block.settings.deal }}</span>{% endif %}
+          {% if block.settings.name != blank %}<h3 class="id4d-name">{{ block.settings.name }}</h3>{% endif %}
+          {% if block.settings.desc != blank %}<p class="id4d-desc">{{ block.settings.desc }}</p>{% endif %}
+
+          {% if block.settings.code != blank %}
+            <button type="button" class="id4d-code" data-code="{{ block.settings.code | escape }}" aria-label="Copy code {{ block.settings.code | escape }}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              <span class="id4d-code-text">{{ block.settings.code }}</span>
+            </button>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if section.settings.cta_label != blank %}
+      <div class="id4d-cta-row">
+        <a href="{{ section.settings.cta_url | default: '#' }}" class="id4d-btn">{{ section.settings.cta_label }} →</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <span class="id4d-rule bottom"></span>
+</section>
+
+<script>
+(function(){
+  var root = document.getElementById('id4-deals-{{ section.id }}');
+  if (!root) return;
+  root.querySelectorAll('.id4d-code').forEach(function(btn){
+    var t;
+    btn.addEventListener('click', function(){
+      var code = btn.getAttribute('data-code') || '';
+      if (!code) return;
+      var label = btn.querySelector('.id4d-code-text');
+      var orig = label ? label.textContent : '';
+      function done(){
+        btn.classList.add('copied');
+        if (label) label.textContent = 'Copied!';
+        clearTimeout(t);
+        t = setTimeout(function(){ btn.classList.remove('copied'); if (label) label.textContent = orig; }, 1600);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(done).catch(done);
+      } else {
+        var ta = document.createElement('textarea'); ta.value = code; ta.style.position='absolute'; ta.style.left='-9999px';
+        document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch(e){} document.body.removeChild(ta);
+        done();
+      }
+    });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "4th of July Deals",
+  "tag": "div",
+  "class": "independence-day-deals-section",
+  "settings": [
+    { "type": "header", "content": "Header" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Limited Time — Ends July 4" },
+    { "type": "text", "id": "title", "label": "Title", "default": "Star-Spangled Deals" },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "Stack the savings and gear up for the ultimate backyard 4th. Tap any code to copy it." },
+    { "type": "range", "id": "columns", "label": "Columns (desktop)", "min": 2, "max": 4, "step": 1, "default": 3 },
+
+    { "type": "header", "content": "Footer button" },
+    { "type": "text", "id": "cta_label", "label": "Button text", "default": "Shop the 4th of July Sale" },
+    { "type": "url", "id": "cta_url", "label": "Button URL" },
+
+    { "type": "header", "content": "Section spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_bg", "label": "Background", "default": "#141c40" },
+    { "type": "color", "id": "color_card", "label": "Card background", "default": "#212c54" },
+    { "type": "color", "id": "color_text", "label": "Text", "default": "#ffffff" },
+    { "type": "color", "id": "color_red", "label": "Red", "default": "#e11d2f" },
+    { "type": "color", "id": "color_blue", "label": "Blue", "default": "#3454c6" },
+    { "type": "color", "id": "color_spark", "label": "Gold accent (QB54 gold)", "default": "#f7b80d" }
+  ],
+  "blocks": [
+    {
+      "type": "deal",
+      "name": "Deal card",
+      "settings": [
+        {
+          "type": "select", "id": "icon", "label": "Icon", "default": "tag",
+          "options": [
+            { "value": "tag", "label": "Price tag" },
+            { "value": "truck", "label": "Free shipping" },
+            { "value": "gift", "label": "Gift" },
+            { "value": "fireworks", "label": "Fireworks" },
+            { "value": "star", "label": "Star" },
+            { "value": "flag", "label": "Flag" },
+            { "value": "football", "label": "Football" }
+          ]
+        },
+        { "type": "text", "id": "deal", "label": "Deal headline", "info": "Big text, e.g. 20% OFF", "default": "20% OFF" },
+        { "type": "text", "id": "name", "label": "Deal name", "default": "Every Game Set" },
+        { "type": "textarea", "id": "desc", "label": "Description", "default": "The viral QB54 tailgate football game — now at its lowest price of the summer." },
+        { "type": "text", "id": "code", "label": "Coupon code (optional)", "info": "Leave blank to hide. Tap-to-copy.", "default": "FREEDOM" }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "4th of July Deals",
+      "blocks": [
+        { "type": "deal", "settings": { "icon": "tag", "deal": "20% OFF", "name": "Every Game Set", "desc": "The viral QB54 tailgate football game — now at its lowest price of the summer.", "code": "FREEDOM" } },
+        { "type": "deal", "settings": { "icon": "truck", "deal": "FREE", "name": "Fast Shipping", "desc": "Free 2–4 day shipping so it lands before the fireworks. Order by July 1.", "code": "" } },
+        { "type": "deal", "settings": { "icon": "gift", "deal": "BUNDLE", "name": "Buy 2, Save More", "desc": "Grab a set for the cookout and one to gift. Extra savings stack at checkout.", "code": "FREEDOM" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

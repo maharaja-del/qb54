@@ -1,0 +1,230 @@
+
+{% liquid
+  assign id = section.id
+%}
+
+<section class="our-story-{{ id }}">
+  <div class="page-width">
+    <div class="layout">
+      <div class="story-content">
+        <h2 class="heading">
+          {{ section.settings.heading_prefix }}
+          <span>{{ section.settings.heading_highlight }}</span>
+        </h2>
+
+        <div class="richtext">
+          {{ section.settings.body }}
+        </div>
+
+        <div class="stats">
+          {% for block in section.blocks %}
+            {% if block.type == 'stat' %}
+              <div class="stat" {{ block.shopify_attributes }}>
+                <strong class="stat-value">{{ block.settings.value }}</strong>
+                <span class="stat-label">{{ block.settings.label }}</span>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="pillars">
+        {% for block in section.blocks %}
+          {% if block.type == 'pillar' %}
+            <div class="pillar" {{ block.shopify_attributes }}>
+              <div class="pillar-icon">
+                {% if block.settings.icon != blank %}
+                  <img
+                    src="{{ block.settings.icon | image_url: width: 80 }}"
+                    alt=""
+                    width="40"
+                    height="40">
+                {% endif %}
+              </div>
+              <div class="pillar-text">
+                <strong>{{ block.settings.title }}</strong>
+                <p>{{ block.settings.text }}</p>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .our-story-{{ id }} {
+      background: {{ section.settings.background }};
+      padding: {{ section.settings.padding_mobile }}px 0;
+    }
+
+    .our-story-{{ id }} .layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 56px;
+      align-items: flex-start;
+    }
+
+    .our-story-{{ id }} .heading {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+      margin-bottom: 20px;
+    }
+
+    .our-story-{{ id }} .heading span {
+      color: {{ section.settings.highlight_color }};
+    }
+
+    .our-story-{{ id }} .richtext {
+      color: {{ section.settings.text_color }};
+      font-size: {{ section.settings.body_size_mobile }}px;
+      line-height: 1.7;
+      margin-bottom: 40px;
+    }
+
+    .our-story-{{ id }} .stats {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .our-story-{{ id }} .stat-value {
+      display: block;
+      font-size: 32px;
+      color: {{ section.settings.stat_value_color }};
+    }
+
+    .our-story-{{ id }} .stat-label {
+      font-size: 14px;
+      color: {{ section.settings.stat_label_color }};
+    }
+
+    .our-story-{{ id }} .pillars {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .our-story-{{ id }} .pillar {
+      background: {{ section.settings.card_bg }};
+      border-radius: {{ section.settings.card_radius }}px;
+      padding: 24px;
+      display: flex;
+      gap: 16px;
+    }
+
+    .our-story-{{ id }} .pillar-icon {
+      background: {{ section.settings.icon_bg }};
+      border-radius: 16px;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .our-story-{{ id }} .pillar-text strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .our-story-{{ id }} .pillar-text p {
+      color: {{ section.settings.pillar_text_color }};
+      font-size: 15px;
+    }
+
+    @media (min-width: 750px) {
+      .our-story-{{ id }} {
+        padding: {{ section.settings.padding_desktop }}px 0;
+      }
+
+      .our-story-{{ id }} .layout {
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 80px;
+      }
+
+      .our-story-{{ id }} .heading {
+        font-size: {{ section.settings.heading_size_desktop }}px;
+      }
+
+      .our-story-{{ id }} .richtext {
+        font-size: {{ section.settings.body_size_desktop }}px;
+      }
+
+      .our-story-{{ id }} .stat-value {
+        font-size: 40px;
+      }
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "Our Story",
+  "settings": [
+    { "type": "text", "id": "heading_prefix", "label": "Heading prefix", "default": "Our" },
+    { "type": "text", "id": "heading_highlight", "label": "Heading highlight", "default": "Story" },
+
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Story text",
+      "default": "<p>QB54 was born from a simple idea: create a fun, safe way for families to enjoy football together without the risk of injury.</p><p>After appearing on Shark Tank, we've helped over a million families create lasting memories outdoors.</p><p>Every QB54 is built with premium materials to last through years of family fun.</p>"
+    },
+
+    { "type": "color", "id": "background", "label": "Background", "default": "#faf9f5" },
+    { "type": "color", "id": "highlight_color", "label": "Highlight color", "default": "#3f6b4a" },
+    { "type": "color", "id": "text_color", "label": "Body text color", "default": "#6b7f72" },
+
+    { "type": "color", "id": "stat_value_color", "label": "Stat value color", "default": "#3f6b4a" },
+    { "type": "color", "id": "stat_label_color", "label": "Stat label color", "default": "#6b7f72" },
+
+    { "type": "color", "id": "card_bg", "label": "Pillar card background", "default": "#ffffff" },
+    { "type": "color", "id": "icon_bg", "label": "Icon background", "default": "#e7ede6" },
+    { "type": "color", "id": "pillar_text_color", "label": "Pillar text color", "default": "#6b7f72" },
+
+    { "type": "range", "id": "card_radius", "label": "Card radius", "min": 0, "max": 40, "step": 2, "default": 20 },
+
+    { "type": "range", "id": "heading_size_mobile", "label": "Heading size mobile", "min": 24, "max": 48, "step": 2, "default": 32 },
+    { "type": "range", "id": "heading_size_desktop", "label": "Heading size desktop", "min": 36, "max": 72, "step": 2, "default": 52 },
+
+    { "type": "range", "id": "body_size_mobile", "label": "Body size mobile", "min": 14, "max": 20, "step": 1, "default": 16 },
+    { "type": "range", "id": "body_size_desktop", "label": "Body size desktop", "min": 16, "max": 22, "step": 1, "default": 17 },
+
+    { "type": "range", "id": "padding_mobile", "label": "Padding mobile", "min": 40, "max": 120, "step": 4, "default": 64 },
+    { "type": "range", "id": "padding_desktop", "label": "Padding desktop", "min": 80, "max": 200, "step": 4, "default": 120 }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat",
+      "settings": [
+        { "type": "text", "id": "value", "label": "Value", "default": "1M+" },
+        { "type": "text", "id": "label", "label": "Label", "default": "Happy Families" }
+      ]
+    },
+    {
+      "type": "pillar",
+      "name": "Pillar",
+      "settings": [
+        { "type": "image_picker", "id": "icon", "label": "Icon" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Family First" },
+        { "type": "textarea", "id": "text", "label": "Description", "default": "We believe the best memories are made together." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Our Story",
+      "blocks": [
+        { "type": "stat" },
+        { "type": "stat" },
+        { "type": "stat" },
+        { "type": "pillar" },
+        { "type": "pillar" },
+        { "type": "pillar" }
+      ]
+    }
+  ]
+}
+{% endschema %}

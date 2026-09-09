@@ -1,0 +1,893 @@
+{%- liquid
+  assign available_teams = '|'
+  assign initial_team = blank
+  assign total_products = 0
+
+  for block in section.blocks
+    assign category_collection = block.settings.collection
+    if category_collection != blank
+      assign total_products = total_products | plus: category_collection.products_count
+
+      for product in category_collection.products limit: 50
+        capture team_key
+          render 'tailgate-team-key', title: product.title
+        endcapture
+        assign team_key = team_key | strip
+
+        assign team_token = team_key | append: '|' | prepend: '|'
+        unless available_teams contains team_token
+          assign available_teams = available_teams | append: team_key | append: '|'
+          # 'all' is the key for team-agnostic products (e.g. the All 32 NFL
+          # Teams ball). It has no logo button, so never open the section on it.
+          if initial_team == blank and team_key != 'all'
+            assign initial_team = team_key
+          endif
+        endunless
+      endfor
+    endif
+  endfor
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --section-padding-top: {{ section.settings.padding_top }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --sbt-ink: {{ section.settings.color_text }};
+    --sbt-paper: {{ section.settings.color_background }};
+    --sbt-card: {{ section.settings.color_card_background }};
+    --sbt-accent: {{ section.settings.color_accent }};
+    --sbt-cta-bg: {{ section.settings.color_button_background }};
+    --sbt-cta-text: {{ section.settings.color_button_text }};
+    {%- render 'section-variables', section: section -%}
+  }
+
+  #shopify-section-{{ section.id }} .shop-by-team {
+    color: var(--sbt-ink);
+    background: var(--sbt-paper);
+  }
+
+  #shopify-section-{{ section.id }} .shop-by-team__intro {
+    max-width: 620px;
+    margin: -8px auto 28px;
+    color: rgb(var(--color-foreground) / 0.68);
+    font-size: 15px;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .shop-by-team__rail-wrap {
+    position: relative;
+    margin-bottom: 40px;
+  }
+
+  #shopify-section-{{ section.id }} .shop-by-team__rail {
+    display: flex;
+    padding: 4px 4px 14px;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  #shopify-section-{{ section.id }} .shop-by-team__rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team {
+    appearance: none;
+    display: flex;
+    width: 96px;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 4px 0;
+    color: var(--sbt-ink);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    scroll-snap-align: start;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team__logo-frame {
+    position: relative;
+    display: flex;
+    width: 76px;
+    height: 76px;
+    align-items: center;
+    justify-content: center;
+    background: var(--sbt-card);
+    border: 2px solid transparent;
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgb(0 0 0 / 0.08);
+    transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team:hover .tailgate-team__logo-frame {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgb(0 0 0 / 0.14);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team.is-active .tailgate-team__logo-frame {
+    border-color: var(--sbt-accent);
+    box-shadow: 0 8px 20px rgb(0 0 0 / 0.16);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team:focus-visible .tailgate-team__logo-frame {
+    outline: 3px solid var(--sbt-accent);
+    outline-offset: 3px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team__monogram {
+    position: absolute;
+    display: flex;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    color: var(--sbt-accent);
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team__logo {
+    position: relative;
+    z-index: 1;
+    width: 62px;
+    height: 62px;
+    object-fit: contain;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team__name {
+    display: -webkit-box;
+    overflow: hidden;
+    color: rgb(var(--color-foreground) / 0.75);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.25;
+    text-align: center;
+    text-transform: uppercase;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    transition: color 180ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-team.is-active .tailgate-team__name {
+    color: var(--sbt-ink);
+  }
+
+  #shopify-section-{{ section.id }} .shop-by-team__results-header {
+    display: flex;
+    margin-bottom: 20px;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  #shopify-section-{{ section.id }} .shop-by-team__results-label {
+    margin: 0 0 4px;
+    color: rgb(var(--color-foreground) / 0.55);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .shop-by-team__results-title {
+    margin: 0;
+    font-size: clamp(22px, 3vw, 32px);
+  }
+
+  #shopify-section-{{ section.id }} .shop-by-team__results-count {
+    flex: 0 0 auto;
+    color: rgb(var(--color-foreground) / 0.55);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px 16px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card {
+    min-width: 0;
+    color: var(--sbt-ink);
+    background: var(--sbt-card);
+    border: 1px solid rgb(var(--color-foreground) / 0.1);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: box-shadow 180ms ease, transform 180ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card:hover {
+    box-shadow: 0 10px 26px rgb(0 0 0 / 0.1);
+    transform: translateY(-2px);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card[hidden] {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__media {
+    position: relative;
+    display: flex;
+    aspect-ratio: 1;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background: #ffffff;
+    overflow: hidden;
+  }
+
+  /* margin:auto centres the image even if a global `img{height:auto}` rule
+     wins over the height below, which otherwise top-aligns landscape shots. */
+  #shopify-section-{{ section.id }} .tailgate-hub-card__image,
+  #shopify-section-{{ section.id }} .tailgate-hub-card__placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    margin: auto;
+    object-fit: contain;
+    object-position: center center;
+    transition: transform 240ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card:hover .tailgate-hub-card__image {
+    transform: scale(1.045);
+  }
+
+  /* The theme sets aria-busy on the button while /cart/add.js is in flight but
+     never styled it, so the button looked dead for the whole round-trip. */
+  #shopify-section-{{ section.id }} .tailgate-hub-card__add[aria-busy='true'] {
+    cursor: progress;
+    opacity: 0.75;
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__add[aria-busy='true'] svg {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__add[aria-busy='true']::after {
+    content: '';
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: tailgate-atc-spin 0.6s linear infinite;
+  }
+
+  @keyframes tailgate-atc-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__category,
+  #shopify-section-{{ section.id }} .tailgate-hub-card__sale {
+    position: absolute;
+    top: 10px;
+    display: inline-flex;
+    min-height: 24px;
+    padding: 5px 9px;
+    align-items: center;
+    background: var(--sbt-accent);
+    border-radius: 999px;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__category {
+    left: 10px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__sale {
+    right: 10px;
+    color: var(--sbt-ink);
+    background: var(--sbt-cta-bg);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__content {
+    padding: 14px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__meta {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__title {
+    min-height: 38px;
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__title a {
+    color: inherit;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__price {
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__actions {
+    display: grid;
+    margin-top: 12px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__add,
+  #shopify-section-{{ section.id }} .tailgate-hub-card__view {
+    display: inline-flex;
+    min-height: 44px;
+    padding: 8px 10px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__add {
+    width: 100%;
+    color: var(--sbt-cta-text);
+    background: var(--sbt-cta-bg);
+    border: 1px solid var(--sbt-cta-bg);
+    transition: opacity 160ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__add:hover {
+    opacity: 0.85;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__add svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-hub-card__view {
+    color: var(--sbt-ink);
+    background: transparent;
+    border: 1px solid rgb(var(--color-foreground) / 0.18);
+  }
+
+  #shopify-section-{{ section.id }} .shop-by-team__product-empty {
+    padding: 48px 24px;
+    color: rgb(var(--color-foreground) / 0.62);
+    background: var(--sbt-card);
+    border: 1px solid rgb(var(--color-foreground) / 0.1);
+    border-radius: 14px;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .shop-by-team__product-empty[hidden] {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .shop-by-team__footer {
+    display: flex;
+    margin-top: 36px;
+    justify-content: center;
+  }
+
+  #shopify-section-{{ section.id }} .shop-by-team__view-all {
+    display: inline-flex;
+    min-height: 52px;
+    padding: 14px 26px;
+    align-items: center;
+    gap: 10px;
+    color: var(--sbt-ink);
+    background: transparent;
+    border: 1px solid rgb(var(--color-foreground) / 0.22);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: border-color 180ms ease, transform 180ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .shop-by-team__view-all:hover {
+    border-color: var(--sbt-accent);
+    transform: translateY(-2px);
+  }
+
+  @media screen and (max-width: 989px) {
+    #shopify-section-{{ section.id }} .tailgate-product-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .shop-by-team__rail {
+      gap: 10px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-team {
+      width: 82px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-team__logo-frame {
+      width: 64px;
+      height: 64px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-team__logo {
+      width: 52px;
+      height: 52px;
+    }
+
+    #shopify-section-{{ section.id }} .shop-by-team__results-header {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-product-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px 10px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-card__content {
+      padding: 10px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-card__title {
+      min-height: 34px;
+      font-size: 13px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-card__actions {
+      grid-template-columns: 1fr;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-hub-card__view {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .tailgate-team,
+    #shopify-section-{{ section.id }} .tailgate-team__logo-frame,
+    #shopify-section-{{ section.id }} .tailgate-hub-card,
+    #shopify-section-{{ section.id }} .tailgate-hub-card__image,
+    #shopify-section-{{ section.id }} .tailgate-hub-card__add,
+    #shopify-section-{{ section.id }} .shop-by-team__view-all {
+      transition: none;
+    }
+  }
+</style>
+
+<div class="section section--padding{% if section.settings.divider %} section--divider{% endif %}{% if section.settings.rounded %} section--rounded relative{% endif %}">
+  <div class="shop-by-team page-width{% if section.settings.full_width %} page-width--full{% endif %} relative">
+    {%- render 'section-heading', section: section -%}
+
+    {%- if section.settings.subheading != blank -%}
+      <p class="shop-by-team__intro">{{ section.settings.subheading | escape }}</p>
+    {%- endif -%}
+
+    {%- if initial_team != blank -%}
+      <shop-by-team data-initial-team="{{ initial_team | escape }}">
+        <div class="shop-by-team__rail-wrap">
+          <div class="shop-by-team__rail" role="tablist" aria-label="Choose your NFL team">
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'cardinals', team_name: 'Arizona Cardinals', short_name: 'Cardinals', abbreviation: 'ARI', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Arizona_cardinals.jpg?v=1785794140' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'falcons', team_name: 'Atlanta Falcons', short_name: 'Falcons', abbreviation: 'ATL', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Atlanta_Falcons_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'ravens', team_name: 'Baltimore Ravens', short_name: 'Ravens', abbreviation: 'BAL', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Baltimore_Ravens_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'bills', team_name: 'Buffalo Bills', short_name: 'Bills', abbreviation: 'BUF', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Buffalo_Bills_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'panthers', team_name: 'Carolina Panthers', short_name: 'Panthers', abbreviation: 'CAR', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Carolina_Panthers_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'bears', team_name: 'Chicago Bears', short_name: 'Bears', abbreviation: 'CHI', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Chicago_Bears_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'bengals', team_name: 'Cincinnati Bengals', short_name: 'Bengals', abbreviation: 'CIN', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Cinncinati_Bengals_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'browns', team_name: 'Cleveland Browns', short_name: 'Browns', abbreviation: 'CLE', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Cleveland_Browns_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'cowboys', team_name: 'Dallas Cowboys', short_name: 'Cowboys', abbreviation: 'DAL', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Dallas_Cowboys_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'broncos', team_name: 'Denver Broncos', short_name: 'Broncos', abbreviation: 'DEN', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Denver_Broncos_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'lions', team_name: 'Detroit Lions', short_name: 'Lions', abbreviation: 'DET', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Detroit_Lions_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'packers', team_name: 'Green Bay Packers', short_name: 'Packers', abbreviation: 'GB', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Green_Bay_Packers_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'texans', team_name: 'Houston Texans', short_name: 'Texans', abbreviation: 'HOU', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Houston_Texans_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'colts', team_name: 'Indianapolis Colts', short_name: 'Colts', abbreviation: 'IND', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Indianapolis_Colts_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'jaguars', team_name: 'Jacksonville Jaguars', short_name: 'Jaguars', abbreviation: 'JAX', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Jacksonville_Jaguars_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'chiefs', team_name: 'Kansas City Chiefs', short_name: 'Chiefs', abbreviation: 'KC', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Kansas_City_Chiefs_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'raiders', team_name: 'Las Vegas Raiders', short_name: 'Raiders', abbreviation: 'LV', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Las_Vegas_Raiders_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'chargers', team_name: 'Los Angeles Chargers', short_name: 'Chargers', abbreviation: 'LAC', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Los_Angeles_Chargers_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'rams', team_name: 'Los Angeles Rams', short_name: 'Rams', abbreviation: 'LAR', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Los_Angeles_Rams_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'dolphins', team_name: 'Miami Dolphins', short_name: 'Dolphins', abbreviation: 'MIA', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Miami_Dolphins_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'vikings', team_name: 'Minnesota Vikings', short_name: 'Vikings', abbreviation: 'MIN', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Minnesota_Vikings_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'patriots', team_name: 'New England Patriots', short_name: 'Patriots', abbreviation: 'NE', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/New_England_Patriots_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'saints', team_name: 'New Orleans Saints', short_name: 'Saints', abbreviation: 'NO', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/New_Orleans_Saints.jpg?v=1785794140' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'giants', team_name: 'New York Giants', short_name: 'Giants', abbreviation: 'NYG', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/New_York_Giants.jpg?v=1785794141' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'jets', team_name: 'New York Jets', short_name: 'Jets', abbreviation: 'NYJ', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/New_York_jets.jpg?v=1785794141' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'eagles', team_name: 'Philadelphia Eagles', short_name: 'Eagles', abbreviation: 'PHI', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Philadelphia_Eagles_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'steelers', team_name: 'Pittsburgh Steelers', short_name: 'Steelers', abbreviation: 'PIT', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Pittsburgh_Steelers_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: '49ers', team_name: 'San Francisco 49ers', short_name: '49ers', abbreviation: 'SF', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/San_Francisco_49ers_logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'seahawks', team_name: 'Seattle Seahawks', short_name: 'Seahawks', abbreviation: 'SEA', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Seattle_Seahawks_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'buccaneers', team_name: 'Tampa Bay Buccaneers', short_name: 'Buccaneers', abbreviation: 'TB', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Tampa_Bay_Buccaneers_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'titans', team_name: 'Tennessee Titans', short_name: 'Titans', abbreviation: 'TEN', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Tennessee_TItans_Logo.png' -%}
+            {%- render 'tailgate-hub-team-button', available_teams: available_teams, initial_team: initial_team, section_id: section.id, team_key: 'commanders', team_name: 'Washington Commanders', short_name: 'Commanders', abbreviation: 'WAS', logo_url: 'https://cdn.shopify.com/s/files/1/1444/0224/files/Washington_Commanders_Logo.png' -%}
+          </div>
+        </div>
+
+        <div id="ShopByTeamResults-{{ section.id }}" role="tabpanel" aria-live="polite">
+          <div class="shop-by-team__results-header">
+            <div>
+              <p class="shop-by-team__results-label">Now showing</p>
+              <h3 class="shop-by-team__results-title heading" data-selected-team>Team Products</h3>
+            </div>
+            <p class="shop-by-team__results-count"><span data-results-count>0</span> products</p>
+          </div>
+
+          <div class="tailgate-product-grid" data-product-grid>
+            {%- for block in section.blocks -%}
+              {%- assign category_collection = block.settings.collection -%}
+              {%- for product in category_collection.products limit: 50 -%}
+                {%- render 'tailgate-hub-product-card', product: product, category_key: block.settings.category_key, category_label: block.settings.singular_label, section_id: section.id -%}
+              {%- endfor -%}
+            {%- endfor -%}
+          </div>
+
+          <div class="shop-by-team__product-empty" data-product-empty hidden>
+            No products are currently available for this team.
+          </div>
+        </div>
+      </shop-by-team>
+
+      {%- if section.settings.view_all_link != blank -%}
+        <div class="shop-by-team__footer">
+          <a class="shop-by-team__view-all" href="{{ section.settings.view_all_link }}">
+            {{ section.settings.view_all_label | escape }}
+            <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
+              <path d="M4 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+            </svg>
+          </a>
+        </div>
+      {%- endif -%}
+
+      <noscript>
+        <div class="shop-by-team__product-empty">JavaScript is required for team filtering. Visit the full team shop to browse by team.</div>
+      </noscript>
+    {%- else -%}
+      <div class="shop-by-team__product-empty">
+        Add active Online Store products to the selected collections to populate this section.
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+<script>
+  if (!customElements.get('shop-by-team')) {
+    customElements.define(
+      'shop-by-team',
+      class ShopByTeam extends HTMLElement {
+        connectedCallback() {
+          this.teamButtons = Array.from(this.querySelectorAll('[data-tailgate-team]'));
+          this.productCards = Array.from(this.querySelectorAll('[data-tailgate-product]'));
+          this.selectedTeamLabel = this.querySelector('[data-selected-team]');
+          this.resultsCount = this.querySelector('[data-results-count]');
+          this.emptyState = this.querySelector('[data-product-empty]');
+          this.resultsSection = this.querySelector('[role="tabpanel"]');
+
+          this.querySelectorAll('[data-tailgate-team-logo]').forEach((logo) => {
+            const hideBrokenLogo = () => { logo.hidden = true; };
+            logo.addEventListener('error', hideBrokenLogo, { once: true });
+            if (logo.complete && logo.naturalWidth === 0) hideBrokenLogo();
+          });
+
+          this.teamButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+              this.selectTeam(button.dataset.team, button.dataset.teamName);
+              button.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            });
+            button.addEventListener('keydown', (event) => this.onKeydown(event, index));
+          });
+
+          const initialButton = this.teamButtons.find((button) => button.dataset.team === this.dataset.initialTeam) || this.teamButtons[0];
+          if (initialButton) this.selectTeam(initialButton.dataset.team, initialButton.dataset.teamName);
+        }
+
+        selectTeam(team, teamName) {
+          this.activeTeam = team;
+
+          this.teamButtons.forEach((button) => {
+            const active = button.dataset.team === team;
+            button.classList.toggle('is-active', active);
+            button.setAttribute('aria-selected', active ? 'true' : 'false');
+            button.setAttribute('tabindex', active ? '0' : '-1');
+          });
+
+          if (this.selectedTeamLabel) this.selectedTeamLabel.textContent = teamName;
+          this.renderProducts();
+        }
+
+        renderProducts() {
+          let visibleCount = 0;
+
+          this.productCards.forEach((card) => {
+            // 'all' marks a team-agnostic product (the All 32 NFL Teams ball),
+            // so it stays visible whichever team is selected.
+            const visible = card.dataset.team === this.activeTeam || card.dataset.team === 'all';
+            card.hidden = !visible;
+            card.setAttribute('aria-hidden', visible ? 'false' : 'true');
+            if (visible) visibleCount += 1;
+          });
+
+          if (this.resultsCount) this.resultsCount.textContent = visibleCount;
+          if (this.emptyState) this.emptyState.hidden = visibleCount !== 0;
+        }
+
+        onKeydown(event, index) {
+          let nextIndex = index;
+
+          if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+            nextIndex = (index + 1) % this.teamButtons.length;
+          } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+            nextIndex = (index - 1 + this.teamButtons.length) % this.teamButtons.length;
+          } else if (event.key === 'Home') {
+            nextIndex = 0;
+          } else if (event.key === 'End') {
+            nextIndex = this.teamButtons.length - 1;
+          } else {
+            return;
+          }
+
+          event.preventDefault();
+          const nextButton = this.teamButtons[nextIndex];
+          this.selectTeam(nextButton.dataset.team, nextButton.dataset.teamName);
+          nextButton.focus();
+        }
+      }
+    );
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Shop by Team",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop By Team"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "title-sm", "label": "Small" },
+        { "value": "title-md", "label": "Medium" },
+        { "value": "title-lg tracking-heading", "label": "Large" },
+        { "value": "title-xl tracking-heading", "label": "Extra large" }
+      ],
+      "default": "title-md",
+      "label": "Heading size"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "text-left md:items-end md:flex-row", "label": "Left" },
+        { "value": "text-center md:items-center", "label": "Center" },
+        { "value": "text-right md:items-end md:flex-row-reverse", "label": "Right" }
+      ],
+      "default": "text-center md:items-center"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "div", "label": "Div" }
+      ],
+      "default": "h2",
+      "label": "Heading tag"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Tap your team's logo — every product for them shows up below."
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Section description"
+    },
+    {
+      "type": "text",
+      "id": "highlighted_text",
+      "label": "Highlighted text",
+      "info": "Leave as none unless a matching word exists in the heading",
+      "default": "none"
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "\"View all teams\" button label",
+      "default": "Shop All 32 Teams"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "\"View all teams\" button link"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "Text",
+      "default": "#171717"
+    },
+    {
+      "type": "color",
+      "id": "color_background",
+      "label": "Section background",
+      "default": "#f4f2e8"
+    },
+    {
+      "type": "color_background",
+      "id": "gradient_background",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "color_card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "color_highlight",
+      "label": "Heading highlight",
+      "default": "#363a66"
+    },
+    {
+      "type": "color_background",
+      "id": "gradient_highlight",
+      "label": "Highlight gradient"
+    },
+    {
+      "type": "color",
+      "id": "color_accent",
+      "label": "Active team / tag accent",
+      "default": "#363a66"
+    },
+    {
+      "type": "color",
+      "id": "color_button_text",
+      "label": "Add to Cart text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "color_button_background",
+      "label": "Add to Cart background",
+      "default": "#fdc439"
+    },
+    {
+      "type": "color_background",
+      "id": "color_button_gradient",
+      "label": "Add to Cart gradient"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 72
+    },
+    {
+      "type": "checkbox",
+      "id": "divider",
+      "label": "Show divider",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "rounded",
+      "label": "Rounded section",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Product category",
+      "limit": 10,
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "select",
+          "id": "category_key",
+          "label": "Category key",
+          "options": [
+            { "value": "blanket", "label": "Blanket" },
+            { "value": "tumbler", "label": "Tumbler" },
+            { "value": "cooler", "label": "Cooler" },
+            { "value": "caddy", "label": "Caddy" },
+            { "value": "table", "label": "Table" },
+            { "value": "football", "label": "Football" },
+            { "value": "vintage", "label": "Vintage football" },
+            { "value": "mascot", "label": "Inflatable mascot" },
+            { "value": "tent", "label": "Tent" }
+          ],
+          "default": "blanket"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Plural label",
+          "default": "Blankets"
+        },
+        {
+          "type": "text",
+          "id": "singular_label",
+          "label": "Singular label",
+          "default": "Blanket"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop by Team",
+      "category": "Collections",
+      "blocks": [
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["footer", "header", "custom.overlay"]
+  }
+}
+{% endschema %}

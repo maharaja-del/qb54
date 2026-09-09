@@ -1,0 +1,323 @@
+
+{% assign sid = section.id %}
+
+<section class="how-to-play-{{ sid }}">
+  <div class="how-to-play__inner">
+
+    {% if section.settings.badge_text != blank %}
+      <div class="how-to-play__badge" style="background: {{ section.settings.badge_bg }}; color: {{ section.settings.badge_color }}">
+        {{ section.settings.badge_text }}
+      </div>
+    {% endif %}
+
+    {% if section.settings.heading != blank %}
+      <h2 class="how-to-play__heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    {% if section.settings.subheading != blank %}
+      <p class="how-to-play__subheading">{{ section.settings.subheading }}</p>
+    {% endif %}
+
+    <div class="how-to-play__grid">
+      {% for block in section.blocks %}
+        <div class="how-to-play__card" {{ block.shopify_attributes }}>
+          <div class="how-to-play__number" style="color: {{ section.settings.step_number_color }}">
+            {{ forloop.index }}
+          </div>
+          <h3 class="how-to-play__title">{{ block.settings.title }}</h3>
+          <p class="how-to-play__text">{{ block.settings.text }}</p>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+<style>
+.how-to-play-{{ sid }} {
+  background: {{ section.settings.bg_color }};
+  padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+}
+
+.how-to-play-{{ sid }} .how-to-play__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.how-to-play-{{ sid }} .how-to-play__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: {{ section.settings.badge_size }}px;
+  margin-bottom: 20px;
+}
+
+.how-to-play-{{ sid }} .how-to-play__heading {
+  color: {{ section.settings.heading_color }};
+  font-size: {{ section.settings.heading_size_mobile }}px;
+  margin-bottom: 12px;
+}
+
+.how-to-play-{{ sid }} .how-to-play__subheading {
+  color: {{ section.settings.text_color }};
+  max-width: 720px;
+  margin: 0 auto 48px;
+  font-size: {{ section.settings.text_size_mobile }}px;
+}
+
+.how-to-play-{{ sid }} .how-to-play__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.how-to-play-{{ sid }} .how-to-play__card {
+  background: {{ section.settings.card_bg }};
+  border-radius: {{ section.settings.card_radius }}px;
+  padding: 28px 24px;
+  text-align: left;
+  position: relative;
+}
+
+.how-to-play-{{ sid }} .how-to-play__number {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  font-size: 48px;
+  font-weight: 700;
+  opacity: 0.15;
+}
+
+.how-to-play-{{ sid }} .how-to-play__title {
+  color: {{ section.settings.title_color }};
+  font-size: {{ section.settings.title_size_mobile }}px;
+  margin-bottom: 8px;
+}
+
+.how-to-play-{{ sid }} .how-to-play__text {
+  color: {{ section.settings.text_color }};
+  font-size: {{ section.settings.text_size_mobile }}px;
+}
+
+@media (min-width: 768px) {
+  .how-to-play-{{ sid }} .how-to-play__heading {
+    font-size: {{ section.settings.heading_size_desktop }}px;
+  }
+
+  .how-to-play-{{ sid }} .how-to-play__subheading {
+    font-size: {{ section.settings.text_size_desktop }}px;
+  }
+
+  .how-to-play-{{ sid }} .how-to-play__grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .how-to-play-{{ sid }} .how-to-play__title {
+    font-size: {{ section.settings.title_size_desktop }}px;
+  }
+
+  .how-to-play-{{ sid }} .how-to-play__text {
+    font-size: {{ section.settings.text_size_desktop }}px;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "How to play",
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "Easy to Learn"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg",
+      "label": "Badge background",
+      "default": "#FBE9CC"
+    },
+    {
+      "type": "color",
+      "id": "badge_color",
+      "label": "Badge text color",
+      "default": "#F4A62A"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "How to Play QB54"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Description",
+      "default": "QB54 is the ultimate football game built into two camping chairs. Score points by making completions, touchdowns, interceptions, and kicking extra points!"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#FAF9F3"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Card background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1F2D23"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#1F2D23"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#6F7F73"
+    },
+    {
+      "type": "color",
+      "id": "step_number_color",
+      "label": "Step number color",
+      "default": "#3F6B47"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card radius",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size mobile",
+      "min": 20,
+      "max": 36,
+      "step": 1,
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size desktop",
+      "min": 28,
+      "max": 56,
+      "step": 1,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Title size mobile",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Title size desktop",
+      "min": 16,
+      "max": 26,
+      "step": 1,
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Text size mobile",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Text size desktop",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "badge_size",
+      "label": "Badge text size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 80
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Set Up"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Set chairs in game mode, approximately 40 feet apart."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "How to play",
+      "blocks": [
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" }
+      ]
+    }
+  ]
+}
+{% endschema %}

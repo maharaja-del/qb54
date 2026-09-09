@@ -1,0 +1,349 @@
+{%- style -%}
+  /* GLOBAL SAFETY */
+  .adventure-gallery, .adventure-gallery * { box-sizing: border-box; }
+  
+  .adventure-gallery {
+    background: {{ section.settings.section_bg }};
+    padding: {{ section.settings.section_padding }}px 0;
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  .adventure-gallery-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  /* HEADER STYLES */
+  .adventure-header {
+    text-align: center;
+    margin-bottom: {{ section.settings.header_bottom_spacing }}px;
+  }
+  
+  .adventure-badge {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: {{ section.settings.badge_color }};
+    margin-bottom: 16px;
+    display: block;
+  }
+  
+  .adventure-title {
+    font-size: {{ section.settings.title_size }}px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: {{ section.settings.title_color }};
+    margin-bottom: 24px;
+  }
+  
+  .adventure-title-highlight {
+    color: {{ section.settings.title_highlight_color }};
+    font-style: italic;
+  }
+  
+  .adventure-description {
+    font-size: {{ section.settings.description_size }}px;
+    line-height: 1.6;
+    color: {{ section.settings.description_color }};
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  
+  /* GRID LAYOUT */
+  .adventure-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: {{ section.settings.grid_gap }}px;
+    margin-top: {{ section.settings.grid_top_spacing }}px;
+  }
+  
+  .adventure-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: {{ section.settings.card_radius }}px;
+    min-height: {{ section.settings.card_height }}px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .adventure-card:hover {
+    transform: scale(1.02);
+  }
+  
+  .adventure-card--large {
+    grid-row: span 2;
+    min-height: {{ section.settings.large_card_height }}px;
+  }
+  
+  .adventure-card-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .adventure-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,{{ section.settings.overlay_opacity | divided_by: 100.0 }}) 0%, transparent 60%);
+    z-index: 1;
+  }
+  
+  .adventure-card-content {
+    position: absolute;
+    bottom: {{ section.settings.card_content_padding }}px;
+    left: {{ section.settings.card_content_padding }}px;
+    right: {{ section.settings.card_content_padding }}px;
+    z-index: 2;
+    color: #ffffff;
+  }
+  
+  .adventure-card-title {
+    font-size: {{ section.settings.card_title_size }}px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  
+  .adventure-card-text {
+    font-size: {{ section.settings.card_text_size }}px;
+    line-height: 1.4;
+    opacity: 0.9;
+  }
+  
+  /* MOBILE RESPONSIVENESS */
+  @media (max-width: 768px) {
+    .adventure-gallery {
+      padding: {{ section.settings.mobile_section_padding }}px 0;
+    }
+    
+    .adventure-gallery-inner {
+      padding: 0 16px;
+    }
+    
+    .adventure-header {
+      margin-bottom: {{ section.settings.mobile_header_spacing }}px;
+    }
+    
+    .adventure-badge {
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .adventure-title {
+      font-size: {{ section.settings.mobile_title_size }}px;
+      margin-bottom: 20px;
+    }
+    
+    .adventure-description {
+      font-size: {{ section.settings.mobile_description_size }}px;
+    }
+    
+    .adventure-grid {
+      display: block;
+      gap: {{ section.settings.mobile_grid_gap }}px;
+      margin-top: {{ section.settings.mobile_grid_top_spacing }}px;
+    }
+    
+    .adventure-card {
+      margin-bottom: {{ section.settings.mobile_grid_gap }}px;
+      min-height: {{ section.settings.mobile_card_height }}px;
+    }
+    
+    .adventure-card--large {
+      grid-row: unset;
+      min-height: {{ section.settings.mobile_card_height }}px;
+    }
+    
+    .adventure-card-title {
+      font-size: {{ section.settings.mobile_card_title_size }}px;
+    }
+    
+    .adventure-card-text {
+      font-size: {{ section.settings.mobile_card_text_size }}px;
+    }
+    
+    .adventure-card-content {
+      bottom: {{ section.settings.mobile_card_padding }}px;
+      left: {{ section.settings.mobile_card_padding }}px;
+      right: {{ section.settings.mobile_card_padding }}px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .adventure-title {
+      font-size: {{ section.settings.mobile_title_size | minus: 8 }}px;
+    }
+    
+    .adventure-card {
+      min-height: {{ section.settings.mobile_card_height | minus: 50 }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="adventure-gallery">
+  <div class="adventure-gallery-inner">
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when 'header' %}
+          <div class="adventure-header" {{ block.shopify_attributes }}>
+            {% if block.settings.badge_text != blank %}
+              <span class="adventure-badge">{{ block.settings.badge_text }}</span>
+            {% endif %}
+            {% if block.settings.title_part_1 != blank or block.settings.title_part_2 != blank %}
+              <h2 class="adventure-title">
+                {{ block.settings.title_part_1 }}
+                {% if block.settings.title_part_2 != blank %}
+                  <span class="adventure-title-highlight">{{ block.settings.title_part_2 }}</span>
+                {% endif %}
+              </h2>
+            {% endif %}
+            {% if block.settings.description != blank %}
+              <p class="adventure-description">{{ block.settings.description }}</p>
+            {% endif %}
+          </div>
+        
+        {% when 'gallery_start' %}
+          <div class="adventure-grid" {{ block.shopify_attributes }}>
+        
+        {% when 'gallery_card' %}
+          <div class="adventure-card{% if block.settings.is_large %} adventure-card--large{% endif %}" {{ block.shopify_attributes }}>
+            {% if block.settings.image != blank %}
+              {{ block.settings.image | image_url: width: 800 | image_tag: class: 'adventure-card-image', loading: 'lazy' }}
+            {% endif %}
+            <div class="adventure-card-overlay"></div>
+            <div class="adventure-card-content">
+              {% if block.settings.card_title != blank %}
+                <h3 class="adventure-card-title">{{ block.settings.card_title }}</h3>
+              {% endif %}
+              {% if block.settings.card_text != blank %}
+                <p class="adventure-card-text">{{ block.settings.card_text }}</p>
+              {% endif %}
+            </div>
+          </div>
+        
+        {% when 'gallery_end' %}
+          </div>
+      {% endcase %}
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Adventure Gallery",
+  "settings": [
+    { "type": "header", "content": "Section" },
+    { "type": "color", "id": "section_bg", "label": "Section background", "default": "#1a1a1a" },
+    { "type": "range", "id": "section_padding", "label": "Section padding", "min": 40, "max": 120, "step": 8, "default": 80 },
+    { "type": "range", "id": "mobile_section_padding", "label": "Mobile section padding", "min": 20, "max": 80, "step": 4, "default": 40 },
+    
+    { "type": "header", "content": "Header" },
+    { "type": "color", "id": "badge_color", "label": "Badge color", "default": "#a6ff00" },
+    { "type": "color", "id": "title_color", "label": "Title color", "default": "#ffffff" },
+    { "type": "color", "id": "title_highlight_color", "label": "Title highlight color", "default": "#a6ff00" },
+    { "type": "color", "id": "description_color", "label": "Description color", "default": "#888888" },
+    { "type": "range", "id": "title_size", "label": "Title size", "min": 32, "max": 72, "step": 2, "default": 56 },
+    { "type": "range", "id": "description_size", "label": "Description size", "min": 14, "max": 24, "step": 1, "default": 18 },
+    { "type": "range", "id": "mobile_title_size", "label": "Mobile title size", "min": 24, "max": 48, "step": 2, "default": 32 },
+    { "type": "range", "id": "mobile_description_size", "label": "Mobile description size", "min": 12, "max": 20, "step": 1, "default": 16 },
+    { "type": "range", "id": "header_bottom_spacing", "label": "Header bottom spacing", "min": 20, "max": 80, "step": 4, "default": 52 },
+    { "type": "range", "id": "mobile_header_spacing", "label": "Mobile header spacing", "min": 16, "max": 60, "step": 4, "default": 32 },
+    
+    { "type": "header", "content": "Grid Layout" },
+    { "type": "range", "id": "grid_gap", "label": "Grid gap", "min": 8, "max": 32, "step": 2, "default": 16 },
+    { "type": "range", "id": "mobile_grid_gap", "label": "Mobile grid gap", "min": 8, "max": 24, "step": 2, "default": 16 },
+    { "type": "range", "id": "grid_top_spacing", "label": "Grid top spacing", "min": 20, "max": 80, "step": 4, "default": 60 },
+    { "type": "range", "id": "mobile_grid_top_spacing", "label": "Mobile grid top spacing", "min": 16, "max": 60, "step": 4, "default": 40 },
+    
+    { "type": "header", "content": "Cards" },
+    { "type": "range", "id": "card_radius", "label": "Card border radius", "min": 0, "max": 24, "step": 2, "default": 12 },
+    { "type": "range", "id": "card_height", "label": "Card height", "min": 200, "max": 400, "step": 10, "default": 280 },
+    { "type": "range", "id": "large_card_height", "label": "Large card height", "min": 400, "max": 700, "step": 20, "default": 580 },
+    { "type": "range", "id": "mobile_card_height", "label": "Mobile card height", "min": 200, "max": 350, "step": 10, "default": 250 },
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay opacity (%)", "min": 20, "max": 80, "step": 5, "default": 60 },
+    
+    { "type": "header", "content": "Card Content" },
+    { "type": "range", "id": "card_title_size", "label": "Card title size", "min": 18, "max": 36, "step": 2, "default": 28 },
+    { "type": "range", "id": "card_text_size", "label": "Card text size", "min": 12, "max": 20, "step": 1, "default": 16 },
+    { "type": "range", "id": "mobile_card_title_size", "label": "Mobile card title size", "min": 16, "max": 28, "step": 2, "default": 20 },
+    { "type": "range", "id": "mobile_card_text_size", "label": "Mobile card text size", "min": 11, "max": 17, "step": 1, "default": 14 },
+    { "type": "range", "id": "card_content_padding", "label": "Card content padding", "min": 16, "max": 48, "step": 4, "default": 32 },
+    { "type": "range", "id": "mobile_card_padding", "label": "Mobile card padding", "min": 12, "max": 32, "step": 4, "default": 20 }
+  ],
+  "blocks": [
+    {
+      "type": "header",
+      "name": "Header",
+      "settings": [
+        { "type": "text", "id": "badge_text", "label": "Badge text", "default": "VERSATILE BY DESIGN" },
+        { "type": "text", "id": "title_part_1", "label": "Title part 1", "default": "Take the Game" },
+        { "type": "text", "id": "title_part_2", "label": "Title part 2 (highlighted)", "default": "Anywhere" },
+        { "type": "textarea", "id": "description", "label": "Description", "default": "From backyard BBQs to beach vacations, QB54 brings family and friends together wherever adventure takes you." }
+      ]
+    },
+    {
+      "type": "gallery_start",
+      "name": "Gallery Start"
+    },
+    {
+      "type": "gallery_card",
+      "name": "Gallery Card",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Card image" },
+        { "type": "text", "id": "card_title", "label": "Card title", "default": "Adventure Title" },
+        { "type": "textarea", "id": "card_text", "label": "Card text", "default": "Description of the adventure or activity." },
+        { "type": "checkbox", "id": "is_large", "label": "Large card (spans 2 rows)", "default": false }
+      ]
+    },
+    {
+      "type": "gallery_end",
+      "name": "Gallery End"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Adventure Gallery",
+      "blocks": [
+        { "type": "header" },
+        { "type": "gallery_start" },
+        { 
+          "type": "gallery_card",
+          "settings": {
+            "card_title": "Tailgating",
+            "card_text": "Easy to pack and go and take to your favorite tailgate party!",
+            "is_large": true
+          }
+        },
+        { 
+          "type": "gallery_card",
+          "settings": {
+            "card_title": "Backyard Fun",
+            "card_text": "Perfect for family gatherings and backyard fun!"
+          }
+        },
+        { 
+          "type": "gallery_card",
+          "settings": {
+            "card_title": "At The Beach",
+            "card_text": "Pack up with ease and take to your favorite beach spot"
+          }
+        },
+        { 
+          "type": "gallery_card",
+          "settings": {
+            "card_title": "At the Park",
+            "card_text": "Take to any gathering with the boys and have some fun!"
+          }
+        },
+        { "type": "gallery_end" }
+      ]
+    }
+  ]
+}
+{% endschema %}

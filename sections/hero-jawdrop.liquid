@@ -1,0 +1,547 @@
+{%- liquid
+  assign stat_blocks = section.blocks | where: 'type', 'stat'
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --hj-bg: {{ section.settings.background }};
+    --hj-ink: {{ section.settings.heading_color }};
+    --hj-sub: {{ section.settings.subheading_color }};
+    --hj-accent: {{ section.settings.accent_color }};
+    --hj-badge-bg: {{ section.settings.badge_bg }};
+    --hj-badge-text: {{ section.settings.badge_color }};
+    --hj-primary-bg: {{ section.settings.primary_button_bg }};
+    --hj-primary-text: {{ section.settings.primary_button_color }};
+    --hj-secondary-bg: {{ section.settings.secondary_button_bg }};
+    --hj-secondary-text: {{ section.settings.secondary_button_color }};
+    --hj-secondary-border: {{ section.settings.secondary_button_border }};
+  }
+
+  #shopify-section-{{ section.id }} .hj {
+    position: relative;
+    background: var(--hj-bg);
+    overflow: hidden;
+    isolation: isolate;
+    padding-block: {{ section.settings.padding_top_mobile }}px {{ section.settings.padding_bottom_mobile }}px;
+  }
+
+  #shopify-section-{{ section.id }} .hj::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+      linear-gradient(115deg, transparent 44%, color-mix(in srgb, var(--hj-accent) 16%, transparent) 44.6%, color-mix(in srgb, var(--hj-accent) 16%, transparent) 47.4%, transparent 48%),
+      linear-gradient(115deg, transparent 58%, rgba(255,255,255,0.05) 58.6%, rgba(255,255,255,0.05) 59.6%, transparent 60.2%);
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} .hj-shell {
+    position: relative;
+    z-index: 1;
+    width: min(1280px, 100% - 48px);
+    margin-inline: auto;
+  }
+
+  #shopify-section-{{ section.id }} .hj-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    gap: 40px;
+  }
+
+  #shopify-section-{{ section.id }} .hj-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--hj-badge-bg);
+    color: var(--hj-badge-text);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-family: var(--font-body-family);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.01em;
+    margin-bottom: 22px;
+  }
+
+  #shopify-section-{{ section.id }} .hj-heading {
+    font-family: var(--font-heading-family);
+    font-style: var(--font-heading-style);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    line-height: 0.98;
+    color: var(--hj-ink);
+    margin: 0 0 20px;
+    font-size: {{ section.settings.heading_size_mobile }}px;
+    text-wrap: balance;
+  }
+
+  #shopify-section-{{ section.id }} .hj-heading em {
+    font-style: normal;
+    color: var(--hj-accent);
+  }
+
+  #shopify-section-{{ section.id }} .hj-sub {
+    font-family: var(--font-body-family);
+    font-size: {{ section.settings.subheading_size_mobile }}px;
+    line-height: 1.55;
+    color: var(--hj-sub);
+    max-width: 48ch;
+    margin: 0 0 30px;
+  }
+
+  #shopify-section-{{ section.id }} .hj-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 34px;
+  }
+
+  #shopify-section-{{ section.id }} .hj-btn {
+    font-family: var(--font-heading-family);
+    font-style: var(--font-heading-style);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 16px 28px;
+    min-height: 52px;
+    border-radius: {{ section.settings.button_radius }}px;
+    border: 1px solid transparent;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+  #shopify-section-{{ section.id }} .hj-btn:hover { transform: translateY(-2px); }
+
+  #shopify-section-{{ section.id }} .hj-btn-primary {
+    background: var(--hj-primary-bg);
+    color: var(--hj-primary-text);
+    box-shadow: 0 10px 26px rgb(0 0 0 / 0.16);
+  }
+
+  #shopify-section-{{ section.id }} .hj-btn-secondary {
+    background: var(--hj-secondary-bg);
+    color: var(--hj-secondary-text);
+    border-color: var(--hj-secondary-border);
+  }
+
+  #shopify-section-{{ section.id }} .hj-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding-top: 24px;
+    border-top: 1px solid color-mix(in srgb, var(--hj-sub) 35%, transparent);
+    max-width: 520px;
+  }
+
+  #shopify-section-{{ section.id }} .hj-stat strong {
+    display: block;
+    font-family: var(--font-heading-family);
+    font-style: var(--font-heading-style);
+    font-weight: 700;
+    font-size: clamp(24px, 2.6vw, 32px);
+    color: var(--hj-accent);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .hj-stat span {
+    display: block;
+    font-family: var(--font-body-family);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--hj-sub);
+    margin-top: 6px;
+  }
+
+  #shopify-section-{{ section.id }} .hj-visual {
+    position: relative;
+  }
+
+  #shopify-section-{{ section.id }} .hj-visual::after {
+    content: '';
+    position: absolute;
+    inset: -6%;
+    background: radial-gradient(circle at 30% 24%, color-mix(in srgb, var(--hj-accent) 26%, transparent), transparent 62%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} .hj-visual picture,
+  #shopify-section-{{ section.id }} .hj-visual img {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: {{ section.settings.image_radius }}px;
+    filter: drop-shadow(0 22px 40px rgb(0 0 0 / 0.28));
+  }
+
+  #shopify-section-{{ section.id }} .hj-placeholder {
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    background: color-mix(in srgb, var(--hj-sub) 12%, transparent);
+    border-radius: {{ section.settings.image_radius }}px;
+  }
+  #shopify-section-{{ section.id }} .hj-placeholder svg { width: 40%; height: 40%; opacity: 0.4; }
+
+  @media screen and (min-width: 900px) {
+    #shopify-section-{{ section.id }} .hj {
+      padding-block: {{ section.settings.padding_top_desktop }}px {{ section.settings.padding_bottom_desktop }}px;
+    }
+    #shopify-section-{{ section.id }} .hj-grid {
+      grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
+      gap: clamp(40px, 5vw, 80px);
+    }
+    #shopify-section-{{ section.id }} .hj-heading {
+      font-size: {{ section.settings.heading_size_desktop }}px;
+    }
+    #shopify-section-{{ section.id }} .hj-sub {
+      font-size: {{ section.settings.subheading_size_desktop }}px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .hj-btn { transition: none; }
+  }
+</style>
+
+<div class="hj">
+  <div class="hj-shell hj-grid">
+    <div>
+      {%- if section.settings.badge_text != blank -%}
+        <p class="hj-badge">{{ section.settings.badge_text | escape }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h1 class="hj-heading">{{ section.settings.heading }}</h1>
+      {%- endif -%}
+
+      {%- if section.settings.subheading != blank -%}
+        <p class="hj-sub">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+
+      <div class="hj-actions">
+        {%- if section.settings.primary_button_text != blank -%}
+          <a class="hj-btn hj-btn-primary" href="{{ section.settings.primary_button_url | default: '#' }}">
+            {{ section.settings.primary_button_text | escape }}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.secondary_button_text != blank -%}
+          <a class="hj-btn hj-btn-secondary" href="{{ section.settings.secondary_button_url | default: '#' }}">
+            {{ section.settings.secondary_button_text | escape }}
+          </a>
+        {%- endif -%}
+      </div>
+
+      {%- if stat_blocks.size > 0 -%}
+        <div class="hj-stats">
+          {%- for block in stat_blocks -%}
+            <div class="hj-stat" {{ block.shopify_attributes }}>
+              <strong>{{ block.settings.stat_value | escape }}</strong>
+              <span>{{ block.settings.stat_label | escape }}</span>
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="hj-visual">
+      {%- if section.settings.image_desktop != blank -%}
+        <picture>
+          {%- if section.settings.image_mobile != blank -%}
+            <source media="(max-width: 749px)" srcset="{{ section.settings.image_mobile | image_url: width: 500 }} 500w, {{ section.settings.image_mobile | image_url: width: 800 }} 800w">
+          {%- endif -%}
+          {{- section.settings.image_desktop
+            | image_url: width: 1200
+            | image_tag:
+              loading: 'eager',
+              widths: '480,720,960,1200',
+              sizes: '(max-width: 899px) 92vw, 44vw',
+              alt: section.settings.image_alt | default: section.settings.heading | strip_html
+          -}}
+        </picture>
+      {%- else -%}
+        <div class="hj-placeholder">
+          {{- 'product-1' | placeholder_svg_tag -}}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero – Jawdrop",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "Shark Tank · As Seen On ABC, GMA, The View"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Every Backyard Becomes The Field"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "<p>Two chairs, one football, endless comebacks. Set up in under two minutes, anywhere.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "primary_button_text",
+      "label": "Primary button text",
+      "default": "Shop Game Sets"
+    },
+    {
+      "type": "url",
+      "id": "primary_button_url",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_button_text",
+      "label": "Secondary button text",
+      "default": "See the Rules"
+    },
+    {
+      "type": "url",
+      "id": "secondary_button_url",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_desktop",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image alt text"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#363a66"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent (stats, highlighted word, backdrop glow)",
+      "default": "#fdc439"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg",
+      "label": "Badge background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "badge_color",
+      "label": "Badge text",
+      "default": "#363a66"
+    },
+    {
+      "type": "color",
+      "id": "primary_button_bg",
+      "label": "Primary button background",
+      "default": "#fdc439"
+    },
+    {
+      "type": "color",
+      "id": "primary_button_color",
+      "label": "Primary button text",
+      "default": "#363a66"
+    },
+    {
+      "type": "color",
+      "id": "secondary_button_bg",
+      "label": "Secondary button background",
+      "default": "transparent"
+    },
+    {
+      "type": "color",
+      "id": "secondary_button_color",
+      "label": "Secondary button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "secondary_button_border",
+      "label": "Secondary button border",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "label": "Button radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Image radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size mobile",
+      "min": 32,
+      "max": 64,
+      "step": 2,
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size desktop",
+      "min": 44,
+      "max": 96,
+      "step": 2,
+      "default": 76
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_mobile",
+      "label": "Subheading size mobile",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "default": 17
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_desktop",
+      "label": "Subheading size desktop",
+      "min": 16,
+      "max": 26,
+      "step": 1,
+      "default": 19
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top mobile",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom mobile",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Padding top desktop",
+      "min": 40,
+      "max": 200,
+      "step": 4,
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Padding bottom desktop",
+      "min": 40,
+      "max": 200,
+      "step": 4,
+      "default": 96
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "stat_value",
+          "label": "Value",
+          "default": "100M+"
+        },
+        {
+          "type": "text",
+          "id": "stat_label",
+          "label": "Label",
+          "default": "Video Views"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero – Jawdrop",
+      "blocks": [
+        { "type": "stat", "settings": { "stat_value": "100M+", "stat_label": "Video Views" } },
+        { "type": "stat", "settings": { "stat_value": "4.9", "stat_label": "Average Rating" } },
+        { "type": "stat", "settings": { "stat_value": "54", "stat_label": "Points to Win" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

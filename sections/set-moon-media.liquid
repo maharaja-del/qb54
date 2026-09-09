@@ -1,0 +1,825 @@
+{% comment %}
+  MEM-Classic-Set — Collection Showcase
+  sections/mem-classic-set.liquid
+  All product data auto-fetched from product picker.
+{% endcomment %}
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+.mcs-wrap *, .mcs-wrap *::before, .mcs-wrap *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.mcs-wrap {
+  font-family: 'Poppins', sans-serif;
+  --o:    {{ section.settings.color_accent }};
+  --od:   #C94F10;
+  --dk:   {{ section.settings.bg_color }};
+  --card: {{ section.settings.card_bg_color }};
+  --ink:  #0F0F0F;
+  --sub:  #6B6B6B;
+  --bdr:  rgba(0,0,0,.08);
+}
+
+/* ── Section ── */
+.mcs-sec {
+  background: var(--dk);
+  padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+  position: relative; overflow: clip;
+}
+.mcs-sec::before {
+  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image: radial-gradient(circle, rgba(0,0,0,.04) 1px, transparent 1px);
+  background-size: 28px 28px; opacity: .5;
+}
+.mcs-inner {
+  position: relative; z-index: 1;
+  max-width: {{ section.settings.max_width }}px;
+  margin: 0 auto; padding: 0 32px;
+}
+
+/* ── Header ── */
+.mcs-hdr { text-align: center; margin-bottom: 48px; }
+.mcs-hdr-ey {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 11px; font-weight: 700; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--o); margin-bottom: 14px;
+}
+.mcs-hdr-ey::before, .mcs-hdr-ey::after { content: ''; width: 22px; height: 2px; background: var(--o); flex-shrink: 0; }
+.mcs-hdr-title {
+  font-size: clamp(30px,4.5vw,52px); font-weight: 900;
+  text-transform: uppercase; color: white;
+  letter-spacing: -1.5px; line-height: 1; margin-bottom: 16px;
+  overflow-wrap: anywhere; word-break: break-word;
+}
+.mcs-hdr-sub { font-size: 16px; color: var(--sub); line-height: 1.65; max-width: 560px; margin: 0 auto; overflow-wrap: break-word; }
+
+/* ── Grid ── */
+.mcs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  align-items: start; /* cards grow independently — alignment done inside */
+}
+
+/* ── Card ── */
+.mcs-card {
+  background: var(--card);
+  border: 2px solid transparent;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  position: relative;
+  transition: box-shadow .3s, transform .3s;
+  min-width: 0;
+  width: 100%;
+}
+.mcs-card:hover { box-shadow: 0 16px 60px rgba(0,0,0,.1); transform: translateY(-3px); }
+.mcs-card.mcs-featured { border-color: var(--o); box-shadow: 0 8px 40px rgba(242,101,34,.12); }
+.mcs-card.mcs-featured:hover { box-shadow: 0 20px 70px rgba(242,101,34,.2); }
+
+/* ── Ribbon — always rendered, invisible when not featured ── */
+.mcs-ribbon {
+  height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase;
+  flex-shrink: 0;
+  visibility: hidden; /* hidden but keeps height */
+}
+.mcs-card.mcs-featured .mcs-ribbon {
+  background: var(--o); color: #fff;
+  visibility: visible;
+}
+
+/* ── Image / Video wrap ── */
+.mcs-img-wrap {
+  position: relative; overflow: hidden;
+  background: #F5F2EE; aspect-ratio: 1/1; flex-shrink: 0;
+  width: 100%;
+}
+.mcs-slide {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; display: none;
+}
+.mcs-slide.mcs-on { display: block; }
+.mcs-slide img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform .5s cubic-bezier(.16,1,.3,1);
+}
+.mcs-card:hover .mcs-slide.mcs-on img { transform: scale(1.04); }
+.mcs-slide video, .mcs-slide iframe {
+  width: 100%; height: 100%; object-fit: cover; display: block; border: none;
+}
+.mcs-thumb { position: relative; }
+.mcs-thumb-play {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,.38); pointer-events: none; font-size: 15px; color: #fff;
+}
+
+.mcs-img-badge {
+  position: absolute; top: 12px; left: 12px; z-index: 3;
+  background: var(--o); color: #fff; font-weight: 700;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  padding: 5px 12px; border-radius: 2px;
+  box-shadow: 0 4px 16px rgba(242,101,34,.3);
+  max-width: calc(100% - 24px);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* ── Slide arrows ── */
+.mcs-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 4;
+  width: 34px; height: 34px;
+  background: rgba(0,0,0,.38); backdrop-filter: blur(4px);
+  border: none; border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s;
+}
+.mcs-arrow:hover { background: rgba(255,255,255,.95); }
+.mcs-arrow svg { width: 16px; height: 16px; stroke: #fff; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.mcs-arrow:hover svg { stroke: #111; }
+.mcs-arrow-prev { left: 10px; }
+.mcs-arrow-next { right: 10px; }
+.mcs-arrow[data-hidden] { display: none; }
+.mcs-thumbs {
+  height: 66px; /* fixed — same on every card whether or not it has thumbs */
+  display: flex; align-items: center; gap: 5px; padding: 0 10px;
+  background: rgba(255,255,255,.95);
+  border-top: 1px solid var(--bdr);
+  overflow-x: auto; scrollbar-width: none; flex-shrink: 0;
+  width: 100%;
+}
+.mcs-thumbs::-webkit-scrollbar { display: none; }
+.mcs-thumb {
+  width: 48px; height: 48px; flex-shrink: 0;
+  border: 2px solid transparent; border-radius: 3px;
+  overflow: hidden; cursor: pointer; background: #eee;
+  transition: border-color .2s;
+}
+.mcs-thumb:hover  { border-color: rgba(0,0,0,.2); }
+.mcs-thumb.mcs-on { border-color: var(--o); }
+.mcs-thumb img    { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ── Body ── */
+.mcs-body { padding: 22px 22px 0; flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+
+.mcs-ey { font-size: 10px; font-weight: 700; letter-spacing: 3.5px; text-transform: uppercase; color: var(--o); margin-bottom: 6px; min-height: 18px; overflow-wrap: anywhere; }
+
+.mcs-name { font-weight: 900; font-size: clamp(20px,2vw,26px); text-transform: uppercase; color: white; line-height: 1.05; letter-spacing: -.5px; margin-bottom: 12px; overflow-wrap: anywhere; word-break: break-word; hyphens: auto; }
+
+.mcs-prices { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.mcs-price   { font-weight: 900; font-size: 28px; color: var(--o); line-height: 1; }
+.mcs-compare { font-size: 16px; color: #bbb; text-decoration: line-through; font-weight: 500; }
+.mcs-save    { background: #eaf5ea; color: #2e7d32; font-weight: 700; font-size: 11px; letter-spacing: 1px; padding: 3px 9px; border-radius: 20px; border: 1px solid #c3e6cb; white-space: nowrap; }
+
+.mcs-desc { font-size: 13px; color: var(--sub); line-height: 1.7; margin-bottom: 16px; overflow-wrap: break-word; }
+
+.mcs-feats { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid var(--bdr); }
+.mcs-feat  { display: flex; align-items: center; gap: 9px; font-size: 13px; color: #333; font-weight: 500; overflow-wrap: break-word; min-width: 0; }
+.mcs-feat-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--o); flex-shrink: 0; }
+
+.mcs-code { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; padding: 10px 14px; background: #FFF8F5; border: 1px dashed rgba(242,101,34,.35); border-radius: 4px; flex-wrap: wrap; }
+.mcs-code-lbl { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #aaa; }
+.mcs-code-val { font-weight: 900; font-size: 16px; letter-spacing: 3px; color: var(--o); overflow-wrap: anywhere; }
+.mcs-code-pct { margin-left: auto; font-size: 12px; font-weight: 600; color: #555; white-space: nowrap; }
+
+/* ── Footer ── */
+.mcs-foot { padding: 0 22px 22px; margin-top: auto; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+
+.mcs-actions { display: flex; gap: 8px; align-items: stretch; min-width: 0; }
+
+.mcs-qty { display: flex; align-items: stretch; border: 2px solid #e0e0e0; border-radius: 3px; overflow: hidden; flex-shrink: 0; }
+.mcs-qty-btn { width: 38px; background: transparent; border: none; font-size: 18px; cursor: pointer; color: #7bd321; transition: background .15s; display: flex; align-items: center; justify-content: center; }
+.mcs-qty-btn:hover { background: #f5f5f5; }
+.mcs-qty-num { width: 42px; text-align: center; border: none; border-left: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; font-family: 'Poppins',sans-serif; font-weight: 700; font-size: 14px; color: white; background: transparent; -moz-appearance: textfield; }
+.mcs-qty-num::-webkit-inner-spin-button, .mcs-qty-num::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+.mcs-atc { flex: 1; min-width: 0; height: 50px; background: var(--o); color: black; border: none; font-family: 'Poppins',sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; border-radius: 3px; cursor: pointer; transition: background .2s, box-shadow .2s; display: flex; align-items: center; justify-content: center; text-decoration: none;  white-space: nowrap; padding: 0 10px; }
+
+.mcs-atc:disabled { opacity: .6; cursor: not-allowed; box-shadow: none; }
+
+.mcs-view-link { display: block; text-align: center; font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--sub); text-decoration: none; transition: color .2s; padding: 4px 0; }
+.mcs-view-link:hover { color: var(--o); }
+
+/* ── Comparison table ── */
+.mcs-compare-row { margin-top: 40px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.mcs-compare-table { width: 100%; min-width: 540px; border-collapse: collapse; font-size: 13px; }
+.mcs-compare-table th, .mcs-compare-table td { padding: 13px 18px; border-bottom: 1px solid var(--bdr); text-align: center; }
+.mcs-compare-table th { font-weight: 800; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink); background: #f9f6f3; }
+.mcs-compare-table td:first-child, .mcs-compare-table th:first-child { text-align: left; font-weight: 700; color: #555; min-width: 160px; }
+.mcs-compare-table tr:last-child td { border-bottom: none; }
+.mcs-check { color: var(--o); font-size: 18px; font-weight: 900; }
+.mcs-dash  { color: #ccc; font-size: 18px; }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .mcs-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .mcs-grid .mcs-card:last-child { grid-column: 1/-1; max-width: 480px; margin: 0 auto; width: 100%; }
+}
+@media (max-width: 640px) {
+  .mcs-inner    { padding: 0 16px; }
+  .mcs-hdr      { margin-bottom: 32px; }
+  .mcs-grid     { grid-template-columns: minmax(0, 1fr); }
+  .mcs-grid .mcs-card:last-child { grid-column: auto; max-width: none; }
+  .mcs-body     { padding: 18px 18px 0; }
+  .mcs-foot     { padding: 0 18px 20px; }
+  .mcs-name     { font-size: clamp(22px,6vw,28px); }
+  .mcs-price    { font-size: 24px; }
+  .mcs-actions  { gap: 8px; }
+  .mcs-qty-btn  { width: 32px; font-size: 16px; }
+  .mcs-qty-num  { width: 34px; font-size: 13px; }
+  .mcs-atc      { height: 48px; font-size: 11px; letter-spacing: 0.8px; padding: 0 8px; }
+  .mcs-arrow    { width: 30px; height: 30px; }
+  .mcs-arrow svg { width: 13px; height: 13px; }
+  .mcs-img-badge { font-size: 9px; padding: 4px 10px; top: 10px; left: 10px; letter-spacing: 1.5px; }
+  .mcs-thumbs   { height: 60px; padding: 0 8px; }
+  .mcs-thumb    { width: 44px; height: 44px; }
+  .mcs-code     { padding: 9px 12px; }
+  .mcs-code-pct { width: 100%; margin-left: 0; }
+}
+@media (max-width: 380px) {
+  .mcs-body     { padding: 16px 14px 0; }
+  .mcs-foot     { padding: 0 14px 16px; }
+  .mcs-actions  { gap: 6px; }
+  .mcs-qty-btn  { width: 28px; font-size: 15px; }
+  .mcs-qty-num  { width: 30px; font-size: 12px; }
+  .mcs-atc      { font-size: 10px; letter-spacing: 0.5px; padding: 0 6px; height: 46px; }
+}
+</style>
+
+<div id="yourock" class="mcs-wrap">
+  <section class="mcs-sec">
+    <div class="mcs-inner">
+
+      <header class="mcs-hdr">
+        {% if section.settings.eyebrow != blank %}<div class="mcs-hdr-ey">{{ section.settings.eyebrow }}</div>{% endif %}
+        {% if section.settings.heading != blank %}<h2 class="mcs-hdr-title">{{ section.settings.heading }}</h2>{% endif %}
+        {% if section.settings.subheading != blank %}<p class="mcs-hdr-sub">{{ section.settings.subheading }}</p>{% endif %}
+      </header>
+
+      <div class="mcs-grid">
+
+        {% comment %} ─── CARD 1 ─── {% endcomment %}
+        {% assign fp = all_products[section.settings.product_1] %}
+        {% if fp != empty %}
+          {% assign c_var = fp.selected_or_first_available_variant %}
+          {% assign c_name = section.settings.name_1 | default: fp.title %}
+          {% assign c_desc = section.settings.desc_1 %}
+          {% if c_desc == blank %}{% assign c_desc = fp.description | strip_html | truncate: 160 %}{% endif %}
+          {% assign c_price = c_var.price | money %}
+          {% assign c_url = fp.url %}
+          {% assign c_vid = c_var.id %}
+          {% assign c_media = fp.media %}
+          {% assign c_feat = false %}
+          {% if section.settings.featured_card == 'card_1' %}{% assign c_feat = true %}{% endif %}
+          {% assign c_has_compare = false %}
+          {% if c_var.compare_at_price > c_var.price %}
+            {% assign c_has_compare = true %}
+            {% assign c_compare = c_var.compare_at_price | money %}
+            {% assign c_save_raw = c_var.compare_at_price | minus: c_var.price %}
+            {% assign c_save_pct = c_save_raw | times: 100 | divided_by: c_var.compare_at_price | round %}
+            {% assign c_save_label = 'Save ' | append: c_save_pct | append: '%' %}
+          {% endif %}
+
+          <div class="mcs-card{% if c_feat %} mcs-featured{% endif %}" id="mcs-card-0">
+
+            <div class="mcs-ribbon">{% if c_feat %}{{ section.settings.featured_label }}{% endif %}</div>
+
+            <div class="mcs-img-wrap">
+              {% if section.settings.badge_1 != blank %}<div class="mcs-img-badge">{{ section.settings.badge_1 }}</div>{% endif %}
+              <button class="mcs-arrow mcs-arrow-prev" type="button" onclick="mcsArrow('mcs-card-0',-1)" aria-label="Previous">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <button class="mcs-arrow mcs-arrow-next" type="button" onclick="mcsArrow('mcs-card-0',1)" aria-label="Next">
+                <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+              </button>
+              {% assign si = 0 %}
+              {% for media in c_media %}
+                {% if media.media_type == 'image' %}
+                  <div class="mcs-slide{% if si == 0 %} mcs-on{% endif %}" data-mcs-panel="mcs-card-0" data-mcs-slide="{{ si }}">
+                    <img src="{{ media | image_url: width: 900 }}" alt="{{ media.alt | default: c_name | escape }}" loading="{% if si == 0 %}eager{% else %}lazy{% endif %}">
+                  </div>
+                  {% assign si = si | plus: 1 %}
+                {% elsif media.media_type == 'video' %}
+                  <div class="mcs-slide{% if si == 0 %} mcs-on{% endif %}" data-mcs-panel="mcs-card-0" data-mcs-slide="{{ si }}">
+                    <video autoplay muted loop playsinline poster="{{ media.preview_image | image_url: width: 900 }}" style="width:100%;height:100%;object-fit:cover;display:block">
+                      {% for source in media.sources %}{% if source.format == 'mp4' %}<source src="{{ source.url }}" type="video/mp4">{% endif %}{% endfor %}
+                      {% for source in media.sources %}{% unless source.format == 'mp4' %}<source src="{{ source.url }}" type="video/{{ source.format }}">{% endunless %}{% endfor %}
+                    </video>
+                  </div>
+                  {% assign si = si | plus: 1 %}
+                {% elsif media.media_type == 'external_video' %}
+                  <div class="mcs-slide{% if si == 0 %} mcs-on{% endif %}" data-mcs-panel="mcs-card-0" data-mcs-slide="{{ si }}">
+                    {% if media.host == 'youtube' %}
+                      <iframe src="https://www.youtube.com/embed/{{ media.external_id }}?autoplay=1&mute=1&loop=1&playlist={{ media.external_id }}&controls=0&rel=0" allow="autoplay;encrypted-media" allowfullscreen></iframe>
+                    {% elsif media.host == 'vimeo' %}
+                      <iframe src="https://player.vimeo.com/video/{{ media.external_id }}?autoplay=1&muted=1&loop=1&controls=0" allow="autoplay;fullscreen" allowfullscreen></iframe>
+                    {% endif %}
+                  </div>
+                  {% assign si = si | plus: 1 %}
+                {% endif %}
+              {% endfor %}
+              {% if si == 0 and fp.featured_image %}
+                <div class="mcs-slide mcs-on">
+                  <img src="{{ fp.featured_image | image_url: width: 900 }}" alt="{{ c_name | escape }}" loading="eager">
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mcs-thumbs">
+              {% if si > 1 %}
+                {% assign ti = 0 %}
+                {% for media in c_media %}
+                  {% if media.media_type == 'image' or media.media_type == 'video' or media.media_type == 'external_video' %}
+                    <div class="mcs-thumb{% if ti == 0 %} mcs-on{% endif %}" onclick="mcsThumb('mcs-card-0',{{ ti }},this)">
+                      <img src="{{ media.preview_image | default: media | image_url: width: 100 }}" alt="" loading="lazy">
+                    </div>
+                    {% assign ti = ti | plus: 1 %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            </div>
+
+            <div class="mcs-body">
+              <div class="mcs-ey">{{ section.settings.eyebrow_1 }}</div>
+              <h3 class="mcs-name">{{ c_name }}</h3>
+              <div class="mcs-prices">
+                <span class="mcs-price">{{ c_price }}</span>
+                {% if c_has_compare %}<span class="mcs-compare">{{ c_compare }}</span><span class="mcs-save">{{ c_save_label }}</span>{% endif %}
+              </div>
+              {% if c_desc != blank %}<p class="mcs-desc">{{ c_desc }}</p>{% endif %}
+              {% if section.settings.features_1 != blank %}
+                <div class="mcs-feats">
+                  {% assign feats = section.settings.features_1 | split: '|' %}
+                  {% for f in feats %}<div class="mcs-feat"><div class="mcs-feat-dot"></div>{{ f | strip }}</div>{% endfor %}
+                </div>
+              {% endif %}
+              {% if section.settings.promo_code != blank %}
+                <div class="mcs-code">
+                  <span class="mcs-code-lbl">Code</span>
+                  <span class="mcs-code-val">{{ section.settings.promo_code }}</span>
+                  <span class="mcs-code-pct">{{ section.settings.promo_label }}</span>
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mcs-foot">
+              <div class="mcs-actions">
+                <div class="mcs-qty">
+                  <button class="mcs-qty-btn" type="button" onclick="mcsQ(this,-1)">&#8722;</button>
+                  <input class="mcs-qty-num" type="number" value="1" min="1" max="99">
+                  <button class="mcs-qty-btn" type="button" onclick="mcsQ(this,1)">&#43;</button>
+                </div>
+                {% if c_vid %}<button type="button" class="mcs-atc" data-variant="{{ c_vid }}" data-label="{{ section.settings.cta_1 }}" onclick="mcsATC(this)">{{ section.settings.cta_1 }} &#8594;</button>
+                {% else %}<a href="{{ c_url }}" class="mcs-atc">{{ section.settings.cta_1 }} &#8594;</a>{% endif %}
+              </div>
+              <a href="{{ c_url }}" class="mcs-view-link">View full details</a>
+            </div>
+          </div>
+        {% endif %}
+
+        {% comment %} ─── CARD 2 ─── {% endcomment %}
+        {% assign fp = all_products[section.settings.product_2] %}
+        {% if fp != empty %}
+          {% assign c_var = fp.selected_or_first_available_variant %}
+          {% assign c_name = section.settings.name_2 | default: fp.title %}
+          {% assign c_desc = section.settings.desc_2 %}
+          {% if c_desc == blank %}{% assign c_desc = fp.description | strip_html | truncate: 160 %}{% endif %}
+          {% assign c_price = c_var.price | money %}
+          {% assign c_url = fp.url %}
+          {% assign c_vid = c_var.id %}
+          {% assign c_media = fp.media %}
+          {% assign c_feat = false %}
+          {% if section.settings.featured_card == 'card_2' %}{% assign c_feat = true %}{% endif %}
+          {% assign c_has_compare = false %}
+          {% if c_var.compare_at_price > c_var.price %}
+            {% assign c_has_compare = true %}
+            {% assign c_compare = c_var.compare_at_price | money %}
+            {% assign c_save_raw = c_var.compare_at_price | minus: c_var.price %}
+            {% assign c_save_pct = c_save_raw | times: 100 | divided_by: c_var.compare_at_price | round %}
+            {% assign c_save_label = 'Save ' | append: c_save_pct | append: '%' %}
+          {% endif %}
+
+          <div class="mcs-card{% if c_feat %} mcs-featured{% endif %}" id="mcs-card-1">
+
+            <div class="mcs-ribbon">{% if c_feat %}{{ section.settings.featured_label }}{% endif %}</div>
+
+            <div class="mcs-img-wrap">
+              {% if section.settings.badge_2 != blank %}<div class="mcs-img-badge">{{ section.settings.badge_2 }}</div>{% endif %}
+              <button class="mcs-arrow mcs-arrow-prev" type="button" onclick="mcsArrow('mcs-card-1',-1)" aria-label="Previous">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <button class="mcs-arrow mcs-arrow-next" type="button" onclick="mcsArrow('mcs-card-1',1)" aria-label="Next">
+                <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+              </button>
+              {% assign si = 0 %}
+              {% for media in c_media %}
+                {% if media.media_type == 'image' %}
+                  <div class="mcs-slide{% if si == 0 %} mcs-on{% endif %}" data-mcs-panel="mcs-card-1" data-mcs-slide="{{ si }}">
+                    <img src="{{ media | image_url: width: 900 }}" alt="{{ media.alt | default: c_name | escape }}" loading="{% if si == 0 %}eager{% else %}lazy{% endif %}">
+                  </div>
+                  {% assign si = si | plus: 1 %}
+                {% elsif media.media_type == 'video' %}
+                  <div class="mcs-slide{% if si == 0 %} mcs-on{% endif %}" data-mcs-panel="mcs-card-1" data-mcs-slide="{{ si }}">
+                    <video autoplay muted loop playsinline poster="{{ media.preview_image | image_url: width: 900 }}" style="width:100%;height:100%;object-fit:cover;display:block">
+                      {% for source in media.sources %}{% if source.format == 'mp4' %}<source src="{{ source.url }}" type="video/mp4">{% endif %}{% endfor %}
+                      {% for source in media.sources %}{% unless source.format == 'mp4' %}<source src="{{ source.url }}" type="video/{{ source.format }}">{% endunless %}{% endfor %}
+                    </video>
+                  </div>
+                  {% assign si = si | plus: 1 %}
+                {% elsif media.media_type == 'external_video' %}
+                  <div class="mcs-slide{% if si == 0 %} mcs-on{% endif %}" data-mcs-panel="mcs-card-1" data-mcs-slide="{{ si }}">
+                    {% if media.host == 'youtube' %}
+                      <iframe src="https://www.youtube.com/embed/{{ media.external_id }}?autoplay=1&mute=1&loop=1&playlist={{ media.external_id }}&controls=0&rel=0" allow="autoplay;encrypted-media" allowfullscreen></iframe>
+                    {% elsif media.host == 'vimeo' %}
+                      <iframe src="https://player.vimeo.com/video/{{ media.external_id }}?autoplay=1&muted=1&loop=1&controls=0" allow="autoplay;fullscreen" allowfullscreen></iframe>
+                    {% endif %}
+                  </div>
+                  {% assign si = si | plus: 1 %}
+                {% endif %}
+              {% endfor %}
+              {% if si == 0 and fp.featured_image %}
+                <div class="mcs-slide mcs-on">
+                  <img src="{{ fp.featured_image | image_url: width: 900 }}" alt="{{ c_name | escape }}" loading="eager">
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mcs-thumbs">
+              {% if si > 1 %}
+                {% assign ti = 0 %}
+                {% for media in c_media %}
+                  {% if media.media_type == 'image' or media.media_type == 'video' or media.media_type == 'external_video' %}
+                    <div class="mcs-thumb{% if ti == 0 %} mcs-on{% endif %}" onclick="mcsThumb('mcs-card-1',{{ ti }},this)">
+                      <img src="{{ media.preview_image | default: media | image_url: width: 100 }}" alt="" loading="lazy">
+                    </div>
+                    {% assign ti = ti | plus: 1 %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            </div>
+
+            <div class="mcs-body">
+              <div class="mcs-ey">{{ section.settings.eyebrow_2 }}</div>
+              <h3 class="mcs-name">{{ c_name }}</h3>
+              <div class="mcs-prices">
+                <span class="mcs-price">{{ c_price }}</span>
+                {% if c_has_compare %}<span class="mcs-compare">{{ c_compare }}</span><span class="mcs-save">{{ c_save_label }}</span>{% endif %}
+              </div>
+              {% if c_desc != blank %}<p class="mcs-desc">{{ c_desc }}</p>{% endif %}
+              {% if section.settings.features_2 != blank %}
+                <div class="mcs-feats">
+                  {% assign feats = section.settings.features_2 | split: '|' %}
+                  {% for f in feats %}<div class="mcs-feat"><div class="mcs-feat-dot"></div>{{ f | strip }}</div>{% endfor %}
+                </div>
+              {% endif %}
+              {% if section.settings.promo_code != blank %}
+                <div class="mcs-code">
+                  <span class="mcs-code-lbl">Code</span>
+                  <span class="mcs-code-val">{{ section.settings.promo_code }}</span>
+                  <span class="mcs-code-pct">{{ section.settings.promo_label }}</span>
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mcs-foot">
+              <div class="mcs-actions">
+                <div class="mcs-qty">
+                  <button class="mcs-qty-btn" type="button" onclick="mcsQ(this,-1)">&#8722;</button>
+                  <input class="mcs-qty-num" type="number" value="1" min="1" max="99">
+                  <button class="mcs-qty-btn" type="button" onclick="mcsQ(this,1)">&#43;</button>
+                </div>
+                {% if c_vid %}<button type="button" class="mcs-atc" data-variant="{{ c_vid }}" data-label="{{ section.settings.cta_2 }}" onclick="mcsATC(this)">{{ section.settings.cta_2 }} &#8594;</button>
+                {% else %}<a href="{{ c_url }}" class="mcs-atc">{{ section.settings.cta_2 }} &#8594;</a>{% endif %}
+              </div>
+              <a href="{{ c_url }}" class="mcs-view-link">View full details</a>
+            </div>
+          </div>
+        {% endif %}
+
+        {% comment %} ─── CARD 3 ─── {% endcomment %}
+        {% assign fp = all_products[section.settings.product_3] %}
+        {% if fp != empty %}
+          {% assign c_var = fp.selected_or_first_available_variant %}
+          {% assign c_name = section.settings.name_3 | default: fp.title %}
+          {% assign c_desc = section.settings.desc_3 %}
+          {% if c_desc == blank %}{% assign c_desc = fp.description | strip_html | truncate: 160 %}{% endif %}
+          {% assign c_price = c_var.price | money %}
+          {% assign c_url = fp.url %}
+          {% assign c_vid = c_var.id %}
+          {% assign c_media = fp.media %}
+          {% assign c_feat = false %}
+          {% if section.settings.featured_card == 'card_3' %}{% assign c_feat = true %}{% endif %}
+          {% assign c_has_compare = false %}
+          {% if c_var.compare_at_price > c_var.price %}
+            {% assign c_has_compare = true %}
+            {% assign c_compare = c_var.compare_at_price | money %}
+            {% assign c_save_raw = c_var.compare_at_price | minus: c_var.price %}
+            {% assign c_save_pct = c_save_raw | times: 100 | divided_by: c_var.compare_at_price | round %}
+            {% assign c_save_label = 'Save ' | append: c_save_pct | append: '%' %}
+          {% endif %}
+
+          <div class="mcs-card{% if c_feat %} mcs-featured{% endif %}" id="mcs-card-2">
+
+            <div class="mcs-ribbon">{% if c_feat %}{{ section.settings.featured_label }}{% endif %}</div>
+
+            <div class="mcs-img-wrap">
+              {% if section.settings.badge_3 != blank %}<div class="mcs-img-badge">{{ section.settings.badge_3 }}</div>{% endif %}
+              <button class="mcs-arrow mcs-arrow-prev" type="button" onclick="mcsArrow('mcs-card-2',-1)" aria-label="Previous">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <button class="mcs-arrow mcs-arrow-next" type="button" onclick="mcsArrow('mcs-card-2',1)" aria-label="Next">
+                <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+              </button>
+              {% assign si = 0 %}
+              {% for media in c_media %}
+                {% if media.media_type == 'image' %}
+                  <div class="mcs-slide{% if si == 0 %} mcs-on{% endif %}" data-mcs-panel="mcs-card-2" data-mcs-slide="{{ si }}">
+                    <img src="{{ media | image_url: width: 900 }}" alt="{{ media.alt | default: c_name | escape }}" loading="{% if si == 0 %}eager{% else %}lazy{% endif %}">
+                  </div>
+                  {% assign si = si | plus: 1 %}
+                {% elsif media.media_type == 'video' %}
+                  <div class="mcs-slide{% if si == 0 %} mcs-on{% endif %}" data-mcs-panel="mcs-card-2" data-mcs-slide="{{ si }}">
+                    <video autoplay muted loop playsinline poster="{{ media.preview_image | image_url: width: 900 }}" style="width:100%;height:100%;object-fit:cover;display:block">
+                      {% for source in media.sources %}{% if source.format == 'mp4' %}<source src="{{ source.url }}" type="video/mp4">{% endif %}{% endfor %}
+                      {% for source in media.sources %}{% unless source.format == 'mp4' %}<source src="{{ source.url }}" type="video/{{ source.format }}">{% endunless %}{% endfor %}
+                    </video>
+                  </div>
+                  {% assign si = si | plus: 1 %}
+                {% elsif media.media_type == 'external_video' %}
+                  <div class="mcs-slide{% if si == 0 %} mcs-on{% endif %}" data-mcs-panel="mcs-card-2" data-mcs-slide="{{ si }}">
+                    {% if media.host == 'youtube' %}
+                      <iframe src="https://www.youtube.com/embed/{{ media.external_id }}?autoplay=1&mute=1&loop=1&playlist={{ media.external_id }}&controls=0&rel=0" allow="autoplay;encrypted-media" allowfullscreen></iframe>
+                    {% elsif media.host == 'vimeo' %}
+                      <iframe src="https://player.vimeo.com/video/{{ media.external_id }}?autoplay=1&muted=1&loop=1&controls=0" allow="autoplay;fullscreen" allowfullscreen></iframe>
+                    {% endif %}
+                  </div>
+                  {% assign si = si | plus: 1 %}
+                {% endif %}
+              {% endfor %}
+              {% if si == 0 and fp.featured_image %}
+                <div class="mcs-slide mcs-on">
+                  <img src="{{ fp.featured_image | image_url: width: 900 }}" alt="{{ c_name | escape }}" loading="eager">
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mcs-thumbs">
+              {% if si > 1 %}
+                {% assign ti = 0 %}
+                {% for media in c_media %}
+                  {% if media.media_type == 'video' or media.media_type == 'external_video' %}
+                    <div class="mcs-thumb{% if ti == 0 %} mcs-on{% endif %}" onclick="mcsThumb('mcs-card-2',{{ ti }},this)">
+                      <img src="{{ media.preview_image | image_url: width: 100 }}" alt="" loading="lazy">
+                      <div class="mcs-thumb-play">&#9654;</div>
+                    </div>
+                    {% assign ti = ti | plus: 1 %}
+                  {% endif %}
+                {% endfor %}
+                {% for media in c_media %}
+                  {% if media.media_type == 'image' %}
+                    <div class="mcs-thumb{% if ti == 0 %} mcs-on{% endif %}" onclick="mcsThumb('mcs-card-2',{{ ti }},this)">
+                      <img src="{{ media | image_url: width: 100 }}" alt="" loading="lazy">
+                    </div>
+                    {% assign ti = ti | plus: 1 %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            </div>
+
+            <div class="mcs-body">
+              <div class="mcs-ey">{{ section.settings.eyebrow_3 }}</div>
+              <h3 class="mcs-name">{{ c_name }}</h3>
+              <div class="mcs-prices">
+                <span class="mcs-price">{{ c_price }}</span>
+                {% if c_has_compare %}<span class="mcs-compare">{{ c_compare }}</span><span class="mcs-save">{{ c_save_label }}</span>{% endif %}
+              </div>
+              {% if c_desc != blank %}<p class="mcs-desc">{{ c_desc }}</p>{% endif %}
+              {% if section.settings.features_3 != blank %}
+                <div class="mcs-feats">
+                  {% assign feats = section.settings.features_3 | split: '|' %}
+                  {% for f in feats %}<div class="mcs-feat"><div class="mcs-feat-dot"></div>{{ f | strip }}</div>{% endfor %}
+                </div>
+              {% endif %}
+              {% if section.settings.promo_code != blank %}
+                <div class="mcs-code">
+                  <span class="mcs-code-lbl">Code</span>
+                  <span class="mcs-code-val">{{ section.settings.promo_code }}</span>
+                  <span class="mcs-code-pct">{{ section.settings.promo_label }}</span>
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mcs-foot">
+              <div class="mcs-actions">
+                <div class="mcs-qty">
+                  <button class="mcs-qty-btn" type="button" onclick="mcsQ(this,-1)">&#8722;</button>
+                  <input class="mcs-qty-num" type="number" value="1" min="1" max="99">
+                  <button class="mcs-qty-btn" type="button" onclick="mcsQ(this,1)">&#43;</button>
+                </div>
+                {% if c_vid %}<button type="button" class="mcs-atc" data-variant="{{ c_vid }}" data-label="{{ section.settings.cta_3 }}" onclick="mcsATC(this)">{{ section.settings.cta_3 }} &#8594;</button>
+                {% else %}<a href="{{ c_url }}" class="mcs-atc">{{ section.settings.cta_3 }} &#8594;</a>{% endif %}
+              </div>
+              <a href="{{ c_url }}" class="mcs-view-link">View full details</a>
+            </div>
+          </div>
+        {% endif %}
+
+      </div><!-- /grid -->
+
+      {% if section.settings.show_compare_table %}
+        {% assign fp1_title = all_products[section.settings.product_1].title %}
+        {% assign fp2_title = all_products[section.settings.product_2].title %}
+        {% assign fp3_title = all_products[section.settings.product_3].title %}
+        <div class="mcs-compare-row">
+          <table class="mcs-compare-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>{{ section.settings.name_1 | default: fp1_title | default: 'Classic' }}</th>
+                <th>{{ section.settings.name_2 | default: fp2_title | default: 'Complete' }}</th>
+                <th>{{ section.settings.name_3 | default: fp3_title | default: 'Deluxe' }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% assign rows = section.settings.compare_rows | split: '||' %}
+              {% for row in rows %}
+                {% assign cells = row | split: '|' %}
+                <tr>
+                  {% for cell in cells %}
+                    {% assign cv = cell | strip %}
+                    {% if forloop.first %}<td><strong>{{ cv }}</strong></td>
+                    {% elsif cv == 'yes' or cv == 'Yes' %}<td><span class="mcs-check">&#10003;</span></td>
+                    {% elsif cv == 'no' or cv == 'No' %}<td><span class="mcs-dash">&#8212;</span></td>
+                    {% else %}<td>{{ cv }}</td>{% endif %}
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+
+    </div>
+  </section>
+</div>
+
+<script>
+function mcsQ(btn, dir) {
+  var n = btn.parentElement.querySelector('.mcs-qty-num');
+  n.value = Math.max(1, Math.min(99, parseInt(n.value) + dir));
+}
+function mcsArrow(cardId, dir) {
+  var slides = Array.from(document.querySelectorAll('[data-mcs-panel="' + cardId + '"]'));
+  if (slides.length < 2) return;
+  var cur = slides.findIndex(function(s) { return s.classList.contains('mcs-on'); });
+  var next = (cur + dir + slides.length) % slides.length;
+  slides[cur].classList.remove('mcs-on');
+  slides[next].classList.add('mcs-on');
+  var card = document.getElementById(cardId);
+  if (card) {
+    card.querySelectorAll('.mcs-thumb').forEach(function(t, i) { t.classList.toggle('mcs-on', i === next); });
+  }
+}
+function mcsThumb(cardId, slideIdx, thumbEl) {
+  var card = document.getElementById(cardId);
+  if (!card) return;
+  card.querySelectorAll('[data-mcs-panel="' + cardId + '"]').forEach(function(slide, i) {
+    slide.classList.toggle('mcs-on', i === slideIdx);
+  });
+  thumbEl.parentElement.querySelectorAll('.mcs-thumb').forEach(function(t) { t.classList.remove('mcs-on'); });
+  thumbEl.classList.add('mcs-on');
+}
+function mcsATC(btn) {
+  var variantId = btn.dataset.variant;
+  var label = btn.dataset.label;
+  var card = btn.closest('.mcs-card');
+  var qty = card ? parseInt(card.querySelector('.mcs-qty-num').value) || 1 : 1;
+  btn.disabled = true;
+  btn.textContent = 'Adding\u2026';
+  fetch('/cart/add.js', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ id: parseInt(variantId), quantity: qty })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.id) {
+      btn.textContent = '\u2713 Added!';
+      btn.style.background = '#2e7d32';
+      btn.style.boxShadow = '0 4px 20px rgba(46,125,50,.3)';
+      setTimeout(function() {
+        window.location.href = '/checkout';
+      }, 600);
+    } else {
+      btn.textContent = data.description || 'Error';
+      btn.style.background = '#c62828';
+      setTimeout(function() {
+        btn.textContent = label + ' \u2192';
+        btn.style.background = '';
+        btn.style.boxShadow = '';
+        btn.disabled = false;
+      }, 2400);
+    }
+  })
+  .catch(function() {
+    btn.textContent = 'Error \u2014 try again';
+    btn.style.background = '#c62828';
+    setTimeout(function() {
+      btn.textContent = label + ' \u2192';
+      btn.style.background = '';
+      btn.style.boxShadow = '';
+      btn.disabled = false;
+    }, 2400);
+  });
+}
+</script>
+
+{% schema %}
+{
+  "name": "MEM - Classic Set",
+  "tag": "div",
+  "class": "mem-classic-set-section",
+  "settings": [
+    { "type": "header", "content": "Section Header" },
+    { "type": "text",     "id": "eyebrow",     "label": "Eyebrow label",    "default": "The Classic Set" },
+    { "type": "text",     "id": "heading",     "label": "Section heading",  "default": "Find Your Perfect Set" },
+    { "type": "textarea", "id": "subheading",  "label": "Subheading",       "default": "Three ways to play. One iconic game. Pick the set that fits your squad." },
+    { "type": "header", "content": "Colors and Layout" },
+    { "type": "color", "id": "color_accent",  "label": "Accent color",       "default": "#F26522" },
+    { "type": "color", "id": "bg_color",      "label": "Section background", "default": "#FFFFFF" },
+    { "type": "color", "id": "card_bg_color", "label": "Card background",    "default": "#FFFFFF" },
+    { "type": "range",  "id": "max_width",      "label": "Max content width (px)", "min": 900,  "max": 1600, "step": 20, "default": 1280 },
+    { "type": "range",  "id": "padding_top",    "label": "Padding top (px)",       "min": 0,    "max": 140,  "step": 4,  "default": 80 },
+    { "type": "range",  "id": "padding_bottom", "label": "Padding bottom (px)",    "min": 0,    "max": 140,  "step": 4,  "default": 80 },
+    { "type": "header", "content": "Featured Card" },
+    { "type": "select", "id": "featured_card", "label": "Highlight one card", "options": [
+        { "value": "none",   "label": "None" },
+        { "value": "card_1", "label": "Card 1" },
+        { "value": "card_2", "label": "Card 2" },
+        { "value": "card_3", "label": "Card 3" }
+      ], "default": "card_2" },
+    { "type": "text", "id": "featured_label", "label": "Ribbon text", "default": "Most Popular" },
+    { "type": "header", "content": "Promo Code" },
+    { "type": "text", "id": "promo_code",  "label": "Promo code (leave blank to hide)" },
+    { "type": "text", "id": "promo_label", "label": "Promo description", "default": "15% off sitewide" },
+    { "type": "header", "content": "Card 1" },
+    { "type": "product",  "id": "product_1",  "label": "Product" },
+    { "type": "text",     "id": "name_1",     "label": "Name override (optional)" },
+    { "type": "text",     "id": "eyebrow_1",  "label": "Eyebrow label",   "default": "Grass - Sand - Turf - Beach" },
+    { "type": "text",     "id": "badge_1",    "label": "Image badge (optional)" },
+    { "type": "textarea", "id": "desc_1",     "label": "Description override (optional)" },
+    { "type": "text",     "id": "features_1", "label": "Features (pipe-separated |)", "default": "Solid birch wood | Grass and turf ready | 2-8 players | Fan favorite" },
+    { "type": "text",     "id": "cta_1",      "label": "Button text", "default": "Add to Cart" },
+    { "type": "header", "content": "Card 2" },
+    { "type": "product",  "id": "product_2",  "label": "Product" },
+    { "type": "text",     "id": "name_2",     "label": "Name override (optional)" },
+    { "type": "text",     "id": "eyebrow_2",  "label": "Eyebrow label",   "default": "Everything Included" },
+    { "type": "text",     "id": "badge_2",    "label": "Image badge (optional)", "default": "Best Value" },
+    { "type": "textarea", "id": "desc_2",     "label": "Description override (optional)" },
+    { "type": "text",     "id": "features_2", "label": "Features (pipe-separated |)", "default": "Boards + balls included | Carry bag | Pump included | Ready to play" },
+    { "type": "text",     "id": "cta_2",      "label": "Button text", "default": "Add to Cart" },
+    { "type": "header", "content": "Card 3" },
+    { "type": "product",  "id": "product_3",  "label": "Product" },
+    { "type": "text",     "id": "name_3",     "label": "Name override (optional)" },
+    { "type": "text",     "id": "eyebrow_3",  "label": "Eyebrow label",   "default": "Premium Edition" },
+    { "type": "text",     "id": "badge_3",    "label": "Image badge (optional)", "default": "Top Pick" },
+    { "type": "textarea", "id": "desc_3",     "label": "Description override (optional)" },
+    { "type": "text",     "id": "features_3", "label": "Features (pipe-separated |)", "default": "Premium birch boards | Extra balls | Deluxe carry bag | Exclusive accessories" },
+    { "type": "text",     "id": "cta_3",      "label": "Button text", "default": "Add to Cart" },
+    { "type": "header", "content": "Comparison Table" },
+    { "type": "checkbox",  "id": "show_compare_table", "label": "Show comparison table", "default": false },
+    { "type": "textarea",  "id": "compare_rows", "label": "Rows: Label|C1|C2|C3, separate rows with ||", "default": "Solid Birch Wood|yes|yes|yes||Carry Bag|no|yes|yes||Balls Included|no|yes|yes||Pump Included|no|no|yes||Players|2-8|2-8|2-10" }
+  ],
+  "presets": [
+    {
+      "name": "MEM - Classic Set",
+      "settings": {
+        "eyebrow": "The Classic Set",
+        "heading": "Find Your Perfect Set",
+        "subheading": "Three ways to play. One iconic game. Pick the set that fits your squad.",
+        "color_accent": "#F26522",
+        "bg_color": "#FFFFFF",
+        "card_bg_color": "#FFFFFF",
+        "max_width": 1280,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "featured_card": "card_2",
+        "featured_label": "Most Popular",
+        "eyebrow_1": "Grass - Sand - Turf - Beach",
+        "features_1": "Solid birch wood | Grass and turf ready | 2-8 players | Fan favorite",
+        "cta_1": "Add to Cart",
+        "eyebrow_2": "Everything Included",
+        "badge_2": "Best Value",
+        "features_2": "Boards + balls included | Carry bag | Pump included | Ready to play",
+        "cta_2": "Add to Cart",
+        "eyebrow_3": "Premium Edition",
+        "badge_3": "Top Pick",
+        "features_3": "Premium birch boards | Extra balls | Deluxe carry bag | Exclusive accessories",
+        "cta_3": "Add to Cart",
+        "show_compare_table": false,
+        "compare_rows": "Solid Birch Wood|yes|yes|yes||Carry Bag|no|yes|yes||Balls Included|no|yes|yes||Pump Included|no|no|yes||Players|2-8|2-8|2-10"
+      }
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,260 @@
+{% comment %} QB54 × @germanpackerscave — Collab Hero Section {% endcomment %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  #gpc-hero-{{ section.id }} {
+    --qb: {{ section.settings.color_qb }};
+    --gpc: {{ section.settings.color_gpc }};
+    --bg: {{ section.settings.color_bg }};
+
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+    padding: 100px 48px 80px;
+    background: var(--bg);
+    font-family: 'Sora', sans-serif;
+  }
+
+  #gpc-hero-{{ section.id }} .hero-bg-overlay {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      linear-gradient(to bottom, rgba(10,14,10,.78) 0%, rgba(10,14,10,.5) 40%, rgba(10,14,10,.92) 100%),
+      radial-gradient(ellipse at 18% 78%, rgba(185,249,0,.12) 0%, transparent 55%),
+      radial-gradient(ellipse at 82% 20%, rgba(255,182,18,.10) 0%, transparent 50%);
+  }
+
+  /* Floating creator photos */
+  #gpc-hero-{{ section.id }} .hero-vids {
+    position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
+  }
+  #gpc-hero-{{ section.id }} .hero-vids::after {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 55% 62% at 50% 50%,
+      rgba(10,14,10,.97) 0%, rgba(10,14,10,.88) 38%,
+      rgba(10,14,10,.72) 60%, rgba(10,14,10,.6) 80%, rgba(10,14,10,.5) 100%);
+    z-index: 10; pointer-events: none;
+  }
+  @media(max-width:900px){ #gpc-hero-{{ section.id }} .hero-vids { display: none; } }
+
+  #gpc-hero-{{ section.id }} .fv { position: absolute; width: 118px; }
+  #gpc-hero-{{ section.id }} .fv-phone {
+    width: 100%; aspect-ratio: 9/16; border-radius: 16px; overflow: hidden;
+    border: 1.5px solid rgba(255,255,255,.1); background: #0a0a0a;
+    box-shadow: 0 12px 40px rgba(0,0,0,.6); position: relative;
+  }
+  #gpc-hero-{{ section.id }} .fv-phone img {
+    width: 100%; height: 100%; object-fit: cover; opacity: .82; display: block;
+  }
+  #gpc-hero-{{ section.id }} .fv-phone::after {
+    content: ''; position: absolute; inset: 0; background: rgba(0,0,0,.12);
+  }
+
+  @keyframes gpc-fl-a { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-14px) rotate(1.5deg)} }
+  @keyframes gpc-fl-b { 0%,100%{transform:translateY(0) rotate(3deg)} 50%{transform:translateY(-12px) rotate(-1deg)} }
+  @keyframes gpc-fl-c { 0%,100%{transform:translateY(-7px) rotate(0deg)} 50%{transform:translateY(11px) rotate(2deg)} }
+  @keyframes gpc-fl-d { 0%,100%{transform:translateY(3px) rotate(-1.5deg)} 50%{transform:translateY(-13px) rotate(2.5deg)} }
+  @keyframes gpc-fl-e { 0%,100%{transform:translateY(-10px) rotate(2deg)} 50%{transform:translateY(9px) rotate(-2deg)} }
+
+  /* Hero inner */
+  #gpc-hero-{{ section.id }} .hero-inner {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; gap: 0;
+  }
+  #gpc-hero-{{ section.id }} .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,182,18,.07); border: 1px solid rgba(255,182,18,.3);
+    border-radius: 4px; padding: 7px 20px;
+    font-size: .6rem; letter-spacing: .25em; text-transform: uppercase; color: #fff;
+    margin-bottom: 40px;
+    animation: gpc-fade-up .8s .2s cubic-bezier(0.22,0.61,0.36,1) both;
+  }
+  #gpc-hero-{{ section.id }} .logos-row {
+    display: flex; align-items: center; justify-content: center; gap: 24px;
+    margin-bottom: 40px;
+    animation: gpc-fade-up .8s .35s cubic-bezier(0.22,0.61,0.36,1) both;
+  }
+  #gpc-hero-{{ section.id }} .logo-box {
+    padding: 18px 26px; border-radius: 8px; backdrop-filter: blur(12px);
+    display: flex; align-items: center; justify-content: center; min-height: 84px;
+  }
+  #gpc-hero-{{ section.id }} .logo-box img { height: 48px; width: auto; object-fit: contain; display: block; }
+  #gpc-hero-{{ section.id }} .logo-box.qb {
+    background: linear-gradient(135deg,rgba(185,249,0,.15),rgba(185,249,0,.06));
+    border: 1px solid rgba(185,249,0,.3);
+  }
+  #gpc-hero-{{ section.id }} .logo-box.gpc {
+    background: linear-gradient(135deg,rgba(255,182,18,.15),rgba(255,182,18,.06));
+    border: 1px solid rgba(255,182,18,.3);
+  }
+  #gpc-hero-{{ section.id }} .logo-box.gpc .handle {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; letter-spacing: .02em;
+    color: var(--gpc); line-height: 1; white-space: nowrap;
+  }
+  #gpc-hero-{{ section.id }} .x-sep {
+    font-family: 'Bebas Neue', sans-serif; font-size: 3rem; line-height: 1;
+    -webkit-text-fill-color: transparent;
+    background: linear-gradient(90deg, var(--qb), var(--gpc));
+    -webkit-background-clip: text; background-clip: text;
+  }
+  #gpc-hero-{{ section.id }} .hero-h {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(56px,13vw,168px); line-height: .88; letter-spacing: .01em;
+    margin-bottom: 24px;
+    animation: gpc-fade-up .8s .5s cubic-bezier(0.22,0.61,0.36,1) both;
+  }
+  #gpc-hero-{{ section.id }} .hero-h .l1 { display: block; color: #fff; }
+  #gpc-hero-{{ section.id }} .hero-h .l2 {
+    display: block; -webkit-text-fill-color: transparent;
+    background: linear-gradient(90deg, var(--qb) 0%, var(--gpc) 100%);
+    -webkit-background-clip: text; background-clip: text;
+  }
+  #gpc-hero-{{ section.id }} .hero-sub {
+    font-size: .95rem; font-weight: 300; color: #fff;
+    max-width: 520px; line-height: 1.8; margin-bottom: 40px;
+    animation: gpc-fade-up .8s .65s cubic-bezier(0.22,0.61,0.36,1) both;
+  }
+  #gpc-hero-{{ section.id }} .hero-sub b { color: var(--qb); font-weight: 700; }
+  #gpc-hero-{{ section.id }} .hero-cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--qb); color: #000;
+    font-family: 'Sora', sans-serif; font-weight: 800; font-size: .75rem;
+    letter-spacing: .14em; text-transform: uppercase; text-decoration: none;
+    padding: 16px 36px; border-radius: 4px;
+    animation: gpc-fade-up .8s .8s cubic-bezier(0.22,0.61,0.36,1) both;
+    transition: transform .2s, box-shadow .3s;
+  }
+  #gpc-hero-{{ section.id }} .hero-cta:hover {
+    transform: translateY(-2px); box-shadow: 0 8px 32px rgba(185,249,0,.3);
+  }
+
+  @keyframes gpc-fade-up { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+  @media(max-width:900px){
+    #gpc-hero-{{ section.id }} { min-height: auto; padding: 64px 32px 56px; }
+    #gpc-hero-{{ section.id }} .hero-h { margin-bottom: 18px; }
+    #gpc-hero-{{ section.id }} .hero-badge,
+    #gpc-hero-{{ section.id }} .logos-row { margin-bottom: 28px; }
+    #gpc-hero-{{ section.id }} .hero-sub { margin-bottom: 28px; }
+  }
+  @media(max-width:640px){
+    #gpc-hero-{{ section.id }} { min-height: auto; padding: 40px 20px 44px; justify-content: flex-start; }
+    #gpc-hero-{{ section.id }} .hero-badge { font-size: .55rem; padding: 6px 14px; margin-bottom: 20px; }
+    #gpc-hero-{{ section.id }} .logos-row { gap: 14px; margin-bottom: 22px; }
+    #gpc-hero-{{ section.id }} .logo-box { padding: 12px 16px; min-height: 64px; }
+    #gpc-hero-{{ section.id }} .logo-box img { height: 36px; }
+    #gpc-hero-{{ section.id }} .logo-box.gpc .handle { font-size: 1.3rem; }
+    #gpc-hero-{{ section.id }} .x-sep { font-size: 2rem; }
+    #gpc-hero-{{ section.id }} .hero-h { margin-bottom: 14px; line-height: .92; }
+    #gpc-hero-{{ section.id }} .hero-sub { font-size: .85rem; line-height: 1.6; max-width: 100%; margin-bottom: 24px; }
+    #gpc-hero-{{ section.id }} .hero-cta { font-size: .7rem; padding: 14px 28px; width: 100%; justify-content: center; }
+  }
+  @media(max-width:380px){
+    #gpc-hero-{{ section.id }} { padding: 32px 16px 36px; }
+    #gpc-hero-{{ section.id }} .hero-h { font-size: 52px; }
+  }
+</style>
+
+<section id="gpc-hero-{{ section.id }}">
+  <div class="hero-bg-overlay"></div>
+
+  {%- if section.settings.show_photos -%}
+  <div class="hero-vids">
+    {%- assign positions = 'left:2%;top:10%;|left:9%;top:55%;|left:15%;top:22%;|left:5%;top:80%;|left:22%;top:68%;|right:2%;top:8%;|right:10%;top:52%;|right:15%;top:20%;|right:4%;top:76%;|right:22%;top:70%;' | split: '|' -%}
+    {%- assign anims = 'gpc-fl-a 18s ease-in-out 0s|gpc-fl-c 22s ease-in-out 1.2s|gpc-fl-b 20s ease-in-out .5s|gpc-fl-d 24s ease-in-out 2s|gpc-fl-e 19s ease-in-out 3s|gpc-fl-b 21s ease-in-out .8s|gpc-fl-a 23s ease-in-out 1.8s|gpc-fl-c 18s ease-in-out .3s|gpc-fl-e 26s ease-in-out 2.5s|gpc-fl-d 20s ease-in-out 4s' | split: '|' -%}
+    {%- assign opacities = '.72|.55|.45|.42|.38|.72|.55|.45|.42|.38' | split: '|' -%}
+    {%- for block in section.blocks limit: 10 -%}
+      {%- assign idx = forloop.index0 -%}
+      {%- if block.settings.photo != blank -%}
+        <div class="fv" style="{{ positions[idx] }}animation:{{ anims[idx] }} infinite;opacity:{{ opacities[idx] }}" {{ block.shopify_attributes }}>
+          <div class="fv-phone">
+            <img src="{{ block.settings.photo | image_url: width: 240 }}" alt="" loading="lazy" width="118" height="210">
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+  {%- endif -%}
+
+  <div class="hero-inner">
+    <div class="hero-badge">{{ section.settings.badge_text }}</div>
+
+    <div class="logos-row">
+      <div class="logo-box qb">
+        {%- if section.settings.qb_logo != blank -%}
+          <img src="{{ section.settings.qb_logo | image_url: width: 200 }}" alt="QB54" width="120" height="48">
+        {%- else -%}
+          <img src="https://playqb54.com/cdn/shop/files/logo.png" alt="QB54" width="120" height="48">
+        {%- endif -%}
+      </div>
+      <div class="x-sep">×</div>
+      <div class="logo-box gpc">
+        {%- if section.settings.gpc_logo != blank -%}
+          <img src="{{ section.settings.gpc_logo | image_url: width: 200 }}" alt="@germanpackerscave" width="160" height="48">
+        {%- else -%}
+          <span class="handle">{{ section.settings.gpc_handle }}</span>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <h1 class="hero-h">
+      <span class="l1">{{ section.settings.heading_line1 }}</span>
+      <span class="l2">{{ section.settings.heading_line2 }}</span>
+    </h1>
+    <p class="hero-sub">{{ section.settings.subheading }}</p>
+    <a href="{{ section.settings.cta_url }}" class="hero-cta">{{ section.settings.cta_label }}</a>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "QB54 × GPC Hero",
+  "tag": "div",
+  "settings": [
+    { "type": "header", "content": "Badge" },
+    { "type": "text", "id": "badge_text", "label": "Badge text", "default": "Official Collab — German Packers Cave" },
+    { "type": "header", "content": "Logos" },
+    { "type": "image_picker", "id": "qb_logo", "label": "QB54 logo" },
+    { "type": "image_picker", "id": "gpc_logo", "label": "Creator logo (optional)" },
+    { "type": "text", "id": "gpc_handle", "label": "Creator handle (used if no logo)", "default": "@germanpackerscave" },
+    { "type": "header", "content": "Headline" },
+    { "type": "text", "id": "heading_line1", "label": "Line 1 (white)", "default": "Anywhere Is" },
+    { "type": "text", "id": "heading_line2", "label": "Line 2 (gradient)", "default": "Your Home Field" },
+    { "type": "richtext", "id": "subheading", "label": "Subheading", "default": "<p>From local parks to international watch parties, <b>@germanpackerscave</b> takes the <b>#1 viral backyard football game</b> across the world — and brings real gridiron competition wherever he lands.</p>" },
+    { "type": "header", "content": "CTA Button" },
+    { "type": "text", "id": "cta_label", "label": "Button label", "default": "🏈 Shop QB54 — 40% Off" },
+    { "type": "url", "id": "cta_url", "label": "Button URL" },
+    { "type": "header", "content": "Background Photos" },
+    { "type": "checkbox", "id": "show_photos", "label": "Show floating creator photos", "default": true, "info": "Floating phone-style photos behind the headline (desktop only). Add up to 10 via the Photo blocks below." },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_bg", "label": "Background", "default": "#0a0e0a" },
+    { "type": "color", "id": "color_qb", "label": "QB54 green", "default": "#b9f900" },
+    { "type": "color", "id": "color_gpc", "label": "Creator gold", "default": "#ffb612" }
+  ],
+  "blocks": [
+    {
+      "type": "photo",
+      "name": "Floating photo",
+      "settings": [
+        { "type": "image_picker", "id": "photo", "label": "Photo (vertical 9:16 works best)" }
+      ]
+    }
+  ],
+  "max_blocks": 10,
+  "presets": [
+    {
+      "name": "QB54 × GPC Hero",
+      "blocks": [
+        { "type": "photo" }, { "type": "photo" }, { "type": "photo" }, { "type": "photo" }, { "type": "photo" },
+        { "type": "photo" }, { "type": "photo" }, { "type": "photo" }, { "type": "photo" }, { "type": "photo" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,789 @@
+{%- liquid
+  assign product_blocks = section.blocks | where: 'type', 'product'
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --qbs-bg: {{ section.settings.background }};
+    --qbs-navy: {{ section.settings.navy_color }};
+    --qbs-gold: {{ section.settings.gold_color }};
+    --qbs-ink: {{ section.settings.text_color }};
+    --qbs-star: {{ section.settings.star_color }};
+    --qbs-sale: {{ section.settings.sale_color }};
+    --qbs-card: #ffffff;
+  }
+
+  #shopify-section-{{ section.id }} .qbs {
+    background: var(--qbs-bg);
+    padding: {{ section.settings.padding_mobile }}px 0;
+  }
+
+  #shopify-section-{{ section.id }} .qbs-shell {
+    width: min(1280px, 100% - 40px);
+    margin-inline: auto;
+  }
+
+  #shopify-section-{{ section.id }} .qbs-head {
+    max-width: 640px;
+    margin-bottom: 34px;
+  }
+
+  #shopify-section-{{ section.id }} .qbs-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-body-family);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--qbs-navy);
+    margin-bottom: 12px;
+  }
+  #shopify-section-{{ section.id }} .qbs-eyebrow::before {
+    content: '';
+    width: 26px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--qbs-gold);
+  }
+
+  #shopify-section-{{ section.id }} .qbs-heading {
+    font-family: var(--font-heading-family);
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: var(--qbs-ink);
+    margin: 0 0 12px;
+    font-size: {{ section.settings.heading_size_mobile }}px;
+  }
+  #shopify-section-{{ section.id }} .qbs-heading em {
+    font-style: normal;
+    color: var(--qbs-navy);
+  }
+
+  #shopify-section-{{ section.id }} .qbs-sub {
+    font-family: var(--font-body-family);
+    font-size: 16px;
+    line-height: 1.55;
+    color: color-mix(in srgb, var(--qbs-ink) 72%, transparent);
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .qbs-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  /* ---------- Shared card pieces ---------- */
+  #shopify-section-{{ section.id }} .qbs-rank {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-heading-family);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: #ffffff;
+    background: var(--qbs-navy);
+    padding: 6px 11px;
+    border-radius: 6px;
+  }
+  #shopify-section-{{ section.id }} .qbs-rank b {
+    color: var(--qbs-gold);
+    font-weight: 700;
+  }
+
+  #shopify-section-{{ section.id }} .qbs-stars {
+    display: inline-flex;
+    gap: 2px;
+    color: var(--qbs-star);
+  }
+  #shopify-section-{{ section.id }} .qbs-stars svg { width: 13px; height: 13px; }
+
+  #shopify-section-{{ section.id }} .qbs-ratingline {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-body-family);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #6b695f;
+  }
+
+  #shopify-section-{{ section.id }} .qbs-price {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+  }
+  #shopify-section-{{ section.id }} .qbs-price-now {
+    font-family: var(--font-heading-family);
+    font-weight: 700;
+    color: var(--qbs-navy);
+    line-height: 1;
+  }
+  #shopify-section-{{ section.id }} .qbs-price-was {
+    font-family: var(--font-body-family);
+    color: #8f8d86;
+    text-decoration: line-through;
+  }
+  #shopify-section-{{ section.id }} .qbs-price-save {
+    background: var(--qbs-sale);
+    color: #ffffff;
+    font-family: var(--font-body-family);
+    font-weight: 700;
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 5px;
+  }
+
+  #shopify-section-{{ section.id }} .qbs-atc {
+    cursor: pointer;
+    background: var(--qbs-gold);
+    color: var(--qbs-navy);
+    border: 0;
+    border-radius: 10px;
+    font-family: var(--font-heading-family);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    text-decoration: none;
+    transition: transform 150ms ease, filter 150ms ease;
+  }
+  #shopify-section-{{ section.id }} .qbs-atc:hover { transform: translateY(-1px); filter: brightness(1.04); }
+  #shopify-section-{{ section.id }} .qbs-atc[disabled] { opacity: 0.55; cursor: not-allowed; }
+
+  #shopify-section-{{ section.id }} .product-form__error-message[hidden] { display: none; }
+  #shopify-section-{{ section.id }} .product-form__error-message {
+    color: #be123c;
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  /* ---------- Featured card ---------- */
+  #shopify-section-{{ section.id }} .qbs-feat {
+    display: grid;
+    grid-template-columns: 1fr;
+    background: var(--qbs-card);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 14px 44px rgb(23 23 23 / 0.09);
+  }
+
+  #shopify-section-{{ section.id }} .qbs-feat-media {
+    position: relative;
+    background: #f6f5f0;
+  }
+  #shopify-section-{{ section.id }} .qbs-feat-media a { display: block; height: 100%; }
+  #shopify-section-{{ section.id }} .qbs-feat-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transition: transform 300ms ease;
+  }
+  #shopify-section-{{ section.id }} .qbs-feat-media:hover img { transform: scale(1.025); }
+  #shopify-section-{{ section.id }} .qbs-feat-media .qbs-rank {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 1;
+  }
+
+  #shopify-section-{{ section.id }} .qbs-feat-body {
+    padding: 24px 22px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+  }
+
+  #shopify-section-{{ section.id }} .qbs-feat-title {
+    font-family: var(--font-heading-family);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 24px;
+    line-height: 1.1;
+    color: var(--qbs-ink);
+    margin: 0;
+  }
+  #shopify-section-{{ section.id }} .qbs-feat-title a { color: inherit; text-decoration: none; }
+
+  #shopify-section-{{ section.id }} .qbs-bullets {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  #shopify-section-{{ section.id }} .qbs-bullets li {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-family: var(--font-body-family);
+    font-size: 14px;
+    line-height: 1.45;
+    color: color-mix(in srgb, var(--qbs-ink) 80%, transparent);
+  }
+  #shopify-section-{{ section.id }} .qbs-bullets svg {
+    flex: none;
+    width: 17px;
+    height: 17px;
+    margin-top: 1px;
+    color: var(--qbs-navy);
+  }
+
+  #shopify-section-{{ section.id }} .qbs-feat .qbs-price-now { font-size: 28px; }
+  #shopify-section-{{ section.id }} .qbs-feat .qbs-price-was { font-size: 15px; }
+
+  #shopify-section-{{ section.id }} .qbs-feat .qbs-atc {
+    width: 100%;
+    font-size: 15px;
+    padding: 16px 22px;
+    min-height: 52px;
+  }
+
+  #shopify-section-{{ section.id }} .qbs-feat-micro {
+    font-family: var(--font-body-family);
+    font-size: 12px;
+    color: #6b695f;
+    padding-top: 12px;
+    border-top: 1px solid #eceae2;
+  }
+
+  /* ---------- Ranked list ---------- */
+  #shopify-section-{{ section.id }} .qbs-list {
+    display: grid;
+    gap: 16px;
+    align-content: start;
+  }
+
+  #shopify-section-{{ section.id }} .qbs-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 116px 1fr;
+    gap: 16px;
+    background: var(--qbs-card);
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 8px 26px rgb(23 23 23 / 0.07);
+    transition: transform 150ms ease, box-shadow 150ms ease;
+  }
+  #shopify-section-{{ section.id }} .qbs-row:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 34px rgb(23 23 23 / 0.11);
+  }
+
+  #shopify-section-{{ section.id }} .qbs-row-media {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f6f5f0;
+  }
+  #shopify-section-{{ section.id }} .qbs-row-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .qbs-row-body {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .qbs-row-body .qbs-rank {
+    align-self: flex-start;
+    padding: 4px 9px;
+    font-size: 10px;
+  }
+
+  #shopify-section-{{ section.id }} .qbs-row-title {
+    font-family: var(--font-heading-family);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 16px;
+    line-height: 1.15;
+    color: var(--qbs-ink);
+    margin: 0;
+  }
+  #shopify-section-{{ section.id }} .qbs-row-title a { color: inherit; text-decoration: none; }
+  #shopify-section-{{ section.id }} .qbs-row-title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  #shopify-section-{{ section.id }} .qbs-row .qbs-price-now { font-size: 19px; }
+  #shopify-section-{{ section.id }} .qbs-row .qbs-price-was { font-size: 13px; }
+
+  #shopify-section-{{ section.id }} .qbs-row-cta {
+    margin-top: auto;
+    padding-top: 4px;
+  }
+  #shopify-section-{{ section.id }} .qbs-row .qbs-atc {
+    position: relative;
+    z-index: 1;
+    font-size: 12.5px;
+    padding: 11px 18px;
+    min-height: 42px;
+  }
+
+  /* ---------- Assurance strip ---------- */
+  #shopify-section-{{ section.id }} .qbs-strip {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 28px;
+    padding: 18px 20px;
+    background: color-mix(in srgb, var(--qbs-navy) 6%, transparent);
+    border: 1px solid color-mix(in srgb, var(--qbs-navy) 12%, transparent);
+    border-radius: 14px;
+  }
+  #shopify-section-{{ section.id }} .qbs-strip-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-body-family);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--qbs-navy);
+  }
+  #shopify-section-{{ section.id }} .qbs-strip-item svg {
+    flex: none;
+    width: 19px;
+    height: 19px;
+  }
+
+  @media screen and (min-width: 990px) {
+    #shopify-section-{{ section.id }} .qbs {
+      padding: {{ section.settings.padding_desktop }}px 0;
+    }
+    #shopify-section-{{ section.id }} .qbs-head { margin-bottom: 40px; }
+    #shopify-section-{{ section.id }} .qbs-heading {
+      font-size: {{ section.settings.heading_size_desktop }}px;
+    }
+    #shopify-section-{{ section.id }} .qbs-grid {
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      gap: 24px;
+    }
+    #shopify-section-{{ section.id }} .qbs-feat {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    }
+    #shopify-section-{{ section.id }} .qbs-feat-media img { aspect-ratio: auto; min-height: 100%; }
+    #shopify-section-{{ section.id }} .qbs-feat-body { padding: 30px 28px; }
+    #shopify-section-{{ section.id }} .qbs-strip {
+      grid-template-columns: repeat({{ section.settings.strip_items | default: 3 }}, auto);
+      justify-content: center;
+      gap: 12px 48px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .qbs-atc,
+    #shopify-section-{{ section.id }} .qbs-row,
+    #shopify-section-{{ section.id }} .qbs-feat-media img { transition: none; }
+  }
+</style>
+
+{%- capture star_row -%}
+  <span class="qbs-stars" aria-hidden="true">
+    {%- for i in (1..5) -%}
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.5l2.6 5.3 5.9.9-4.2 4.1 1 5.8L10 14.9l-5.3 2.7 1-5.8L1.5 7.7l5.9-.9z"/></svg>
+    {%- endfor -%}
+  </span>
+{%- endcapture -%}
+
+{%- capture check_icon -%}
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+{%- endcapture -%}
+
+<div class="qbs" id="qb54-lineup">
+  <div class="qbs-shell">
+    <header class="qbs-head">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="qbs-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="qbs-heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="qbs-sub">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+    </header>
+
+    <div class="qbs-grid">
+      {%- assign rendered = 0 -%}
+      {%- for block in product_blocks -%}
+        {%- liquid
+          assign p = block.settings.product
+          if p == blank
+            continue
+          endif
+          assign rendered = rendered | plus: 1
+          assign mf_rating = p.metafields.reviews.rating.value
+          assign mf_count = p.metafields.reviews.rating_count.value
+        -%}
+
+        {%- if rendered == 1 -%}
+          <article class="qbs-feat" {{ block.shopify_attributes }}>
+            <div class="qbs-feat-media">
+              <span class="qbs-rank"><b>#1</b> {{ block.settings.rank_label | default: 'Best Seller' | escape }}</span>
+              <a href="{{ p.url }}" tabindex="-1" aria-hidden="true">
+                {{- p.featured_media
+                  | image_url: width: 1000
+                  | image_tag: loading: 'lazy', widths: '480,720,1000', sizes: '(max-width: 989px) 92vw, 560px', alt: p.featured_media.alt | default: p.title
+                -}}
+              </a>
+            </div>
+            <div class="qbs-feat-body">
+              <div class="qbs-ratingline">
+                {{ star_row }}
+                {%- if mf_rating != blank and mf_count > 0 -%}
+                  <span>{{ mf_rating.rating | round: 1 }} · {{ mf_count }} reviews</span>
+                {%- elsif block.settings.rating_text != blank -%}
+                  <span>{{ block.settings.rating_text | escape }}</span>
+                {%- endif -%}
+              </div>
+
+              <h3 class="qbs-feat-title"><a href="{{ p.url }}">{{ p.title }}</a></h3>
+
+              <ul class="qbs-bullets">
+                {%- if section.settings.bullet_1 != blank -%}<li>{{ check_icon }}{{ section.settings.bullet_1 | escape }}</li>{%- endif -%}
+                {%- if section.settings.bullet_2 != blank -%}<li>{{ check_icon }}{{ section.settings.bullet_2 | escape }}</li>{%- endif -%}
+                {%- if section.settings.bullet_3 != blank -%}<li>{{ check_icon }}{{ section.settings.bullet_3 | escape }}</li>{%- endif -%}
+              </ul>
+
+              <div class="qbs-price">
+                <span class="qbs-price-now">{{ p.price | money }}</span>
+                {%- if p.compare_at_price > p.price -%}
+                  <s class="qbs-price-was">{{ p.compare_at_price | money }}</s>
+                  {%- assign save_amount = p.compare_at_price | minus: p.price -%}
+                  <span class="qbs-price-save">Save {{ save_amount | money_without_trailing_zeros }}</span>
+                {%- endif -%}
+              </div>
+
+              {%- if p.available == false -%}
+                <button class="qbs-atc" type="button" disabled>{{ 'products.product.sold_out' | t }}</button>
+              {%- elsif p.variants.size == 1 -%}
+                {%- form 'product', p, is: 'product-form', id: 'LineupFeatForm', data-type: 'add-to-cart-form' -%}
+                  <input type="hidden" name="id" value="{{ p.selected_or_first_available_variant.id }}" />
+                  <div class="product-form__error-message" role="alert" hidden></div>
+                  <button type="submit" name="add" class="qbs-atc" style="width:100%">
+                    {{ section.settings.atc_label | default: 'Add to Cart' | escape }}
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1.6"/><circle cx="19" cy="21" r="1.6"/><path d="M2.5 3h3l2.6 12.6a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 2-1.6L22.5 8H6.1"/></svg>
+                  </button>
+                {%- endform -%}
+              {%- else -%}
+                <a class="qbs-atc" style="width:100%" href="{{ p.url }}">{{ 'products.product.choose_options' | t }}</a>
+              {%- endif -%}
+
+              {%- if section.settings.feat_micro != blank -%}
+                <p class="qbs-feat-micro">{{ section.settings.feat_micro }}</p>
+              {%- endif -%}
+            </div>
+          </article>
+        {%- else -%}
+          {%- if rendered == 2 -%}<div class="qbs-list">{%- endif -%}
+          <article class="qbs-row" {{ block.shopify_attributes }}>
+            <div class="qbs-row-media">
+              {{- p.featured_media
+                | image_url: width: 460
+                | image_tag: loading: 'lazy', widths: '232,460', sizes: '116px', alt: p.featured_media.alt | default: p.title
+              -}}
+            </div>
+            <div class="qbs-row-body">
+              <span class="qbs-rank"><b>#{{ forloop.index }}</b> {{ block.settings.rank_label | default: 'Best Seller' | escape }}</span>
+              <h3 class="qbs-row-title"><a href="{{ p.url }}">{{ p.title }}</a></h3>
+              <div class="qbs-ratingline">
+                {{ star_row }}
+                {%- if mf_rating != blank and mf_count > 0 -%}
+                  <span>{{ mf_rating.rating | round: 1 }} ({{ mf_count }})</span>
+                {%- elsif block.settings.rating_text != blank -%}
+                  <span>{{ block.settings.rating_text | escape }}</span>
+                {%- endif -%}
+              </div>
+              <div class="qbs-price">
+                <span class="qbs-price-now">{{ p.price | money }}</span>
+                {%- if p.compare_at_price > p.price -%}
+                  <s class="qbs-price-was">{{ p.compare_at_price | money }}</s>
+                  {%- assign save_amount = p.compare_at_price | minus: p.price -%}
+                  <span class="qbs-price-save">Save {{ save_amount | money_without_trailing_zeros }}</span>
+                {%- endif -%}
+              </div>
+              <div class="qbs-row-cta">
+                {%- if p.available == false -%}
+                  <button class="qbs-atc" type="button" disabled>{{ 'products.product.sold_out' | t }}</button>
+                {%- elsif p.variants.size == 1 -%}
+                  {%- capture row_form_id -%}LineupRowForm-{{ p.id }}{%- endcapture -%}
+                  {%- form 'product', p, is: 'product-form', id: row_form_id -%}
+                    <input type="hidden" name="id" value="{{ p.selected_or_first_available_variant.id }}" />
+                    <div class="product-form__error-message" role="alert" hidden></div>
+                    <button type="submit" name="add" class="qbs-atc">
+                      {{ section.settings.atc_label | default: 'Add to Cart' | escape }}
+                    </button>
+                  {%- endform -%}
+                {%- else -%}
+                  <a class="qbs-atc" href="{{ p.url }}">{{ 'products.product.choose_options' | t }}</a>
+                {%- endif -%}
+              </div>
+            </div>
+          </article>
+        {%- endif -%}
+
+      {%- endfor -%}
+      {%- if rendered > 1 -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- assign has_strip = false -%}
+    {%- if section.settings.strip_1 != blank or section.settings.strip_2 != blank or section.settings.strip_3 != blank -%}
+      {%- assign has_strip = true -%}
+    {%- endif -%}
+    {%- if has_strip -%}
+      <div class="qbs-strip">
+        {%- if section.settings.strip_1 != blank -%}
+          <span class="qbs-strip-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.2"/><circle cx="18.5" cy="18.5" r="2.2"/></svg>
+            {{ section.settings.strip_1 | escape }}
+          </span>
+        {%- endif -%}
+        {%- if section.settings.strip_2 != blank -%}
+          <span class="qbs-strip-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-3.6 8-10V5l-8-3-8 3v7c0 6.4 8 10 8 10z"/><path d="M9 11.5l2.2 2.2L15.5 9"/></svg>
+            {{ section.settings.strip_2 | escape }}
+          </span>
+        {%- endif -%}
+        {%- if section.settings.strip_3 != blank -%}
+          <span class="qbs-strip-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 6.5V12l3.5 2"/></svg>
+            {{ section.settings.strip_3 | escape }}
+          </span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "QB54 Best Sellers",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Best Sellers"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading (italic = navy)",
+      "default": "The Starting <em>Lineup</em>"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "The complete game sets players grab first. Every set is everything you need to play — right out of the bag."
+    },
+    {
+      "type": "header",
+      "content": "Featured card bullets"
+    },
+    {
+      "type": "text",
+      "id": "bullet_1",
+      "label": "Bullet 1",
+      "default": "Everything included — 2 chairs, goals, ball, pump, tee, carry bag"
+    },
+    {
+      "type": "text",
+      "id": "bullet_2",
+      "label": "Bullet 2",
+      "default": "Sets up anywhere in under 2 minutes"
+    },
+    {
+      "type": "text",
+      "id": "bullet_3",
+      "label": "Bullet 3",
+      "default": "Heavy-duty chairs support up to 275 lbs"
+    },
+    {
+      "type": "text",
+      "id": "atc_label",
+      "label": "Add to cart label",
+      "default": "Add to Cart"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "feat_micro",
+      "label": "Microcopy under featured button",
+      "default": "30-day money-back guarantee · Secure checkout"
+    },
+    {
+      "type": "header",
+      "content": "Assurance strip"
+    },
+    {
+      "type": "text",
+      "id": "strip_1",
+      "label": "Item 1 (truck icon)",
+      "default": "Free shipping on orders $225+"
+    },
+    {
+      "type": "text",
+      "id": "strip_2",
+      "label": "Item 2 (shield icon)",
+      "default": "30-day money-back guarantee"
+    },
+    {
+      "type": "text",
+      "id": "strip_3",
+      "label": "Item 3 (clock icon)",
+      "default": "Ships within 1 business day"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#f4f2e8"
+    },
+    {
+      "type": "color",
+      "id": "navy_color",
+      "label": "Navy",
+      "default": "#363a66"
+    },
+    {
+      "type": "color",
+      "id": "gold_color",
+      "label": "Gold",
+      "default": "#fdc439"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#171717"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Stars",
+      "default": "#f59e0b"
+    },
+    {
+      "type": "color",
+      "id": "sale_color",
+      "label": "Save chip",
+      "default": "#e11d48"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size mobile",
+      "min": 28,
+      "max": 48,
+      "step": 2,
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size desktop",
+      "min": 36,
+      "max": 72,
+      "step": 2,
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_mobile",
+      "label": "Vertical padding mobile",
+      "min": 24,
+      "max": 100,
+      "step": 4,
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "padding_desktop",
+      "label": "Vertical padding desktop",
+      "min": 40,
+      "max": 140,
+      "step": 4,
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "strip_items",
+      "label": "Assurance strip columns (desktop)",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 3
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "text",
+          "id": "rank_label",
+          "label": "Rank label",
+          "default": "Best Seller"
+        },
+        {
+          "type": "text",
+          "id": "rating_text",
+          "label": "Fallback rating text",
+          "info": "Shown when the product has no review metafields.",
+          "default": "5-star rated"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "QB54 Best Sellers",
+      "blocks": [
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" }
+      ]
+    }
+  ]
+}
+{% endschema %}

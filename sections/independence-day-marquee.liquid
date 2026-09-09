@@ -1,0 +1,162 @@
+{% comment %}
+  ID4-Marquee — Star-spangled scrolling ticker for 4th of July
+  Infinite patriotic marquee with stars between phrases + flag rules top/bottom
+  Section: sections/independence-day-marquee.liquid
+  Brand: QB54 — navy + gold + patriotic red
+{% endcomment %}
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  #id4-marquee-{{ section.id }} {
+    --bg:    {{ section.settings.color_bg }};
+    --text:  {{ section.settings.color_text }};
+    --red:   {{ section.settings.color_red }};
+    --blue:  {{ section.settings.color_blue }};
+    --spark: {{ section.settings.color_spark }};
+
+    position: relative;
+    background:
+      linear-gradient(90deg,
+        color-mix(in srgb, var(--red) 22%, var(--bg)) 0%,
+        var(--bg) 30%, var(--bg) 70%,
+        color-mix(in srgb, var(--blue) 30%, var(--bg)) 100%),
+      var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    padding: {{ section.settings.padding_y }}px 0;
+    font-family: 'Sora', sans-serif;
+    isolation: isolate;
+  }
+
+  /* flag rule top + bottom */
+  #id4-marquee-{{ section.id }} .id4m-rule {
+    position: absolute; left: 0; right: 0; height: 3px; z-index: 2;
+    background: repeating-linear-gradient(90deg,
+      var(--red) 0 12%, #fff 12% 24%, var(--blue) 24% 36%, transparent 36% 50%);
+    opacity: .85;
+  }
+  #id4-marquee-{{ section.id }} .id4m-rule.top { top: 0; }
+  #id4-marquee-{{ section.id }} .id4m-rule.bottom { bottom: 0; }
+
+  #id4-marquee-{{ section.id }} .id4m-track {
+    display: flex; width: max-content;
+    animation: id4m-scroll {{ section.settings.speed }}s linear infinite;
+  }
+  #id4-marquee-{{ section.id }}:hover .id4m-track {
+    animation-play-state: {% if section.settings.pause_on_hover %}paused{% else %}running{% endif %};
+  }
+  @keyframes id4m-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  #id4-marquee-{{ section.id }} .id4m-group {
+    display: flex; align-items: center; flex-shrink: 0;
+  }
+  #id4-marquee-{{ section.id }} .id4m-item {
+    display: inline-flex; align-items: center; gap: clamp(20px, 3vw, 44px);
+    padding: 0 clamp(20px, 3vw, 44px);
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(22px, 3.4vw, 42px);
+    letter-spacing: .04em; text-transform: uppercase; white-space: nowrap;
+  }
+  #id4-marquee-{{ section.id }} .id4m-text { color: var(--text); }
+  #id4-marquee-{{ section.id }} .id4m-text.spark { color: var(--spark); }
+  #id4-marquee-{{ section.id }} .id4m-text.red   { color: var(--red); }
+
+  /* star divider */
+  #id4-marquee-{{ section.id }} .id4m-star {
+    width: clamp(20px, 2.2vw, 30px); height: clamp(20px, 2.2vw, 30px);
+    flex-shrink: 0; transform: rotate(-12deg);
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--spark) 45%, transparent));
+  }
+  #id4-marquee-{{ section.id }} .id4m-star svg { width: 100%; height: 100%; fill: var(--spark); }
+
+  /* edge fade */
+  #id4-marquee-{{ section.id }} .id4m-fade {
+    position: absolute; top: 0; bottom: 0; width: clamp(40px, 8vw, 120px); z-index: 1; pointer-events: none;
+  }
+  #id4-marquee-{{ section.id }} .id4m-fade.l { left: 0;  background: linear-gradient(90deg, var(--bg), transparent); }
+  #id4-marquee-{{ section.id }} .id4m-fade.r { right: 0; background: linear-gradient(270deg, var(--bg), transparent); }
+
+  @media (prefers-reduced-motion: reduce) {
+    #id4-marquee-{{ section.id }} .id4m-track { animation: none; justify-content: center; flex-wrap: wrap; }
+  }
+</style>
+
+{%- assign star_svg = '<svg viewBox="0 0 24 24"><path d="M4.5 19.5C2.8 14.2 3.9 7.6 9 5.1s10.5-1.6 10.5-1.6.9 5.4-1.6 10.5-7 5.6-12.4 5.5z"/><path d="M9 15l6-6M9.8 11.2h4.4M11.2 9.8v4.4" fill="none" stroke="#131a3c" stroke-width="1.4" stroke-linecap="round"/></svg>' -%}
+
+<div id="id4-marquee-{{ section.id }}">
+  <span class="id4m-rule top"></span>
+  <span class="id4m-fade l"></span>
+  <span class="id4m-fade r"></span>
+
+  <div class="id4m-track" aria-hidden="false">
+    {%- for n in (1..2) -%}
+      <div class="id4m-group">
+        {%- for block in section.blocks -%}
+          <div class="id4m-item" {{ block.shopify_attributes }}>
+            <span class="id4m-text {{ block.settings.style }}">{{ block.settings.text }}</span>
+            <span class="id4m-star">{{ star_svg }}</span>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endfor -%}
+  </div>
+
+  <span class="id4m-rule bottom"></span>
+</div>
+
+{% schema %}
+{
+  "name": "4th of July Marquee",
+  "tag": "div",
+  "class": "independence-day-marquee-section",
+  "settings": [
+    { "type": "header", "content": "Animation" },
+    { "type": "range", "id": "speed", "label": "Scroll duration", "min": 10, "max": 60, "step": 2, "unit": "s", "default": 28, "info": "Higher = slower scroll" },
+    { "type": "checkbox", "id": "pause_on_hover", "label": "Pause on hover", "default": true },
+
+    { "type": "header", "content": "Section spacing" },
+    { "type": "range", "id": "padding_y", "label": "Vertical padding", "min": 8, "max": 80, "step": 2, "unit": "px", "default": 22 },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_bg", "label": "Background", "default": "#141c40" },
+    { "type": "color", "id": "color_text", "label": "Text", "default": "#ffffff" },
+    { "type": "color", "id": "color_red", "label": "Red", "default": "#e11d2f" },
+    { "type": "color", "id": "color_blue", "label": "Blue", "default": "#3454c6" },
+    { "type": "color", "id": "color_spark", "label": "Gold accent (QB54 gold)", "default": "#f7b80d" }
+  ],
+  "blocks": [
+    {
+      "type": "phrase",
+      "name": "Phrase",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "30% Off Game Sets" },
+        {
+          "type": "select", "id": "style", "label": "Color style", "default": "spark",
+          "options": [
+            { "value": "spark", "label": "Gold" },
+            { "value": "red", "label": "Red" },
+            { "value": "white", "label": "White" }
+          ]
+        }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "4th of July Marquee",
+      "blocks": [
+        { "type": "phrase", "settings": { "text": "30% Off Game Sets", "style": "spark" } },
+        { "type": "phrase", "settings": { "text": "Free Fast Shipping", "style": "white" } },
+        { "type": "phrase", "settings": { "text": "Code: FREEDOM", "style": "red" } },
+        { "type": "phrase", "settings": { "text": "Ships Before the Fireworks", "style": "white" } },
+        { "type": "phrase", "settings": { "text": "Own the Backyard", "style": "spark" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,1053 @@
+<style>
+  #shopify-section-{{ section.id }} {
+    --section-padding-top: {{ section.settings.padding_top }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+    {%- render 'section-variables', section: section -%}
+    --values-columns-count: {{ section.blocks.size | at_most: 3 }};
+  }
+</style>
+
+<div class="section section--padding{% if section.settings.divider %} section--divider{% endif %}{% if section.settings.rounded %} section--rounded relative{% endif %}"{% if section.settings.transparent_header %} allow-transparent-header{% endif %}>
+  <div class="page-width{% if section.settings.full_width %} page-width--full{% endif %} relative">
+    {%- render 'section-heading', section: section -%}
+
+    {%- if section.settings.highlight_differences -%}
+      <div class="text-center">
+        <label class="comparison-highlight button icon-with-text" for="ComparisonHighlight-{{ section.id }}" aria-label="{{ 'sections.comparison-table.highlight_differences' | t | escape }}">
+          <span class="btn-text">
+            {{- 'sections.comparison-table.highlight_differences' | t -}}
+            <input id="ComparisonHighlight-{{ section.id }}" name="comparison-highlight" class="switch" type="checkbox" value="1" is="comparison-highlight" aria-controls="ProductComparison-{{ section.id }}">
+          </span>
+        </label>
+      </div>
+    {%- endif -%}
+    
+    <comparison-table class="comparison-table product-comparison grid gap-4 scroll-area" id="ProductComparison-{{ section.id }}">
+      {%- assign tfoot_content = blank -%}
+      {%- capture thead_content -%}
+        {%- for i in (0..2) -%}
+          {%- assign block = section.blocks[i] -%}
+          {%- if block != blank -%}
+            <div class="comparison-table__column grid gap-4">
+              {%- if section.blocks.size > 3 -%}
+                <div class="comparison-table__selector w-full relative">
+                  <select id="ProductComparison-{{ section.id }}-{{ forloop.index }}"
+                    class="select cursor-pointer"
+                    is="product-comparison"
+                    data-column="{{ forloop.index }}"
+                    data-section-id="{{ section.id }}"
+                    aria-controls="ProductComparison-{{ section.id }}"
+                  >
+                    {%- for block in section.blocks -%}
+                      {%- if block.settings.product != blank -%}
+                        <option value="{{ block.settings.product.id }}"{% if forloop.index == forloop.parentloop.index %} selected{% endif %}>{{ block.settings.product.title }}</option>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </select>
+                  {%- render 'icon', icon: 'chevron-up', size: 'sm', class: 'absolute pointer-events-none' -%}
+                </div>
+              {%- endif -%}
+              {%- if block.settings.product != blank -%}
+                {%- liquid
+                  assign card_product = block.settings.product
+                  assign first_available_variant = blank
+                  if card_product.has_only_default_variant == false and section.settings.first_available_variant
+                    assign first_available_variant = card_product.first_available_variant
+                  endif
+                  assign featured_media = first_available_variant.featured_media | default: card_product.featured_media
+                -%}
+                <div class="horizontal-product flex items-start flex-col gap-4 md:flex-row md:gap-6" data-product="{{ forloop.index }}">
+                  <a class="horizontal-product__media media media--{{ settings.product_image_ratio }}{% unless settings.product_image_fill %} media--contain{% endunless %} relative overflow-hidden shrink-0" href="{{ card_product.url }}">
+                    {%- liquid
+                      if featured_media
+                        echo featured_media | image_url: width: featured_media.width | image_tag: loading: 'lazy', widths: '180,360,540', is: 'lazy-image'
+                      else
+                        echo 'product-1' | placeholder_svg_tag
+                      endif
+                    -%}
+                  </a>
+                  <div class="horizontal-product__details grow flex flex-col justify-start align-self-center gap-1d5 w-full">
+                    <div class="flex flex-col gap-1">
+                      <div class="block">
+                        {%- if section.settings.show_vendor -%}
+                          <p class="horizontal-product__vendor text-xs text-opacity">{{ card_product.vendor }}</p>
+                        {%- endif -%}
+                        <a href="{{ card_product.url }}" class="horizontal-product__title reversed-link font-medium text-base leading-tight">{{ card_product.title }}</a>
+                      </div>
+                      {%- if first_available_variant != blank -%}
+                        <p class="text-xs text-opacity leading-tight">{{ first_available_variant.title }}</p>
+                      {%- endif -%}
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      {%- liquid
+                        if section.settings.show_price
+                          if first_available_variant != blank
+                            render 'product-price', product: card_product, variant: first_available_variant, use_variant: true, class: 'flex flex-wrap items-end gap-2 text-sm'
+                          else
+                            render 'product-price', product: card_product, class: 'flex flex-wrap items-end gap-2 text-sm'
+                          endif
+                        endif
+                      -%}
+                    </div>
+                  </div>
+                </div>
+                {%- capture tfoot_content -%}
+                  {{- tfoot_content -}}
+                  <div class="comparison-table__column" data-product-action="{{ forloop.index }}">
+                    {%- if first_available_variant != blank -%}
+                      {%- capture product_form_id -%}QuickAddProductForm-{{ section.id }}-{{ card_product.id }}{%- endcapture -%}
+                      {%- form 'product', card_product, is: 'product-form', id: product_form_id, class: 'grid gap-5' -%}
+                        <input type="hidden" name="id" value="{{ card_product.selected_or_first_available_variant.id }}" />
+                        {%- liquid
+                          if product.template_suffix != 'pre-order'
+                            assign quick_add_label = 'products.product.add_to_cart' | t
+                          else
+                            assign quick_add_label = 'products.product.pre_order' | t
+                          endif
+                        -%}
+                        <button type="submit" class="button button--primary w-full" is="hover-button" data-variant-id="{{ card_product.selected_or_first_available_variant.id }}" aria-label="{{ quick_add_label | escape }}">
+                          <span class="btn-fill" data-fill></span>
+                          <span class="btn-text">
+                            <span data-sold-out="{{ 'products.product.sold_out' | t | escape }}">
+                              {{- quick_add_label -}}
+                            </span>
+                          </span>
+                        </button>
+                        <p class="text-center">
+                          <a href="{{ card_product.url }}" class="link text-sm">{{ 'products.product.view_product' | t }}</a>
+                        </p>
+                      {%- endform -%}
+                    {%- else -%}
+                      <a href="{{ card_product.url }}" class="button button--primary w-full" is="hover-link" aria-label="{{ 'products.product.view_product' | t | escape }}">
+                        <span class="btn-fill" data-fill></span>
+                        <span class="btn-text">
+                          {{- 'products.product.view_product' | t -}}
+                        </span>
+                      </a>
+                    {%- endif -%}
+                  </div>
+                {%- endcapture -%}
+              {%- else -%}
+                <div class="horizontal-product flex items-start flex-col gap-4 md:flex-row md:gap-6" data-product="{{ forloop.index }}">
+                  <div class="horizontal-product__media media media--{{ settings.product_image_ratio }}{% unless settings.product_image_fill %} media--contain{% endunless %} relative overflow-hidden shrink-0" href="{{ card_product.url }}">
+                    {{- 'product-1' | placeholder_svg_tag -}}
+                  </div>
+                  <div class="horizontal-product__details grow flex flex-col justify-start align-self-center gap-1d5 w-full">
+                    <div class="flex flex-col gap-1">
+                      <div class="block">
+                        {%- if section.settings.show_vendor -%}
+                          <p class="horizontal-product__vendor text-xs text-opacity">{{ 'products.product.vendor' | t }}</p>
+                        {%- endif -%}
+                        <a href="#" class="horizontal-product__title reversed-link font-medium text-base leading-tight">{{ 'onboarding.product_title' | t }}</a>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      {%- liquid
+                        if section.settings.show_price
+                          render 'product-price', product: blank, class: 'flex flex-wrap items-end gap-2 text-sm'
+                        endif
+                      -%}
+                    </div>
+                  </div>
+                </div>
+                {%- capture tfoot_content -%}
+                  {{- tfoot_content -}}
+                  <div class="comparison-table__column" data-product-action="{{ forloop.index }}">
+                    <p class="button button--primary w-full" disabled="disabled">{{ 'products.product.sold_out' | t }}</p>
+                  </div>
+                {%- endcapture -%}
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+
+      <div class="comparison-table__row grid grid-cols-3 gap-6 thead">
+        {{- thead_content -}}
+      </div>
+
+      {%- if section.settings.sticky_product_info -%}
+        <div class="comparison-table__sticky page-width{% if section.settings.full_width %} page-width--full{% endif %} scroll-area fixed z-1 top-0 left-0 w-full opacity-0 invisible">
+          <div class="comparison-table__row grid grid-cols-3 gap-6 sticky">
+            {%- liquid
+              assign thead_content = thead_content | replace: 'is="product-comparison"', ''
+              assign thead_content = thead_content | replace: 'id="ProductComparison-', 'id="ProductComparisonSticky-'
+              assign thead_content = thead_content | replace: 'data-product=', 'data-product-sticky='
+              echo thead_content
+            -%}
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        {%- assign row_count = 0 -%}
+        {%- for i in (1..25) -%}
+          {%- liquid
+            assign heading_key = 'heading_' | append: i
+            assign value_key = 'value_' | append: i
+            assign first_block = section.blocks[0]
+            assign first_block_heading = first_block.settings[heading_key]
+            assign first_block_value = first_block.settings[value_key]
+          -%}
+          {%- if first_block_heading != blank -%}
+            {%- if first_block_heading contains '####' -%}
+              {%- liquid
+                assign row_count = 0
+                assign allow_render_row = false
+                if first_block_value != blank
+                  assign allow_render_row = true
+                endif
+              -%}
+              <div class="comparison-table__head heading text-base lg:text-lg xl:text-xl font-medium leading-tight">
+                <span class="comparison-table__column">{{ first_block_heading | replace: '####', '' | strip }}</span>
+              </div>
+            {%- else -%}
+              {%- assign allow_render_row = true -%}
+            {%- endif -%}
+            {%- if allow_render_row == true -%}
+              {%- assign row_count = row_count | plus: 1 -%}
+              {%- assign row_modulo = row_count | modulo: 2 -%}
+              <div class="comparison-table__row grid grid-cols-3 gap-6{% if row_modulo == 0 %} even{% else %} odd{% endif %}">
+                {%- for i in (0..2) -%}
+                  {%- assign block = section.blocks[i] -%}
+                  {%- if block != blank -%}
+                    {%- liquid
+                      assign heading = block.settings[heading_key]
+                      assign value = block.settings[value_key]
+                      assign stripped_value = value | strip_html | strip | upcase
+                    -%}
+                    <div class="comparison-table__column {{ block.settings.text_size }} rte" data-column="{{ forloop.index }}" data-index="{{ forloop.parentloop.index }}">
+                      {%- unless first_block_heading contains '####' -%}
+                        <p class="h6 leading-tight tracking-none">{{ heading }}</p>
+                      {%- endunless -%}
+                      {%- liquid
+                        if stripped_value == 'FALSE'
+                          capture value
+                            render 'icon', icon: 'close-circle-filled'
+                          endcapture
+                        elsif stripped_value == 'TRUE'
+                          capture value
+                            render 'icon', icon: 'check-circle-filled'
+                          endcapture
+                        else
+                          assign value = value | default: '—'
+                        endif
+                        echo value | strip_newlines
+                      -%}
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        <div class="comparison-table__row grid grid-cols-3 gap-6 tfoot">
+          {{- tfoot_content -}}
+        </div>
+
+        <script>
+          theme.ProductComparisonJSON = theme.ProductComparisonJSON || {};
+          theme.ProductComparisonJSON["{{ section.id }}"] = {
+            {%- for block in section.blocks -%}
+              {%- if block.settings.product != blank -%}
+                "{{ block.settings.product.id }}": {
+                  {%- for i in (1..25) -%}
+                    {%- liquid
+                      assign heading_key = 'heading_' | append: i
+                      assign value_key = 'value_' | append: i
+                      assign heading = block.settings[heading_key]
+                      assign value = block.settings[value_key]
+
+                      assign stripped_value = value | strip_html | strip | upcase
+                      if stripped_value == 'FALSE'
+                        capture value
+                          render 'icon', icon: 'close-circle-filled'
+                        endcapture
+                      elsif stripped_value == 'TRUE'
+                        capture value
+                          render 'icon', icon: 'check-circle-filled'
+                        endcapture
+                      else
+                        assign value = value | default: '—'
+                      endif
+
+                      assign first_block_heading = section.blocks[0].settings[heading_key]
+                      if first_block_heading contains '####'
+                        assign heading = ''
+                      endif
+                    -%}
+                    {%- if first_block_heading != blank -%}
+                      "heading_{{ i }}": "{{ heading | escape }}",
+                      "value_{{ i }}": "{{ value | strip_newlines | escape }}",
+                    {%- endif -%}
+                  {%- endfor -%}
+                },
+              {%- endif -%}
+            {%- endfor -%}
+          }
+        </script>
+        {%- for block in section.blocks -%}
+          {%- if block.settings.product != blank -%}
+            <script type="text/mustache" id="ProductComparisonInfo-{{ section.id }}-{{ block.settings.product.id }}">
+              {%- if block.settings.product != blank -%}
+                {%- liquid
+                  assign card_product = block.settings.product
+                  assign first_available_variant = blank
+                  if card_product.has_only_default_variant == false and section.settings.first_available_variant
+                    assign first_available_variant = card_product.first_available_variant
+                  endif
+                  assign featured_media = first_available_variant.featured_media | default: card_product.featured_media
+                -%}
+                <div class="horizontal-product flex items-start flex-col gap-4 md:flex-row md:gap-6">
+                  <a class="horizontal-product__media media media--{{ settings.product_image_ratio }}{% unless settings.product_image_fill %} media--contain{% endunless %} relative overflow-hidden shrink-0" href="{{ card_product.url }}">
+                    {%- liquid
+                      if featured_media
+                        echo featured_media | image_url: width: featured_media.width | image_tag: loading: 'lazy', widths: '180,360,540', is: 'lazy-image'
+                      else
+                        echo 'product-1' | placeholder_svg_tag
+                      endif
+                    -%}
+                  </a>
+                  <div class="horizontal-product__details grow flex flex-col justify-start align-self-center gap-1d5 w-full">
+                    <div class="flex flex-col gap-1">
+                      <div class="block">
+                        {%- if section.settings.show_vendor -%}
+                          <p class="horizontal-product__vendor text-xs text-opacity">{{ card_product.vendor }}</p>
+                        {%- endif -%}
+                        <a href="{{ card_product.url }}" class="horizontal-product__title reversed-link font-medium text-base leading-tight">{{ card_product.title }}</a>
+                      </div>
+                      {%- if first_available_variant != blank -%}
+                        <p class="text-xs text-opacity leading-tight">{{ first_available_variant.title }}</p>
+                      {%- endif -%}
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      {%- liquid
+                        if section.settings.show_price
+                          if first_available_variant != blank
+                            render 'product-price', product: card_product, variant: first_available_variant, use_variant: true, class: 'flex flex-wrap items-end gap-2 text-sm'
+                          else
+                            render 'product-price', product: card_product, class: 'flex flex-wrap items-end gap-2 text-sm'
+                          endif
+                        endif
+                      -%}
+                    </div>
+                  </div>
+                </div>
+              {%- endif -%}
+            </script>
+            <script type="text/mustache" id="ProductComparisonAction-{{ section.id }}-{{ block.settings.product.id }}">
+              {%- if block.settings.product != blank -%}
+                {%- liquid
+                  assign card_product = block.settings.product
+                  assign first_available_variant = blank
+                  if card_product.has_only_default_variant == false and section.settings.first_available_variant
+                    assign first_available_variant = card_product.first_available_variant
+                  endif
+                -%}
+                {%- if first_available_variant != blank -%}
+                  {%- capture product_form_id -%}QuickAddProductForm-{{ section.id }}-{{ card_product.id }}{%- endcapture -%}
+                  {%- form 'product', card_product, is: 'product-form', id: product_form_id, class: 'grid gap-5' -%}
+                    <input type="hidden" name="id" value="{{ card_product.selected_or_first_available_variant.id }}" />
+                    {%- liquid
+                      if product.template_suffix != 'pre-order'
+                        assign quick_add_label = 'products.product.add_to_cart' | t
+                      else
+                        assign quick_add_label = 'products.product.pre_order' | t
+                      endif
+                    -%}
+                    <button type="submit" class="button button--primary w-full" is="hover-button" data-variant-id="{{ card_product.selected_or_first_available_variant.id }}" aria-label="{{ quick_add_label | escape }}">
+                      <span class="btn-fill" data-fill></span>
+                      <span class="btn-text">
+                        <span data-sold-out="{{ 'products.product.sold_out' | t | escape }}">
+                          {{- quick_add_label -}}
+                        </span>
+                      </span>
+                    </button>
+                    <p class="text-center">
+                      <a href="{{ card_product.url }}" class="link text-sm">{{ 'products.product.view_product' | t }}</a>
+                    </p>
+                  {%- endform -%}
+                {%- else -%}
+                  <a href="{{ card_product.url }}" class="button button--primary w-full" is="hover-link" aria-label="{{ 'products.product.view_product' | t | escape }}">
+                    <span class="btn-fill" data-fill></span>
+                    <span class="btn-text">
+                      {{- 'products.product.view_product' | t -}}
+                    </span>
+                  </a>
+                {%- endif -%}
+              {%- endif -%}
+            </script>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+    </comparison-table>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.product-comparison.name",
+  "class": "comparison-table-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "highlight_differences",
+      "label": "t:sections.comparison-table.settings.highlight_differences.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_product_info",
+      "label": "t:sections.comparison-table.settings.sticky_product_info.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "first_available_variant",
+      "default": true,
+      "label": "t:sections.comparison-table.settings.first_available_variant.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "default": true,
+      "label": "t:sections.global.settings.show_vendor.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "default": true,
+      "label": "t:sections.global.settings.show_price.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.header__heading.content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.global.settings.heading.label",
+      "default": "Product comparison"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "title-sm",
+          "label": "t:sections.global.settings.heading_size.options__1.label"
+        },
+        {
+          "value": "title-md",
+          "label": "t:sections.global.settings.heading_size.options__2.label"
+        },
+        {
+          "value": "title-lg tracking-heading",
+          "label": "t:sections.global.settings.heading_size.options__3.label"
+        },
+        {
+          "value": "title-xl tracking-heading",
+          "label": "t:sections.global.settings.heading_size.options__4.label"
+        }
+      ],
+      "default": "title-md",
+      "label": "t:sections.global.settings.heading_size.label"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "t:sections.global.settings.heading_alignment.label",
+      "options": [
+        {
+          "value": "text-left md:items-end md:flex-row",
+          "label": "t:sections.global.settings.heading_alignment.options__1.label"
+        },
+        {
+          "value": "text-center md:items-center",
+          "label": "t:sections.global.settings.heading_alignment.options__2.label"
+        },
+        {
+          "value": "text-right md:items-end md:flex-row-reverse",
+          "label": "t:sections.global.settings.heading_alignment.options__3.label"
+        }
+      ],
+      "default": "text-center md:items-center"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "options": [
+        {
+          "value": "h1",
+          "label": "t:sections.global.settings.heading_tag.options__1.label"
+        },
+        {
+          "value": "h2",
+          "label": "t:sections.global.settings.heading_tag.options__2.label"
+        },
+        {
+          "value": "h3",
+          "label": "t:sections.global.settings.heading_tag.options__3.label"
+        },
+        {
+          "value": "h4",
+          "label": "t:sections.global.settings.heading_tag.options__4.label"
+        },
+        {
+          "value": "h5",
+          "label": "t:sections.global.settings.heading_tag.options__5.label"
+        },
+        {
+          "value": "h6",
+          "label": "t:sections.global.settings.heading_tag.options__6.label"
+        },
+        {
+          "value": "div",
+          "label": "t:sections.global.settings.heading_tag.options__7.label"
+        },
+        {
+          "value": "span",
+          "label": "t:sections.global.settings.heading_tag.options__8.label"
+        },
+        {
+          "value": "p",
+          "label": "t:sections.global.settings.heading_tag.options__9.label"
+        }
+      ],
+      "default": "h2",
+      "label": "t:sections.global.settings.heading_tag.label",
+      "info": "t:sections.global.settings.heading_tag.info"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "t:sections.global.settings.subheading.label"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "t:sections.global.settings.description.label"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.global.settings.button_label.label",
+      "info": "t:sections.global.settings.button_label.info"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.global.settings.button_link.label"
+    },
+    {
+      "visible_if": "{{ section.settings.button_label != blank }}",
+      "type": "checkbox",
+      "id": "button_external",
+      "label": "t:sections.global.settings.button_external.label",
+      "default": false
+    },
+    {
+      "visible_if": "{{ section.settings.button_label != blank }}",
+      "type": "checkbox",
+      "id": "button_icon",
+      "label": "t:sections.global.settings.button_icon.label",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.header__highlight.content",
+      "info": "t:sections.global.settings.header__highlight.info"
+    },
+    {
+      "type": "select",
+      "id": "highlighted_text",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:sections.global.settings.highlighted_text.options__1.label"
+        },
+        {
+          "value": "text",
+          "label": "t:sections.global.settings.highlighted_text.options__2.label"
+        },
+        {
+          "value": "full_text",
+          "label": "t:sections.global.settings.highlighted_text.options__3.label"
+        },
+        {
+          "value": "half_text",
+          "label": "t:sections.global.settings.highlighted_text.options__4.label"
+        },
+        {
+          "value": "underline",
+          "label": "t:sections.global.settings.highlighted_text.options__5.label"
+        },
+        {
+          "value": "marker",
+          "label": "t:sections.global.settings.highlighted_text.options__6.label"
+        },
+        {
+          "value": "stencil",
+          "label": "t:sections.global.settings.highlighted_text.options__7.label"
+        },
+        {
+          "value": "scribble",
+          "label": "t:sections.global.settings.highlighted_text.options__8.label"
+        }
+      ],
+      "default": "none",
+      "label": "t:sections.global.settings.highlighted_text.label"
+    },
+    {
+      "visible_if": "{{ section.settings.highlighted_text == 'scribble' }}",
+      "type": "select",
+      "id": "highlighted_scribble",
+      "options": [
+        {
+          "value": "circle",
+          "label": "t:sections.global.settings.highlighted_scribble.options__1.label"
+        },
+        {
+          "value": "basic-underline",
+          "label": "t:sections.global.settings.highlighted_scribble.options__2.label"
+        },
+        {
+          "value": "sketch-underline",
+          "label": "t:sections.global.settings.highlighted_scribble.options__3.label"
+        },
+        {
+          "value": "squiggle-underline",
+          "label": "t:sections.global.settings.highlighted_scribble.options__4.label"
+        },
+        {
+          "value": "squiggle-underline-2",
+          "label": "t:sections.global.settings.highlighted_scribble.options__5.label"
+        }
+      ],
+      "default": "circle",
+      "label": "t:sections.global.settings.highlighted_scribble.label",
+      "info": "t:sections.global.settings.highlighted_scribble.info"
+    },
+    {
+      "visible_if": "{{ section.settings.highlighted_text != 'none' }}",
+      "type": "checkbox",
+      "id": "highlighted_reveal",
+      "label": "t:sections.global.settings.highlighted_reveal.label",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.header__colors.content",
+      "info": "t:sections.global.settings.header__colors.info"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "t:sections.global.settings.color_text.label"
+    },
+    {
+      "type": "color",
+      "id": "color_background",
+      "label": "t:sections.global.settings.color_background.label"
+    },
+    {
+      "type": "color_background",
+      "id": "gradient_background",
+      "label": "t:sections.global.settings.gradient_background.label"
+    },
+    {
+      "type": "color",
+      "id": "color_highlight",
+      "label": "t:sections.global.settings.color_highlight.label"
+    },
+    {
+      "type": "color_background",
+      "id": "gradient_highlight",
+      "label": "t:sections.global.settings.gradient_highlight.label"
+    },
+    {
+      "type": "color",
+      "id": "color_button_text",
+      "label": "t:sections.global.settings.color_button_text.label"
+    },
+    {
+      "type": "color",
+      "id": "color_button_background",
+      "label": "t:sections.global.settings.color_button_background.label"
+    },
+    {
+      "type": "color_background",
+      "id": "color_button_gradient",
+      "label": "t:sections.global.settings.color_button_gradient.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.header__section.content"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.global.settings.padding_top.label",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.global.settings.padding_bottom.label",
+      "default": 60
+    },
+    {
+      "type": "checkbox",
+      "id": "divider",
+      "label": "t:sections.global.settings.divider.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "t:sections.global.settings.full_width.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "rounded",
+      "default": false,
+      "label": "t:sections.global.settings.rounded.label"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "t:sections.global.blocks.product.name",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "t:sections.global.settings.product.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_1",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_1.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_1 != blank }}",
+          "type": "richtext",
+          "id": "value_1",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_1.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_2",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_2.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_2 != blank }}",
+          "type": "richtext",
+          "id": "value_2",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_2.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_3",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_3.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_3 != blank }}",
+          "type": "richtext",
+          "id": "value_3",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_3.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_4",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_4.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_4 != blank }}",
+          "type": "richtext",
+          "id": "value_4",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_4.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_5",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_5.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_5 != blank }}",
+          "type": "richtext",
+          "id": "value_5",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_5.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_6",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_6.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_6 != blank }}",
+          "type": "richtext",
+          "id": "value_6",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_6.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_7",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_7.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_7 != blank }}",
+          "type": "richtext",
+          "id": "value_7",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_7.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_8",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_8.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_8 != blank }}",
+          "type": "richtext",
+          "id": "value_8",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_8.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_9",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_9.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_9 != blank }}",
+          "type": "richtext",
+          "id": "value_9",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_9.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_10",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_10.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_10 != blank }}",
+          "type": "richtext",
+          "id": "value_10",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_10.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_11",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_11.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_11 != blank }}",
+          "type": "richtext",
+          "id": "value_11",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_11.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_12",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_12.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_12 != blank }}",
+          "type": "richtext",
+          "id": "value_12",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_12.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_13",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_13.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_13 != blank }}",
+          "type": "richtext",
+          "id": "value_13",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_13.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_14",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_14.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_14 != blank }}",
+          "type": "richtext",
+          "id": "value_14",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_14.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_15",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_15.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_15 != blank }}",
+          "type": "richtext",
+          "id": "value_15",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_15.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_16",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_16.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_16 != blank }}",
+          "type": "richtext",
+          "id": "value_16",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_16.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_17",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_17.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_17 != blank }}",
+          "type": "richtext",
+          "id": "value_17",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_17.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_18",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_18.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_18 != blank }}",
+          "type": "richtext",
+          "id": "value_18",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_18.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_19",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_19.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_19 != blank }}",
+          "type": "richtext",
+          "id": "value_19",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_19.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_20",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_20.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_20 != blank }}",
+          "type": "richtext",
+          "id": "value_20",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_20.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_21",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_21.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_21 != blank }}",
+          "type": "richtext",
+          "id": "value_21",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_21.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_22",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_22.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_22 != blank }}",
+          "type": "richtext",
+          "id": "value_22",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_22.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_23",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_23.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_23 != blank }}",
+          "type": "richtext",
+          "id": "value_23",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_23.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_24",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_24.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_24 != blank }}",
+          "type": "richtext",
+          "id": "value_24",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_24.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_25",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_25.label"
+        },
+        {
+          "visible_if": "{{ block.settings.heading_25 != blank }}",
+          "type": "richtext",
+          "id": "value_25",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_25.label"
+        },
+        {
+          "type": "select",
+          "id": "text_size",
+          "options": [
+            {
+              "value": "text-sm",
+              "label": "t:sections.global.settings.text_size.options__1.label"
+            },
+            {
+              "value": "text-base",
+              "label": "t:sections.global.settings.text_size.options__2.label"
+            },
+            {
+              "value": "text-base lg:text-lg",
+              "label": "t:sections.global.settings.text_size.options__3.label"
+            },
+            {
+              "value": "text-base lg:text-xl",
+              "label": "t:sections.global.settings.text_size.options__4.label"
+            }
+          ],
+          "default": "text-sm",
+          "label": "t:sections.global.settings.text_size.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.product-comparison.name",
+      "category": "t:categories.products"
+    }
+  ],
+  "disabled_on": {
+    "groups": [
+      "footer",
+      "header",
+      "custom.overlay"
+    ]
+  }
+}
+{% endschema %}

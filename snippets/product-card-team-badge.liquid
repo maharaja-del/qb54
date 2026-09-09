@@ -1,0 +1,21 @@
+{%- doc -%}
+  Renders a small circular team-logo badge on the bottom-right corner of a product card's media, sourced from the `custom.team_logo` product metafield.
+
+  Renders nothing when the metafield is blank, so this is safe to call unconditionally from `product-card.liquid` for every product in the store, not just footballs.
+
+  @param {object} product - Shopify product object
+
+  @example
+  {% render 'product-card-team-badge', product: product %}
+{%- enddoc -%}
+
+{%- liquid
+  assign team_logo = product.metafields.custom.team_logo.value
+  assign team_name = product.metafields.custom.team_name.value
+-%}
+
+{%- if team_logo != blank -%}
+  <div class="product-card__team-badge z-2 absolute rounded-full overflow-hidden pointer-events-none">
+    {{- team_logo | image_url: width: 80 | image_tag: loading: 'lazy', widths: '40,80', alt: team_name, class: 'w-full h-full' -}}
+  </div>
+{%- endif -%}

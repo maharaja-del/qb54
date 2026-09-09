@@ -1,0 +1,273 @@
+
+{% liquid
+  assign id = section.id
+%}
+
+<section class="game-anywhere-{{ id }}">
+  <div class="page-width">
+    <div class="header">
+      <h2 class="heading">
+        {{ section.settings.heading_prefix }}
+        <span>{{ section.settings.heading_highlight }}</span>
+      </h2>
+
+      <p class="subheading">{{ section.settings.subheading }}</p>
+
+      <div class="badges">
+        {% for block in section.blocks %}
+          {% if block.type == 'badge' %}
+            <div class="badge" {{ block.shopify_attributes }}>
+              <div class="badge-content">
+                <span class="badge-eyebrow">{{ block.settings.eyebrow }}</span>
+                <strong class="badge-text">{{ block.settings.text }}</strong>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="cards">
+      {% for block in section.blocks %}
+        {% if block.type == 'card' %}
+          <div class="card" {{ block.shopify_attributes }}>
+            <img
+              src="{{ block.settings.image | image_url: width: 1200 }}"
+              alt="{{ block.settings.title | escape }}"
+              loading="lazy"
+              width="1200"
+              height="800">
+
+            <div class="overlay">
+              <div class="card-title">
+                {% if block.settings.icon != blank %}
+                  <img
+                    src="{{ block.settings.icon | image_url: width: 40 }}"
+                    alt=""
+                    width="20"
+                    height="20">
+                {% endif %}
+                <span>{{ block.settings.title }}</span>
+              </div>
+              <p class="card-text">{{ block.settings.text }}</p>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {% if section.settings.button_text != blank %}
+      <div class="cta">
+        <a href="{{ section.settings.button_url }}" class="cta-button">
+          {{ section.settings.button_text }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const btn = document.querySelector('.game-anywhere-{{ id }} .cta-button');
+  const target = document.querySelector('#scrolltoHere');
+
+  if (btn && target) {
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    });
+  }
+});
+</script>
+
+  <style>
+    .game-anywhere-{{ id }} {
+      background: {{ section.settings.background }};
+      padding: {{ section.settings.padding_mobile }}px 0;
+      text-align: center;
+    }
+
+    .game-anywhere-{{ id }} .heading {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+      margin-bottom: 12px;
+    }
+
+    .game-anywhere-{{ id }} .heading span {
+      color: {{ section.settings.highlight_color }};
+    }
+
+    .game-anywhere-{{ id }} .subheading {
+      max-width: 760px;
+      margin: 0 auto 48px;
+      color: {{ section.settings.subheading_color }};
+      font-size: {{ section.settings.subheading_size_mobile }}px;
+    }
+
+    .game-anywhere-{{ id }} .badges {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-bottom: 72px;
+    }
+
+    .game-anywhere-{{ id }} .badge {
+      background: {{ section.settings.badge_bg }};
+      color: {{ section.settings.badge_text_color }};
+      border-radius: {{ section.settings.badge_radius }}px;
+      padding: 18px 28px;
+      min-width: 220px;
+    }
+
+    .game-anywhere-{{ id }} .badge-eyebrow {
+      display: block;
+      font-size: {{ section.settings.badge_eyebrow_size }}px;
+      opacity: 0.8;
+      margin-bottom: 4px;
+    }
+
+    .game-anywhere-{{ id }} .badge-text {
+      font-size: {{ section.settings.badge_text_size }}px;
+    }
+
+    .game-anywhere-{{ id }} .cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .game-anywhere-{{ id }} .card {
+      position: relative;
+      border-radius: {{ section.settings.card_radius }}px;
+      overflow: hidden;
+    }
+
+    .game-anywhere-{{ id }} .card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .game-anywhere-{{ id }} .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.65), transparent 60%);
+      color: #fff;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      text-align: left;
+    }
+
+    .game-anywhere-{{ id }} .card-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .game-anywhere-{{ id }} .cta-button {
+      background: {{ section.settings.button_bg }};
+      color: {{ section.settings.button_color }};
+      padding: 14px 32px;
+      border-radius: 999px;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    @media (min-width: 750px) {
+      .game-anywhere-{{ id }} {
+        padding: {{ section.settings.padding_desktop }}px 0;
+      }
+
+      .game-anywhere-{{ id }} .heading {
+        font-size: {{ section.settings.heading_size_desktop }}px;
+      }
+
+      .game-anywhere-{{ id }} .subheading {
+        font-size: {{ section.settings.subheading_size_desktop }}px;
+      }
+
+      .game-anywhere-{{ id }} .cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+      }
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "Take the Game Anywhere",
+  "settings": [
+    { "type": "text", "id": "heading_prefix", "label": "Heading prefix", "default": "Take the Game" },
+    { "type": "text", "id": "heading_highlight", "label": "Heading highlight", "default": "Anywhere" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "From backyard BBQs to beach vacations, QB54 brings family and friends together wherever adventure takes you." },
+
+    { "type": "header", "content": "Badge Style" },
+    { "type": "color", "id": "badge_bg", "label": "Badge background", "default": "#111111" },
+    { "type": "color", "id": "badge_text_color", "label": "Badge text color", "default": "#ffffff" },
+    { "type": "range", "id": "badge_radius", "label": "Badge border radius", "min": 0, "max": 60, "step": 2, "default": 40 },
+    { "type": "range", "id": "badge_eyebrow_size", "label": "Badge eyebrow size", "min": 10, "max": 18, "step": 1, "default": 13 },
+    { "type": "range", "id": "badge_text_size", "label": "Badge text size", "min": 14, "max": 26, "step": 1, "default": 20 },
+
+    { "type": "header", "content": "General Style" },
+    { "type": "color", "id": "background", "label": "Background", "default": "#faf9f5" },
+    { "type": "color", "id": "highlight_color", "label": "Heading highlight color", "default": "#3f6b4a" },
+    { "type": "color", "id": "subheading_color", "label": "Subheading color", "default": "#6b7f72" },
+
+    { "type": "range", "id": "heading_size_mobile", "label": "Heading size mobile", "min": 24, "max": 48, "step": 2, "default": 32 },
+    { "type": "range", "id": "heading_size_desktop", "label": "Heading size desktop", "min": 36, "max": 72, "step": 2, "default": 56 },
+    { "type": "range", "id": "subheading_size_mobile", "label": "Subheading size mobile", "min": 14, "max": 22, "step": 1, "default": 16 },
+    { "type": "range", "id": "subheading_size_desktop", "label": "Subheading size desktop", "min": 16, "max": 26, "step": 1, "default": 18 },
+
+    { "type": "range", "id": "card_radius", "label": "Card radius", "min": 0, "max": 40, "step": 2, "default": 24 },
+    { "type": "range", "id": "padding_mobile", "label": "Padding mobile", "min": 40, "max": 120, "step": 4, "default": 64 },
+    { "type": "range", "id": "padding_desktop", "label": "Padding desktop", "min": 80, "max": 200, "step": 4, "default": 120 },
+
+    { "type": "header", "content": "CTA Button" },
+    { "type": "text", "id": "button_text", "label": "Button text", "default": "Shop All Products" },
+    { "type": "url", "id": "button_url", "label": "Button link" },
+    { "type": "color", "id": "button_bg", "label": "Button background", "default": "#3f6b4a" },
+    { "type": "color", "id": "button_color", "label": "Button text color", "default": "#ffffff" }
+  ],
+  "blocks": [
+    {
+      "type": "badge",
+      "name": "Feature badge",
+      "settings": [
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "All Ages" },
+        { "type": "text", "id": "text", "label": "Main text", "default": "2–10+ Players" }
+      ]
+    },
+    {
+      "type": "card",
+      "name": "Image card",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "image_picker", "id": "icon", "label": "Icon" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Tailgate Champion" },
+        { "type": "textarea", "id": "text", "label": "Description", "default": "Dominate the parking lot before the big game." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Take the Game Anywhere",
+      "blocks": [
+        { "type": "badge" },
+        { "type": "badge" },
+        { "type": "badge" },
+        { "type": "card" },
+        { "type": "card" },
+        { "type": "card" },
+        { "type": "card" }
+      ]
+    }
+  ]
+}
+{% endschema %}

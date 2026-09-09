@@ -1,0 +1,358 @@
+/* ==========================================================================
+   Logo upload — customer artwork uploader + live product preview
+   Mobile-first. Uses theme color tokens with safe fallbacks.
+   ========================================================================== */
+
+logo-upload {
+  --lu-fg: var(--color-foreground, 18 18 18);
+  --lu-bg: var(--color-background, 255 255 255);
+  display: grid;
+  gap: 0.75rem;
+}
+
+/* When the standalone section relocates itself into the product info column */
+logo-upload.is-inlined {
+  margin-block: 1.25rem;
+}
+
+.logo-upload__title {
+  margin: 0;
+}
+
+.logo-upload__helper p {
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Dropzone — full-width tap target, min 88px tall for thumbs
+   -------------------------------------------------------------------------- */
+
+.logo-upload__dropzone {
+  min-height: 88px;
+  padding: 1.25rem 1rem;
+  border: 1.5px dashed rgb(var(--lu-fg) / 0.35);
+  border-radius: var(--rounded-input, 8px);
+  background: rgb(var(--lu-fg) / 0.03);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.logo-upload__dropzone:hover,
+.logo-upload__dropzone.is-dragover {
+  border-color: rgb(var(--lu-fg) / 0.8);
+  background: rgb(var(--lu-fg) / 0.06);
+}
+
+.logo-upload__dropzone:focus-visible {
+  outline: 2px solid rgb(var(--lu-fg));
+  outline-offset: 2px;
+}
+
+.logo-upload__icon {
+  opacity: 0.6;
+}
+
+/* Busy state while large files are read on slow connections */
+logo-upload.is-busy .logo-upload__dropzone {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+logo-upload.is-busy .logo-upload__icon {
+  animation: logo-upload-pulse 1s ease-in-out infinite;
+}
+
+@keyframes logo-upload-pulse {
+  50% { opacity: 0.2; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  logo-upload.is-busy .logo-upload__icon { animation: none; }
+}
+
+/* Desktop copy vs mobile copy */
+[data-mobile-only] { display: none; }
+@media (hover: none) and (pointer: coarse) {
+  [data-desktop-only] { display: none; }
+  [data-mobile-only] { display: inline; }
+}
+
+/* Invalid highlight when add-to-cart is blocked */
+logo-upload.has-error .logo-upload__dropzone {
+  border-color: rgb(220 53 47);
+}
+
+/* --------------------------------------------------------------------------
+   File card
+   -------------------------------------------------------------------------- */
+
+.logo-upload__card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid rgb(var(--lu-fg) / 0.15);
+  border-radius: var(--rounded-input, 8px);
+  background: rgb(var(--lu-fg) / 0.03);
+}
+
+.logo-upload__thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgb(var(--lu-fg) / 0.12);
+  /* Checkerboard so transparent logos are legible — and white boxes obvious */
+  background:
+    conic-gradient(rgb(var(--lu-fg) / 0.1) 0 25%, transparent 0 50%, rgb(var(--lu-fg) / 0.1) 0 75%, transparent 0)
+    0 0 / 14px 14px,
+    rgb(var(--lu-bg));
+}
+
+.logo-upload__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.logo-upload__filename {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+.logo-upload__badge {
+  justify-self: start;
+  padding: 0.2em 0.65em;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.logo-upload__badge.is-pass {
+  background: rgb(24 128 56 / 0.12);
+  color: rgb(20 106 47);
+}
+
+.logo-upload__badge.is-warn {
+  background: rgb(178 116 8 / 0.14);
+  color: rgb(140 90 6);
+}
+
+.logo-upload__actions {
+  border-top: 1px solid rgb(var(--lu-fg) / 0.1);
+  padding-top: 0.625rem;
+}
+
+.logo-upload__action {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0.5rem 0.25rem; /* generous thumb target */
+  margin: -0.5rem 0;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  color: rgb(var(--lu-fg));
+}
+
+.logo-upload__action:hover { text-decoration-thickness: 2px; }
+.logo-upload__action:focus-visible {
+  outline: 2px solid rgb(var(--lu-fg));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Status / error region
+   -------------------------------------------------------------------------- */
+
+.logo-upload__status { line-height: 1.5; }
+.logo-upload__status:empty { display: none; }
+.logo-upload__status.is-warn { color: rgb(140 90 6); }
+.logo-upload__status.is-error { color: rgb(190 40 34); }
+.logo-upload__status.is-pass { color: rgb(20 106 47); }
+
+.logo-upload__check {
+  cursor: pointer;
+  line-height: 1.45;
+}
+
+.logo-upload__check input {
+  margin-top: 0.2em;
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Live preview overlay on the gallery image
+   %-based box → scales identically on every viewport, no media queries needed.
+   Goal: make the customer's logo read as genuinely *printed on the game set*,
+   and, before upload, showcase exactly where it will go.
+   -------------------------------------------------------------------------- */
+
+.logo-upload-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.logo-upload-overlay__box {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The uploaded logo — layered contact shadow grounds it on the fabric so it
+   reads as printed, not pasted on top. */
+.logo-upload-overlay__img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 1px 1px rgb(0 0 0 / 0.35))
+    drop-shadow(0 4px 8px rgb(0 0 0 / 0.22));
+}
+
+/* Optional fabric-blend modes (merchant setting). Default 'normal' keeps bright
+   logos fully visible on dark products like the black chairs. */
+.logo-upload-overlay[data-blend="multiply"] .logo-upload-overlay__img { mix-blend-mode: multiply; }
+.logo-upload-overlay[data-blend="screen"]   .logo-upload-overlay__img { mix-blend-mode: screen; }
+.logo-upload-overlay[data-blend="darken"]   .logo-upload-overlay__img { mix-blend-mode: darken; }
+
+/* --- Placeholder: frame the print area before any upload --- */
+.logo-upload-overlay.is-placeholder .logo-upload-overlay__box {
+  border-radius: 6px;
+}
+
+/* Crisp corner brackets that draw the eye to the customizable spot */
+.logo-upload-overlay.is-placeholder .logo-upload-overlay__box::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  --b: 2px;   /* bracket thickness */
+  --l: 16px;  /* bracket arm length */
+  --c: rgb(255 255 255 / 0.9);
+  background:
+    linear-gradient(var(--c) 0 0), linear-gradient(var(--c) 0 0),
+    linear-gradient(var(--c) 0 0), linear-gradient(var(--c) 0 0),
+    linear-gradient(var(--c) 0 0), linear-gradient(var(--c) 0 0),
+    linear-gradient(var(--c) 0 0), linear-gradient(var(--c) 0 0);
+  background-repeat: no-repeat;
+  background-position:
+    0 0, 0 0, 100% 0, 100% 0,
+    0 100%, 0 100%, 100% 100%, 100% 100%;
+  background-size:
+    var(--l) var(--b), var(--b) var(--l),
+    var(--l) var(--b), var(--b) var(--l),
+    var(--l) var(--b), var(--b) var(--l),
+    var(--l) var(--b), var(--b) var(--l);
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.45));
+  animation: logo-upload-breathe 2.4s ease-in-out infinite;
+}
+
+.logo-upload-overlay__placeholder {
+  color: rgb(255 255 255 / 0.9);
+  font-size: clamp(0.6rem, 2vw, 0.8rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0.25rem;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.65);
+}
+
+@keyframes logo-upload-breathe {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+
+/* --- "Your design" tag, revealed once a logo is applied --- */
+.logo-upload-overlay__tag {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -145%) scale(0.9);
+  padding: 0.18em 0.65em;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.62);
+  color: rgb(255 255 255 / 0.95);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.logo-upload-overlay.has-logo .logo-upload-overlay__tag {
+  opacity: 1;
+  transform: translate(-50%, -145%) scale(1);
+}
+
+.logo-upload-overlay__note {
+  position: absolute;
+  left: 50%;
+  bottom: 0.5rem;
+  transform: translateX(-50%);
+  max-width: calc(100% - 1rem);
+  padding: 0.3em 0.8em;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.55);
+  color: rgb(255 255 255 / 0.9);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  backdrop-filter: blur(2px);
+}
+
+/* Elegant settle-in for the applied logo — the "money moment" */
+.logo-upload-overlay.has-logo .logo-upload-overlay__img {
+  animation: logo-upload-settle 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes logo-upload-settle {
+  from { opacity: 0; transform: scale(0.85); }
+  60%  { opacity: 1; transform: scale(1.03); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* One-shot glow ring behind the logo the moment it lands */
+.logo-upload-overlay.has-logo .logo-upload-overlay__box::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  animation: logo-upload-pop 0.7s ease-out both;
+  pointer-events: none;
+}
+
+@keyframes logo-upload-pop {
+  from { box-shadow: 0 0 0 0 rgb(255 255 255 / 0.55); }
+  to   { box-shadow: 0 0 0 18px rgb(255 255 255 / 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-upload-overlay.has-logo .logo-upload-overlay__img,
+  .logo-upload-overlay.is-placeholder .logo-upload-overlay__box::before,
+  .logo-upload-overlay.has-logo .logo-upload-overlay__box::after {
+    animation: none;
+  }
+}
+
+/* Hide the placement note on very small screens if it crowds the image */
+@media (max-width: 360px) {
+  .logo-upload-overlay__note { display: none; }
+}

@@ -1,0 +1,210 @@
+
+{% liquid
+  assign id = section.id
+%}
+
+<section class="testimonials-{{ id }}">
+  <div class="page-width">
+    <div class="header">
+      <h2 class="heading">
+        {{ section.settings.heading_prefix }}
+        <span>{{ section.settings.heading_highlight }}</span>
+      </h2>
+
+      <div class="stars">
+        {% for i in (1..section.settings.star_count) %}
+          <span class="star">★</span>
+        {% endfor %}
+      </div>
+
+      <p class="subheading">{{ section.settings.subheading }}</p>
+    </div>
+
+    <div class="grid">
+      {% for block in section.blocks %}
+        <div class="testimonial" {{ block.shopify_attributes }}>
+          <div class="testimonial-stars">
+            {% for i in (1..block.settings.rating) %}
+              <span class="star">★</span>
+            {% endfor %}
+          </div>
+
+          <p class="quote">“{{ block.settings.quote }}”</p>
+
+          <div class="author">
+            <strong>{{ block.settings.name }}</strong>
+            <span>{{ block.settings.location }}</span>
+          </div>
+
+          <div class="quote-mark">”</div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if section.settings.footer_text != blank %}
+      <div class="footer">
+        {{ section.settings.footer_text }}
+      </div>
+    {% endif %}
+  </div>
+
+  <style>
+    .testimonials-{{ id }} {
+      background: {{ section.settings.background }};
+      padding: {{ section.settings.padding_mobile }}px 0;
+      color: {{ section.settings.text_color }};
+    }
+
+    .testimonials-{{ id }} .header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    .testimonials-{{ id }} .heading {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+      margin-bottom: 12px;
+    }
+
+    .testimonials-{{ id }} .heading span {
+      color: {{ section.settings.highlight_color }};
+    }
+
+    .testimonials-{{ id }} .stars {
+      margin-bottom: 16px;
+    }
+
+    .testimonials-{{ id }} .star {
+      color: {{ section.settings.star_color }};
+      font-size: 22px;
+      margin: 0 2px;
+    }
+
+    .testimonials-{{ id }} .subheading {
+      font-size: {{ section.settings.subheading_size_mobile }}px;
+      opacity: 0.85;
+    }
+
+    .testimonials-{{ id }} .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .testimonials-{{ id }} .testimonial {
+      background: {{ section.settings.card_bg }};
+      border-radius: {{ section.settings.card_radius }}px;
+      padding: 28px;
+      position: relative;
+    }
+
+    .testimonials-{{ id }} .testimonial-stars {
+      margin-bottom: 12px;
+    }
+
+    .testimonials-{{ id }} .quote {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .testimonials-{{ id }} .author strong {
+      display: block;
+    }
+
+    .testimonials-{{ id }} .author span {
+      font-size: 14px;
+      opacity: 0.75;
+    }
+
+    .testimonials-{{ id }} .quote-mark {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 40px;
+      color: {{ section.settings.quote_mark_color }};
+      opacity: 0.4;
+    }
+
+    .testimonials-{{ id }} .footer {
+      margin-top: 56px;
+      text-align: center;
+      font-size: 14px;
+      opacity: 0.7;
+    }
+
+    @media (min-width: 750px) {
+      .testimonials-{{ id }} {
+        padding: {{ section.settings.padding_desktop }}px 0;
+      }
+
+      .testimonials-{{ id }} .heading {
+        font-size: {{ section.settings.heading_size_desktop }}px;
+      }
+
+      .testimonials-{{ id }} .subheading {
+        font-size: {{ section.settings.subheading_size_desktop }}px;
+      }
+
+      .testimonials-{{ id }} .grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 32px;
+      }
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "What Families Are Saying",
+  "settings": [
+    { "type": "text", "id": "heading_prefix", "label": "Heading prefix", "default": "What Families Are" },
+    { "type": "text", "id": "heading_highlight", "label": "Heading highlight", "default": "Saying" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Join thousands of happy families" },
+
+    { "type": "range", "id": "star_count", "label": "Header star count", "min": 1, "max": 5, "step": 1, "default": 5 },
+
+    { "type": "color", "id": "background", "label": "Background", "default": "#3f6b4a" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" },
+    { "type": "color", "id": "highlight_color", "label": "Highlight color", "default": "#f0b44c" },
+    { "type": "color", "id": "star_color", "label": "Star color", "default": "#f0b44c" },
+    { "type": "color", "id": "card_bg", "label": "Card background", "default": "#4f7b58" },
+    { "type": "color", "id": "quote_mark_color", "label": "Quote mark color", "default": "#f0b44c" },
+
+    { "type": "range", "id": "card_radius", "label": "Card radius", "min": 0, "max": 40, "step": 2, "default": 20 },
+
+    { "type": "range", "id": "heading_size_mobile", "label": "Heading size mobile", "min": 24, "max": 48, "step": 2, "default": 32 },
+    { "type": "range", "id": "heading_size_desktop", "label": "Heading size desktop", "min": 36, "max": 72, "step": 2, "default": 52 },
+    { "type": "range", "id": "subheading_size_mobile", "label": "Subheading size mobile", "min": 14, "max": 22, "step": 1, "default": 16 },
+    { "type": "range", "id": "subheading_size_desktop", "label": "Subheading size desktop", "min": 16, "max": 26, "step": 1, "default": 18 },
+
+    { "type": "range", "id": "padding_mobile", "label": "Padding mobile", "min": 40, "max": 120, "step": 4, "default": 64 },
+    { "type": "range", "id": "padding_desktop", "label": "Padding desktop", "min": 80, "max": 200, "step": 4, "default": 120 },
+
+    { "type": "text", "id": "footer_text", "label": "Footer text", "default": "Trusted by athletes and families alike" }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        { "type": "range", "id": "rating", "label": "Rating", "min": 1, "max": 5, "step": 1, "default": 5 },
+        { "type": "textarea", "id": "quote", "label": "Quote", "default": "Best outdoor game we've ever bought!" },
+        { "type": "text", "id": "name", "label": "Name", "default": "Mike R." },
+        { "type": "text", "id": "location", "label": "Location", "default": "Texas" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "What Families Are Saying",
+      "blocks": [
+        { "type": "testimonial" },
+        { "type": "testimonial" },
+        { "type": "testimonial" },
+        { "type": "testimonial" },
+        { "type": "testimonial" },
+        { "type": "testimonial" }
+      ]
+    }
+  ]
+}
+{% endschema %}

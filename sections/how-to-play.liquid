@@ -1,0 +1,606 @@
+{% liquid
+  assign step_blocks = section.blocks | where: "type", "step"
+  assign scoring_blocks = section.blocks | where: "type", "scoring_item"
+%}
+
+<style>
+  {{ section.settings.heading_font | font_face }}
+  {{ section.settings.body_font | font_face }}
+
+  #section-{{ section.id }} {
+    --bg-color: {{ section.settings.background_color }};
+    --heading-color: {{ section.settings.heading_color }};
+    --subheading-color: {{ section.settings.subheading_color }};
+    --card-bg-color: {{ section.settings.card_background_color }};
+    --card-title-color: {{ section.settings.card_title_color }};
+    --card-text-color: {{ section.settings.card_text_color }};
+    --card-icon-bg-color: {{ section.settings.card_icon_bg_color }};
+    --card-badge-bg-color: {{ section.settings.card_badge_bg_color }};
+    --card-badge-text-color: {{ section.settings.card_badge_text_color }};
+    --scoring-bg-color: {{ section.settings.scoring_bg_color }};
+    --scoring-heading-color: {{ section.settings.scoring_heading_color }};
+    --scoring-number-color: {{ section.settings.scoring_number_color }};
+    --scoring-text-color: {{ section.settings.scoring_text_color }};
+    --heading-font-size: {{ section.settings.heading_font_size }}px;
+    --padding-top: {{ section.settings.padding_top }}px;
+    --padding-bottom: {{ section.settings.padding_bottom }}px;
+
+    background-color: var(--bg-color);
+    padding-top: var(--padding-top);
+    padding-bottom: var(--padding-bottom);
+    font-family: {{ section.settings.body_font.family }}, {{ section.settings.body_font.fallback_families }};
+  }
+
+  #section-{{ section.id }} .container {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  
+  #section-{{ section.id }} .section-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  #section-{{ section.id }} .section-heading {
+    font-family: {{ section.settings.heading_font.family }}, {{ section.settings.heading_font.fallback_families }};
+    font-size: var(--heading-font-size);
+    font-weight: 700;
+    color: var(--heading-color);
+    margin: 0 0 16px 0;
+  }
+
+  #section-{{ section.id }} .section-subheading {
+    font-size: 18px;
+    color: var(--subheading-color);
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  #section-{{ section.id }} .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: 64px;
+  }
+
+  #section-{{ section.id }} .step-card {
+    position: relative;
+    background-color: var(--card-bg-color);
+    border-radius: 16px;
+    padding: 60px 24px 40px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  }
+  
+  #section-{{ section.id }} .step-badge {
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--card-badge-bg-color);
+    color: var(--card-badge-text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+  }
+
+  #section-{{ section.id }} .step-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    background-color: var(--card-icon-bg-color);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  #section-{{ section.id }} .step-icon-wrapper img,
+  #section-{{ section.id }} .step-icon-wrapper svg {
+    width: 40px;
+    height: 40px;
+  }
+  
+  #section-{{ section.id }} .step-title {
+    font-family: {{ section.settings.heading_font.family }}, {{ section.settings.heading_font.fallback_families }};
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--card-title-color);
+    margin: 0 0 8px 0;
+  }
+
+  #section-{{ section.id }} .step-description {
+    font-size: 14px;
+    color: var(--card-text-color);
+    line-height: 1.6;
+    max-width: 220px;
+  }
+
+  #section-{{ section.id }} .scoring-system {
+    background-color: var(--scoring-bg-color);
+    border-radius: 16px;
+    padding: 48px;
+    text-align: center;
+  }
+
+  #section-{{ section.id }} .scoring-heading {
+    font-family: {{ section.settings.heading_font.family }}, {{ section.settings.heading_font.fallback_families }};
+    color: var(--scoring-heading-color);
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 40px 0;
+  }
+
+  #section-{{ section.id }} .scoring-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  #section-{{ section.id }} .scoring-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #section-{{ section.id }} .scoring-number {
+    font-family: {{ section.settings.heading_font.family }}, {{ section.settings.heading_font.fallback_families }};
+    color: var(--scoring-number-color);
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  #section-{{ section.id }} .scoring-text {
+    color: var(--scoring-text-color);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 1024px) {
+    #section-{{ section.id }} .steps-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    #section-{{ section.id }} {
+      --bg-color: {{ section.settings.mobile_background_color }};
+      --heading-color: {{ section.settings.heading_color_mobile }};
+      --subheading-color: {{ section.settings.subheading_color_mobile }};
+      --heading-font-size: {{ section.settings.heading_font_size_mobile }}px;
+      --padding-top: {{ section.settings.padding_top_mobile }}px;
+      --padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+    }
+
+    #section-{{ section.id }} .container {
+      padding: 0 16px;
+    }
+
+    #section-{{ section.id }} .section-subheading {
+      font-size: 16px;
+    }
+
+    #section-{{ section.id }} .steps-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+      margin-bottom: 48px;
+    }
+
+    #section-{{ section.id }} .step-card {
+      padding: 48px 20px 32px;
+    }
+
+    #section-{{ section.id }} .scoring-system {
+      padding: 32px 16px;
+    }
+    
+    #section-{{ section.id }} .scoring-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    
+    #section-{{ section.id }} .scoring-number {
+      font-size: 48px;
+    }
+  }
+
+</style>
+
+<section id="section-{{ section.id }}">
+  <div class="container">
+    {% if section.settings.heading != blank or section.settings.subheading != blank %}
+      <div class="section-header">
+        {% if section.settings.heading != blank %}
+          <h2 class="section-heading">{{ section.settings.heading | escape }}</h2>
+        {% endif %}
+        {% if section.settings.subheading != blank %}
+          <div class="section-subheading">{{ section.settings.subheading | escape }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if step_blocks.size > 0 %}
+      <div class="steps-grid">
+        {% for block in step_blocks %}
+          <div class="step-card" {{ block.shopify_attributes }}>
+            <div class="step-badge">{{ forloop.index }}</div>
+            <div class="step-icon-wrapper">
+              {% if block.settings.icon != blank %}
+                <img src="{{ block.settings.icon | image_url: width: 80 }}" alt="{{ block.settings.title | escape }}" width="40" height="40" loading="lazy">
+              {% else %}
+                {% case forloop.index %}
+                  {% when 1 %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11h20"/><path d="M18 19a2 2 0 0 0 2-2v-4H4v4a2 2 0 0 0 2 2h12Z"/></svg>
+                  {% when 2 %}
+                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                  {% when 3 %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  {% else %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect x="4" y="4" width="16" height="16" rx="2"/><path d="m16 8 4 4"/><path d="m12 12 4 4"/></svg>
+                {% endcase %}
+              {% endif %}
+            </div>
+            {% if block.settings.title != blank %}
+              <h3 class="step-title">{{ block.settings.title | escape }}</h3>
+            {% endif %}
+            {% if block.settings.description != blank %}
+              <div class="step-description">{{ block.settings.description | escape }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if scoring_blocks.size > 0 %}
+      <div class="scoring-system">
+        {% if section.settings.scoring_heading != blank %}
+           <h3 class="scoring-heading">{{ section.settings.scoring_heading | escape }}</h3>
+        {% endif %}
+        <div class="scoring-grid">
+          {% for block in scoring_blocks %}
+            <div class="scoring-item" {{ block.shopify_attributes }}>
+              {% if block.settings.score_number != blank %}
+                <div class="scoring-number">{{ block.settings.score_number }}</div>
+              {% endif %}
+              {% if block.settings.score_description != blank %}
+                <div class="scoring-text">{{ block.settings.score_description | escape }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "How to Play",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "How to Play QB54"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Simple rules, endless fun. Anyone can play in minutes!"
+    },
+    {
+      "type": "text",
+      "id": "scoring_heading",
+      "label": "Scoring Section Heading",
+      "default": "Scoring System"
+    },
+    {
+      "type": "header",
+      "content": "Color Palette"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Desktop Background",
+      "default": "#F8F6F1"
+    },
+    {
+      "type": "color",
+      "id": "mobile_background_color",
+      "label": "Mobile Background",
+      "default": "#3B8761"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Desktop Heading",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "heading_color_mobile",
+      "label": "Mobile Heading",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Desktop Subheading",
+      "default": "#5A5A5A"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color_mobile",
+      "label": "Mobile Subheading",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Card Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Card Title",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Card Text",
+      "default": "#6A6A6A"
+    },
+    {
+      "type": "color",
+      "id": "card_icon_bg_color",
+      "label": "Card Icon Background",
+      "default": "#F5F5F5"
+    },
+    {
+      "type": "color",
+      "id": "card_badge_bg_color",
+      "label": "Card Badge Background",
+      "default": "#1E5631"
+    },
+    {
+      "type": "color",
+      "id": "card_badge_text_color",
+      "label": "Card Badge Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "scoring_bg_color",
+      "label": "Scoring Section Background",
+      "default": "#1E5631"
+    },
+    {
+      "type": "color",
+      "id": "scoring_heading_color",
+      "label": "Scoring Section Heading",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "scoring_number_color",
+      "label": "Scoring Number",
+      "default": "#F5A623"
+    },
+    {
+      "type": "color",
+      "id": "scoring_text_color",
+      "label": "Scoring Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "font",
+      "id": "heading_font",
+      "label": "Heading Font"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Desktop Heading Font Size",
+      "min": 24,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 42
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size_mobile",
+      "label": "Mobile Heading Font Size",
+      "min": 20,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "font",
+      "id": "body_font",
+      "label": "Body Font"
+    },
+    {
+      "type": "header",
+      "content": "Section Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max Width",
+      "min": 800,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Desktop Padding Top",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Desktop Padding Bottom",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Mobile Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Mobile Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step Card",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Step Title"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Description",
+          "default": "Add a short description for this step."
+        }
+      ]
+    },
+    {
+      "type": "scoring_item",
+      "name": "Scoring Item",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "score_number",
+          "label": "Score Number",
+          "default": "1"
+        },
+        {
+          "type": "text",
+          "id": "score_description",
+          "label": "Score Description",
+          "default": "Points description"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "How to Play",
+      "blocks": [
+        {
+          "type": "step",
+          "settings": {
+            "title": "Set Up",
+            "description": "Unfold the two QB54 chairs and place them 40 feet apart."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "Throw",
+            "description": "Toss the football and try to land it in the opposing chair's bucket."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "Score Points",
+            "description": "Hit the bucket for points. Higher points for tougher shots!"
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "First to 54 Wins!",
+            "description": "The first player or team to reach 54 points wins the game."
+          }
+        },
+        {
+          "type": "scoring_item",
+          "settings": {
+            "score_number": "1",
+            "score_description": "Point - Hit the chair"
+          }
+        },
+        {
+          "type": "scoring_item",
+          "settings": {
+            "score_number": "3",
+            "score_description": "Points - Ball stays in bucket"
+          }
+        },
+        {
+          "type": "scoring_item",
+          "settings": {
+            "score_number": "6",
+            "score_description": "Points - Ball goes through bucket"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

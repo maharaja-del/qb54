@@ -1,0 +1,705 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  #qb54-tailgate-{{ section.id }} {
+    --lime: #9aff00;
+    --lime-soft: rgba(154, 255, 0, 0.16);
+    --black: #090a0a;
+    --white: #ffffff;
+    --white-88: rgba(255,255,255,0.88);
+    --white-72: rgba(255,255,255,0.72);
+    --white-16: rgba(255,255,255,0.16);
+
+    position: relative;
+    width: 100%;
+    min-height: 680px;
+    height: min(88vh, 900px);
+    overflow: hidden;
+    background: var(--black);
+    color: var(--white);
+    font-family: "Inter", sans-serif;
+  }
+
+  #qb54-tailgate-{{ section.id }} *,
+  #qb54-tailgate-{{ section.id }} *::before,
+  #qb54-tailgate-{{ section.id }} *::after {
+    box-sizing: border-box;
+  }
+
+  /* BACKGROUND */
+  #qb54-tailgate-{{ section.id }} .qb54-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  #qb54-tailgate-{{ section.id }} .qb54-bg img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: {{ section.settings.image_focal_point }};
+    opacity: {{ section.settings.bg_opacity | divided_by: 100.0 }};
+  }
+
+  #qb54-tailgate-{{ section.id }} .qb54-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg,
+        rgba(7,8,8,0.91) 0%,
+        rgba(7,8,8,0.83) 38%,
+        rgba(7,8,8,0.60) 63%,
+        rgba(7,8,8,0.34) 100%);
+  }
+
+  /* MAIN LAYOUT */
+  #qb54-tailgate-{{ section.id }} .qb54-inner {
+    position: relative;
+    z-index: 2;
+    width: min(100%, 1480px);
+    height: 100%;
+    margin: 0 auto;
+    padding: 28px clamp(28px, 5vw, 76px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(34px, 5vw, 76px);
+  }
+
+  #qb54-tailgate-{{ section.id }} .qb54-content {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 760px;
+    min-width: 0;
+  }
+
+  /* OPTIONAL LOGOS */
+  #qb54-tailgate-{{ section.id }} .qb54-collab {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 24px;
+  }
+
+  #qb54-tailgate-{{ section.id }} .qb54-collab-logo {
+    height: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  #qb54-tailgate-{{ section.id }} .qb54-collab-logo img {
+    width: auto;
+    height: auto;
+    max-height: 100%;
+    max-width: 132px;
+    display: block;
+    object-fit: contain;
+  }
+
+  #qb54-tailgate-{{ section.id }} .qb54-collab-x {
+    color: var(--lime);
+    font-family: "Oswald", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  /* TOP LABEL */
+  #qb54-tailgate-{{ section.id }} .qb54-kicker {
+    margin: 0 0 13px;
+    font-family: "Oswald", sans-serif;
+    font-size: clamp(14px, 1.2vw, 18px);
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--lime);
+  }
+
+  /* MAIN HEADLINE */
+  #qb54-tailgate-{{ section.id }} .qb54-heading {
+    margin: 0;
+    max-width: 100%;
+    font-family: "Anton", sans-serif;
+    font-size: clamp(52px, 5vw, 78px);
+    font-weight: 400;
+    line-height: 0.94;
+    letter-spacing: -0.012em;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+
+  #qb54-tailgate-{{ section.id }} .qb54-heading-line {
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    white-space: nowrap;
+  }
+
+  /* OFFER */
+  #qb54-tailgate-{{ section.id }} .qb54-offer {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: 24px;
+    padding: 10px 16px 9px;
+    border-radius: 4px;
+    background: var(--lime);
+    box-shadow: 0 10px 30px rgba(154,255,0,0.12);
+    color: #091000;
+    font-family: "Oswald", sans-serif;
+    font-size: clamp(13px, 1.15vw, 17px);
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  /* PRIMARY SUPPORTING COPY */
+  #qb54-tailgate-{{ section.id }} .qb54-subheading {
+    max-width: 650px;
+    margin: 22px 0 0;
+    color: var(--white-88);
+    font-size: clamp(16px, 1.25vw, 19px);
+    line-height: 1.55;
+    font-weight: 500;
+  }
+
+  /* OPTIONAL SECOND BODY COPY */
+  #qb54-tailgate-{{ section.id }} .qb54-body {
+    max-width: 650px;
+    margin: 15px 0 0;
+    color: var(--white-72);
+    font-size: clamp(14px, 1.05vw, 16px);
+    line-height: 1.62;
+    font-weight: 400;
+  }
+
+  /* CTA */
+  #qb54-tailgate-{{ section.id }} .qb54-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 28px;
+  }
+
+  #qb54-tailgate-{{ section.id }} .qb54-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 13px 24px;
+    border-radius: 5px;
+    background: var(--lime);
+    color: #091000;
+    text-decoration: none;
+    font-family: "Oswald", sans-serif;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+
+  #qb54-tailgate-{{ section.id }} .qb54-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(154,255,0,0.18);
+  }
+
+  #qb54-tailgate-{{ section.id }} .qb54-btn-primary svg {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 auto;
+  }
+
+  #qb54-tailgate-{{ section.id }} .qb54-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 52px;
+    color: var(--white);
+    text-decoration: none;
+    font-family: "Oswald", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--white-16);
+  }
+
+  /* VIDEO */
+  #qb54-tailgate-{{ section.id }} .qb54-video {
+    position: relative;
+    flex: 0 0 auto;
+    height: calc(100% - 20px);
+    max-height: 820px;
+    aspect-ratio: 9 / 16;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #000;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.14),
+      0 20px 55px rgba(0,0,0,0.28);
+  }
+
+  #qb54-tailgate-{{ section.id }} .qb54-video video {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  #qb54-tailgate-{{ section.id }} .qb54-mute {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    z-index: 3;
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 50%;
+    background: rgba(0,0,0,0.62);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  #qb54-tailgate-{{ section.id }} .qb54-mute svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  #qb54-tailgate-{{ section.id }} .qb54-mute .icon-unmuted { display: block; }
+  #qb54-tailgate-{{ section.id }} .qb54-mute .icon-muted { display: none; }
+  #qb54-tailgate-{{ section.id }} .qb54-mute.is-muted .icon-unmuted { display: none; }
+  #qb54-tailgate-{{ section.id }} .qb54-mute.is-muted .icon-muted { display: block; }
+
+  /* TABLET */
+  @media (max-width: 1100px) and (min-width: 768px) {
+    #qb54-tailgate-{{ section.id }} {
+      min-height: 620px;
+      height: min(84vh, 780px);
+    }
+
+    #qb54-tailgate-{{ section.id }} .qb54-inner {
+      padding-left: 34px;
+      padding-right: 34px;
+      gap: 30px;
+    }
+
+    #qb54-tailgate-{{ section.id }} .qb54-content {
+      max-width: 610px;
+    }
+
+    #qb54-tailgate-{{ section.id }} .qb54-heading {
+      font-size: clamp(44px, 5.4vw, 64px);
+    }
+  }
+
+  /* MOBILE */
+  @media (max-width: 767px) {
+    #qb54-tailgate-{{ section.id }} {
+      height: auto;
+      min-height: 0;
+    }
+
+    #qb54-tailgate-{{ section.id }} .qb54-overlay {
+      background: linear-gradient(180deg,
+        rgba(7,8,8,0.36) 0%,
+        rgba(7,8,8,0.75) 48%,
+        rgba(7,8,8,0.96) 100%);
+    }
+
+    #qb54-tailgate-{{ section.id }} .qb54-inner {
+      width: 100%;
+      height: auto;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    #qb54-tailgate-{{ section.id }} .qb54-video {
+      order: -1;
+      width: 100%;
+      height: min(118vw, 74vh);
+      max-height: none;
+      aspect-ratio: auto;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    #qb54-tailgate-{{ section.id }} .qb54-content {
+      max-width: none;
+      padding: 34px 22px 42px;
+      background: linear-gradient(180deg, rgba(7,8,8,0.88), rgba(7,8,8,0.98));
+    }
+
+    #qb54-tailgate-{{ section.id }} .qb54-collab {
+      margin-bottom: 20px;
+    }
+
+    #qb54-tailgate-{{ section.id }} .qb54-collab-logo {
+      height: 34px;
+    }
+
+    #qb54-tailgate-{{ section.id }} .qb54-heading {
+      font-size: clamp(42px, 12.2vw, 60px);
+      line-height: 0.95;
+    }
+
+    #qb54-tailgate-{{ section.id }} .qb54-heading-line {
+      width: auto;
+      white-space: normal;
+    }
+
+    #qb54-tailgate-{{ section.id }} .qb54-offer {
+      margin-top: 20px;
+    }
+
+    #qb54-tailgate-{{ section.id }} .qb54-subheading {
+      margin-top: 18px;
+      font-size: 16px;
+    }
+
+    #qb54-tailgate-{{ section.id }} .qb54-body {
+      font-size: 14px;
+    }
+
+    #qb54-tailgate-{{ section.id }} .qb54-actions {
+      margin-top: 24px;
+    }
+
+    #qb54-tailgate-{{ section.id }} .qb54-btn-primary {
+      width: 100%;
+    }
+  }
+</style>
+
+<section id="qb54-tailgate-{{ section.id }}" aria-label="QB54 Tailgate Hero">
+  {% if section.settings.bg_image != blank %}
+    <div class="qb54-bg">
+      <img
+        src="{{ section.settings.bg_image | img_url: 'master' }}"
+        alt=""
+        aria-hidden="true"
+        loading="eager"
+      >
+    </div>
+    <div class="qb54-overlay"></div>
+  {% endif %}
+
+  <div class="qb54-inner">
+    <div class="qb54-content">
+
+      {% if section.settings.collab_logo_1 != blank or section.settings.collab_logo_2 != blank %}
+        <div class="qb54-collab">
+          {% if section.settings.collab_logo_1 != blank %}
+            <div class="qb54-collab-logo">
+              <img
+                src="{{ section.settings.collab_logo_1 | img_url: 'master' }}"
+                alt="{{ section.settings.collab_logo_1_alt | default: 'Brand logo' }}"
+                loading="eager"
+              >
+            </div>
+          {% endif %}
+
+          {% if section.settings.collab_logo_1 != blank and section.settings.collab_logo_2 != blank %}
+            <span class="qb54-collab-x" aria-hidden="true">x</span>
+          {% endif %}
+
+          {% if section.settings.collab_logo_2 != blank %}
+            <div class="qb54-collab-logo">
+              <img
+                src="{{ section.settings.collab_logo_2 | img_url: 'master' }}"
+                alt="{{ section.settings.collab_logo_2_alt | default: 'Brand logo' }}"
+                loading="eager"
+              >
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if section.settings.top_label != blank %}
+        <p class="qb54-kicker">{{ section.settings.top_label }}</p>
+      {% endif %}
+
+      {% if section.settings.heading_line_1 != blank or section.settings.heading_line_2 != blank or section.settings.heading_line_3 != blank %}
+        <h1 class="qb54-heading">
+          {% if section.settings.heading_line_1 != blank %}
+            <span class="qb54-heading-line">{{ section.settings.heading_line_1 }}</span>
+          {% endif %}
+          {% if section.settings.heading_line_2 != blank %}
+            <span class="qb54-heading-line">{{ section.settings.heading_line_2 }}</span>
+          {% endif %}
+          {% if section.settings.heading_line_3 != blank %}
+            <span class="qb54-heading-line">{{ section.settings.heading_line_3 }}</span>
+          {% endif %}
+        </h1>
+      {% endif %}
+
+      {% if section.settings.offer_text != blank %}
+        <div class="qb54-offer">{{ section.settings.offer_text }}</div>
+      {% endif %}
+
+      {% if section.settings.subheading != blank %}
+        <p class="qb54-subheading">{{ section.settings.subheading }}</p>
+      {% endif %}
+
+      {% if section.settings.body_copy != blank %}
+        <p class="qb54-body">{{ section.settings.body_copy }}</p>
+      {% endif %}
+
+      {% if section.settings.cta_text != blank or section.settings.secondary_text != blank %}
+        <div class="qb54-actions">
+          {% if section.settings.cta_text != blank %}
+            <a href="{{ section.settings.cta_url | default: '#' }}" class="qb54-btn-primary">
+              {{ section.settings.cta_text }}
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          {% endif %}
+
+          {% if section.settings.secondary_text != blank %}
+            <a href="{{ section.settings.secondary_url | default: '#' }}" class="qb54-btn-secondary">
+              {{ section.settings.secondary_text }}
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+
+    </div>
+
+    {% if section.settings.video_url != blank %}
+      <div class="qb54-video">
+        <video
+          id="qb54-video-{{ section.id }}"
+          autoplay
+          muted
+          loop
+          playsinline
+          {% if section.settings.video_poster != blank %}
+            poster="{{ section.settings.video_poster | img_url: 'master' }}"
+          {% endif %}
+        >
+          <source src="{{ section.settings.video_url }}" type="video/mp4">
+        </video>
+
+        <button
+          type="button"
+          class="qb54-mute is-muted"
+          id="qb54-mute-{{ section.id }}"
+          aria-label="Unmute video"
+          onclick="
+            (function() {
+              var video = document.getElementById('qb54-video-{{ section.id }}');
+              var button = document.getElementById('qb54-mute-{{ section.id }}');
+              if (!video || !button) return;
+              video.muted = !video.muted;
+              button.classList.toggle('is-muted', video.muted);
+              button.setAttribute('aria-label', video.muted ? 'Unmute video' : 'Mute video');
+            })();
+          "
+        >
+          <svg class="icon-unmuted" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          </svg>
+          <svg class="icon-muted" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+            <line x1="23" y1="9" x2="17" y2="15"/>
+            <line x1="17" y1="9" x2="23" y2="15"/>
+          </svg>
+        </button>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "QB54 Tailgate Hero V2",
+  "tag": "section",
+  "class": "qb54-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Background image"
+    },
+    {
+      "type": "range",
+      "id": "bg_opacity",
+      "label": "Background image opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "default": 55,
+      "unit": "%"
+    },
+    {
+      "type": "select",
+      "id": "image_focal_point",
+      "label": "Background image position",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top" },
+        { "value": "center bottom", "label": "Bottom" },
+        { "value": "left center", "label": "Left" },
+        { "value": "right center", "label": "Right" }
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "header",
+      "content": "Optional logos"
+    },
+    {
+      "type": "paragraph",
+      "content": "Leave both logo fields empty if this page does not need logos."
+    },
+    {
+      "type": "image_picker",
+      "id": "collab_logo_1",
+      "label": "Logo 1"
+    },
+    {
+      "type": "text",
+      "id": "collab_logo_1_alt",
+      "label": "Logo 1 alt text"
+    },
+    {
+      "type": "image_picker",
+      "id": "collab_logo_2",
+      "label": "Logo 2"
+    },
+    {
+      "type": "text",
+      "id": "collab_logo_2_alt",
+      "label": "Logo 2 alt text"
+    },
+    {
+      "type": "header",
+      "content": "Hero copy"
+    },
+    {
+      "type": "paragraph",
+      "content": "Every field below is optional. Empty fields are not rendered and do not leave blank spacing."
+    },
+    {
+      "type": "text",
+      "id": "top_label",
+      "label": "Top label",
+      "info": "Example for NFL: THE NFL IS BACK! Leave blank for College if not needed."
+    },
+    {
+      "type": "text",
+      "id": "heading_line_1",
+      "label": "Heading line 1",
+      "default": "THE OG TAILGATE"
+    },
+    {
+      "type": "text",
+      "id": "heading_line_2",
+      "label": "Heading line 2",
+      "default": "FOOTBALL GAME."
+    },
+    {
+      "type": "text",
+      "id": "heading_line_3",
+      "label": "Heading line 3",
+      "info": "Optional. Leave blank when only two heading lines are needed."
+    },
+    {
+      "type": "text",
+      "id": "offer_text",
+      "label": "Discount / offer",
+      "default": "20% OFF WITH CODE KICKOFF",
+      "info": "Leave blank to hide the offer badge."
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Primary supporting copy",
+      "default": "College football's opening weekend just got a new tradition."
+    },
+    {
+      "type": "textarea",
+      "id": "body_copy",
+      "label": "Extra body copy",
+      "info": "Optional. Example: QB54 turns two 275-lb-rated chairs into throw-it, kick-it, first-to-54 football. One bag, no extra gear, ready before kickoff."
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Primary button text",
+      "default": "SHOP QB54",
+      "info": "Leave blank to hide the primary button."
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_text",
+      "label": "Secondary link text",
+      "info": "Optional. Leave blank to hide."
+    },
+    {
+      "type": "url",
+      "id": "secondary_url",
+      "label": "Secondary link URL"
+    },
+    {
+      "type": "header",
+      "content": "Video"
+    },
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "Video URL (.mp4)",
+      "default": "https://qb54.myshopify.com/cdn/shop/videos/c/vp/89ce1bad12b6430ab45a295f1f4fed48/89ce1bad12b6430ab45a295f1f4fed48.HD-1080p-2.5Mbps-66302483.mp4",
+      "info": "Leave blank if a page should not show the portrait video."
+    },
+    {
+      "type": "image_picker",
+      "id": "video_poster",
+      "label": "Video poster image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "QB54 Tailgate Hero V2"
+    }
+  ]
+}
+{% endschema %}

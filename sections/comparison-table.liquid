@@ -1,0 +1,892 @@
+<style>
+  #shopify-section-{{ section.id }} {
+    --section-padding-top: {{ section.settings.padding_top }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+    {%- render 'section-variables', section: section -%}
+    --values-columns-count: {{ section.blocks | where: 'type', 'values' | size }};
+  }
+</style>
+
+<div class="section section--padding{% if section.settings.divider %} section--divider{% endif %}{% if section.settings.rounded %} section--rounded relative{% endif %}"{% if section.settings.transparent_header %} allow-transparent-header{% endif %}>
+  <div class="page-width{% if section.settings.full_width %} page-width--full{% endif %} relative">
+    {%- render 'section-heading', section: section -%}
+
+    {%- assign headings_block = section.blocks | where: 'type', 'headings' | first -%}
+    {%- assign values_blocks = section.blocks | where: 'type', 'values' -%}
+
+    {%- if values_blocks.size > 0 -%}
+      <comparison-table class="comparison-table grid gap-4 md:gap-10 scroll-area">
+        {%- assign tfoot_content = blank -%}
+        {%- capture thead_content -%}
+          {%- for block in values_blocks -%}
+            <div class="comparison-table__column">
+              {%- if block.settings.product != blank -%}
+                {%- liquid
+                  assign card_product = block.settings.product
+                  assign first_available_variant = blank
+                  if card_product.has_only_default_variant == false and section.settings.first_available_variant
+                    assign first_available_variant = card_product.first_available_variant
+                  endif
+                  assign featured_media = first_available_variant.featured_media | default: card_product.featured_media
+                -%}
+                <div class="horizontal-product flex items-start flex-col gap-4 md:flex-row md:gap-6">
+                  <a class="horizontal-product__media media media--{{ settings.product_image_ratio }}{% unless settings.product_image_fill %} media--contain{% endunless %} relative overflow-hidden shrink-0" href="{{ card_product.url }}">
+                    {%- liquid
+                      if featured_media
+                        echo featured_media | image_url: width: featured_media.width | image_tag: loading: 'lazy', widths: '180,360,540', is: 'lazy-image'
+                      else
+                        echo 'product-1' | placeholder_svg_tag
+                      endif
+                    -%}
+                  </a>
+                  <div class="horizontal-product__details grow flex flex-col justify-start align-self-center gap-1d5 w-full">
+                    <div class="flex flex-col gap-1">
+                      <div class="block">
+                        {%- if section.settings.show_vendor -%}
+                          <p class="horizontal-product__vendor text-xs text-opacity">{{ card_product.vendor }}</p>
+                        {%- endif -%}
+                        <a href="{{ card_product.url }}" class="horizontal-product__title reversed-link font-medium text-base leading-tight">{{ card_product.title }}</a>
+                      </div>
+                      {%- if first_available_variant != blank -%}
+                        <p class="text-xs text-opacity leading-tight">{{ first_available_variant.title }}</p>
+                      {%- endif -%}
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      {%- liquid
+                        if section.settings.show_price
+                          if first_available_variant != blank
+                            render 'product-price', product: card_product, variant: first_available_variant, use_variant: true, class: 'flex flex-wrap items-end gap-2 text-sm'
+                          else
+                            render 'product-price', product: card_product, class: 'flex flex-wrap items-end gap-2 text-sm'
+                          endif
+                        endif
+                      -%}
+                    </div>
+                  </div>
+                </div>
+                {%- capture tfoot_content -%}
+                  {{- tfoot_content -}}
+                  <div class="comparison-table__column">
+                    {%- if first_available_variant != blank -%}
+                      {%- capture product_form_id -%}QuickAddProductForm-{{ section.id }}-{{ card_product.id }}{%- endcapture -%}
+                      {%- form 'product', card_product, is: 'product-form', id: product_form_id, class: 'grid gap-5' -%}
+                        <input type="hidden" name="id" value="{{ card_product.selected_or_first_available_variant.id }}" />
+                        {%- liquid
+                          if product.template_suffix != 'pre-order'
+                            assign quick_add_label = 'products.product.add_to_cart' | t
+                          else
+                            assign quick_add_label = 'products.product.pre_order' | t
+                          endif
+                        -%}
+                        <button type="submit" class="button button--primary w-full" is="hover-button" data-variant-id="{{ card_product.selected_or_first_available_variant.id }}" aria-label="{{ quick_add_label | escape }}">
+                          <span class="btn-fill" data-fill></span>
+                          <span class="btn-text">
+                            <span data-sold-out="{{ 'products.product.sold_out' | t | escape }}">
+                              {{- quick_add_label -}}
+                            </span>
+                          </span>
+                        </button>
+                        <p class="text-center">
+                          <a href="{{ card_product.url }}" class="link text-sm">{{ 'products.product.view_product' | t }}</a>
+                        </p>
+                      {%- endform -%}
+                    {%- else -%}
+                      <a href="{{ card_product.url }}" class="button button--primary w-full" is="hover-link" aria-label="{{ 'products.product.view_product' | t | escape }}">
+                        <span class="btn-fill" data-fill></span>
+                        <span class="btn-text">
+                          {{- 'products.product.view_product' | t -}}
+                        </span>
+                      </a>
+                    {%- endif -%}
+                  </div>
+                {%- endcapture -%}
+              {%- else -%}
+                <div class="horizontal-product flex items-start flex-col gap-4 md:flex-row md:gap-6">
+                  <div class="horizontal-product__media media media--{{ settings.product_image_ratio }}{% unless settings.product_image_fill %} media--contain{% endunless %} relative overflow-hidden shrink-0" href="{{ card_product.url }}">
+                    {{- 'product-1' | placeholder_svg_tag -}}
+                  </div>
+                  <div class="horizontal-product__details grow flex flex-col justify-start align-self-center gap-1d5 w-full">
+                    <div class="flex flex-col gap-1">
+                      <div class="block">
+                        {%- if section.settings.show_vendor -%}
+                          <p class="horizontal-product__vendor text-xs text-opacity">{{ 'products.product.vendor' | t }}</p>
+                        {%- endif -%}
+                        <a href="#" class="horizontal-product__title reversed-link font-medium text-base leading-tight">{{ 'onboarding.product_title' | t }}</a>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      {%- liquid
+                        if section.settings.show_price
+                          render 'product-price', product: blank, class: 'flex flex-wrap items-end gap-2 text-sm'
+                        endif
+                      -%}
+                    </div>
+                  </div>
+                </div>
+                {%- capture tfoot_content -%}
+                  {{- tfoot_content -}}
+                  <div class="comparison-table__column">
+                    <p class="button button--primary w-full" disabled="disabled">{{ 'products.product.sold_out' | t }}</p>
+                  </div>
+                {%- endcapture -%}
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        {%- endcapture -%}
+
+        <div class="comparison-table__row grid grid-cols-3 gap-6 thead">
+          {{- thead_content -}}
+        </div>
+
+        {%- if section.settings.sticky_product_info -%}
+          <div class="comparison-table__sticky page-width{% if section.settings.full_width %} page-width--full{% endif %} scroll-area fixed z-1 top-0 left-0 w-full opacity-0 invisible">
+            <div class="comparison-table__row grid grid-cols-3 gap-6 sticky">
+              {{- thead_content -}}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- for i in (1..25) -%}
+          {%- liquid
+            assign heading_key = 'heading_' | append: i
+            assign value_key = 'value_' | append: i
+            assign heading_value = headings_block.settings[heading_key]
+          -%}
+          
+          {%- capture row_content -%}
+            {%- for block in values_blocks -%}
+              {%- if block.settings[value_key] != blank -%}
+                <div class="comparison-table__column {{ block.settings.text_size }} rte">
+                  {%- liquid
+                    assign metafield_content = block.settings[value_key]
+                    assign stripped_value = block.settings[value_key] | strip_html | strip | upcase
+
+                    if stripped_value == 'FALSE'
+                      render 'icon', icon: 'close-circle-filled'
+                    elsif stripped_value == 'TRUE'
+                      render 'icon', icon: 'check-circle-filled'
+                    else
+                      if metafield_content contains '<h6>'
+                        if metafield_content contains 'class="metafield-single_line_text_field-array'
+                          assign metafield_content = metafield_content | replace: 'class="metafield-single_line_text_field-array', 'class="metafield-single_line_text_field-array col-span-full'
+                        elsif metafield_content contains 'class="metafield-rich_text_field'
+                          assign metafield_content = metafield_content | replace: 'class="metafield-rich_text_field', 'class="metafield-rich_text_field col-span-full'
+                        elsif metafield_content contains 'class='
+                          assign metafield_content = metafield_content | replace: 'class="', 'class="col-span-full '
+                        else
+                          assign metafield_content = '<div class="col-span-full">' | append: metafield_content | append: '</div>'
+                        endif
+                        
+                        assign metafield_content = metafield_content | replace_first: '<h6>', '<div class="grid gap-6 md:gap-10"><h6>'
+                        assign metafield_content = metafield_content | replace: '<h6>', '</div><div class="col-span-full"><h6 class="leading-tight tracking-none">'
+                        assign metafield_content = metafield_content | remove_first: '</div>'
+                        assign metafield_content = metafield_content | append: '</div></div>'
+                      else
+                        assign metafield_content = '<div class="col-span-full">' | append: metafield_content | append: '</div>'
+                      endif
+
+                      echo metafield_content | default: '-'
+                    endif
+                  -%}
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endcapture -%}
+          
+          {%- if heading_value != blank and row_content != blank -%}
+            <div class="comparison-table__head heading text-base lg:text-lg xl:text-xl font-medium leading-tight">
+              <span class="comparison-table__column">{{ heading_value }}</span>
+            </div>
+            <div class="comparison-table__row grid grid-cols-3 gap-6">{{ row_content }}</div>
+          {%- endif -%}
+        {%- endfor -%}
+
+        <div class="comparison-table__row grid grid-cols-3 gap-6">
+          {{- tfoot_content -}}
+        </div>
+      </comparison-table>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.comparison-table.name",
+  "class": "comparison-table-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "sticky_product_info",
+      "label": "t:sections.comparison-table.settings.sticky_product_info.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "first_available_variant",
+      "default": true,
+      "label": "t:sections.comparison-table.settings.first_available_variant.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "default": true,
+      "label": "t:sections.global.settings.show_vendor.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "default": true,
+      "label": "t:sections.global.settings.show_price.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.header__heading.content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.global.settings.heading.label",
+      "default": "Comparison table"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "title-sm",
+          "label": "t:sections.global.settings.heading_size.options__1.label"
+        },
+        {
+          "value": "title-md",
+          "label": "t:sections.global.settings.heading_size.options__2.label"
+        },
+        {
+          "value": "title-lg tracking-heading",
+          "label": "t:sections.global.settings.heading_size.options__3.label"
+        },
+        {
+          "value": "title-xl tracking-heading",
+          "label": "t:sections.global.settings.heading_size.options__4.label"
+        }
+      ],
+      "default": "title-md",
+      "label": "t:sections.global.settings.heading_size.label"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "t:sections.global.settings.heading_alignment.label",
+      "options": [
+        {
+          "value": "text-left md:items-end md:flex-row",
+          "label": "t:sections.global.settings.heading_alignment.options__1.label"
+        },
+        {
+          "value": "text-center md:items-center",
+          "label": "t:sections.global.settings.heading_alignment.options__2.label"
+        },
+        {
+          "value": "text-right md:items-end md:flex-row-reverse",
+          "label": "t:sections.global.settings.heading_alignment.options__3.label"
+        }
+      ],
+      "default": "text-center md:items-center"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "options": [
+        {
+          "value": "h1",
+          "label": "t:sections.global.settings.heading_tag.options__1.label"
+        },
+        {
+          "value": "h2",
+          "label": "t:sections.global.settings.heading_tag.options__2.label"
+        },
+        {
+          "value": "h3",
+          "label": "t:sections.global.settings.heading_tag.options__3.label"
+        },
+        {
+          "value": "h4",
+          "label": "t:sections.global.settings.heading_tag.options__4.label"
+        },
+        {
+          "value": "h5",
+          "label": "t:sections.global.settings.heading_tag.options__5.label"
+        },
+        {
+          "value": "h6",
+          "label": "t:sections.global.settings.heading_tag.options__6.label"
+        },
+        {
+          "value": "div",
+          "label": "t:sections.global.settings.heading_tag.options__7.label"
+        },
+        {
+          "value": "span",
+          "label": "t:sections.global.settings.heading_tag.options__8.label"
+        },
+        {
+          "value": "p",
+          "label": "t:sections.global.settings.heading_tag.options__9.label"
+        }
+      ],
+      "default": "h2",
+      "label": "t:sections.global.settings.heading_tag.label",
+      "info": "t:sections.global.settings.heading_tag.info"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "t:sections.global.settings.subheading.label"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "t:sections.global.settings.description.label"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.global.settings.button_label.label",
+      "info": "t:sections.global.settings.button_label.info"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.global.settings.button_link.label"
+    },
+    {
+      "visible_if": "{{ section.settings.button_label != blank }}",
+      "type": "checkbox",
+      "id": "button_external",
+      "label": "t:sections.global.settings.button_external.label",
+      "default": false
+    },
+    {
+      "visible_if": "{{ section.settings.button_label != blank }}",
+      "type": "checkbox",
+      "id": "button_icon",
+      "label": "t:sections.global.settings.button_icon.label",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.header__highlight.content",
+      "info": "t:sections.global.settings.header__highlight.info"
+    },
+    {
+      "type": "select",
+      "id": "highlighted_text",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:sections.global.settings.highlighted_text.options__1.label"
+        },
+        {
+          "value": "text",
+          "label": "t:sections.global.settings.highlighted_text.options__2.label"
+        },
+        {
+          "value": "full_text",
+          "label": "t:sections.global.settings.highlighted_text.options__3.label"
+        },
+        {
+          "value": "half_text",
+          "label": "t:sections.global.settings.highlighted_text.options__4.label"
+        },
+        {
+          "value": "underline",
+          "label": "t:sections.global.settings.highlighted_text.options__5.label"
+        },
+        {
+          "value": "marker",
+          "label": "t:sections.global.settings.highlighted_text.options__6.label"
+        },
+        {
+          "value": "stencil",
+          "label": "t:sections.global.settings.highlighted_text.options__7.label"
+        },
+        {
+          "value": "scribble",
+          "label": "t:sections.global.settings.highlighted_text.options__8.label"
+        }
+      ],
+      "default": "none",
+      "label": "t:sections.global.settings.highlighted_text.label"
+    },
+    {
+      "visible_if": "{{ section.settings.highlighted_text == 'scribble' }}",
+      "type": "select",
+      "id": "highlighted_scribble",
+      "options": [
+        {
+          "value": "circle",
+          "label": "t:sections.global.settings.highlighted_scribble.options__1.label"
+        },
+        {
+          "value": "basic-underline",
+          "label": "t:sections.global.settings.highlighted_scribble.options__2.label"
+        },
+        {
+          "value": "sketch-underline",
+          "label": "t:sections.global.settings.highlighted_scribble.options__3.label"
+        },
+        {
+          "value": "squiggle-underline",
+          "label": "t:sections.global.settings.highlighted_scribble.options__4.label"
+        },
+        {
+          "value": "squiggle-underline-2",
+          "label": "t:sections.global.settings.highlighted_scribble.options__5.label"
+        }
+      ],
+      "default": "circle",
+      "label": "t:sections.global.settings.highlighted_scribble.label",
+      "info": "t:sections.global.settings.highlighted_scribble.info"
+    },
+    {
+      "visible_if": "{{ section.settings.highlighted_text != 'none' }}",
+      "type": "checkbox",
+      "id": "highlighted_reveal",
+      "label": "t:sections.global.settings.highlighted_reveal.label",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.header__colors.content",
+      "info": "t:sections.global.settings.header__colors.info"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "t:sections.global.settings.color_text.label"
+    },
+    {
+      "type": "color",
+      "id": "color_background",
+      "label": "t:sections.global.settings.color_background.label"
+    },
+    {
+      "type": "color_background",
+      "id": "gradient_background",
+      "label": "t:sections.global.settings.gradient_background.label"
+    },
+    {
+      "type": "color",
+      "id": "color_highlight",
+      "label": "t:sections.global.settings.color_highlight.label"
+    },
+    {
+      "type": "color_background",
+      "id": "gradient_highlight",
+      "label": "t:sections.global.settings.gradient_highlight.label"
+    },
+    {
+      "type": "color",
+      "id": "color_button_text",
+      "label": "t:sections.global.settings.color_button_text.label"
+    },
+    {
+      "type": "color",
+      "id": "color_button_background",
+      "label": "t:sections.global.settings.color_button_background.label"
+    },
+    {
+      "type": "color_background",
+      "id": "color_button_gradient",
+      "label": "t:sections.global.settings.color_button_gradient.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.header__section.content"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.global.settings.padding_top.label",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.global.settings.padding_bottom.label",
+      "default": 60
+    },
+    {
+      "type": "checkbox",
+      "id": "divider",
+      "label": "t:sections.global.settings.divider.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "t:sections.global.settings.full_width.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "rounded",
+      "default": false,
+      "label": "t:sections.global.settings.rounded.label"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "t:sections.comparison-table.blocks.headings.name",
+      "type": "headings",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "t:sections.comparison-table.blocks.headings.settings.paragraph.content"
+        },
+        {
+          "type": "text",
+          "id": "heading_1",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_1.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_2",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_2.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_3",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_3.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_4",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_4.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_5",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_5.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_6",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_6.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_7",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_7.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_8",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_8.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_9",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_9.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_10",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_10.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_11",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_11.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_12",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_12.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_13",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_13.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_14",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_14.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_15",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_15.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_16",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_16.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_17",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_17.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_18",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_18.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_19",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_19.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_20",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_20.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_21",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_21.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_22",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_22.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_23",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_23.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_24",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_24.label"
+        },
+        {
+          "type": "text",
+          "id": "heading_25",
+          "label": "t:sections.comparison-table.blocks.headings.settings.heading_25.label"
+        }
+      ]
+    },
+    {
+      "name": "t:sections.comparison-table.blocks.values.name",
+      "type": "values",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "t:sections.global.settings.product.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_1",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_1.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_2",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_2.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_3",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_3.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_4",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_4.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_5",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_5.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_6",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_6.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_7",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_7.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_8",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_8.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_9",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_9.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_10",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_10.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_11",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_11.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_12",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_12.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_13",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_13.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_14",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_14.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_15",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_15.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_16",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_16.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_17",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_17.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_18",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_18.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_19",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_19.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_20",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_20.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_21",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_21.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_22",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_22.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_23",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_23.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_24",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_24.label"
+        },
+        {
+          "type": "richtext",
+          "id": "value_25",
+          "label": "t:sections.comparison-table.blocks.values.settings.value_25.label"
+        },
+        {
+          "type": "select",
+          "id": "text_size",
+          "options": [
+            {
+              "value": "text-sm",
+              "label": "t:sections.global.settings.text_size.options__1.label"
+            },
+            {
+              "value": "text-base",
+              "label": "t:sections.global.settings.text_size.options__2.label"
+            },
+            {
+              "value": "text-base lg:text-lg",
+              "label": "t:sections.global.settings.text_size.options__3.label"
+            },
+            {
+              "value": "text-base lg:text-xl",
+              "label": "t:sections.global.settings.text_size.options__4.label"
+            }
+          ],
+          "default": "text-sm",
+          "label": "t:sections.global.settings.text_size.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.comparison-table.name",
+      "category": "t:categories.products",
+      "blocks": [
+        {
+          "type": "headings",
+          "settings": {
+            "heading_1": "Heading 1",
+            "heading_2": "Heading 2",
+            "heading_3": "Heading 3"
+          }
+        },
+        {
+          "type": "values",
+          "settings": {
+            "value_1": "<p>Value 1</p>",
+            "value_2": "<p>Value 2</p>",
+            "value_3": "<p>Value 3</p>"
+          }
+        },
+        {
+          "type": "values",
+          "settings": {
+            "value_1": "<p>Value 1</p>",
+            "value_2": "<p>Value 2</p>",
+            "value_3": "<p>Value 3</p>"
+          }
+        },
+        {
+          "type": "values",
+          "settings": {
+            "value_1": "<p>Value 1</p>",
+            "value_2": "<p>Value 2</p>",
+            "value_3": "<p>Value 3</p>"
+          }
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": [
+      "footer",
+      "header",
+      "custom.overlay"
+    ]
+  }
+}
+{% endschema %}

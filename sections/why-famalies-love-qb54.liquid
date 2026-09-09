@@ -1,0 +1,239 @@
+
+{% liquid
+  assign id = section.id
+%}
+
+<section class="why-love-{{ id }}">
+  <div class="page-width">
+    <div class="layout">
+      <div class="media">
+        {% if section.settings.image != blank %}
+          <div class="image-wrap">
+            <img
+              src="{{ section.settings.image | image_url: width: 1000 }}"
+              alt="{{ section.settings.heading | escape }}"
+              width="1000"
+              height="1000"
+              loading="lazy">
+          </div>
+        {% endif %}
+
+        {% if section.settings.stat_text != blank %}
+          <div class="stat">
+            {% if section.settings.stat_icon != blank %}
+              <img
+                src="{{ section.settings.stat_icon | image_url: width: 80 }}"
+                alt=""
+                width="40"
+                height="40">
+            {% endif %}
+            <div>
+              <strong>{{ section.settings.stat_text }}</strong>
+              <span>{{ section.settings.stat_label }}</span>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="content">
+        <h2 class="heading">
+          {{ section.settings.heading_prefix }}
+          <span>{{ section.settings.heading_highlight }}</span>
+        </h2>
+
+        <p class="subheading">{{ section.settings.subheading }}</p>
+
+        <div class="features">
+          {% for block in section.blocks %}
+            <div class="feature" {{ block.shopify_attributes }}>
+              <div class="icon">
+                {% if block.settings.icon != blank %}
+                  <img
+                    src="{{ block.settings.icon | image_url: width: 80 }}"
+                    alt=""
+                    width="40"
+                    height="40">
+                {% endif %}
+              </div>
+              <div class="text">
+                <strong>{{ block.settings.title }}</strong>
+                <p>{{ block.settings.text }}</p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .why-love-{{ id }} {
+      background: {{ section.settings.background }};
+      padding: {{ section.settings.padding_mobile }}px 0;
+    }
+
+    .why-love-{{ id }} .layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .why-love-{{ id }} .image-wrap img {
+      width: 100%;
+      height: auto;
+      border-radius: {{ section.settings.image_radius }}px;
+      display: block;
+    }
+
+    .why-love-{{ id }} .stat {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: {{ section.settings.stat_bg }};
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-top: 16px;
+      max-width: 320px;
+    }
+
+    .why-love-{{ id }} .stat strong {
+      display: block;
+      font-size: 18px;
+    }
+
+    .why-love-{{ id }} .stat span {
+      font-size: 14px;
+      opacity: 0.7;
+    }
+
+    .why-love-{{ id }} .heading {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+      margin-bottom: 16px;
+    }
+
+    .why-love-{{ id }} .heading span {
+      color: {{ section.settings.highlight_color }};
+    }
+
+    .why-love-{{ id }} .subheading {
+      color: {{ section.settings.subheading_color }};
+      font-size: {{ section.settings.subheading_size_mobile }}px;
+      margin-bottom: 32px;
+      max-width: 520px;
+    }
+
+    .why-love-{{ id }} .features {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .why-love-{{ id }} .feature {
+      display: flex;
+      gap: 16px;
+    }
+
+    .why-love-{{ id }} .icon {
+      background: {{ section.settings.icon_bg }};
+      border-radius: 16px;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .why-love-{{ id }} .feature strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .why-love-{{ id }} .feature p {
+      color: {{ section.settings.feature_text_color }};
+      font-size: 15px;
+    }
+
+    @media (min-width: 750px) {
+      .why-love-{{ id }} {
+        padding: {{ section.settings.padding_desktop }}px 0;
+      }
+
+      .why-love-{{ id }} .layout {
+        grid-template-columns: 1fr 1fr;
+        gap: 64px;
+      }
+
+      .why-love-{{ id }} .heading {
+        font-size: {{ section.settings.heading_size_desktop }}px;
+      }
+
+      .why-love-{{ id }} .subheading {
+        font-size: {{ section.settings.subheading_size_desktop }}px;
+      }
+
+      .why-love-{{ id }} .features {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+      }
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "Why Families Love QB54",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Main image" },
+    { "type": "image_picker", "id": "stat_icon", "label": "Stat icon" },
+    { "type": "text", "id": "stat_text", "label": "Stat text", "default": "1,000,000+" },
+    { "type": "text", "id": "stat_label", "label": "Stat label", "default": "Happy Families" },
+
+    { "type": "text", "id": "heading_prefix", "label": "Heading prefix", "default": "Why Families" },
+    { "type": "text", "id": "heading_highlight", "label": "Heading highlight", "default": "Love QB54" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "More than just a game — it's a way to bring people together, create memories, and have fun outdoors." },
+
+    { "type": "color", "id": "background", "label": "Background", "default": "#faf9f5" },
+    { "type": "color", "id": "highlight_color", "label": "Highlight color", "default": "#3f6b4a" },
+    { "type": "color", "id": "subheading_color", "label": "Subheading color", "default": "#6b7f72" },
+    { "type": "color", "id": "feature_text_color", "label": "Feature text color", "default": "#6b7f72" },
+    { "type": "color", "id": "icon_bg", "label": "Icon background", "default": "#e7ede6" },
+    { "type": "color", "id": "stat_bg", "label": "Stat background", "default": "#ffffff" },
+
+    { "type": "range", "id": "image_radius", "label": "Image radius", "min": 0, "max": 40, "step": 2, "default": 24 },
+
+    { "type": "range", "id": "heading_size_mobile", "label": "Heading size mobile", "min": 24, "max": 48, "step": 2, "default": 32 },
+    { "type": "range", "id": "heading_size_desktop", "label": "Heading size desktop", "min": 36, "max": 72, "step": 2, "default": 52 },
+    { "type": "range", "id": "subheading_size_mobile", "label": "Subheading size mobile", "min": 14, "max": 22, "step": 1, "default": 16 },
+    { "type": "range", "id": "subheading_size_desktop", "label": "Subheading size desktop", "min": 16, "max": 26, "step": 1, "default": 18 },
+
+    { "type": "range", "id": "padding_mobile", "label": "Padding mobile", "min": 40, "max": 120, "step": 4, "default": 64 },
+    { "type": "range", "id": "padding_desktop", "label": "Padding desktop", "min": 80, "max": 200, "step": 4, "default": 120 }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        { "type": "image_picker", "id": "icon", "label": "Icon" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Family Bonding" },
+        { "type": "textarea", "id": "text", "label": "Description", "default": "Create lasting memories with a game the whole family can enjoy together." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Why Families Love QB54",
+      "blocks": [
+        { "type": "feature" },
+        { "type": "feature" },
+        { "type": "feature" },
+        { "type": "feature" },
+        { "type": "feature" },
+        { "type": "feature" }
+      ]
+    }
+  ]
+}
+{% endschema %}

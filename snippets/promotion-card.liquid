@@ -1,0 +1,147 @@
+{%- doc -%}
+  Renders a promotional card with image or video background and optional content overlay.
+
+  Supports responsive media, parallax effects, and flexible content positioning with CTA buttons.
+
+  @param {object} block - Block object with settings and attributes
+
+  @example
+  {% render 'promotion-card', block: block %}
+{%- enddoc -%}
+
+{%- liquid
+  assign promotion_has_content = false
+  if block.settings.icon != blank or block.settings.subheading != blank or block.settings.heading != blank or block.settings.content != blank or block.settings.button_label != blank
+    assign promotion_has_content = true
+  endif
+-%}
+
+<div class="card product-card product-card--promo block leading-none relative" id="shopify-block-{{ block.id }}">
+  <style>
+    #shopify-block-{{ block.id }} {
+      {%- render 'section-variables', section: block -%}
+      --card-column-size: {{ block.settings.column_size }};
+      --card-row-size: {{ block.settings.row_size }};
+    }
+  </style>
+  <div class="product-card__media{% unless promotion_has_content %} without-content{% endunless %} relative top-0 left-0 w-full h-full overflow-hidden">
+    <media-element class="flex relative top-0 left-0 w-full h-full"{% if block.type == 'promotion' %} data-parallax="0.3"{% endif %}>
+      {%- if block.type == 'promotion' -%}
+        <picture class="media block w-full h-full relative overflow-hidden">
+          {%- if block.settings.image != blank -%}
+            {%- if block.settings.image_mobile -%}
+              <source
+                media="(max-width: 767px)"
+                srcset="{{ block.settings.image_mobile | image_url: width: '400x' }} 400w, {{ block.settings.image_mobile | image_url: width: '600x' }} 600w, {{ block.settings.image_mobile | image_url: width: '800x' }} 800w, {{ block.settings.image_mobile | image_url: width: '1000x' }} 1000w"
+                width="{{ block.settings.image_mobile.width }}"
+                height="{{ block.settings.image_mobile.height }}"
+              >
+            {%- endif -%}
+
+            {{- block.settings.image | image_url: width: block.settings.image.width | image_tag: loading: 'lazy', widths: '180,360,540,720,900,1080', is: 'lazy-image' -}}
+          {%- else -%}
+            {{- 'collection-1' | placeholder_svg_tag: 'placeholder' -}}
+          {%- endif -%}
+        </picture>
+      {%- else -%}
+        {%- if block.settings.video_mobile or block.settings.video_url_mobile -%}
+          {%- render 'video',
+            video: block.settings.video_mobile,
+            video_url: block.settings.video_url_mobile,
+            muted: true,
+            autoplay: true,
+            loop: true,
+            description: block.settings.description,
+            cover_image: block.settings.cover_image_mobile,
+            show_play_button: false,
+            is_mobile: true,
+            class: 'media w-full h-full'
+          -%}
+        {%- endif -%}
+
+        {%- render 'video',
+          video: block.settings.video,
+          video_url: block.settings.video_url,
+          muted: true,
+          autoplay: true,
+          loop: true,
+          description: block.settings.description,
+          cover_image: block.settings.cover_image,
+          show_play_button: false,
+          class: 'media w-full h-full'
+        -%}
+      {%- endif -%}
+    </media-element>
+  </div>
+
+  {%- if promotion_has_content -%}
+    <div class="product-card__content z-1 absolute top-0 left-0 w-full h-full flex justify-center {{ block.settings.content_position_mobile }} {{ block.settings.content_position }} overflow-hidden">
+      <div class="md:text-{{ block.settings.text_alignment }} text-{{ block.settings.text_alignment_mobile }} w-full">
+        <div class="promo-box{% if block.settings.row_size == '2' %} promo-box--lg{% endif %} inline-block">
+          {%- liquid
+            if block.settings.icon != blank
+              echo block.settings.icon | image_url: width: block.settings.icon.width | image_tag: loading: 'lazy', widths: '80,96,160,192', is: 'lazy-image', class: 'promo-img inline-block'
+            endif
+          -%}
+  
+          {%- if block.settings.subheading != blank or block.settings.heading != blank or block.settings.content != blank -%}
+            <div class="flex flex-col gap-3">
+              {%- if block.settings.subheading != blank -%}
+                {%- liquid
+                  assign subtext_size = 'text-sm-lg'
+                  assign content_size = 'text-base leading-tight'
+                  if block.settings.content_layout == 'marquee'
+                    if block.settings.heading_size == 'title-sm' or block.settings.heading_size == 'title-md'
+                      assign subtext_size = 'subtext-md'
+                    else
+                      assign subtext_size = 'subtext-lg'
+                    endif
+                    assign content_size = subtext_size | append: ' leading-normal'
+                  endif
+                -%}
+                <p class="promo-subtitle font-medium {{ subtext_size }} leading-none">{{ block.settings.subheading }}</p>
+              {%- endif -%}
+
+              {%- if block.settings.heading != blank -%}
+                {%- if block.settings.content_layout == 'marquee' -%}
+                  <marquee-element class="scrolling-text--{{ block.settings.direction }} heading {{ block.settings.heading_size }} leading-none flex gap-1" data-speed="{{ block.settings.speed }}" data-direction="{{ block.settings.direction }}">
+                    <div class="promo-title marquee whitespace-nowrap">{{ block.settings.heading }}</div>
+                  </marquee-element>
+                {%- else -%}
+                  <p class="promo-title heading text-3xl tracking-tight leading-none">{{ block.settings.heading }}</p>
+                {%- endif -%}
+              {%- endif -%}
+  
+              {%- if block.settings.content != blank -%}
+                <div class="promo-content rte {{ content_size }}">
+                  {%- liquid
+                    if block.settings.highlighted_text == 'none'
+                      echo block.settings.content
+                    else
+                      assign with_gradient = false
+                      if block.settings.gradient_highlight != blank and block.settings.gradient_highlight != 'rgba(0,0,0,0)'
+                        assign with_gradient = true
+                      endif
+                      render 'highlighted-text', content: block.settings.content, style: block.settings.highlighted_text, scribble: block.settings.highlighted_scribble, gradient: with_gradient
+                    endif
+                  -%}
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+  
+          {%- if block.settings.button_label != blank -%}
+            {%- render 'button',
+              label: block.settings.button_label,
+              link: block.settings.button_link,
+              style: block.settings.button_style,
+              size: block.settings.button_size,
+              external: block.settings.button_external,
+              show_icon: block.settings.button_icon
+            -%}
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+</div>

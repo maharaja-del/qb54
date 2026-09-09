@@ -1,0 +1,233 @@
+{%- style -%}
+  .statistics-banner, .statistics-banner * { box-sizing: border-box; }
+  
+  .statistics-banner {
+    background: {{ section.settings.section_bg }};
+    width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .statistics-banner-container {
+    padding: {{ section.settings.section_padding }}px 20px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+  
+  .statistics-banner-grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.desktop_columns }}, 1fr);
+    gap: {{ section.settings.grid_gap }}px;
+    align-items: center;
+  }
+  
+  .statistics-banner-stat {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .statistics-banner-number {
+    font-size: {{ section.settings.number_font_size }}px;
+    font-weight: {{ section.settings.number_font_weight }};
+    color: {{ section.settings.number_color }};
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  
+  .statistics-banner-label {
+    font-size: {{ section.settings.label_font_size }}px;
+    font-weight: {{ section.settings.label_font_weight }};
+    color: {{ section.settings.label_color }};
+    line-height: 1.3;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+  
+  /* Mobile Slider Styles */
+  .statistics-banner-mobile-slider {
+    display: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .statistics-banner-mobile-slider::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .statistics-banner-mobile-grid {
+    display: flex;
+    gap: {{ section.settings.mobile_gap }}px;
+    padding: 0 20px;
+  }
+  
+  .statistics-banner-mobile-stat {
+    min-width: 200px;
+    flex-shrink: 0;
+    scroll-snap-align: center;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .statistics-banner-mobile-number {
+    font-size: {{ section.settings.mobile_number_font_size }}px;
+    font-weight: {{ section.settings.number_font_weight }};
+    color: {{ section.settings.number_color }};
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  
+  .statistics-banner-mobile-label {
+    font-size: {{ section.settings.mobile_label_font_size }}px;
+    font-weight: {{ section.settings.label_font_weight }};
+    color: {{ section.settings.label_color }};
+    line-height: 1.3;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+  
+  @media (max-width: 768px) {
+    .statistics-banner-grid {
+      display: none;
+    }
+    
+    .statistics-banner-mobile-slider {
+      display: block;
+    }
+    
+    .statistics-banner-container {
+      padding: {{ section.settings.mobile_section_padding }}px 0;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .statistics-banner-mobile-stat {
+      min-width: 160px;
+    }
+    
+    .statistics-banner-mobile-number {
+      font-size: {{ section.settings.mobile_number_font_size | minus: 8 }}px;
+    }
+    
+    .statistics-banner-mobile-label {
+      font-size: {{ section.settings.mobile_label_font_size | minus: 2 }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="statistics-banner">
+  <div class="statistics-banner-container">
+    <!-- Desktop Grid -->
+    <div class="statistics-banner-grid">
+      {% for block in section.blocks %}
+        {% case block.type %}
+          {% when 'statistic' %}
+            <div class="statistics-banner-stat" {{ block.shopify_attributes }}>
+              <h3 class="statistics-banner-number">{{ block.settings.number }}</h3>
+              <p class="statistics-banner-label">{{ block.settings.label }}</p>
+            </div>
+        {% endcase %}
+      {% endfor %}
+    </div>
+    
+    <!-- Mobile Slider -->
+    <div class="statistics-banner-mobile-slider">
+      <div class="statistics-banner-mobile-grid">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'statistic' %}
+              <div class="statistics-banner-mobile-stat" {{ block.shopify_attributes }}>
+                <h3 class="statistics-banner-mobile-number">{{ block.settings.number }}</h3>
+                <p class="statistics-banner-mobile-label">{{ block.settings.label }}</p>
+              </div>
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Statistics Banner",
+  "settings": [
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "desktop_columns", "label": "Statistics per row (Desktop)", "min": 2, "max": 6, "step": 1, "default": 4 },
+    { "type": "range", "id": "section_padding", "label": "Section padding", "min": 20, "max": 100, "step": 4, "default": 40 },
+    { "type": "range", "id": "mobile_section_padding", "label": "Mobile section padding", "min": 20, "max": 80, "step": 4, "default": 32 },
+    { "type": "range", "id": "grid_gap", "label": "Desktop gap between stats", "min": 20, "max": 100, "step": 4, "default": 40 },
+    { "type": "range", "id": "mobile_gap", "label": "Mobile gap between stats", "min": 16, "max": 60, "step": 4, "default": 24 },
+    
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "section_bg", "label": "Background color", "default": "#b8ff00" },
+    { "type": "color", "id": "number_color", "label": "Number color", "default": "#000000" },
+    { "type": "color", "id": "label_color", "label": "Label color", "default": "#000000" },
+    
+    { "type": "header", "content": "Typography - Desktop" },
+    { "type": "range", "id": "number_font_size", "label": "Number font size", "min": 32, "max": 80, "step": 2, "default": 64 },
+    { "type": "range", "id": "number_font_weight", "label": "Number font weight", "min": 400, "max": 900, "step": 100, "default": 800 },
+    { "type": "range", "id": "label_font_size", "label": "Label font size", "min": 10, "max": 18, "step": 1, "default": 12 },
+    { "type": "range", "id": "label_font_weight", "label": "Label font weight", "min": 400, "max": 900, "step": 100, "default": 600 },
+    
+    { "type": "header", "content": "Typography - Mobile" },
+    { "type": "range", "id": "mobile_number_font_size", "label": "Mobile number font size", "min": 28, "max": 60, "step": 2, "default": 48 },
+    { "type": "range", "id": "mobile_label_font_size", "label": "Mobile label font size", "min": 9, "max": 16, "step": 1, "default": 11 }
+  ],
+  "blocks": [
+    {
+      "type": "statistic",
+      "name": "Statistic",
+      "settings": [
+        { "type": "text", "id": "number", "label": "Number", "default": "100M+" },
+        { "type": "text", "id": "label", "label": "Label", "default": "SOCIAL MEDIA VIEWS" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Statistics Banner",
+      "blocks": [
+        {
+          "type": "statistic",
+          "settings": {
+            "number": "100M+",
+            "label": "SOCIAL MEDIA VIEWS"
+          }
+        },
+        {
+          "type": "statistic",
+          "settings": {
+            "number": "50K+",
+            "label": "SETS SOLD"
+          }
+        },
+        {
+          "type": "statistic",
+          "settings": {
+            "number": "275",
+            "label": "LBS SUPPORT"
+          }
+        },
+        {
+          "type": "statistic",
+          "settings": {
+            "number": "2-8",
+            "label": "PLAYERS PER GAME"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

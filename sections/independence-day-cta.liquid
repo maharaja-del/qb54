@@ -1,0 +1,261 @@
+{% comment %}
+  ID4-CTA — Final "Light It Up" call-to-action banner for 4th of July
+  Big patriotic closer with live countdown, click-to-copy coupon, fireworks glow.
+  Section: sections/independence-day-cta.liquid
+  Brand: QB54 — navy + gold + patriotic red
+{% endcomment %}
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  #id4-cta-{{ section.id }} {
+    --bg:    {{ section.settings.color_bg }};
+    --text:  {{ section.settings.color_text }};
+    --red:   {{ section.settings.color_red }};
+    --blue:  {{ section.settings.color_blue }};
+    --spark: {{ section.settings.color_spark }};
+    --muted: color-mix(in srgb, {{ section.settings.color_text }} 64%, transparent);
+    --line:  color-mix(in srgb, {{ section.settings.color_text }} 16%, transparent);
+
+    position: relative;
+    background:
+      radial-gradient(ellipse 70% 90% at 50% 120%, color-mix(in srgb, var(--red) 40%, var(--bg)) 0%, transparent 60%),
+      radial-gradient(ellipse 80% 70% at 50% -20%, color-mix(in srgb, var(--blue) 55%, var(--bg)) 0%, var(--bg) 60%),
+      var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    font-family: 'Sora', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    isolation: isolate;
+  }
+  #id4-cta-{{ section.id }} .id4c-stars {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      radial-gradient(1.8px 1.8px at 14% 20%, #fff, transparent),
+      radial-gradient(1.4px 1.4px at 84% 24%, var(--spark), transparent),
+      radial-gradient(2px 2px at 50% 12%, #fff, transparent),
+      radial-gradient(1.6px 1.6px at 68% 60%, var(--red), transparent),
+      radial-gradient(1.4px 1.4px at 28% 72%, #fff, transparent),
+      radial-gradient(1.6px 1.6px at 90% 70%, var(--spark), transparent);
+    opacity: .7;
+  }
+  #id4-cta-{{ section.id }} .id4c-burst {
+    position: absolute; z-index: 0; width: 220px; height: 220px; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, color-mix(in srgb, var(--spark) 40%, transparent) 0%, transparent 60%);
+    filter: blur(6px); animation: id4c-pulse 4s ease-in-out infinite;
+  }
+  #id4-cta-{{ section.id }} .id4c-burst.a { top: 8%; left: 8%; }
+  #id4-cta-{{ section.id }} .id4c-burst.b { bottom: 6%; right: 10%; background: radial-gradient(circle, color-mix(in srgb, var(--red) 45%, transparent) 0%, transparent 60%); animation-delay: 1.6s; }
+  @keyframes id4c-pulse { 0%,100% { transform: scale(.85); opacity: .5; } 50% { transform: scale(1.15); opacity: .9; } }
+
+  #id4-cta-{{ section.id }} .id4c-field {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 150px; z-index: 0; pointer-events: none;
+    background:
+      repeating-linear-gradient(90deg, transparent 0 56px, color-mix(in srgb, #fff 20%, transparent) 56px 58px),
+      linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--blue) 24%, transparent) 100%);
+    transform: perspective(420px) rotateX(64deg); transform-origin: bottom center;
+    mask-image: linear-gradient(180deg, transparent 0%, #000 72%);
+    opacity: .45;
+  }
+  #id4-cta-{{ section.id }} .id4c-inner {
+    position: relative; z-index: 2; max-width: 920px; margin: 0 auto; text-align: center;
+    padding: 0 clamp(20px, 4vw, 56px);
+  }
+  #id4-cta-{{ section.id }} .id4c-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 11px; font-weight: 800; letter-spacing: .26em; text-transform: uppercase;
+    color: var(--spark); margin-bottom: 18px;
+  }
+  #id4-cta-{{ section.id }} .id4c-eyebrow svg { width: 14px; height: 14px; fill: var(--spark); }
+  #id4-cta-{{ section.id }} .id4c-title {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(46px, 8vw, 92px); line-height: .9; letter-spacing: .01em; text-transform: uppercase; margin: 0 0 18px;
+  }
+  #id4-cta-{{ section.id }} .id4c-title .spark { color: var(--spark); }
+  #id4-cta-{{ section.id }} .id4c-title .stripe {
+    background: repeating-linear-gradient(180deg, var(--red) 0 18%, #fff 18% 36%, var(--red) 36% 54%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    -webkit-text-stroke: 1px color-mix(in srgb, #fff 30%, transparent);
+  }
+  #id4-cta-{{ section.id }} .id4c-sub { font-size: clamp(15px, 1.6vw, 18px); color: var(--muted); line-height: 1.6; max-width: 52ch; margin: 0 auto 28px; }
+
+  /* countdown */
+  #id4-cta-{{ section.id }} .id4c-count { display: inline-flex; gap: clamp(10px, 2vw, 18px); margin-bottom: 12px; }
+  #id4-cta-{{ section.id }} .id4c-unit {
+    position: relative; min-width: 78px; padding: 18px 12px 10px; border-radius: 12px;
+    background: linear-gradient(180deg, color-mix(in srgb, #000 16%, var(--bg)), color-mix(in srgb, #000 46%, var(--bg)));
+    border: 1px solid color-mix(in srgb, var(--spark) 22%, var(--line));
+    box-shadow: inset 0 2px 12px rgba(0,0,0,.55);
+  }
+  #id4-cta-{{ section.id }} .id4c-unit::before {
+    content: ''; position: absolute; top: 7px; left: 50%; transform: translateX(-50%);
+    width: 30px; height: 3px; border-radius: 2px; background: var(--spark); box-shadow: 0 0 10px var(--spark); opacity: .9;
+  }
+  #id4-cta-{{ section.id }} .id4c-unit:nth-child(even)::before { background: var(--red); box-shadow: 0 0 10px var(--red); }
+  #id4-cta-{{ section.id }} .id4c-num { font-family: 'Anton', sans-serif; font-size: clamp(36px, 5vw, 50px); line-height: 1; color: var(--spark); font-variant-numeric: tabular-nums; text-shadow: 0 0 16px color-mix(in srgb, var(--spark) 50%, transparent); }
+  #id4-cta-{{ section.id }} .id4c-lbl { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+  #id4-cta-{{ section.id }} .id4c-countlabel { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+  #id4-cta-{{ section.id }} .id4c-live { font-family: 'Anton', sans-serif; font-size: clamp(26px, 4vw, 40px); color: var(--spark); margin-bottom: 18px; letter-spacing: .03em; }
+
+  /* coupon */
+  #id4-cta-{{ section.id }} .id4c-coupon {
+    display: inline-flex; align-items: stretch; margin: 8px 0 26px; border-radius: 12px; overflow: hidden;
+    border: 1.5px dashed color-mix(in srgb, var(--spark) 60%, transparent); cursor: pointer; background: color-mix(in srgb, var(--spark) 8%, transparent);
+  }
+  #id4-cta-{{ section.id }} .id4c-coupon .lbl { padding: 12px 16px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); align-self: center; }
+  #id4-cta-{{ section.id }} .id4c-coupon .code { padding: 12px 20px; font-family: 'Anton', sans-serif; font-size: 26px; letter-spacing: .08em; color: var(--spark); background: color-mix(in srgb, var(--spark) 14%, transparent); }
+  #id4-cta-{{ section.id }} .id4c-coupon .copied { display: none; align-items: center; padding: 0 16px; color: var(--spark); font-weight: 700; font-size: 12px; }
+  #id4-cta-{{ section.id }} .id4c-coupon.is-copied .copied { display: inline-flex; }
+
+  #id4-cta-{{ section.id }} .id4c-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 18px 40px; border-radius: 999px; font-weight: 800; font-size: 16px; letter-spacing: .02em;
+    text-decoration: none; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease;
+    background: var(--spark); color: #11183b; box-shadow: 0 14px 36px color-mix(in srgb, var(--spark) 45%, transparent);
+  }
+  #id4-cta-{{ section.id }} .id4c-btn:hover { transform: translateY(-2px); box-shadow: 0 20px 48px color-mix(in srgb, var(--spark) 60%, transparent); }
+  #id4-cta-{{ section.id }} .id4c-fine { display: block; margin-top: 16px; font-size: 12px; color: var(--muted); }
+</style>
+
+<div id="id4-cta-{{ section.id }}"
+  data-target="{{ section.settings.target_date }}T{{ section.settings.target_time }}:00{{ section.settings.timezone_offset }}"
+  data-live="{{ section.settings.live_message | escape }}">
+  <div class="id4c-stars"></div>
+  <div class="id4c-field"></div>
+  <span class="id4c-burst a"></span>
+  <span class="id4c-burst b"></span>
+
+  <div class="id4c-inner">
+    {%- if section.settings.eyebrow != blank -%}
+      <div class="id4c-eyebrow">
+        <svg viewBox="0 0 24 24"><path d="M12 1.5l2.9 6.4 7 .7-5.2 4.7 1.5 6.9L12 17.8 5.8 20.9l1.5-6.9L2.1 8.6l7-.7z"/></svg>
+        {{ section.settings.eyebrow }}
+      </div>
+    {%- endif -%}
+
+    <h2 class="id4c-title">{{ section.settings.title }}</h2>
+    {%- if section.settings.subtitle != blank -%}<p class="id4c-sub">{{ section.settings.subtitle }}</p>{%- endif -%}
+
+    {%- if section.settings.show_countdown -%}
+      {%- if section.settings.countdown_label != blank -%}<div class="id4c-countlabel">{{ section.settings.countdown_label }}</div>{%- endif -%}
+      <div class="id4c-count" data-countdown>
+        <div class="id4c-unit"><div class="id4c-num" data-d>00</div><div class="id4c-lbl">Days</div></div>
+        <div class="id4c-unit"><div class="id4c-num" data-h>00</div><div class="id4c-lbl">Hrs</div></div>
+        <div class="id4c-unit"><div class="id4c-num" data-m>00</div><div class="id4c-lbl">Min</div></div>
+        <div class="id4c-unit"><div class="id4c-num" data-s>00</div><div class="id4c-lbl">Sec</div></div>
+      </div>
+      <div class="id4c-live" data-live-msg hidden></div>
+    {%- endif -%}
+
+    {%- if section.settings.show_coupon and section.settings.coupon_code != blank -%}
+      <div><span class="id4c-coupon" data-coupon data-code="{{ section.settings.coupon_code | escape }}" role="button" tabindex="0" aria-label="Copy coupon code">
+        <span class="lbl">{{ section.settings.coupon_label }}</span>
+        <span class="code">{{ section.settings.coupon_code }}</span>
+        <span class="copied">{{ section.settings.coupon_copied_text }}</span>
+      </span></div>
+    {%- endif -%}
+
+    {%- if section.settings.cta_label != blank -%}
+      <div><a class="id4c-btn" href="{{ section.settings.cta_url | default: '#' }}">{{ section.settings.cta_label }}</a></div>
+    {%- endif -%}
+
+    {%- if section.settings.fine_print != blank -%}<span class="id4c-fine">{{ section.settings.fine_print }}</span>{%- endif -%}
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById('id4-cta-{{ section.id }}');
+    if (!root) return;
+
+    /* ── Countdown ── */
+    var cd = root.querySelector('[data-countdown]');
+    if (cd) {
+      var target = new Date(root.getAttribute('data-target')).getTime();
+      var liveEl = root.querySelector('[data-live-msg]');
+      var dEl = cd.querySelector('[data-d]'), hEl = cd.querySelector('[data-h]'),
+          mEl = cd.querySelector('[data-m]'), sEl = cd.querySelector('[data-s]');
+      var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+      var tick = function () {
+        var diff = target - Date.now();
+        if (isNaN(target) || diff <= 0) {
+          cd.style.display = 'none';
+          if (liveEl) { liveEl.hidden = false; liveEl.textContent = root.getAttribute('data-live') || ''; }
+          if (timer) clearInterval(timer);
+          return;
+        }
+        var s = Math.floor(diff / 1000);
+        dEl.textContent = pad(Math.floor(s / 86400));
+        hEl.textContent = pad(Math.floor((s % 86400) / 3600));
+        mEl.textContent = pad(Math.floor((s % 3600) / 60));
+        sEl.textContent = pad(s % 60);
+      };
+      tick();
+      var timer = setInterval(tick, 1000);
+    }
+
+    /* ── Click-to-copy coupon ── */
+    var coupon = root.querySelector('[data-coupon]');
+    if (coupon) {
+      var copy = function () {
+        var code = coupon.getAttribute('data-code') || '';
+        var done = function () { coupon.classList.add('is-copied'); setTimeout(function () { coupon.classList.remove('is-copied'); }, 1800); };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(code).then(done).catch(done);
+        } else {
+          var t = document.createElement('textarea'); t.value = code; document.body.appendChild(t); t.select();
+          try { document.execCommand('copy'); } catch (e) {}
+          document.body.removeChild(t); done();
+        }
+      };
+      coupon.addEventListener('click', copy);
+      coupon.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); copy(); } });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "4th of July CTA",
+  "tag": "div",
+  "class": "independence-day-cta-section",
+  "settings": [
+    { "type": "header", "content": "Copy" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Don't Miss the Fireworks Sale" },
+    { "type": "textarea", "id": "title", "label": "Title", "info": "Use line breaks for stacked lines", "default": "Light It Up" },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "The biggest QB54 sale of the summer ends July 4. Grab your set, gather the crew, and make this 4th one for the highlight reel." },
+
+    { "type": "header", "content": "Countdown" },
+    { "type": "checkbox", "id": "show_countdown", "label": "Show countdown", "default": true },
+    { "type": "text", "id": "countdown_label", "label": "Label above countdown", "default": "Offer ends in" },
+    { "type": "text", "id": "target_date", "label": "Target date (YYYY-MM-DD)", "default": "2026-07-04" },
+    { "type": "text", "id": "target_time", "label": "Target time (HH:MM, 24h)", "default": "23:59" },
+    { "type": "text", "id": "timezone_offset", "label": "Timezone offset", "info": "e.g. -04:00 (EDT), -07:00 (PDT). Blank = visitor local time.", "default": "-04:00" },
+    { "type": "text", "id": "live_message", "label": "Message after timer ends", "default": "★ Happy 4th — Shop the Sale Now ★" },
+
+    { "type": "header", "content": "Coupon" },
+    { "type": "checkbox", "id": "show_coupon", "label": "Show coupon", "default": true },
+    { "type": "text", "id": "coupon_label", "label": "Coupon label", "default": "Tap to copy" },
+    { "type": "text", "id": "coupon_code", "label": "Coupon code", "default": "FREEDOM" },
+    { "type": "text", "id": "coupon_copied_text", "label": "\"Copied!\" text", "default": "Copied!" },
+
+    { "type": "header", "content": "Button" },
+    { "type": "text", "id": "cta_label", "label": "Button text", "default": "Shop the 4th of July Sale" },
+    { "type": "url", "id": "cta_url", "label": "Button URL" },
+    { "type": "text", "id": "fine_print", "label": "Fine print", "default": "Free shipping on orders over $50. Sale ends 7/4 at 11:59pm ET." },
+
+    { "type": "header", "content": "Section spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 200, "step": 2, "unit": "px", "default": 100 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 200, "step": 2, "unit": "px", "default": 110 },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_bg", "label": "Background", "default": "#141c40" },
+    { "type": "color", "id": "color_text", "label": "Text", "default": "#ffffff" },
+    { "type": "color", "id": "color_red", "label": "Red", "default": "#e11d2f" },
+    { "type": "color", "id": "color_blue", "label": "Blue (glow)", "default": "#2a3f8f" },
+    { "type": "color", "id": "color_spark", "label": "Gold accent (QB54 gold)", "default": "#f7b80d" }
+  ],
+  "presets": [ { "name": "4th of July CTA" } ]
+}
+{% endschema %}

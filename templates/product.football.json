@@ -1,0 +1,465 @@
+{
+  "sections": {
+    "main-product": {
+      "type": "main-product",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {
+            "title_size": "product-title-md",
+            "title_size_mobile": "product-title-md",
+            "show_price": true,
+            "show_rating": true
+          }
+        },
+        "yotpo_product_reviews_star_rating_NTAgzm": {
+          "type": "shopify://apps/yotpo-product-reviews/blocks/star-rating/eb7dfd7d-db44-4334-bc49-c893b51b36cf",
+          "settings": {
+            "product": "{{product}}"
+          }
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "enable_dynamic_variants": true,
+            "show_variant_labels": true,
+            "picker_type": "button",
+            "enable_color_swatches": true,
+            "color_swatch_type": "variant",
+            "size_chart": ""
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_quantity_selector": true,
+            "show_price": true,
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": false,
+            "enable_back_in_stock": true,
+            "show_back_in_stock_name": true,
+            "show_back_in_stock_phone": true
+          }
+        },
+        "pickup_availability": {
+          "type": "pickup_availability",
+          "settings": {}
+        },
+        "share": {
+          "type": "share",
+          "disabled": true,
+          "settings": {
+            "share_label": "Share",
+            "show_help_desk": true,
+            "help_label": "Need help?",
+            "help_type": "drawer",
+            "help_page": "",
+            "help_page_external": false
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {
+            "text_size": "text-base"
+          }
+        },
+        "collapsible_tab_VRx9Tx": {
+          "type": "collapsible_tab",
+          "settings": {
+            "opened": false,
+            "style": "with-border",
+            "icon": "truck",
+            "heading": "Shipping",
+            "content": "<ol><li>Orders take an estimated 2-4 business days to be delivered after departure from our warehouse. Departure from warehouse may take up to 5 business days.</li><li>The cutoff shipping time is 12 PM EST.</li><li>Tracking is provided on all orders. QB54 is not liable for lost orders if the tracking number shows that the order was delivered.</li><li>Customers must enter a complete address at checkout. QB54 is not liable for inaccurate or incomplete shipping addresses entered by customers.</li><li>QB54 is not liable for shipping delays made by the shipping carrier.</li><li>Customers can select an expedited shipping option at checkout.</li><li>Holidays, sales campaigns and inclement weather can impact shipping and delivery times.</li><li>Issues with orders must be reported within 48 hours of delivery.</li><li>We reserve the right to cancel any order.</li></ol>",
+            "page": "",
+            "liquid": "",
+            "text_size": "text-sm"
+          }
+        },
+        "collapsible_tab_QcLftd": {
+          "type": "collapsible_tab",
+          "settings": {
+            "opened": false,
+            "style": "with-border",
+            "icon": "return",
+            "heading": "Returns",
+            "content": "<p>Our policy lasts 30 days. If 30 days have gone by since your purchase, unfortunately we can’t offer you a refund or exchange.</p><p>To be eligible for a return, your item must be unused and in the same condition that you received it. It must also be in the original packaging.</p><p>To complete your return, we require a receipt or proof of purchase.</p><p>Please do not send your purchase back to the manufacturer.</p><p>There are certain situations where only partial refunds are granted (if applicable)</p><p>Any item not in its original condition, is damaged or missing parts for reasons not due to our error<br/>Any item that is returned more than 30 days after deliver</p>",
+            "page": "",
+            "liquid": "",
+            "text_size": "text-sm"
+          }
+        },
+        "text-1": {
+          "type": "text",
+          "settings": {
+            "icon": "return",
+            "iwidth": "custom",
+            "icon_width": 20,
+            "text": "100% MONEYBACK GUARANTEE",
+            "text_size": "text-sm"
+          }
+        },
+        "text-2": {
+          "type": "text",
+          "settings": {
+            "icon": "truck",
+            "iwidth": "custom",
+            "icon_width": 20,
+            "text": "FAST SHIPPING",
+            "text_size": "text-sm"
+          }
+        },
+        "text-3": {
+          "type": "text",
+          "settings": {
+            "icon": "lightning",
+            "iwidth": "custom",
+            "icon_width": 20,
+            "text": "PREMIUM QUALITY",
+            "text_size": "text-sm"
+          }
+        },
+        "sticky_buy_button": {
+          "type": "sticky_buy_button",
+          "settings": {}
+        },
+        "cro_badges": {
+          "type": "badges",
+          "settings": {
+            "show_sold_out": true,
+            "show_save_amount": true,
+            "save_type": "dollar"
+          }
+        },
+        "cro_inventory": {
+          "type": "inventory",
+          "settings": {
+            "inventory_threshold": 10,
+            "show_inventory_transfer": false,
+            "show_inventory_quantity": "low",
+            "color_scheme": "accent-2"
+          }
+        },
+        "cro_complementary": {
+          "type": "complementary",
+          "settings": {
+            "heading": "Complete Your Game Day",
+            "product_limit": 4,
+            "show_vendor": false,
+            "show_price": true
+          }
+        }
+      },
+      "block_order": [
+        "cro_badges",
+        "title",
+        "yotpo_product_reviews_star_rating_NTAgzm",
+        "variant_picker",
+        "cro_inventory",
+        "buy_buttons",
+        "pickup_availability",
+        "share",
+        "description",
+        "collapsible_tab_VRx9Tx",
+        "collapsible_tab_QcLftd",
+        "text-1",
+        "text-2",
+        "text-3",
+        "cro_complementary",
+        "sticky_buy_button"
+      ],
+      "custom_css": [
+        ".btn-text {font-size: 20px; font-weight: 600; text-transform: uppercase;}",
+        ".price {font-size: 24px; font-weight: 600;}"
+      ],
+      "settings": {
+        "enable_sticky_info": true,
+        "media_size": 66,
+        "gallery_layout": "thumbnail",
+        "thumbnail_position": "beside",
+        "image_ratio": "adapt_first",
+        "image_zoom": "lightbox",
+        "hide_variants": false,
+        "enable_video_autoplay": false,
+        "enable_video_looping": false,
+        "mobile_layout": "full_width",
+        "image_ratio_mobile": "adapt_first",
+        "mobile_thumbnail": false,
+        "padding_top": 56,
+        "padding_bottom": 84,
+        "divider": false,
+        "full_width": false,
+        "rounded": false
+      }
+    },
+    "help-drawer": {
+      "type": "help-drawer",
+      "blocks": {
+        "content-1": {
+          "type": "content",
+          "settings": {
+            "icon": "rocket",
+            "heading": "Shipping Information",
+            "text": "<p>Use this text to answer questions in as much detail as possible for your customers.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle",
+            "color_text": "#b45309",
+            "color_background": "#fffbeb",
+            "gradient_background": "",
+            "color_highlight": "#ffddbf",
+            "gradient_highlight": ""
+          }
+        },
+        "content-2": {
+          "type": "content",
+          "settings": {
+            "icon": "headphone",
+            "heading": "Customer Support",
+            "text": "<p>Use this text to answer questions in as much detail as possible for your customers.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle",
+            "color_text": "#0369a1",
+            "color_background": "#f0f9ff",
+            "gradient_background": "",
+            "color_highlight": "#ffddbf",
+            "gradient_highlight": ""
+          }
+        },
+        "content-3": {
+          "type": "content",
+          "settings": {
+            "icon": "chat_bubble",
+            "heading": "FAQ’s",
+            "text": "<p>Use this text to answer questions in as much detail as possible for your customers.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle",
+            "color_text": "#be123c",
+            "color_background": "#fff1f2",
+            "gradient_background": "",
+            "color_highlight": "#ffddbf",
+            "gradient_highlight": ""
+          }
+        },
+        "content-4": {
+          "type": "content",
+          "settings": {
+            "icon": "phone",
+            "heading": "Contact Us",
+            "text": "<p>Use this text to answer questions in as much detail as possible for your customers.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle",
+            "color_text": "#4d7c0f",
+            "color_background": "#f7fee7",
+            "gradient_background": "",
+            "color_highlight": "#ffddbf",
+            "gradient_highlight": ""
+          }
+        }
+      },
+      "block_order": [
+        "content-1",
+        "content-2",
+        "content-3",
+        "content-4"
+      ],
+      "disabled": true,
+      "settings": {
+        "heading": "Need help?",
+        "description": "<p>If you have any questions, you are always welcome to contact us. We'll get back to you as soon as possible, within 24 hours on weekdays.</p>"
+      }
+    },
+    "product-recommendations": {
+      "type": "product-recommendations",
+      "disabled": true,
+      "settings": {
+        "product_limit": 6,
+        "columns": 4,
+        "carousel_on_desktop": true,
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "heading": "You may also like",
+        "heading_size": "title-md",
+        "heading_alignment": "text-left md:items-end md:flex-row",
+        "heading_tag": "h2",
+        "subheading": "",
+        "description": "",
+        "highlighted_text": "none",
+        "highlighted_scribble": "circle",
+        "highlighted_reveal": false,
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "padding_top": 0,
+        "padding_bottom": 72,
+        "divider": false,
+        "full_width": false,
+        "rounded": true
+      }
+    },
+    "as_seen_on_media_R3ej7B": {
+      "type": "as-seen-on-media",
+      "blocks": {
+        "logo_MzWUD8": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/shark-tank-seeklogo.png",
+            "alt_text": "Media logo"
+          }
+        },
+        "logo_WGJ4RR": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/The_View_Logo.png",
+            "alt_text": "Media logo"
+          }
+        },
+        "logo_i7HxyN": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/good-morning-america-seeklogo.png",
+            "alt_text": "Media logo"
+          }
+        },
+        "logo_ffYzBz": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/logo-ABC-Logo.png",
+            "alt_text": "Media logo"
+          }
+        },
+        "logo_hbeDjp": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/logo-cropped-logo-3.png",
+            "alt_text": "Media logo"
+          }
+        }
+      },
+      "block_order": [
+        "logo_MzWUD8",
+        "logo_WGJ4RR",
+        "logo_i7HxyN",
+        "logo_ffYzBz",
+        "logo_hbeDjp"
+      ],
+      "name": "As Seen On – Media",
+      "settings": {
+        "eyebrow": "AS SEEN ON",
+        "heading": "",
+        "footer_text": "",
+        "columns_desktop": 5,
+        "logo_size_mobile": 80,
+        "logo_size_desktop": 120,
+        "background": "#f4f2e8",
+        "text_color": "#363a66",
+        "logo_opacity": 1,
+        "eyebrow_size_mobile": 12,
+        "eyebrow_size_desktop": 24,
+        "heading_size_mobile": 40,
+        "heading_size_desktop": 44,
+        "footer_size_mobile": 13,
+        "footer_size_desktop": 14,
+        "padding_top_mobile": 48,
+        "padding_bottom_mobile": 48,
+        "padding_top_desktop": 40,
+        "padding_bottom_desktop": 40
+      }
+    },
+    "video_embed_YaiYxe": {
+      "type": "video-embed",
+      "name": "Video Embed",
+      "settings": {
+        "heading": "See QB54 in Action",
+        "subheading": "Watch how easy it is to set up and play. The ultimate football experience for everyone!",
+        "video": "shopify://files/videos/How to play.mp4",
+        "video_url": "",
+        "background": "#ffffff",
+        "subheading_color": "#6b7f72",
+        "radius": 20,
+        "max_width": 1000,
+        "heading_size_mobile": 32,
+        "heading_size_desktop": 48,
+        "subheading_size_mobile": 16,
+        "subheading_size_desktop": 18,
+        "padding_mobile": 64,
+        "padding_desktop": 120
+      }
+    },
+    "recently_viewed_QV7JjW": {
+      "type": "recently-viewed",
+      "name": "t:sections.recently-viewed.name",
+      "settings": {
+        "product_limit": 6,
+        "columns": 4,
+        "carousel_on_desktop": true,
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "heading": "Recently viewed",
+        "heading_size": "title-md",
+        "heading_alignment": "text-left md:items-end md:flex-row",
+        "heading_tag": "h2",
+        "subheading": "",
+        "description": "",
+        "highlighted_text": "none",
+        "highlighted_scribble": "circle",
+        "highlighted_reveal": false,
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "divider": false,
+        "full_width": false,
+        "rounded": false
+      }
+    },
+    "1769208114b1b3bc03": {
+      "type": "apps",
+      "blocks": {
+        "yotpo_product_reviews_reviews_FbDnTt": {
+          "type": "shopify://apps/yotpo-product-reviews/blocks/reviews/eb7dfd7d-db44-4334-bc49-c893b51b36cf",
+          "settings": {
+            "product": "{{product}}"
+          }
+        }
+      },
+      "block_order": [
+        "yotpo_product_reviews_reviews_FbDnTt"
+      ],
+      "settings": {
+        "color_text": "",
+        "color_background": "",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "",
+        "color_button_background": "",
+        "color_button_gradient": "",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "divider": false,
+        "full_width": false,
+        "rounded": false
+      }
+    }
+  },
+  "order": [
+    "main-product",
+    "help-drawer",
+    "product-recommendations",
+    "as_seen_on_media_R3ej7B",
+    "video_embed_YaiYxe",
+    "recently_viewed_QV7JjW",
+    "1769208114b1b3bc03"
+  ]
+}

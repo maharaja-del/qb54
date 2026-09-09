@@ -1,0 +1,194 @@
+{% comment %} QB54 × @germanpackerscave — Content Gallery / The Tour Section {% endcomment %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  #gpc-gal-{{ section.id }} {
+    --qb: {{ section.settings.color_qb }};
+    --gpc: {{ section.settings.color_gpc }};
+    padding: 88px 0;
+    background: {{ section.settings.color_bg }};
+    border-top: 1px solid rgba(255,182,18,.1);
+    font-family: 'Sora', sans-serif;
+    overflow: hidden;
+  }
+  #gpc-gal-{{ section.id }} .g-inner { max-width: 1340px; margin: 0 auto; padding: 0 48px; }
+
+  #gpc-gal-{{ section.id }} .g-head {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 24px;
+    margin-bottom: 44px;
+  }
+  #gpc-gal-{{ section.id }} .g-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: .6rem; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--gpc); margin-bottom: 14px;
+  }
+  #gpc-gal-{{ section.id }} .g-eyebrow::before { content: ''; width: 26px; height: 1px; background: var(--gpc); opacity: .6; }
+  #gpc-gal-{{ section.id }} .g-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px,5vw,64px); line-height: .95; color: #fff; margin: 0;
+  }
+  #gpc-gal-{{ section.id }} .g-title span {
+    -webkit-text-fill-color: transparent;
+    background: linear-gradient(90deg, var(--qb), var(--gpc));
+    -webkit-background-clip: text; background-clip: text;
+  }
+  #gpc-gal-{{ section.id }} .g-follow {
+    flex-shrink: 0; display: inline-flex; align-items: center; gap: 9px;
+    background: rgba(255,182,18,.08); border: 1px solid rgba(255,182,18,.3);
+    border-radius: 100px; padding: 11px 20px; text-decoration: none;
+    font-size: .68rem; font-weight: 700; letter-spacing: .08em; color: #fff;
+    transition: background .25s, transform .2s;
+  }
+  #gpc-gal-{{ section.id }} .g-follow:hover { background: rgba(255,182,18,.16); transform: translateY(-2px); }
+  #gpc-gal-{{ section.id }} .g-follow b { color: var(--gpc); }
+
+  /* Feed grid */
+  #gpc-gal-{{ section.id }} .g-grid {
+    display: grid; grid-template-columns: repeat(5,1fr); gap: 16px;
+  }
+  #gpc-gal-{{ section.id }} .g-card {
+    position: relative; border-radius: 14px; overflow: hidden;
+    aspect-ratio: 9/16; background: #141714;
+    border: 1px solid rgba(255,255,255,.07);
+    transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s;
+  }
+  #gpc-gal-{{ section.id }} .g-card img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform .6s cubic-bezier(.16,1,.3,1);
+  }
+  #gpc-gal-{{ section.id }} .g-card:hover { transform: translateY(-5px); box-shadow: 0 20px 50px -18px rgba(0,0,0,.75); }
+  #gpc-gal-{{ section.id }} .g-card:hover img { transform: scale(1.06); }
+  #gpc-gal-{{ section.id }} .g-card::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(to top, rgba(10,14,10,.5) 0%, transparent 42%);
+    opacity: 0; transition: opacity .35s;
+  }
+  #gpc-gal-{{ section.id }} .g-card:hover::after { opacity: 1; }
+  #gpc-gal-{{ section.id }} .g-card .ph {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: rgba(255,255,255,.25);
+    background: repeating-linear-gradient(45deg,#141714,#141714 10px,#181c18 10px,#181c18 20px);
+  }
+  #gpc-gal-{{ section.id }} .g-card .g-play {
+    position: absolute; top: 12px; right: 12px; z-index: 2;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(10,14,10,.6); backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,.18);
+    display: flex; align-items: center; justify-content: center;
+  }
+  #gpc-gal-{{ section.id }} .g-card .g-play svg { width: 11px; height: 11px; fill: #fff; margin-left: 1px; }
+
+  /* Bottom CTA bar */
+  #gpc-gal-{{ section.id }} .g-foot {
+    margin-top: 48px; text-align: center;
+  }
+  #gpc-gal-{{ section.id }} .g-cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--qb); color: #000;
+    font-weight: 800; font-size: .74rem; letter-spacing: .14em; text-transform: uppercase;
+    text-decoration: none; padding: 16px 38px; border-radius: 4px;
+    transition: transform .2s, box-shadow .3s;
+  }
+  #gpc-gal-{{ section.id }} .g-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(185,249,0,.3); }
+
+  @media(max-width:1080px){ #gpc-gal-{{ section.id }} .g-grid { grid-template-columns: repeat(4,1fr); } }
+  @media(max-width:820px){
+    #gpc-gal-{{ section.id }} .g-grid { grid-template-columns: repeat(3,1fr); }
+    #gpc-gal-{{ section.id }} .g-head { flex-direction: column; align-items: flex-start; }
+  }
+  @media(max-width:640px){
+    #gpc-gal-{{ section.id }} { padding: 60px 0; }
+    #gpc-gal-{{ section.id }} .g-inner { padding: 0 16px; }
+    #gpc-gal-{{ section.id }} .g-grid { grid-template-columns: repeat(2,1fr); gap: 10px; }
+    #gpc-gal-{{ section.id }} .g-cta { width: 100%; justify-content: center; }
+  }
+</style>
+
+<section id="gpc-gal-{{ section.id }}">
+  <div class="g-inner">
+
+    <div class="g-head">
+      <div>
+        <span class="g-eyebrow">{{ section.settings.eyebrow }}</span>
+        <h2 class="g-title">{{ section.settings.title }}</h2>
+      </div>
+      {%- if section.settings.follow_url != blank -%}
+        <a href="{{ section.settings.follow_url }}" class="g-follow" target="_blank" rel="noopener">
+          {{ section.settings.follow_label }} <b>{{ section.settings.follow_handle }}</b>
+        </a>
+      {%- endif -%}
+    </div>
+
+    <div class="g-grid">
+      {%- for block in section.blocks -%}
+        {%- if block.settings.url != blank -%}
+          <a class="g-card" href="{{ block.settings.url }}" target="_blank" rel="noopener" {{ block.shopify_attributes }}>
+        {%- else -%}
+          <div class="g-card" {{ block.shopify_attributes }}>
+        {%- endif -%}
+          {%- if block.settings.image != blank -%}
+            <img src="{{ block.settings.image | image_url: width: 480 }}" alt="QB54 × @germanpackerscave" loading="lazy">
+          {%- else -%}
+            <div class="ph">Add photo</div>
+          {%- endif -%}
+          {%- if block.settings.is_video -%}
+            <span class="g-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+          {%- endif -%}
+        {%- if block.settings.url != blank -%}</a>{%- else -%}</div>{%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.cta_label != blank -%}
+      <div class="g-foot">
+        <a href="{{ section.settings.cta_url }}" class="g-cta">{{ section.settings.cta_label }}</a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "QB54 × GPC Gallery",
+  "tag": "div",
+  "settings": [
+    { "type": "header", "content": "Heading" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The Tour" },
+    { "type": "text", "id": "title", "label": "Title", "default": "QB54 <span>Around The World</span>" },
+    { "type": "header", "content": "Follow chip" },
+    { "type": "text", "id": "follow_label", "label": "Follow label", "default": "Follow" },
+    { "type": "text", "id": "follow_handle", "label": "Handle", "default": "@germanpackerscave" },
+    { "type": "url", "id": "follow_url", "label": "Profile URL" },
+    { "type": "header", "content": "Bottom CTA" },
+    { "type": "text", "id": "cta_label", "label": "Button label", "default": "🏈 Shop QB54 — 40% Off" },
+    { "type": "url", "id": "cta_url", "label": "Button URL" },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_bg", "label": "Background", "default": "#0a0e0a" },
+    { "type": "color", "id": "color_qb", "label": "QB54 green", "default": "#b9f900" },
+    { "type": "color", "id": "color_gpc", "label": "Creator gold", "default": "#ffb612" }
+  ],
+  "blocks": [
+    {
+      "type": "post",
+      "name": "Post",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Photo (vertical 9:16 works best)" },
+        { "type": "checkbox", "id": "is_video", "label": "Show play icon (video)", "default": false },
+        { "type": "url", "id": "url", "label": "Link (optional)" }
+      ]
+    }
+  ],
+  "max_blocks": 10,
+  "presets": [
+    {
+      "name": "QB54 × GPC Gallery",
+      "blocks": [
+        { "type": "post" }, { "type": "post" }, { "type": "post" }, { "type": "post" }, { "type": "post" },
+        { "type": "post" }, { "type": "post" }, { "type": "post" }, { "type": "post" }, { "type": "post" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,393 @@
+{%- style -%}
+  /* GLOBAL SAFETY */
+  .game-set-hero, .game-set-hero * { box-sizing: border-box; }
+  
+  .game-set-hero {
+    background: {{ section.settings.section_bg }};
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+    min-height: {{ section.settings.section_height }}px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .game-set-hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  
+  .game-set-hero-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  
+  .game-set-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba({{ section.settings.overlay_color | color_extract: 'red' }}, {{ section.settings.overlay_color | color_extract: 'green' }}, {{ section.settings.overlay_color | color_extract: 'blue' }}, {{ section.settings.overlay_opacity | divided_by: 100.0 }});
+    z-index: 1;
+  }
+  
+  .game-set-hero-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: {{ section.settings.content_padding_y }}px {{ section.settings.content_padding_x }}px;
+    text-align: center;
+  }
+  
+  .game-set-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: {{ section.settings.badge_bg }};
+    color: {{ section.settings.badge_text_color }};
+    padding: {{ section.settings.badge_padding_y }}px {{ section.settings.badge_padding_x }}px;
+    border-radius: {{ section.settings.badge_radius }}px;
+    font-size: {{ section.settings.badge_font_size }}px;
+    font-weight: {{ section.settings.badge_font_weight }};
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: {{ section.settings.badge_margin_bottom }}px;
+  }
+  
+  .game-set-hero-heading {
+    font-size: {{ section.settings.heading_font_size }}px;
+    font-weight: {{ section.settings.heading_font_weight }};
+    color: {{ section.settings.heading_color }};
+    line-height: {{ section.settings.heading_line_height | divided_by: 100.0 }};
+    letter-spacing: {{ section.settings.heading_letter_spacing | divided_by: 100.0 }}em;
+    margin: 0 0 {{ section.settings.heading_margin_bottom }}px 0;
+    max-width: {{ section.settings.heading_max_width }}px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .game-set-hero-text {
+    font-size: {{ section.settings.text_font_size }}px;
+    color: {{ section.settings.text_color }};
+    line-height: {{ section.settings.text_line_height | divided_by: 100.0 }};
+    margin: 0 0 {{ section.settings.text_margin_bottom }}px 0;
+    max-width: {{ section.settings.text_max_width }}px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .game-set-hero-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: {{ section.settings.button_gap }}px;
+    flex-wrap: wrap;
+  }
+  
+  .game-set-hero-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: {{ section.settings.button_padding_y }}px {{ section.settings.button_padding_x }}px;
+    border-radius: {{ section.settings.button_radius }}px;
+    font-size: {{ section.settings.button_font_size }}px;
+    font-weight: {{ section.settings.button_font_weight }};
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+  
+  .game-set-hero-btn--primary {
+    background: {{ section.settings.primary_btn_bg }};
+    color: {{ section.settings.primary_btn_text_color }};
+    border: 2px solid {{ section.settings.primary_btn_bg }};
+  }
+  
+  .game-set-hero-btn--primary:hover {
+    background: {{ section.settings.primary_btn_hover_bg }};
+    border-color: {{ section.settings.primary_btn_hover_bg }};
+    transform: translateY(-2px);
+  }
+  
+  .game-set-hero-btn--secondary {
+    background: {{ section.settings.secondary_btn_bg }};
+    color: {{ section.settings.secondary_btn_text_color }};
+    border: 2px solid {{ section.settings.secondary_btn_border }};
+  }
+  
+  .game-set-hero-btn--secondary:hover {
+    background: {{ section.settings.secondary_btn_hover_bg }};
+    color: {{ section.settings.secondary_btn_hover_text }};
+    border-color: {{ section.settings.secondary_btn_hover_border }};
+    transform: translateY(-2px);
+  }
+  
+  .game-set-hero-btn-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+  
+  .game-set-hero-btn-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* MOBILE IMAGE */
+  .game-set-hero-mobile-bg {
+    display: none;
+  }
+  
+  @media (max-width: 768px) {
+    .game-set-hero {
+      min-height: {{ section.settings.mobile_section_height }}px;
+    }
+    
+    .game-set-hero-bg {
+      display: none;
+    }
+    
+    .game-set-hero-mobile-bg {
+      display: block;
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    
+    .game-set-hero-mobile-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    
+    .game-set-hero-content {
+      padding: {{ section.settings.mobile_content_padding_y }}px {{ section.settings.mobile_content_padding_x }}px;
+    }
+    
+    .game-set-hero-badge {
+      font-size: {{ section.settings.mobile_badge_font_size }}px;
+      padding: {{ section.settings.mobile_badge_padding_y }}px {{ section.settings.mobile_badge_padding_x }}px;
+      margin-bottom: {{ section.settings.mobile_badge_margin_bottom }}px;
+    }
+    
+    .game-set-hero-heading {
+      font-size: {{ section.settings.mobile_heading_font_size }}px;
+      margin-bottom: {{ section.settings.mobile_heading_margin_bottom }}px;
+      max-width: 100%;
+    }
+    
+    .game-set-hero-text {
+      font-size: {{ section.settings.mobile_text_font_size }}px;
+      margin-bottom: {{ section.settings.mobile_text_margin_bottom }}px;
+      max-width: 100%;
+    }
+    
+    .game-set-hero-buttons {
+      flex-direction: column;
+      gap: {{ section.settings.mobile_button_gap }}px;
+    }
+    
+    .game-set-hero-btn {
+      width: 100%;
+      max-width: 300px;
+      padding: {{ section.settings.mobile_button_padding_y }}px {{ section.settings.mobile_button_padding_x }}px;
+      font-size: {{ section.settings.mobile_button_font_size }}px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .game-set-hero {
+      min-height: {{ section.settings.mobile_section_height | times: 0.8 | round }}px;
+    }
+    
+    .game-set-hero-content {
+      padding: {{ section.settings.mobile_content_padding_y | times: 0.8 | round }}px {{ section.settings.mobile_content_padding_x | times: 0.8 | round }}px;
+    }
+    
+    .game-set-hero-heading {
+      font-size: {{ section.settings.mobile_heading_font_size | times: 0.9 | round }}px;
+    }
+    
+    .game-set-hero-text {
+      font-size: {{ section.settings.mobile_text_font_size | times: 0.9 | round }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="game-set-hero">
+  <!-- Desktop Background -->
+  <div class="game-set-hero-bg">
+    {% if section.settings.desktop_bg_image != blank %}
+      {{ section.settings.desktop_bg_image | image_url: width: 1920 | image_tag: loading: 'lazy' }}
+    {% endif %}
+  </div>
+  
+  <!-- Mobile Background -->
+  <div class="game-set-hero-mobile-bg">
+    {% if section.settings.mobile_bg_image != blank %}
+      {{ section.settings.mobile_bg_image | image_url: width: 768 | image_tag: loading: 'lazy' }}
+    {% endif %}
+  </div>
+  
+  <!-- Overlay -->
+  {% if section.settings.show_overlay %}
+    <div class="game-set-hero-overlay"></div>
+  {% endif %}
+  
+  <!-- Content -->
+  <div class="game-set-hero-content">
+    {% if section.settings.badge_text != blank %}
+      <div class="game-set-hero-badge">
+        {{ section.settings.badge_text }}
+      </div>
+    {% endif %}
+    
+    {% if section.settings.heading != blank %}
+      <h1 class="game-set-hero-heading">
+        {{ section.settings.heading }}
+      </h1>
+    {% endif %}
+    
+    {% if section.settings.text != blank %}
+      <p class="game-set-hero-text">
+        {{ section.settings.text }}
+      </p>
+    {% endif %}
+    
+    <div class="game-set-hero-buttons">
+      {% if section.settings.primary_btn_text != blank %}
+        <a href="{{ section.settings.primary_btn_link }}" class="game-set-hero-btn game-set-hero-btn--primary">
+          {{ section.settings.primary_btn_text }}
+          {% if section.settings.show_primary_btn_icon %}
+            <span class="game-set-hero-btn-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </span>
+          {% endif %}
+        </a>
+      {% endif %}
+      
+      {% if section.settings.secondary_btn_text != blank %}
+        <a href="{{ section.settings.secondary_btn_link }}" class="game-set-hero-btn game-set-hero-btn--secondary">
+          {{ section.settings.secondary_btn_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const btn = document.querySelector('a.game-set-hero-btn.game-set-hero-btn--secondary');
+  const target = document.querySelector('#scrolltoHere');
+
+  if (btn && target) {
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    });
+  }
+});
+</script>
+{% schema %}
+{
+  "name": "Game Set Hero Banner",
+  "settings": [
+    { "type": "header", "content": "Background Images" },
+    { "type": "image_picker", "id": "desktop_bg_image", "label": "Desktop background image" },
+    { "type": "image_picker", "id": "mobile_bg_image", "label": "Mobile background image" },
+    { "type": "checkbox", "id": "show_overlay", "label": "Show overlay", "default": true },
+    
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "section_height", "label": "Section height (Desktop)", "min": 300, "max": 800, "step": 20, "default": 500 },
+    { "type": "range", "id": "mobile_section_height", "label": "Section height (Mobile)", "min": 300, "max": 700, "step": 20, "default": 460 },
+    { "type": "range", "id": "content_padding_y", "label": "Content padding Y", "min": 40, "max": 120, "step": 4, "default": 80 },
+    { "type": "range", "id": "content_padding_x", "label": "Content padding X", "min": 20, "max": 80, "step": 4, "default": 40 },
+    { "type": "range", "id": "mobile_content_padding_y", "label": "Mobile content padding Y", "min": 20, "max": 80, "step": 4, "default": 60 },
+    { "type": "range", "id": "mobile_content_padding_x", "label": "Mobile content padding X", "min": 16, "max": 60, "step": 4, "default": 24 },
+    
+    { "type": "header", "content": "Colors & Overlay" },
+    { "type": "color", "id": "section_bg", "label": "Section background", "default": "#000000" },
+    { "type": "color", "id": "overlay_color", "label": "Overlay color", "default": "#000000" },
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay opacity (%)", "min": 0, "max": 80, "step": 5, "default": 30 },
+    
+    { "type": "header", "content": "Badge" },
+    { "type": "text", "id": "badge_text", "label": "Badge text", "default": "READY TO PLAY?" },
+    { "type": "color", "id": "badge_bg", "label": "Badge background", "default": "#9acd32" },
+    { "type": "color", "id": "badge_text_color", "label": "Badge text color", "default": "#000000" },
+    { "type": "range", "id": "badge_font_size", "label": "Badge font size", "min": 10, "max": 18, "step": 1, "default": 12 },
+    { "type": "range", "id": "badge_font_weight", "label": "Badge font weight", "min": 400, "max": 900, "step": 100, "default": 700 },
+    { "type": "range", "id": "badge_padding_y", "label": "Badge padding Y", "min": 4, "max": 16, "step": 2, "default": 8 },
+    { "type": "range", "id": "badge_padding_x", "label": "Badge padding X", "min": 8, "max": 32, "step": 2, "default": 16 },
+    { "type": "range", "id": "badge_radius", "label": "Badge border radius", "min": 0, "max": 20, "step": 2, "default": 4 },
+    { "type": "range", "id": "badge_margin_bottom", "label": "Badge margin bottom", "min": 12, "max": 40, "step": 2, "default": 24 },
+    { "type": "range", "id": "mobile_badge_font_size", "label": "Mobile badge font size", "min": 8, "max": 16, "step": 1, "default": 11 },
+    { "type": "range", "id": "mobile_badge_padding_y", "label": "Mobile badge padding Y", "min": 4, "max": 12, "step": 2, "default": 6 },
+    { "type": "range", "id": "mobile_badge_padding_x", "label": "Mobile badge padding X", "min": 6, "max": 24, "step": 2, "default": 12 },
+    { "type": "range", "id": "mobile_badge_margin_bottom", "label": "Mobile badge margin bottom", "min": 8, "max": 32, "step": 2, "default": 16 },
+    
+    { "type": "header", "content": "Heading" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Get Your QB54 Game Set Today" },
+    { "type": "color", "id": "heading_color", "label": "Heading color", "default": "#ffffff" },
+    { "type": "range", "id": "heading_font_size", "label": "Heading font size", "min": 32, "max": 72, "step": 2, "default": 48 },
+    { "type": "range", "id": "heading_font_weight", "label": "Heading font weight", "min": 400, "max": 900, "step": 100, "default": 800 },
+    { "type": "range", "id": "heading_line_height", "label": "Heading line height (%)", "min": 100, "max": 150, "step": 5, "default": 110 },
+    { "type": "range", "id": "heading_letter_spacing", "label": "Heading letter spacing (0.01em)", "min": -5, "max": 5, "step": 1, "default": -1 },
+    { "type": "range", "id": "heading_max_width", "label": "Heading max width", "min": 400, "max": 800, "step": 20, "default": 700 },
+    { "type": "range", "id": "heading_margin_bottom", "label": "Heading margin bottom", "min": 16, "max": 48, "step": 2, "default": 28 },
+    { "type": "range", "id": "mobile_heading_font_size", "label": "Mobile heading font size", "min": 24, "max": 48, "step": 2, "default": 32 },
+    { "type": "range", "id": "mobile_heading_margin_bottom", "label": "Mobile heading margin bottom", "min": 12, "max": 32, "step": 2, "default": 20 },
+    
+    { "type": "header", "content": "Text" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Join thousands of families who have made QB54 their go-to game for every gathering. 40% off all sets — limited time only." },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#cccccc" },
+    { "type": "range", "id": "text_font_size", "label": "Text font size", "min": 14, "max": 24, "step": 1, "default": 18 },
+    { "type": "range", "id": "text_line_height", "label": "Text line height (%)", "min": 120, "max": 180, "step": 5, "default": 150 },
+    { "type": "range", "id": "text_max_width", "label": "Text max width", "min": 400, "max": 800, "step": 20, "default": 600 },
+    { "type": "range", "id": "text_margin_bottom", "label": "Text margin bottom", "min": 24, "max": 60, "step": 2, "default": 40 },
+    { "type": "range", "id": "mobile_text_font_size", "label": "Mobile text font size", "min": 12, "max": 20, "step": 1, "default": 16 },
+    { "type": "range", "id": "mobile_text_margin_bottom", "label": "Mobile text margin bottom", "min": 16, "max": 40, "step": 2, "default": 28 },
+    
+    { "type": "header", "content": "Primary Button" },
+    { "type": "text", "id": "primary_btn_text", "label": "Primary button text", "default": "SHOP GAME SETS" },
+    { "type": "url", "id": "primary_btn_link", "label": "Primary button link" },
+    { "type": "checkbox", "id": "show_primary_btn_icon", "label": "Show arrow icon", "default": true },
+    { "type": "color", "id": "primary_btn_bg", "label": "Primary button background", "default": "#9acd32" },
+    { "type": "color", "id": "primary_btn_text_color", "label": "Primary button text", "default": "#000000" },
+    { "type": "color", "id": "primary_btn_hover_bg", "label": "Primary button hover background", "default": "#8bc34a" },
+    
+    { "type": "header", "content": "Secondary Button" },
+    { "type": "text", "id": "secondary_btn_text", "label": "Secondary button text", "default": "HOW TO PLAY" },
+    { "type": "url", "id": "secondary_btn_link", "label": "Secondary button link" },
+    { "type": "color", "id": "secondary_btn_bg", "label": "Secondary button background", "default": "transparent" },
+    { "type": "color", "id": "secondary_btn_text_color", "label": "Secondary button text", "default": "#ffffff" },
+    { "type": "color", "id": "secondary_btn_border", "label": "Secondary button border", "default": "#ffffff" },
+    { "type": "color", "id": "secondary_btn_hover_bg", "label": "Secondary button hover background", "default": "#ffffff" },
+    { "type": "color", "id": "secondary_btn_hover_text", "label": "Secondary button hover text", "default": "#000000" },
+    { "type": "color", "id": "secondary_btn_hover_border", "label": "Secondary button hover border", "default": "#ffffff" },
+    
+    { "type": "header", "content": "Button Styling" },
+    { "type": "range", "id": "button_font_size", "label": "Button font size", "min": 12, "max": 20, "step": 1, "default": 14 },
+    { "type": "range", "id": "button_font_weight", "label": "Button font weight", "min": 400, "max": 900, "step": 100, "default": 700 },
+    { "type": "range", "id": "button_padding_y", "label": "Button padding Y", "min": 10, "max": 24, "step": 2, "default": 16 },
+    { "type": "range", "id": "button_padding_x", "label": "Button padding X", "min": 16, "max": 48, "step": 2, "default": 32 },
+    { "type": "range", "id": "button_radius", "label": "Button border radius", "min": 0, "max": 12, "step": 2, "default": 4 },
+    { "type": "range", "id": "button_gap", "label": "Gap between buttons", "min": 12, "max": 32, "step": 2, "default": 20 },
+    { "type": "range", "id": "mobile_button_font_size", "label": "Mobile button font size", "min": 10, "max": 18, "step": 1, "default": 13 },
+    { "type": "range", "id": "mobile_button_padding_y", "label": "Mobile button padding Y", "min": 8, "max": 20, "step": 2, "default": 14 },
+    { "type": "range", "id": "mobile_button_padding_x", "label": "Mobile button padding X", "min": 12, "max": 40, "step": 2, "default": 24 },
+    { "type": "range", "id": "mobile_button_gap", "label": "Mobile gap between buttons", "min": 8, "max": 24, "step": 2, "default": 12 }
+  ],
+  "presets": [{ "name": "Game Set Hero Banner" }]
+}
+{% endschema %}

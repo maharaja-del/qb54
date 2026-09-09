@@ -1,0 +1,169 @@
+{% comment %}
+QB54 – Play Instructions Grid v1
+Desktop: 4 cards per row
+Mobile: 2 cards per row
+All content editable via Customizer
+{% endcomment %}
+
+{% style %}
+.qb54-play {
+  background-color: #faf9f5;
+  padding: 80px 20px;
+}
+
+.qb54-play__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.qb54-play__badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background-color: #fdebd2;
+  color: #f39c12;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.qb54-play__heading {
+  font-size: 36px;
+  font-weight: 800;
+  color: #1f2d24;
+  margin-bottom: 12px;
+}
+
+.qb54-play__subheading {
+  font-size: 17px;
+  color: #6b776f;
+  max-width: 720px;
+  margin: 0 auto 48px;
+}
+
+/* GRID */
+.qb54-play__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .qb54-play__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .qb54-play__heading {
+    font-size: 28px;
+  }
+}
+
+/* CARD */
+.qb54-play__card {
+  background-color: #ffffff;
+  border-radius: 14px;
+  padding: 24px;
+  text-align: left;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+.qb54-play__card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2d24;
+  margin-bottom: 8px;
+}
+
+.qb54-play__card-text {
+  font-size: 15px;
+  color: #6b776f;
+  line-height: 1.5;
+}
+{% endstyle %}
+
+<section class="qb54-play">
+  <div class="qb54-play__container">
+
+    {% if section.settings.badge_text != blank %}
+      <div class="qb54-play__badge">
+        {{ section.settings.badge_text }}
+      </div>
+    {% endif %}
+
+    <h2 class="qb54-play__heading">
+      {{ section.settings.heading }}
+    </h2>
+
+    <p class="qb54-play__subheading">
+      {{ section.settings.subheading }}
+    </p>
+
+    <div class="qb54-play__grid">
+      {% for block in section.blocks %}
+        <div class="qb54-play__card" {{ block.shopify_attributes }}>
+          <div class="qb54-play__card-title">
+            {{ block.settings.card_title }}
+          </div>
+          <div class="qb54-play__card-text">
+            {{ block.settings.card_text }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "QB54 Play Instructions v1",
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "Easy to Learn"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Main heading",
+      "default": "How to Play QB54"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading text",
+      "default": "QB54 is the ultimate football game built into two camping chairs. Score points by making completions, touchdowns, interceptions, and kicking extra points!"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "instruction",
+      "name": "Instruction Card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "card_title",
+          "label": "Card title",
+          "default": "Set Up"
+        },
+        {
+          "type": "textarea",
+          "id": "card_text",
+          "label": "Card description",
+          "default": "Set chairs in game mode, approximately 40 feet apart (adjust for skill level)."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "QB54 – How to Play Grid"
+    }
+  ]
+}
+{% endschema %}

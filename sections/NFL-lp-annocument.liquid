@@ -1,0 +1,387 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* ─── TOKENS ─────────────────────────────────────────── */
+  #qb54-ab-{{ section.id }} {
+    --lime:      #9aff00;
+    --lime-glow: rgba(154,255,0,0.22);
+    --dark:      #0d0d0d;
+    --white:     #ffffff;
+    --white-80:  rgba(255,255,255,0.82);
+    --white-50:  rgba(255,255,255,0.50);
+    --white-15:  rgba(255,255,255,0.15);
+    --white-08:  rgba(255,255,255,0.08);
+  }
+  #qb54-ab-{{ section.id }} *,
+  #qb54-ab-{{ section.id }} *::before,
+  #qb54-ab-{{ section.id }} *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* ─── BAR ─────────────────────────────────────────────── */
+  #qb54-ab-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    background: var(--dark);
+    border-bottom: 1px solid var(--white-15);
+    overflow: hidden;
+    z-index: 100;
+  }
+  /* Lime top accent line */
+  #qb54-ab-{{ section.id }}::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: var(--lime);
+    box-shadow: 0 0 14px rgba(154,255,0,0.35);
+    z-index: 3;
+  }
+
+  /* ─── INNER ROW ───────────────────────────────────────── */
+  #qb54-ab-{{ section.id }} .ab-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(8px, 1.5vw, 20px);
+    min-height: 48px;
+    padding: 10px clamp(48px, 6vw, 64px) 10px clamp(12px, 3vw, 24px);
+    position: relative;
+    z-index: 2;
+    flex-wrap: wrap;
+  }
+  /* When permanent / no close button — symmetric padding */
+  #qb54-ab-{{ section.id }}.ab-permanent .ab-inner {
+    padding: 10px clamp(12px, 3vw, 24px);
+  }
+
+  /* ─── TEXT ────────────────────────────────────────────── */
+  #qb54-ab-{{ section.id }} .ab-text {
+    font-family: "Oswald", sans-serif;
+    font-size: clamp(11px, 1.1vw, 13px);
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--white-80);
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  /* Divider pip */
+  #qb54-ab-{{ section.id }} .ab-pip {
+    display: inline-block;
+    width: 3px; height: 3px;
+    background: var(--white-50);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ─── CODE PILL ───────────────────────────────────────── */
+  #qb54-ab-{{ section.id }} .ab-code-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(154,255,0,0.08);
+    border: 1px solid rgba(154,255,0,0.38);
+    border-radius: 5px;
+    padding: 5px 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+    position: relative;
+  }
+  #qb54-ab-{{ section.id }} .ab-code-pill:hover {
+    background: rgba(154,255,0,0.13);
+    border-color: rgba(154,255,0,0.65);
+    box-shadow: 0 0 14px rgba(154,255,0,0.18);
+  }
+  #qb54-ab-{{ section.id }} .ab-code-text {
+    font-family: "Oswald", sans-serif;
+    font-size: clamp(12px, 1.2vw, 14px);
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--lime);
+    line-height: 1;
+    user-select: all;
+  }
+  #qb54-ab-{{ section.id }} .ab-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: "Oswald", sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--white-50);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s;
+    flex-shrink: 0;
+    white-space: nowrap;
+    /* Tap target */
+    min-width: 44px;
+    min-height: 28px;
+    justify-content: center;
+  }
+  #qb54-ab-{{ section.id }} .ab-copy-btn:hover { color: var(--white-80); }
+  #qb54-ab-{{ section.id }} .ab-copy-btn.copied { color: var(--lime); }
+  #qb54-ab-{{ section.id }} .ab-copy-btn svg {
+    width: 10px; height: 10px;
+    stroke: currentColor; fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  /* Copied tooltip */
+  #qb54-ab-{{ section.id }} .ab-copied-tip {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: var(--lime);
+    color: #0a1400;
+    font-family: "Oswald", sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+    z-index: 10;
+  }
+  #qb54-ab-{{ section.id }} .ab-copied-tip.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ─── CLOSE ───────────────────────────────────────────── */
+  #qb54-ab-{{ section.id }} .ab-close {
+    position: absolute;
+    right: 0; top: 0;
+    width: 44px; height: 100%;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-left: 1px solid var(--white-08);
+    cursor: pointer;
+    z-index: 3;
+    transition: background 0.15s;
+  }
+  #qb54-ab-{{ section.id }} .ab-close:hover { background: var(--white-08); }
+  #qb54-ab-{{ section.id }} .ab-close svg {
+    width: 11px; height: 11px;
+    stroke: var(--white-50);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    pointer-events: none;
+  }
+
+  /* ─── MOBILE ──────────────────────────────────────────── */
+  @media (max-width: 480px) {
+    #qb54-ab-{{ section.id }} .ab-inner {
+      gap: 6px;
+      padding: 10px 48px 10px 12px;
+    }
+    #qb54-ab-{{ section.id }}.ab-permanent .ab-inner {
+      padding: 10px 12px;
+    }
+    #qb54-ab-{{ section.id }} .ab-text {
+      font-size: 11px;
+      letter-spacing: 0.09em;
+      white-space: normal;
+      text-align: center;
+    }
+    #qb54-ab-{{ section.id }} .ab-pip { display: none; }
+    #qb54-ab-{{ section.id }} .ab-code-text { font-size: 13px; letter-spacing: 0.22em; }
+  }
+</style>
+
+{% if section.settings.enabled %}
+
+  {%- liquid
+    assign is_permanent = section.settings.permanent
+    assign show_close_btn = section.settings.show_close
+    if is_permanent
+      assign show_close_btn = false
+    endif
+  -%}
+
+<div
+  id="qb54-ab-{{ section.id }}"
+  class="{% if is_permanent %}ab-permanent{% endif %}"
+  role="banner"
+  aria-label="Promotional announcement"
+>
+  <div class="ab-inner">
+
+    <span class="ab-text">{{ section.settings.message_left }}</span>
+
+    <span class="ab-pip" aria-hidden="true"></span>
+
+    <!-- Code pill -->
+    <div
+      class="ab-code-pill"
+      id="qb54-ab-pill-{{ section.id }}"
+      onclick="
+        (function(){
+          var code = '{{ section.settings.promo_code }}';
+          navigator.clipboard.writeText(code).catch(function(){
+            var t = document.createElement('textarea');
+            t.value = code; document.body.appendChild(t); t.select();
+            document.execCommand('copy'); document.body.removeChild(t);
+          });
+          var btn = document.getElementById('qb54-ab-cbtn-{{ section.id }}');
+          var tip = document.getElementById('qb54-ab-tip-{{ section.id }}');
+          btn.classList.add('copied');
+          tip.classList.add('show');
+          btn.querySelector('.lbl').textContent = 'COPIED';
+          setTimeout(function(){
+            btn.classList.remove('copied');
+            tip.classList.remove('show');
+            btn.querySelector('.lbl').textContent = 'COPY';
+          }, 2200);
+        })();
+      "
+      title="Click to copy promo code"
+    >
+      <span class="ab-code-text">{{ section.settings.promo_code }}</span>
+      <button
+        class="ab-copy-btn"
+        id="qb54-ab-cbtn-{{ section.id }}"
+        aria-label="Copy promo code {{ section.settings.promo_code }}"
+        onclick="event.stopPropagation();"
+      >
+        <svg viewBox="0 0 16 16">
+          <rect x="5" y="5" width="8" height="10" rx="1"/>
+          <path d="M3 11V3a1 1 0 0 1 1-1h8"/>
+        </svg>
+        <span class="lbl">COPY</span>
+      </button>
+      <div class="ab-copied-tip" id="qb54-ab-tip-{{ section.id }}" aria-live="polite">✓ Copied!</div>
+    </div>
+
+    {% if section.settings.message_right != blank %}
+      <span class="ab-pip" aria-hidden="true"></span>
+      <span class="ab-text">{{ section.settings.message_right }}</span>
+    {% endif %}
+
+    <!-- Dismiss (hidden when permanent) -->
+    {% if show_close_btn %}
+      <button
+        class="ab-close"
+        aria-label="Dismiss announcement"
+        onclick="
+          (function(){
+            var bar = document.getElementById('qb54-ab-{{ section.id }}');
+            bar.style.maxHeight = bar.offsetHeight + 'px';
+            requestAnimationFrame(function(){
+              bar.style.transition = 'max-height 0.3s ease, opacity 0.25s ease';
+              bar.style.maxHeight  = '0';
+              bar.style.opacity    = '0';
+              bar.style.overflow   = 'hidden';
+            });
+            try { sessionStorage.setItem('qb54_ab_{{ section.id }}_dismissed','1'); } catch(e){}
+          })();
+        "
+      >
+        <svg viewBox="0 0 16 16">
+          <line x1="4" y1="4" x2="12" y2="12"/>
+          <line x1="12" y1="4" x2="4" y2="12"/>
+        </svg>
+      </button>
+    {% endif %}
+
+  </div>
+</div>
+
+{% unless is_permanent %}
+<script>
+  (function(){
+    try {
+      if (sessionStorage.getItem('qb54_ab_{{ section.id }}_dismissed') === '1') {
+        var el = document.getElementById('qb54-ab-{{ section.id }}');
+        if (el) el.style.display = 'none';
+      }
+    } catch(e){}
+  })();
+</script>
+{% endunless %}
+
+{% endif %}
+
+{% schema %}
+{
+  "name": "QB54 Announcement Bar",
+  "tag": "section",
+  "class": "qb54-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enabled",
+      "label": "Show Announcement Bar",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "— Message"
+    },
+    {
+      "type": "text",
+      "id": "message_left",
+      "label": "Message (left of code pill)",
+      "default": "$30 off sets when you use promo code"
+    },
+    {
+      "type": "text",
+      "id": "promo_code",
+      "label": "Promo Code",
+      "default": "PICK"
+    },
+    {
+      "type": "text",
+      "id": "message_right",
+      "label": "Message (right of code pill)",
+      "info": "Optional. E.g. 'Applied at checkout'. Leave blank to hide.",
+      "default": "Applied at checkout"
+    },
+    {
+      "type": "header",
+      "content": "— Options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_close",
+      "label": "Show Dismiss (✕) Button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "permanent",
+      "label": "Make announcement bar permanent",
+      "info": "When enabled, the bar always shows on every page load and the dismiss (✕) button is hidden — even if the option above is on. Visitors cannot close it.",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "QB54 Announcement Bar"
+    }
+  ]
+}
+{% endschema %}

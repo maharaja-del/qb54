@@ -1,0 +1,292 @@
+{% comment %} QB54 × Moon Media — Video Showcase Section {% endcomment %}
+
+<style>
+  #qb-video-{{ section.id }} {
+    --qb: {{ section.settings.color_qb }};
+    --moon: {{ section.settings.color_moon }};
+    position: relative;
+    background: {{ section.settings.color_bg }};
+    overflow: hidden;
+    padding: 100px 0;
+    border-bottom: 1px solid rgba(185,249,0,.1);
+    font-family: 'Sora', sans-serif;
+  }
+  #qb-video-{{ section.id }} .vs-accent {
+    position: absolute; right: -200px; top: -200px; width: 600px; height: 600px;
+    border-radius: 50%; background: var(--qb); filter: blur(160px); opacity: .06; pointer-events: none;
+  }
+  #qb-video-{{ section.id }} .vs-accent2 {
+    position: absolute; left: -150px; bottom: -150px; width: 400px; height: 400px;
+    border-radius: 50%; background: var(--moon); filter: blur(140px); opacity: .05; pointer-events: none;
+  }
+  #qb-video-{{ section.id }} .vs-inner {
+    max-width: 1100px; margin: 0 auto; padding: 0 48px;
+    display: grid; grid-template-columns: 1fr 480px; gap: 80px;
+    align-items: center; position: relative; z-index: 1;
+  }
+  #qb-video-{{ section.id }} .vs-label {
+    font-size: .62rem; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--moon); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  #qb-video-{{ section.id }} .vs-label::before {
+    content: ''; width: 24px; height: 1.5px; background: var(--moon);
+  }
+  #qb-video-{{ section.id }} .vs-h {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px,6vw,84px); line-height: .9; margin-bottom: 24px; color: #fff;
+  }
+  #qb-video-{{ section.id }} .vs-h span { color: var(--moon); }
+  #qb-video-{{ section.id }} .vs-body {
+    font-size: .88rem; font-weight: 300; color: rgba(255,255,255,.8);
+    line-height: 1.85; margin-bottom: 32px; max-width: 420px;
+  }
+  #qb-video-{{ section.id }} .vs-body strong { color: #fff; font-weight: 700; }
+  #qb-video-{{ section.id }} .vs-byline {
+    display: flex; align-items: center; gap: 14px;
+    padding-top: 24px; border-top: 1px solid rgba(185,249,0,.1);
+  }
+  #qb-video-{{ section.id }} .vs-byline img {
+    height: 22px; filter: brightness(1.2) saturate(.5); opacity: .7; display: block;
+  }
+  #qb-video-{{ section.id }} .vs-byline span {
+    font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.5);
+  }
+  #qb-video-{{ section.id }} .vs-phone-col {
+    display: flex; justify-content: center; align-items: center; position: relative;
+  }
+  #qb-video-{{ section.id }} .vs-glow-ring {
+    position: absolute; inset: -40px; border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(255,45,85,.2) 0%, transparent 65%);
+    filter: blur(16px); pointer-events: none;
+  }
+  #qb-video-{{ section.id }} .vs-phone {
+    width: 260px; border-radius: 36px; overflow: hidden;
+    border: 2px solid rgba(255,255,255,.12); position: relative; z-index: 1;
+    box-shadow: 0 48px 100px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.04);
+  }
+  #qb-video-{{ section.id }} .vs-phone video {
+    width: 100%; aspect-ratio: 9/16; display: block; object-fit: cover; position: relative; z-index: 1;
+  }
+  #qb-video-{{ section.id }} .vs-coming {
+    position: absolute; bottom: -36px; left: 50%; transform: translateX(-50%);
+    white-space: nowrap; font-size: .57rem; letter-spacing: .2em;
+    text-transform: uppercase; color: rgba(255,255,255,.3);
+  }
+
+  /* Video controls */
+  #qb-video-{{ section.id }} .vid-btn-tl {
+    position: absolute; top: 16px; left: 16px; z-index: 5;
+  }
+  #qb-video-{{ section.id }} .vid-controls {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 40px 16px 20px;
+    background: linear-gradient(to top, rgba(0,0,0,.75) 0%, transparent 100%);
+    z-index: 3; display: flex; align-items: center; justify-content: space-between;
+    border-radius: 0 0 36px 36px;
+  }
+  #qb-video-{{ section.id }} .vid-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(255,255,255,.15); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.2);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background .2s, transform .15s; flex-shrink: 0;
+    padding: 0;
+  }
+  #qb-video-{{ section.id }} .vid-btn:hover { background: rgba(255,255,255,.28); transform: scale(1.08); }
+  #qb-video-{{ section.id }} .vid-btn svg { width: 16px; height: 16px; fill: #fff; display: block; }
+
+  /* Tablet + below: stack and put video FIRST */
+  @media(max-width:860px){
+    #qb-video-{{ section.id }} { padding: 64px 0; }
+    #qb-video-{{ section.id }} .vs-inner {
+      grid-template-columns: 1fr;
+      gap: 40px;
+      text-align: center;
+      padding: 0 24px;
+    }
+    #qb-video-{{ section.id }} .vs-phone-col { order: -1; }
+    #qb-video-{{ section.id }} .vs-label { justify-content: center; }
+    #qb-video-{{ section.id }} .vs-body {
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 24px;
+    }
+    #qb-video-{{ section.id }} .vs-byline { justify-content: center; }
+    #qb-video-{{ section.id }} .vs-phone { width: 220px; }
+    #qb-video-{{ section.id }} .vs-h { margin-bottom: 18px; }
+  }
+
+  /* Mobile */
+  @media(max-width:640px){
+    #qb-video-{{ section.id }} { padding: 48px 0 56px; }
+    #qb-video-{{ section.id }} .vs-inner { gap: 36px; padding: 0 20px; }
+    #qb-video-{{ section.id }} .vs-phone { width: 200px; }
+    #qb-video-{{ section.id }} .vs-label { font-size: .58rem; margin-bottom: 12px; }
+    #qb-video-{{ section.id }} .vs-h { margin-bottom: 14px; }
+    #qb-video-{{ section.id }} .vs-body {
+      font-size: .82rem; line-height: 1.7; margin-bottom: 20px;
+    }
+    #qb-video-{{ section.id }} .vs-byline { padding-top: 18px; gap: 10px; }
+    #qb-video-{{ section.id }} .vs-byline img { height: 18px; }
+    #qb-video-{{ section.id }} .vs-byline span { font-size: .55rem; }
+    #qb-video-{{ section.id }} .vs-coming { font-size: .52rem; bottom: -28px; }
+  }
+
+  /* Very small phones */
+  @media(max-width:380px){
+    #qb-video-{{ section.id }} { padding: 40px 0 48px; }
+    #qb-video-{{ section.id }} .vs-phone { width: 180px; }
+    #qb-video-{{ section.id }} .vs-h { font-size: 38px; }
+  }
+
+  /* Fullscreen — Instagram reel style */
+  #vs-phone-{{ section.id }}:fullscreen,
+  #vs-phone-{{ section.id }}:-webkit-full-screen {
+    width: 100vw !important;
+    height: 100vh !important;
+    border-radius: 0 !important;
+    border: none !important;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #vs-phone-{{ section.id }}:fullscreen video,
+  #vs-phone-{{ section.id }}:-webkit-full-screen video {
+    width: 100% !important;
+    height: 100% !important;
+    aspect-ratio: unset !important;
+    object-fit: contain !important;
+  }
+  #vs-phone-{{ section.id }}:fullscreen .vid-controls,
+  #vs-phone-{{ section.id }}:-webkit-full-screen .vid-controls {
+    position: fixed;
+    bottom: 32px;
+    left: 0; right: 0;
+    border-radius: 0;
+    z-index: 9999;
+  }
+  #vs-phone-{{ section.id }}:fullscreen .vid-btn-tl,
+  #vs-phone-{{ section.id }}:-webkit-full-screen .vid-btn-tl {
+    position: fixed;
+    top: 24px; left: 24px;
+    z-index: 9999;
+  }
+
+</style>
+
+<section id="qb-video-{{ section.id }}">
+  <div class="vs-accent"></div>
+  <div class="vs-accent2"></div>
+  <div class="vs-inner">
+
+    <div class="vs-left">
+      <div class="vs-label">{{ section.settings.eyebrow }}</div>
+      <h2 class="vs-h">
+        {{ section.settings.heading_line1 }}<br>
+        <span>{{ section.settings.heading_line2 }}</span>
+      </h2>
+      <p class="vs-body">{{ section.settings.body_text }}</p>
+      <div class="vs-byline">
+        {%- if section.settings.byline_logo != blank -%}
+          <img src="{{ section.settings.byline_logo | image_url: width: 160 }}" alt="{{ section.settings.byline_text }}">
+        {%- else -%}
+          <img src="https://images.squarespace-cdn.com/content/v1/6111d9dc96344d4b722b4481/36343cc8-77de-44d0-a2a6-0d1123a10288/Moon-Media-Logo-Web.png" alt="Moon Media">
+        {%- endif -%}
+        <span>{{ section.settings.byline_text }}</span>
+      </div>
+    </div>
+
+    <div class="vs-phone-col">
+      <div class="vs-glow-ring"></div>
+      <div class="vs-phone" id="vs-phone-{{ section.id }}">
+        <video
+          id="vs-vid-{{ section.id }}"
+          src="{{ section.settings.video_url }}"
+          autoplay muted loop playsinline
+          disablepictureinpicture disableremoteplayback
+        ></video>
+
+        <button class="vid-btn vid-btn-tl" id="vid-play-{{ section.id }}" title="Play/Pause">
+          <svg id="icon-pause-{{ section.id }}" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          <svg id="icon-play-{{ section.id }}" viewBox="0 0 24 24" style="display:none"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+
+        <div class="vid-controls">
+          <button class="vid-btn" id="vid-mute-{{ section.id }}" title="Mute/Unmute">
+            <svg id="icon-unmute-{{ section.id }}" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+            <svg id="icon-mute-{{ section.id }}" viewBox="0 0 24 24" style="display:none"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+          </button>
+          <button class="vid-btn" id="vid-fs-{{ section.id }}" title="Fullscreen">
+            <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="vs-coming">{{ section.settings.coming_soon_text }}</div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function(){
+  var vid = document.getElementById('vs-vid-{{ section.id }}');
+  var playBtn = document.getElementById('vid-play-{{ section.id }}');
+  var iconPlay = document.getElementById('icon-play-{{ section.id }}');
+  var iconPause = document.getElementById('icon-pause-{{ section.id }}');
+  var muteBtn = document.getElementById('vid-mute-{{ section.id }}');
+  var iconMute = document.getElementById('icon-mute-{{ section.id }}');
+  var iconUnmute = document.getElementById('icon-unmute-{{ section.id }}');
+  var fsBtn = document.getElementById('vid-fs-{{ section.id }}');
+  var phoneWrap = document.getElementById('vs-phone-{{ section.id }}');
+
+  if('mediaSession' in navigator){
+    navigator.mediaSession.setActionHandler('play', null);
+    navigator.mediaSession.setActionHandler('pause', null);
+  }
+
+  playBtn.addEventListener('click', function(){
+    if(vid.paused){ vid.play(); iconPlay.style.display='none'; iconPause.style.display='block'; }
+    else { vid.pause(); iconPlay.style.display='block'; iconPause.style.display='none'; }
+  });
+
+  muteBtn.addEventListener('click', function(){
+    vid.muted = !vid.muted;
+    iconUnmute.style.display = vid.muted ? 'block' : 'none';
+    iconMute.style.display   = vid.muted ? 'none'  : 'block';
+  });
+
+  fsBtn.addEventListener('click', function(){
+    if(document.fullscreenElement) document.exitFullscreen();
+    else if(phoneWrap.requestFullscreen) phoneWrap.requestFullscreen();
+    else if(phoneWrap.webkitRequestFullscreen) phoneWrap.webkitRequestFullscreen();
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "QB54 Video",
+  "tag": "div",
+  "settings": [
+    { "type": "header", "content": "Text" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow label", "default": "Produced by Moon Media" },
+    { "type": "text", "id": "heading_line1", "label": "Heading line 1", "default": "The Content" },
+    { "type": "text", "id": "heading_line2", "label": "Heading line 2 (accent color)", "default": "That Sells." },
+    { "type": "textarea", "id": "body_text", "label": "Body text", "default": "This isn't stock footage or influencer fluff. Moon Media is building QB54 a scroll-stopping, platform-native video — scripted, filmed, and edited entirely in-house to drive real views, real engagement, and real sales." },
+    { "type": "header", "content": "Byline" },
+    { "type": "image_picker", "id": "byline_logo", "label": "Byline logo" },
+    { "type": "text", "id": "byline_text", "label": "Byline text", "default": "Exclusive content built for QB54" },
+    { "type": "header", "content": "Video" },
+    { "type": "text", "id": "video_url", "label": "Video URL (mp4)", "default": "https://cdn.shopify.com/videos/c/o/v/f77c728d5f1d4a39ba65efc26e00019e.mp4" },
+    { "type": "text", "id": "coming_soon_text", "label": "Caption below phone", "default": "Moon Media × QB54 — Coming Soon" },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_bg", "label": "Background", "default": "#0b120b" },
+    { "type": "color", "id": "color_qb", "label": "QB54 green", "default": "#b9f900" },
+    { "type": "color", "id": "color_moon", "label": "Moon Media pink", "default": "#ff2d55" }
+  ],
+  "presets": [{ "name": "QB54 Video" }]
+}
+{% endschema %}

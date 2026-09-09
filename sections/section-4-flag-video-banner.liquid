@@ -1,0 +1,921 @@
+{% comment %}
+  QB54 — 4th of July Flag Video Banner (Section 4)
+  Full-width cinematic banner with background video/image,
+  animated waving flag stripes, star field, live countdown,
+  coupon, and CTA linking to the 4th of July hero page.
+
+  Perfect for: Product pages, Collection pages, blog, and "Other" pages.
+  sections/qb54-july4-video-banner.liquid
+{% endcomment %}
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  /* ── ROOT ── */
+  #qb54-vbanner-{{ section.id }} {
+    --vb-text:  {{ section.settings.color_text }};
+    --vb-red:   {{ section.settings.color_red }};
+    --vb-blue:  {{ section.settings.color_blue }};
+    --vb-gold:  {{ section.settings.color_gold }};
+    --vb-muted: color-mix(in srgb, {{ section.settings.color_text }} 55%, transparent);
+    --vb-bg:    {{ section.settings.color_overlay }};
+
+    position: relative;
+    overflow: hidden;
+    margin: {{ section.settings.margin_top }}px 0 {{ section.settings.margin_bottom }}px;
+    isolation: isolate;
+    font-family: 'Sora', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: clamp(340px, 50vw, {{ section.settings.section_height }}px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── BACKGROUND VIDEO / IMAGE ── */
+  #qb54-vbanner-{{ section.id }} .vb-bg-media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center;
+    pointer-events: none;
+    display: block;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-bg-placeholder {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(135deg, var(--vb-blue) 0%, #0a0f28 50%, var(--vb-red) 100%);
+  }
+
+  /* ── DARK OVERLAY ── */
+  #qb54-vbanner-{{ section.id }} .vb-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: var(--vb-bg);
+    pointer-events: none;
+  }
+
+  /* ── WAVING FLAG STRIPES ── */
+  #qb54-vbanner-{{ section.id }} .vb-stripes {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      -9deg,
+      color-mix(in srgb, var(--vb-red) 22%, transparent) 0px,
+      color-mix(in srgb, var(--vb-red) 22%, transparent) 44px,
+      rgba(255,255,255,0.05) 44px,
+      rgba(255,255,255,0.05) 50px,
+      transparent 50px,
+      transparent 88px
+    );
+    mask-image: radial-gradient(ellipse 100% 100% at 50% 100%, #000 10%, transparent 68%);
+    animation: vb-stripe-wave 9s ease-in-out infinite;
+  }
+  @keyframes vb-stripe-wave {
+    0%, 100% { transform: translateX(0) skewY(0deg); }
+    50%       { transform: translateX(-28px) skewY(-1deg); }
+  }
+
+  /* ── FLAG STAR CANTON (top-left decorative corner) ── */
+  #qb54-vbanner-{{ section.id }} .vb-canton {
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 3;
+    pointer-events: none;
+    width: clamp(120px, 14vw, 200px);
+    height: clamp(90px, 10vw, 140px);
+    background: color-mix(in srgb, var(--vb-blue) 88%, transparent);
+    clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 2px;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-canton-star {
+    font-size: clamp(8px, 1.2vw, 13px);
+    color: rgba(255,255,255,0.85);
+    line-height: 1;
+    animation: vb-star-pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes vb-star-pulse {
+    0%, 100% { opacity: 0.85; }
+    50%       { opacity: 0.4; }
+  }
+  #qb54-vbanner-{{ section.id }} .vb-canton-star:nth-child(odd)  { animation-delay: 0.4s; }
+  #qb54-vbanner-{{ section.id }} .vb-canton-star:nth-child(3n)   { animation-delay: 1s; }
+
+  /* ── RED WHITE STRIPES (left edge, full height) ── */
+  #qb54-vbanner-{{ section.id }} .vb-left-edge {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 10px;
+    z-index: 3;
+    background: repeating-linear-gradient(
+      180deg,
+      var(--vb-red)  0 50%,
+      #fff           50% 100%
+    );
+    background-size: 100% 20px;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-right-edge {
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 10px;
+    z-index: 3;
+    background: repeating-linear-gradient(
+      180deg,
+      var(--vb-red)  0 50%,
+      #fff           50% 100%
+    );
+    background-size: 100% 20px;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  /* ── TOP & BOTTOM STRIPE BANDS ── */
+  #qb54-vbanner-{{ section.id }} .vb-stripe-top,
+  #qb54-vbanner-{{ section.id }} .vb-stripe-bottom {
+    position: absolute;
+    left: 0; right: 0;
+    height: 7px;
+    z-index: 3;
+    pointer-events: none;
+    background: repeating-linear-gradient(90deg,
+      var(--vb-red) 0 33.33%,
+      #fff 33.33% 66.66%,
+      var(--vb-blue) 66.66% 100%);
+    background-size: 120px 100%;
+    opacity: 0.92;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-stripe-top    { top: 0; }
+  #qb54-vbanner-{{ section.id }} .vb-stripe-bottom { bottom: 0; }
+
+  /* ── FIREWORKS ── */
+  #qb54-vbanner-{{ section.id }} .vb-fw {
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    opacity: 0;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-fw::before {
+    content: ''; position: absolute; inset: 0; border-radius: 50%;
+    box-shadow:
+      0 -48px 0 -3px currentColor, 0 48px 0 -3px currentColor,
+      48px 0 0 -3px currentColor, -48px 0 0 -3px currentColor,
+      34px -34px 0 -3px currentColor, -34px 34px 0 -3px currentColor,
+      34px 34px 0 -3px currentColor, -34px -34px 0 -3px currentColor,
+      0 -36px 0 -4px currentColor, 36px 0 0 -4px currentColor,
+      0 36px 0 -4px currentColor, -36px 0 0 -4px currentColor;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-fw-1 { top: 20%; left: 12%; color: var(--vb-gold); animation: vb-fw 4.5s ease-out infinite; }
+  #qb54-vbanner-{{ section.id }} .vb-fw-2 { top: 15%; right: 15%; color: #fff;          animation: vb-fw 4.5s ease-out 0.9s infinite; }
+  #qb54-vbanner-{{ section.id }} .vb-fw-3 { top: 35%; left: 55%; color: var(--vb-red);  animation: vb-fw 4.5s ease-out 2.1s infinite; }
+  #qb54-vbanner-{{ section.id }} .vb-fw-4 { top: 10%; left: 38%; color: color-mix(in srgb, var(--vb-blue) 30%, #fff); animation: vb-fw 4.5s ease-out 3.2s infinite; }
+  @keyframes vb-fw {
+    0%   { opacity: 0; transform: scale(0.15); }
+    8%   { opacity: 1; }
+    50%  { opacity: 0.85; transform: scale(1.1); }
+    75%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  /* ── STAR FIELD ── */
+  #qb54-vbanner-{{ section.id }} .vb-stars {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background-image:
+      radial-gradient(1.8px 1.8px at 7%  12%, rgba(255,255,255,0.9), transparent),
+      radial-gradient(1.4px 1.4px at 88% 18%, rgba(255,255,255,0.8), transparent),
+      radial-gradient(2px   2px   at 42%  8%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1.6px 1.6px at 65% 22%, var(--vb-gold), transparent),
+      radial-gradient(1.2px 1.2px at 22% 28%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1.5px 1.5px at 78% 10%, rgba(255,255,255,0.85), transparent),
+      radial-gradient(1.3px 1.3px at 55%  5%, rgba(255,255,255,0.65), transparent),
+      radial-gradient(1.7px 1.7px at 15% 40%, rgba(255,255,255,0.55), transparent),
+      radial-gradient(1.2px 1.2px at 93% 35%, var(--vb-red), transparent);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 40%, transparent 72%);
+    animation: vb-twinkle 4s ease-in-out infinite;
+  }
+  @keyframes vb-twinkle { 0%,100%{ opacity:0.9; } 50%{ opacity:0.38; } }
+
+  /* ── CONTENT ── */
+  #qb54-vbanner-{{ section.id }} .vb-inner {
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: clamp(40px, 6vw, 80px) clamp(20px, 5vw, 80px);
+    text-align: center;
+  }
+
+  /* ── EYEBROW ── */
+  #qb54-vbanner-{{ section.id }} .vb-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--vb-gold);
+    margin-bottom: 22px;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-eyebrow::before,
+  #qb54-vbanner-{{ section.id }} .vb-eyebrow::after {
+    content: '';
+    width: 36px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--vb-gold));
+  }
+  #qb54-vbanner-{{ section.id }} .vb-eyebrow::after {
+    background: linear-gradient(90deg, var(--vb-gold), transparent);
+  }
+
+  /* ── HEADLINE ── */
+  #qb54-vbanner-{{ section.id }} .vb-headline {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(42px, 8vw, 100px);
+    line-height: 0.85;
+    text-transform: uppercase;
+    color: var(--vb-text);
+    margin-bottom: 20px;
+    text-shadow: 0 4px 30px rgba(0,0,0,0.65);
+  }
+  #qb54-vbanner-{{ section.id }} .vb-hl-stripe {
+    background-image: repeating-linear-gradient(
+      180deg,
+      var(--vb-red) 0, var(--vb-red) 50%,
+      #fff 50%, #fff 100%
+    );
+    background-size: 100% 24px;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 3px 18px color-mix(in srgb, var(--vb-red) 40%, transparent));
+  }
+  #qb54-vbanner-{{ section.id }} .vb-hl-gold {
+    color: var(--vb-gold);
+    -webkit-text-fill-color: var(--vb-gold);
+    text-shadow: 0 0 40px color-mix(in srgb, var(--vb-gold) 55%, transparent), 0 4px 30px rgba(0,0,0,0.55);
+  }
+
+  /* ── SUBTITLE ── */
+  #qb54-vbanner-{{ section.id }} .vb-sub {
+    font-size: clamp(14px, 1.3vw, 17px);
+    line-height: 1.7;
+    color: var(--vb-muted);
+    max-width: 580px;
+    margin: 0 auto 30px;
+    font-weight: 400;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-sub strong { color: var(--vb-text); font-weight: 700; }
+
+  /* ── COUNTDOWN ── */
+  #qb54-vbanner-{{ section.id }} .vb-cd-wrap {
+    margin-bottom: 28px;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-cd-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--vb-muted);
+    margin-bottom: 14px;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-countdown {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-cell {
+    position: relative;
+    background: color-mix(in srgb, #000 40%, transparent);
+    border: 1px solid color-mix(in srgb, var(--vb-gold) 28%, transparent);
+    border-radius: 12px;
+    padding: 14px 12px 10px;
+    min-width: 72px;
+    text-align: center;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: border-color 0.3s;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-cell::before {
+    content: '';
+    position: absolute;
+    top: 6px; left: 50%;
+    transform: translateX(-50%);
+    width: 28px; height: 3px;
+    border-radius: 2px;
+    background: var(--vb-gold);
+    box-shadow: 0 0 10px var(--vb-gold);
+  }
+  #qb54-vbanner-{{ section.id }} .vb-cell:nth-child(even)::before { background: var(--vb-red); box-shadow: 0 0 10px var(--vb-red); }
+  #qb54-vbanner-{{ section.id }} .vb-num {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(32px, 5vw, 52px);
+    line-height: 1;
+    color: var(--vb-gold);
+    display: block;
+    margin: 6px 0 5px;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 22px color-mix(in srgb, var(--vb-gold) 50%, transparent);
+  }
+  #qb54-vbanner-{{ section.id }} .vb-unit {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--vb-muted);
+  }
+  #qb54-vbanner-{{ section.id }} .vb-colon {
+    font-family: 'Anton', sans-serif;
+    font-size: 38px;
+    color: var(--vb-gold);
+    opacity: 0.4;
+    padding-top: 20px;
+    flex-shrink: 0;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-cell.pulse .vb-num { animation: vb-tick 0.55s ease-out; }
+  @keyframes vb-tick { 0%{transform:scale(1);color:#fff;} 50%{transform:scale(1.1);} 100%{transform:scale(1);color:var(--vb-gold);} }
+  #qb54-vbanner-{{ section.id }} .vb-live-msg {
+    display: none;
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(20px, 3vw, 32px);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--vb-gold);
+    text-shadow: 0 0 30px var(--vb-gold);
+    animation: vb-live-glow 1.5s ease-in-out infinite;
+    margin-bottom: 20px;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-live-msg.on { display: block; }
+  @keyframes vb-live-glow { 0%,100%{opacity:1;} 50%{opacity:0.6;} }
+
+  /* ── COUPON + CTAS ── */
+  #qb54-vbanner-{{ section.id }} .vb-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-coupon {
+    display: inline-flex;
+    align-items: center;
+    border: 1.5px dashed color-mix(in srgb, var(--vb-gold) 65%, transparent);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    background: color-mix(in srgb, #000 38%, transparent);
+    position: relative;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-coupon:hover {
+    border-color: var(--vb-gold);
+    transform: translateY(-2px);
+  }
+  #qb54-vbanner-{{ section.id }} .vb-coupon::before,
+  #qb54-vbanner-{{ section.id }} .vb-coupon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 12px; height: 12px;
+    background: transparent;
+    border: 1.5px dashed color-mix(in srgb, var(--vb-gold) 65%, transparent);
+    border-radius: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-coupon::before { left: -6px; }
+  #qb54-vbanner-{{ section.id }} .vb-coupon::after  { right: -6px; }
+  #qb54-vbanner-{{ section.id }} .vb-coupon-tag {
+    font-size: 9px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--vb-gold); padding: 9px 12px;
+    border-right: 1px dashed color-mix(in srgb, var(--vb-gold) 35%, transparent);
+    white-space: nowrap;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-coupon-code {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(16px, 2.2vw, 22px);
+    letter-spacing: 0.14em;
+    color: #fff; padding: 9px 14px;
+    white-space: nowrap;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-coupon-icon {
+    padding: 9px 12px;
+    color: color-mix(in srgb, #fff 45%, transparent);
+    display: flex; align-items: center;
+    transition: color 0.2s;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-coupon:hover .vb-coupon-icon { color: var(--vb-gold); }
+  #qb54-vbanner-{{ section.id }} .vb-coupon-icon svg { width: 15px; height: 15px; }
+  #qb54-vbanner-{{ section.id }} .vb-coupon-fb {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--vb-gold); color: #061a06;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase;
+    opacity: 0; transition: opacity 0.22s; pointer-events: none;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-coupon.copied .vb-coupon-fb { opacity: 1; }
+
+  #qb54-vbanner-{{ section.id }} .vb-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 17px 34px;
+    font-family: 'Sora', sans-serif; font-weight: 800;
+    font-size: 13px; letter-spacing: 0.15em; text-transform: uppercase;
+    border-radius: 999px; cursor: pointer; text-decoration: none;
+    border: none; white-space: nowrap;
+    transition: transform 0.2s, box-shadow 0.25s, gap 0.2s;
+  }
+  #qb54-vbanner-{{ section.id }} .vb-btn-primary {
+    background: var(--vb-gold); color: #061a06;
+    box-shadow: 0 12px 36px color-mix(in srgb, var(--vb-gold) 48%, transparent);
+  }
+  #qb54-vbanner-{{ section.id }} .vb-btn-primary:hover {
+    transform: translateY(-2px); gap: 14px;
+    box-shadow: 0 22px 56px color-mix(in srgb, var(--vb-gold) 58%, transparent);
+  }
+  #qb54-vbanner-{{ section.id }} .vb-btn-ghost {
+    background: color-mix(in srgb, #fff 8%, transparent);
+    color: var(--vb-text);
+    border: 1px solid color-mix(in srgb, #fff 22%, transparent);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  #qb54-vbanner-{{ section.id }} .vb-btn-ghost:hover {
+    background: color-mix(in srgb, #fff 14%, transparent);
+    border-color: color-mix(in srgb, #fff 42%, transparent);
+    transform: translateY(-2px); gap: 14px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    #qb54-vbanner-{{ section.id }} .vb-inner {
+      padding: clamp(32px, 8vw, 52px) 20px;
+    }
+    #qb54-vbanner-{{ section.id }} .vb-cell { min-width: 58px; padding: 12px 8px 8px; border-radius: 9px; }
+    #qb54-vbanner-{{ section.id }} .vb-num  { font-size: clamp(26px, 8vw, 38px); }
+    #qb54-vbanner-{{ section.id }} .vb-colon { font-size: 28px; padding-top: 14px; }
+    #qb54-vbanner-{{ section.id }} .vb-actions { flex-direction: column; align-items: stretch; gap: 10px; }
+    #qb54-vbanner-{{ section.id }} .vb-btn { justify-content: center; }
+    #qb54-vbanner-{{ section.id }} .vb-coupon { justify-content: center; }
+    #qb54-vbanner-{{ section.id }} .vb-fw   { display: none; }
+    #qb54-vbanner-{{ section.id }} .vb-canton { width: clamp(80px, 22vw, 120px); height: clamp(60px, 14vw, 90px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #qb54-vbanner-{{ section.id }} .vb-stripes,
+    #qb54-vbanner-{{ section.id }} .vb-stars,
+    #qb54-vbanner-{{ section.id }} .vb-fw,
+    #qb54-vbanner-{{ section.id }} .vb-canton-star { animation: none !important; }
+    #qb54-vbanner-{{ section.id }} .vb-fw { opacity: 0.25; }
+    #qb54-vbanner-{{ section.id }} .vb-canton-star { opacity: 0.75; }
+  }
+</style>
+
+<div id="qb54-vbanner-{{ section.id }}">
+
+  <!-- BACKGROUND MEDIA -->
+  {%- if section.settings.media_type == 'video' and section.settings.bg_video != blank -%}
+    <video class="vb-bg-media" autoplay muted loop playsinline
+      poster="{{ section.settings.bg_video.preview_image | image_url: width: 1600 }}"
+      preload="auto" aria-hidden="true">
+      {%- for source in section.settings.bg_video.sources -%}
+        <source src="{{ source.url }}" type="{{ source.mime_type }}">
+      {%- endfor -%}
+    </video>
+  {%- elsif section.settings.media_type == 'image' and section.settings.bg_image != blank -%}
+    <img class="vb-bg-media" aria-hidden="true"
+      srcset="{{ section.settings.bg_image | image_url: width: 800 }} 800w,
+              {{ section.settings.bg_image | image_url: width: 1200 }} 1200w,
+              {{ section.settings.bg_image | image_url: width: 1600 }} 1600w,
+              {{ section.settings.bg_image | image_url: width: 2000 }} 2000w"
+      sizes="100vw"
+      src="{{ section.settings.bg_image | image_url: width: 1600 }}"
+      alt="" loading="lazy">
+  {%- else -%}
+    <div class="vb-bg-placeholder"></div>
+  {%- endif -%}
+
+  <!-- LAYERS -->
+  <div class="vb-overlay"></div>
+  <div class="vb-stripes"></div>
+  <div class="vb-stars"></div>
+
+  <!-- FLAG CANTON (top-left stars) -->
+  <div class="vb-canton" aria-hidden="true">
+    {%- for i in (1..25) -%}<span class="vb-canton-star" style="animation-delay:{{ forloop.index | times: 0.12 }}s">★</span>{%- endfor -%}
+  </div>
+
+  <!-- EDGE STRIPES -->
+  <div class="vb-left-edge" aria-hidden="true"></div>
+  <div class="vb-right-edge" aria-hidden="true"></div>
+
+  <!-- TOP / BOTTOM STRIPE BANDS -->
+  <div class="vb-stripe-top" aria-hidden="true"></div>
+  <div class="vb-stripe-bottom" aria-hidden="true"></div>
+
+  <!-- FIREWORKS -->
+  {% if section.settings.show_fireworks %}
+    <span class="vb-fw vb-fw-1"></span>
+    <span class="vb-fw vb-fw-2"></span>
+    <span class="vb-fw vb-fw-3"></span>
+    <span class="vb-fw vb-fw-4"></span>
+  {% endif %}
+
+  <!-- CONTENT -->
+  <div class="vb-inner">
+
+    {% if section.settings.eyebrow != blank %}
+      <div class="vb-eyebrow">{{ section.settings.eyebrow }}</div>
+    {% endif %}
+
+    <h2 class="vb-headline">
+      {%- if section.settings.heading_line1 != blank -%}
+        <span class="vb-hl-stripe">{{ section.settings.heading_line1 }}</span><br>
+      {%- endif -%}
+      {%- if section.settings.heading_line2 != blank -%}
+        <span class="vb-hl-gold">{{ section.settings.heading_line2 }}</span>
+      {%- endif -%}
+    </h2>
+
+    {% if section.settings.subtitle != blank %}
+      <p class="vb-sub">{{ section.settings.subtitle }}</p>
+    {% endif %}
+
+    {% if section.settings.show_countdown %}
+      <div class="vb-cd-wrap">
+        <div class="vb-cd-label">{{ section.settings.countdown_label }}</div>
+        <div class="vb-countdown" id="vb-cd-{{ section.id }}">
+          <div class="vb-cell"><span class="vb-num" data-unit="days">--</span><span class="vb-unit">Days</span></div>
+          <span class="vb-colon">:</span>
+          <div class="vb-cell"><span class="vb-num" data-unit="hours">--</span><span class="vb-unit">Hours</span></div>
+          <span class="vb-colon">:</span>
+          <div class="vb-cell"><span class="vb-num" data-unit="minutes">--</span><span class="vb-unit">Mins</span></div>
+          <span class="vb-colon">:</span>
+          <div class="vb-cell"><span class="vb-num" data-unit="seconds">--</span><span class="vb-unit">Secs</span></div>
+        </div>
+        <div class="vb-live-msg" id="vb-live-{{ section.id }}">{{ section.settings.live_message }}</div>
+      </div>
+    {% endif %}
+
+    <div class="vb-actions">
+      {% if section.settings.show_coupon and section.settings.coupon_code != blank %}
+        <button type="button" class="vb-coupon" id="vb-coupon-{{ section.id }}" data-code="{{ section.settings.coupon_code | escape }}" aria-label="Copy coupon code {{ section.settings.coupon_code | escape }}">
+          <span class="vb-coupon-tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:middle;" aria-hidden="true">
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+              <line x1="7" y1="7" x2="7.01" y2="7"/>
+            </svg>
+            Code
+          </span>
+          <span class="vb-coupon-code">{{ section.settings.coupon_code }}</span>
+          <span class="vb-coupon-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+          </span>
+          <span class="vb-coupon-fb">✓ Copied!</span>
+        </button>
+      {% endif %}
+
+      {% if section.settings.cta1_label != blank %}
+        <a href="{{ section.settings.cta1_url | default: '#' }}" class="vb-btn vb-btn-primary">{{ section.settings.cta1_label }} →</a>
+      {% endif %}
+      {% if section.settings.cta2_label != blank %}
+        <a href="{{ section.settings.cta2_url | default: '#' }}" class="vb-btn vb-btn-ghost">{{ section.settings.cta2_label }}</a>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  var sid = '{{ section.id }}';
+  var targetIso = '{{ section.settings.target_date }}T{{ section.settings.target_time }}:00{{ section.settings.timezone_offset }}';
+  var target = new Date(targetIso);
+  if (isNaN(target.getTime())) {
+    var now = new Date();
+    target = new Date(now.getFullYear(), 6, 4, 23, 59, 0);
+    if (target < now) target = new Date(now.getFullYear() + 1, 6, 4, 23, 59, 0);
+  }
+  var cd = document.getElementById('vb-cd-' + sid);
+  var liveEl = document.getElementById('vb-live-' + sid);
+  if (cd) {
+    var cells = {
+      days:    cd.querySelector('[data-unit="days"]'),
+      hours:   cd.querySelector('[data-unit="hours"]'),
+      minutes: cd.querySelector('[data-unit="minutes"]'),
+      seconds: cd.querySelector('[data-unit="seconds"]')
+    };
+    var last = { days: null, hours: null, minutes: null, seconds: null };
+    function pad(n){ return n < 10 ? '0' + n : '' + n; }
+    function tick(){
+      var diff = target - Date.now();
+      if (diff <= 0) {
+        cd.style.display = 'none';
+        if (liveEl) liveEl.classList.add('on');
+        return;
+      }
+      var v = {
+        days:    Math.floor(diff / 86400000),
+        hours:   Math.floor((diff % 86400000) / 3600000),
+        minutes: Math.floor((diff % 3600000) / 60000),
+        seconds: Math.floor((diff % 60000) / 1000)
+      };
+      for (var k in cells) {
+        if (cells[k] && v[k] !== last[k]) {
+          cells[k].textContent = pad(v[k]);
+          if (last[k] !== null) {
+            var cell = cells[k].parentElement;
+            cell.classList.remove('pulse'); void cell.offsetWidth; cell.classList.add('pulse');
+          }
+          last[k] = v[k];
+        }
+      }
+    }
+    tick(); setInterval(tick, 1000);
+  }
+
+  var couponBtn = document.getElementById('vb-coupon-' + sid);
+  if (couponBtn) {
+    var resetT;
+    function showCopied(){ couponBtn.classList.add('copied'); clearTimeout(resetT); resetT = setTimeout(function(){ couponBtn.classList.remove('copied'); }, 1800); }
+    function fallback(text){ var ta=document.createElement('textarea'); ta.value=text; ta.style.cssText='position:absolute;left:-9999px'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); }
+    couponBtn.addEventListener('click', function(){
+      var code = couponBtn.dataset.code || '';
+      if (!code) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(showCopied).catch(function(){ fallback(code); showCopied(); });
+      } else { fallback(code); showCopied(); }
+    });
+  }
+
+  /* Nudge background video autoplay */
+  var bgVid = document.querySelector('#qb54-vbanner-{{ section.id }} .vb-bg-media[autoplay]');
+  if (bgVid) {
+    var vp = bgVid.play();
+    if (vp && vp.catch) vp.catch(function(){});
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "🎑 Flag Video Banner",
+  "tag": "div",
+  "class": "qb54-vbanner-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background Media"
+    },
+    {
+      "type": "select",
+      "id": "media_type",
+      "label": "Background type",
+      "options": [
+        { "value": "none",  "label": "Gradient only" },
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video (Shopify-hosted)" }
+      ],
+      "default": "none",
+      "info": "Upload a flag or gameplay video for maximum impact"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Background image",
+      "info": "Landscape / wide-format recommended"
+    },
+    {
+      "type": "video",
+      "id": "bg_video",
+      "label": "Background video",
+      "info": "Shopify-hosted video. Autoplay muted, no controls."
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Independence Day Sale"
+    },
+    {
+      "type": "text",
+      "id": "heading_line1",
+      "label": "Heading line 1 (stripe fill)",
+      "default": "Red, White"
+    },
+    {
+      "type": "text",
+      "id": "heading_line2",
+      "label": "Heading line 2 (gold accent)",
+      "default": "& QB54."
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "The viral backyard football game is <strong>20% off</strong> through July 4th. Grab it before the fireworks."
+    },
+    {
+      "type": "header",
+      "content": "Countdown"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_countdown",
+      "label": "Show countdown",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "countdown_label",
+      "label": "Label",
+      "default": "Sale ends in"
+    },
+    {
+      "type": "text",
+      "id": "target_date",
+      "label": "Target date (YYYY-MM-DD)",
+      "default": "2026-07-04"
+    },
+    {
+      "type": "text",
+      "id": "target_time",
+      "label": "Target time (HH:MM, 24h)",
+      "default": "23:59"
+    },
+    {
+      "type": "text",
+      "id": "timezone_offset",
+      "label": "Timezone offset",
+      "info": "e.g. -04:00 (EDT), -07:00 (PDT)",
+      "default": "-04:00"
+    },
+    {
+      "type": "text",
+      "id": "live_message",
+      "label": "Message after countdown ends",
+      "default": "★ Happy 4th of July — Shop Now ★"
+    },
+    {
+      "type": "header",
+      "content": "Coupon & Buttons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_coupon",
+      "label": "Show coupon code",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "coupon_code",
+      "label": "Coupon code",
+      "default": "FREEDOM"
+    },
+    {
+      "type": "text",
+      "id": "cta1_label",
+      "label": "Primary button",
+      "default": "Shop the 4th of July Sale"
+    },
+    {
+      "type": "url",
+      "id": "cta1_url",
+      "label": "Primary button URL",
+      "info": "Link to your 4th of July landing page / hero section"
+    },
+    {
+      "type": "text",
+      "id": "cta2_label",
+      "label": "Secondary button (optional)",
+      "info": "Leave blank to hide"
+    },
+    {
+      "type": "url",
+      "id": "cta2_url",
+      "label": "Secondary button URL"
+    },
+    {
+      "type": "header",
+      "content": "Effects"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_fireworks",
+      "label": "Show firework animations",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "section_height",
+      "label": "Max section height",
+      "min": 320,
+      "max": 900,
+      "step": 20,
+      "default": 560,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Content max width",
+      "min": 480,
+      "max": 1200,
+      "step": 20,
+      "default": 860,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Margin top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "color_overlay",
+      "label": "Dark overlay color",
+      "info": "Set opacity via alpha — e.g. #141c40 at 78%",
+      "default": "#0d1535"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "color_red",
+      "label": "Red",
+      "default": "#e11d2f"
+    },
+    {
+      "type": "color",
+      "id": "color_blue",
+      "label": "Navy",
+      "default": "#1d2a60"
+    },
+    {
+      "type": "color",
+      "id": "color_gold",
+      "label": "Gold accent",
+      "default": "#f7b80d"
+    }
+  ],
+  "presets": [
+    {
+      "name": "🎑 Flag Video Banner"
+    }
+  ],
+  "enabled_on": {
+    "templates": ["*"]
+  }
+}
+{% endschema %}

@@ -1,0 +1,391 @@
+{%- liquid
+  assign flag_show = true
+  if section.settings.hide_on_homepage and request.page_type == 'index'
+    assign flag_show = false
+  endif
+-%}
+
+{%- if flag_show -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* ONE seamless strip — no inner boxes, no pills */
+  #flag-bar-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    min-height: 48px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 20px;
+    background-color: #3C3B6E;
+    /* Star band running across the middle of the bar */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='18' viewBox='0 0 60 18'%3E%3Cpath fill='rgba(255,255,255,0.8)' d='M30 3.2l1.7 3.45 3.8.55-2.75 2.68.65 3.79L30 11.88l-3.4 1.79.65-3.79-2.75-2.68 3.8-.55z'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-position: center;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
+  }
+
+  /* Red/white stripes along the top and bottom edges */
+  #flag-bar-{{ section.id }}::before,
+  #flag-bar-{{ section.id }}::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: linear-gradient(
+      #ffffff 0 25%,
+      #B22234 25% 75%,
+      #ffffff 75% 100%
+    );
+    pointer-events: none;
+    z-index: 2;
+  }
+  #flag-bar-{{ section.id }}::before { top: 0; }
+  #flag-bar-{{ section.id }}::after { bottom: 0; }
+
+  /* Feathered scrim so the stars fade out behind the text
+     instead of colliding with it */
+  #flag-bar-{{ section.id }} .flag-scrim {
+    position: absolute;
+    inset: 8px 0;
+    background: linear-gradient(
+      90deg,
+      rgba(60, 59, 110, 0) 0%,
+      rgb(60, 59, 110) 22%,
+      rgb(60, 59, 110) 78%,
+      rgba(60, 59, 110, 0) 100%
+    );
+    pointer-events: none;
+  }
+
+  /* Message + countdown flow together as one line.
+     The line carries its own solid navy backing (with soft fading
+     edges) so stars can NEVER show through the text, no matter how
+     wide the message is. */
+  #flag-bar-{{ section.id }} .flag-line {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    column-gap: 14px;
+    row-gap: 4px;
+    max-width: 100%;
+    min-width: 0;
+    padding: 4px 36px;
+    box-sizing: border-box;
+    background: linear-gradient(
+      90deg,
+      rgba(60, 59, 110, 0) 0%,
+      #3C3B6E 32px,
+      #3C3B6E calc(100% - 32px),
+      rgba(60, 59, 110, 0) 100%
+    );
+  }
+
+  /* Grid-stacked rotator: every slide occupies the same cell, so the
+     rotator sizes itself to its largest message without jumping. */
+  #flag-bar-{{ section.id }} .flag-rotator {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    min-width: 0;
+    max-width: 100%;
+  }
+  #flag-bar-{{ section.id }} .flag-slide {
+    grid-area: 1 / 1;
+    min-width: 0;
+    max-width: 100%;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+  }
+  #flag-bar-{{ section.id }} .flag-slide.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  #flag-bar-{{ section.id }} .flag-text {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.5;
+  }
+  #flag-bar-{{ section.id }} .flag-text a {
+    color: #ffffff;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    padding-bottom: 1px;
+    transition: border-color 0.2s ease;
+  }
+  #flag-bar-{{ section.id }} .flag-text a:hover {
+    border-color: #ffffff;
+  }
+
+  /* The one celebratory accent: a small gold star as the separator */
+  #flag-bar-{{ section.id }} .flag-star {
+    display: none;
+    color: #F5C542;
+    font-size: 11px;
+    line-height: 1;
+    transform: translateY(-1px);
+  }
+
+  /* Countdown: gold text in the same line — no box, no divider */
+  #flag-bar-{{ section.id }} .flag-countdown {
+    display: none; /* shown by JS once a valid end date is parsed */
+    align-items: baseline;
+    gap: 6px;
+    color: #F5C542;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+  #flag-bar-{{ section.id }}.countdown-live .flag-countdown {
+    display: inline-flex;
+  }
+  #flag-bar-{{ section.id }}.countdown-live .flag-star {
+    display: inline-block;
+  }
+  #flag-bar-{{ section.id }} .flag-time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media screen and (max-width: 700px) {
+    #flag-bar-{{ section.id }} {
+      padding: 12px 14px;
+    }
+    /* Cover the whole star band on small screens: less clutter */
+    #flag-bar-{{ section.id }} .flag-scrim {
+      background: rgb(60, 59, 110);
+    }
+    #flag-bar-{{ section.id }} .flag-text,
+    #flag-bar-{{ section.id }} .flag-countdown {
+      font-size: 11px;
+      letter-spacing: 0.04em;
+    }
+    /* Countdown wraps to its own line; hide the star so nothing dangles */
+    #flag-bar-{{ section.id }} .flag-line {
+      flex-direction: column;
+      column-gap: 0;
+    }
+    #flag-bar-{{ section.id }}.countdown-live .flag-star {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #flag-bar-{{ section.id }} .flag-slide {
+      transition: none;
+    }
+  }
+</style>
+
+<div id="flag-bar-{{ section.id }}">
+  <div class="flag-scrim" aria-hidden="true"></div>
+
+  <div class="flag-line">
+
+    <div class="flag-rotator">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'announcement' -%}
+          <div
+            class="flag-slide{% if forloop.first %} active{% endif %}"
+            {% unless forloop.first %}aria-hidden="true"{% endunless %}
+            {{ block.shopify_attributes }}
+          >
+            <span class="flag-text">
+              {%- if block.settings.link != blank -%}
+                <a href="{{ block.settings.link }}">{{ block.settings.text }}</a>
+              {%- else -%}
+                {{ block.settings.text }}
+              {%- endif -%}
+            </span>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.show_countdown and section.settings.countdown_end != blank -%}
+      <span class="flag-star" aria-hidden="true">&#9733;</span>
+      <div
+        class="flag-countdown"
+        data-countdown-end="{{ section.settings.countdown_end | escape }}"
+        role="timer"
+        aria-live="off"
+      >
+        <span>{{ section.settings.countdown_label | default: 'Encore ends in' }}</span>
+        <span class="flag-time">--</span>
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+
+<script>
+(function() {
+  var bar = document.getElementById('flag-bar-{{ section.id }}');
+  if (!bar) return;
+
+  /* ---------- Rotating messages (smooth crossfade) ---------- */
+  var slides = bar.querySelectorAll('.flag-slide');
+  if (slides.length > 1) {
+    var current = 0;
+    setInterval(function() {
+      var outgoing = slides[current];
+      current = (current + 1) % slides.length;
+      var incoming = slides[current];
+
+      outgoing.classList.remove('active');
+      outgoing.setAttribute('aria-hidden', 'true');
+      incoming.classList.add('active');
+      incoming.removeAttribute('aria-hidden');
+    }, 5000);
+  }
+
+  /* ---------- Countdown ---------- */
+  var cd = bar.querySelector('.flag-countdown');
+  if (!cd) return;
+
+  var raw = cd.getAttribute('data-countdown-end');
+  // Accept "2026-07-11 23:59" or "2026-07-11T23:59" (shopper's local time)
+  var end = new Date(raw.replace(' ', 'T'));
+  if (isNaN(end.getTime())) return;
+
+  var timeEl = cd.querySelector('.flag-time');
+  var timerId;
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function tick() {
+    var diff = end.getTime() - Date.now();
+    if (diff <= 0) {
+      bar.classList.remove('countdown-live');
+      if (timerId) clearInterval(timerId);
+      return;
+    }
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor((diff % 86400000) / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    timeEl.textContent = d > 0
+      ? d + 'd ' + pad(h) + 'h ' + pad(m) + 'm ' + pad(s) + 's'
+      : pad(h) + 'h ' + pad(m) + 'm ' + pad(s) + 's';
+    bar.classList.add('countdown-live');
+  }
+
+  tick();
+  timerId = setInterval(tick, 1000);
+})();
+</script>
+
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Flag Announcement Bar",
+  "class": "flag-announcement-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "hide_on_homepage",
+      "label": "Hide on homepage",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Countdown timer"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_countdown",
+      "label": "Show countdown",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "countdown_label",
+      "label": "Countdown label",
+      "default": "Encore ends in"
+    },
+    {
+      "type": "text",
+      "id": "countdown_end",
+      "label": "Sale end date & time",
+      "info": "Format: YYYY-MM-DD HH:MM (24h, shopper's local time). The countdown hides itself automatically when it hits zero.",
+      "default": "2026-07-11 23:59"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Announcement",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Free shipping on all orders $199+"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flag Announcement Bar",
+      "blocks": [
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "You made this sale a hit — so we're not stopping"
+          }
+        },
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "Encore week unlocked: the July 4th sale runs 7 more days"
+          }
+        },
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "20% off sitewide continues — code FREEDOM"
+          }
+        },
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "Free shipping on all orders $199+"
+          }
+        }
+      ]
+    }
+  ],
+  "enabled_on": {
+    "groups": ["header"]
+  }
+}
+{% endschema %}

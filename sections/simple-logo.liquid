@@ -1,0 +1,139 @@
+{%- style -%}
+  /* GLOBAL SAFETY */
+  .simple-logo-section, .simple-logo-section * { box-sizing: border-box; }
+  
+  .simple-logo-section {
+    background: {{ section.settings.section_bg }};
+    width: 100%;
+    padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px;
+  }
+  
+  .simple-logo-container {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center;
+  }
+  
+  .simple-logo-wrapper {
+    display: inline-block;
+    line-height: 0;
+  }
+  
+  .simple-logo-image {
+    max-width: {{ section.settings.logo_width }}px;
+    width: 100%;
+    height: auto;
+    border-radius: {{ section.settings.logo_border_radius }}px;
+    border: {{ section.settings.logo_border_width }}px solid {{ section.settings.logo_border_color }};
+    transition: all 0.3s ease;
+    filter: opacity({{ section.settings.logo_opacity }}%);
+  }
+  
+  .simple-logo-link:hover .simple-logo-image,
+  .simple-logo-wrapper:hover .simple-logo-image {
+    transform: scale({{ section.settings.logo_hover_scale | times: 0.01 }}) translateY({{ section.settings.logo_hover_transform }}px);
+    filter: opacity({{ section.settings.logo_hover_opacity }}%);
+    border-color: {{ section.settings.logo_hover_border_color }};
+  }
+  
+  .simple-logo-link {
+    display: inline-block;
+    line-height: 0;
+    text-decoration: none;
+  }
+  
+  /* RESPONSIVE DESIGN */
+  @media (max-width: 768px) {
+    .simple-logo-section {
+      padding: {{ section.settings.mobile_section_padding_top }}px 0 {{ section.settings.mobile_section_padding_bottom }}px;
+    }
+    
+    .simple-logo-container {
+      padding: 0 16px;
+    }
+    
+    .simple-logo-image {
+      max-width: {{ section.settings.mobile_logo_width }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="simple-logo-section">
+  <div class="simple-logo-container">
+    {% if section.settings.logo != blank %}
+      {% if section.settings.logo_link != blank %}
+        <a href="{{ section.settings.logo_link }}" class="simple-logo-link">
+          <img 
+            src="{{ section.settings.logo | image_url: width: section.settings.logo_width }}"
+            alt="{{ section.settings.logo_alt | default: shop.name }}"
+            class="simple-logo-image"
+            loading="lazy"
+            width="{{ section.settings.logo_width }}"
+            height="auto"
+          >
+        </a>
+      {% else %}
+        <div class="simple-logo-wrapper">
+          <img 
+            src="{{ section.settings.logo | image_url: width: section.settings.logo_width }}"
+            alt="{{ section.settings.logo_alt | default: shop.name }}"
+            class="simple-logo-image"
+            loading="lazy"
+            width="{{ section.settings.logo_width }}"
+            height="auto"
+          >
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="simple-logo-wrapper">
+        <div style="width: {{ section.settings.logo_width }}px; height: 60px; background: #e0e0e0; border-radius: {{ section.settings.logo_border_radius }}px; display: flex; align-items: center; justify-content: center; color: #666; font-size: 14px;">
+          Add Logo Image
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Simple Logo Section",
+  "settings": [
+    { "type": "header", "content": "Section Layout" },
+    { "type": "color", "id": "section_bg", "label": "Section background", "default": "#ffffff" },
+    { "type": "range", "id": "section_padding_top", "label": "Section padding top", "min": 10, "max": 100, "step": 2, "default": 40 },
+    { "type": "range", "id": "section_padding_bottom", "label": "Section padding bottom", "min": 10, "max": 100, "step": 2, "default": 40 },
+    { "type": "range", "id": "max_width", "label": "Max container width", "min": 800, "max": 1400, "step": 50, "default": 1200 },
+    
+    { "type": "header", "content": "Logo Image" },
+    { "type": "image_picker", "id": "logo", "label": "Logo image" },
+    { "type": "text", "id": "logo_alt", "label": "Logo alt text", "info": "Describe the logo for accessibility. Leave blank to use shop name." },
+    { "type": "url", "id": "logo_link", "label": "Logo link", "info": "Optional: Make logo clickable" },
+    
+    { "type": "header", "content": "Logo Sizing" },
+    { "type": "range", "id": "logo_width", "label": "Logo width", "min": 50, "max": 500, "step": 10, "default": 200 },
+    { "type": "range", "id": "logo_opacity", "label": "Logo opacity", "min": 10, "max": 100, "step": 5, "default": 100 },
+    
+    { "type": "header", "content": "Logo Styling" },
+    { "type": "range", "id": "logo_border_radius", "label": "Logo border radius", "min": 0, "max": 50, "step": 2, "default": 0 },
+    { "type": "range", "id": "logo_border_width", "label": "Logo border width", "min": 0, "max": 10, "step": 1, "default": 0 },
+    { "type": "color", "id": "logo_border_color", "label": "Logo border color", "default": "#e0e0e0" },
+    
+    { "type": "header", "content": "Logo Hover Effects" },
+    { "type": "range", "id": "logo_hover_scale", "label": "Logo hover scale (%)", "min": 80, "max": 120, "step": 2, "default": 104 },
+    { "type": "range", "id": "logo_hover_transform", "label": "Logo hover transform (negative moves up)", "min": -10, "max": 10, "step": 1, "default": -2 },
+    { "type": "range", "id": "logo_hover_opacity", "label": "Logo hover opacity", "min": 10, "max": 100, "step": 5, "default": 80 },
+    { "type": "color", "id": "logo_hover_border_color", "label": "Logo hover border color", "default": "#cccccc" },
+    
+    { "type": "header", "content": "Mobile Settings" },
+    { "type": "range", "id": "mobile_section_padding_top", "label": "Mobile section padding top", "min": 10, "max": 80, "step": 2, "default": 30 },
+    { "type": "range", "id": "mobile_section_padding_bottom", "label": "Mobile section padding bottom", "min": 10, "max": 80, "step": 2, "default": 30 },
+    { "type": "range", "id": "mobile_logo_width", "label": "Mobile logo width", "min": 50, "max": 300, "step": 10, "default": 150 }
+  ],
+  "presets": [
+    {
+      "name": "Simple Logo Section"
+    }
+  ]
+}
+{% endschema %}

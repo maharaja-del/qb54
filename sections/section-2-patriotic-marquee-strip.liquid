@@ -1,0 +1,371 @@
+{% comment %}
+  QB54 — 4th of July Patriotic Marquee Strip (Section 2)
+  Endlessly scrolling text ticker on a flag-stripe background.
+  Great for product pages and collection pages — drops in as a
+  1-line attention ribbon between content sections.
+
+  sections/qb54-july4-marquee-strip.liquid
+{% endcomment %}
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+
+<style>
+  /* ── OUTER SHELL ── */
+  #qb54-marquee-{{ section.id }} {
+    position: relative;
+    overflow: hidden;
+    margin: {{ section.settings.margin_top }}px 0 {{ section.settings.margin_bottom }}px;
+    isolation: isolate;
+    line-height: 1;
+  }
+
+  /* ── FLAG STRIPES ── */
+  #qb54-marquee-{{ section.id }} .qb54-mq-stripes {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      -{{ section.settings.stripe_angle }}deg,
+      {{ section.settings.color_red }} 0,
+      {{ section.settings.color_red }} {{ section.settings.stripe_width }}px,
+      #fff {{ section.settings.stripe_width }}px,
+      #fff {{ section.settings.stripe_width | times: 2 }}px
+    );
+    opacity: {{ section.settings.stripe_opacity | divided_by: 100.0 }};
+    animation: qb54-mq-wave 7s ease-in-out infinite;
+  }
+  @keyframes qb54-mq-wave {
+    0%, 100% { transform: translateX(0) skewY(0); }
+    50%       { transform: translateX(-18px) skewY(-0.5deg); }
+  }
+
+  /* ── NAVY OVERLAY (tints the whole strip) ── */
+  #qb54-marquee-{{ section.id }} .qb54-mq-navy {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: {{ section.settings.color_blue }};
+    opacity: {{ section.settings.navy_opacity | divided_by: 100.0 }};
+    pointer-events: none;
+  }
+
+  /* ── TOP & BOTTOM GOLD RAILS ── */
+  #qb54-marquee-{{ section.id }} .qb54-mq-rail {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: {{ section.settings.color_gold }};
+    box-shadow: 0 0 10px {{ section.settings.color_gold }};
+    z-index: 4;
+    opacity: 0.85;
+  }
+  #qb54-marquee-{{ section.id }} .qb54-mq-rail-top    { top: 0; }
+  #qb54-marquee-{{ section.id }} .qb54-mq-rail-bottom { bottom: 0; }
+
+  /* ── MARQUEE TRACK ── */
+  #qb54-marquee-{{ section.id }} .qb54-mq-track {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    height: {{ section.settings.strip_height }}px;
+    width: max-content;
+    animation: qb54-mq-scroll {{ section.settings.scroll_speed }}s linear infinite;
+    will-change: transform;
+  }
+  #qb54-marquee-{{ section.id }}:hover .qb54-mq-track {
+    animation-play-state: paused;
+  }
+  @keyframes qb54-mq-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── ITEM ── */
+  #qb54-marquee-{{ section.id }} .qb54-mq-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 32px;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  #qb54-marquee-{{ section.id }} .qb54-mq-text {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(14px, 2vw, {{ section.settings.font_size }}px);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: {{ section.settings.color_text }};
+    text-shadow: 0 1px 10px rgba(0,0,0,0.45);
+  }
+  #qb54-marquee-{{ section.id }} .qb54-mq-sep {
+    display: inline-flex;
+    align-items: center;
+    font-size: 18px;
+    color: {{ section.settings.color_gold }};
+    text-shadow: 0 0 10px {{ section.settings.color_gold }};
+    flex-shrink: 0;
+    opacity: 0.9;
+  }
+  #qb54-marquee-{{ section.id }} .qb54-mq-code {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(12px, 1.6vw, {{ section.settings.font_size | minus: 2 }}px);
+    letter-spacing: 0.15em;
+    color: {{ section.settings.color_gold }};
+    background: rgba(0,0,0,0.3);
+    border: 1px solid {{ section.settings.color_gold }}55;
+    border-radius: 4px;
+    padding: 3px 10px;
+    text-shadow: 0 0 14px {{ section.settings.color_gold }};
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #qb54-marquee-{{ section.id }} .qb54-mq-track   { animation: none; }
+    #qb54-marquee-{{ section.id }} .qb54-mq-stripes { animation: none; }
+  }
+
+  @media (max-width: 480px) {
+    #qb54-marquee-{{ section.id }} .qb54-mq-track {
+      animation-duration: {{ section.settings.scroll_speed | plus: 8 }}s;
+    }
+  }
+</style>
+
+{%- liquid
+  assign items_str = ''
+  for block in section.blocks
+    if block.type == 'marquee_item'
+      assign items_str = items_str | append: block.settings.text | append: '|||'
+    endif
+  endfor
+  assign items = items_str | split: '|||'
+  assign coupon = section.settings.coupon_code
+  assign sep = section.settings.separator_char
+-%}
+
+<div id="qb54-marquee-{{ section.id }}">
+  <div class="qb54-mq-stripes"></div>
+  <div class="qb54-mq-navy"></div>
+  <div class="qb54-mq-rail qb54-mq-rail-top"></div>
+  <div class="qb54-mq-rail qb54-mq-rail-bottom"></div>
+
+  <div class="qb54-mq-track">
+    {%- comment -%} Render twice for seamless loop {%- endcomment -%}
+    {%- for pass in (1..2) -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'marquee_item' -%}
+          {%- if block.settings.link != blank -%}
+            <a href="{{ block.settings.link }}" class="qb54-mq-item" {{ block.shopify_attributes }}>
+          {%- else -%}
+            <span class="qb54-mq-item" {{ block.shopify_attributes }}>
+          {%- endif -%}
+            <span class="qb54-mq-sep">{{ sep }}</span>
+            <span class="qb54-mq-text">{{ block.settings.text }}</span>
+            {%- if block.settings.show_code and block.settings.code != blank -%}
+              <span class="qb54-mq-code">{{ block.settings.code }}</span>
+            {%- endif -%}
+          {%- if block.settings.link != blank -%}
+            </a>
+          {%- else -%}
+            </span>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "🎆 Marquee Strip",
+  "tag": "div",
+  "class": "qb54-marquee-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Scroll"
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed",
+      "label": "Scroll speed (seconds to cross screen)",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "strip_height",
+      "label": "Strip height",
+      "min": 40,
+      "max": 90,
+      "step": 2,
+      "default": 56,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size (desktop)",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "text",
+      "id": "separator_char",
+      "label": "Separator character",
+      "default": "★"
+    },
+    {
+      "type": "text",
+      "id": "coupon_code",
+      "label": "Default coupon code (used if block has no override)",
+      "default": "FREEDOM"
+    },
+    {
+      "type": "header",
+      "content": "Stripe Style"
+    },
+    {
+      "type": "range",
+      "id": "stripe_width",
+      "label": "Stripe width",
+      "min": 4,
+      "max": 40,
+      "step": 2,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "stripe_angle",
+      "label": "Stripe angle",
+      "min": 0,
+      "max": 45,
+      "step": 1,
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "stripe_opacity",
+      "label": "Stripe opacity (%)",
+      "min": 5,
+      "max": 100,
+      "step": 5,
+      "default": 45
+    },
+    {
+      "type": "range",
+      "id": "navy_opacity",
+      "label": "Navy overlay opacity (%)",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "default": 55
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Margin top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "color_red",
+      "label": "Stripe red",
+      "default": "#B22234"
+    },
+    {
+      "type": "color",
+      "id": "color_blue",
+      "label": "Navy overlay",
+      "default": "#1d2a60"
+    },
+    {
+      "type": "color",
+      "id": "color_gold",
+      "label": "Gold accent (rails + code)",
+      "default": "#f7b80d"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "marquee_item",
+      "name": "Marquee Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "4th of July Sale — 20% OFF"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_code",
+          "label": "Show coupon badge",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "code",
+          "label": "Coupon code",
+          "default": "FREEDOM"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "🎆 Marquee Strip",
+      "blocks": [
+        { "type": "marquee_item", "settings": { "text": "4th of July Sale — 20% OFF All Game Sets", "show_code": true, "code": "FREEDOM" } },
+        { "type": "marquee_item", "settings": { "text": "Free Shipping on Orders $199+" } },
+        { "type": "marquee_item", "settings": { "text": "The #1 Backyard Football Game — Play QB54" } },
+        { "type": "marquee_item", "settings": { "text": "Sale Ends July 4th at Midnight" } }
+      ]
+    }
+  ],
+  "enabled_on": {
+    "templates": ["*"]
+  }
+}
+{% endschema %}

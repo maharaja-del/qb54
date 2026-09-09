@@ -1,0 +1,595 @@
+<!-- Filename: how-to-play-qb54.liquid -->
+{% liquid
+  assign step_blocks = section.blocks | where: "type", "step"
+  assign score_blocks = section.blocks | where: "type", "score_item"
+%}
+
+<style>
+  {{ section.settings.heading_font | font_face }}
+  {{ section.settings.body_font | font_face }}
+
+  #section-{{ section.id }} {
+    --heading-font: {{ section.settings.heading_font.family }};
+    --body-font: {{ section.settings.body_font.family }};
+    --color-background: {{ section.settings.background_color }};
+    --color-heading: {{ section.settings.heading_color }};
+    --color-subheading: {{ section.settings.subheading_color }};
+    
+    --card-bg: {{ section.settings.card_bg_color }};
+    --card-title: {{ section.settings.card_title_color }};
+    --card-text: {{ section.settings.card_text_color }};
+    --card-badge-bg: {{ section.settings.card_badge_bg }};
+    --card-badge-text: {{ section.settings.card_badge_text }};
+    --card-icon-bg: {{ section.settings.card_icon_bg }};
+    --card-border-radius: {{ section.settings.card_border_radius }}px;
+
+    --scoring-bg: {{ section.settings.scoring_container_bg }};
+    --scoring-title: {{ section.settings.scoring_title_color }};
+    --scoring-number: {{ section.settings.scoring_number_color }};
+    --scoring-text: {{ section.settings.scoring_text_color }};
+    --scoring-border-radius: {{ section.settings.scoring_container_border_radius }}px;
+
+    background-color: var(--color-background);
+    font-family: var(--body-font);
+    padding-top: {{ section.settings.padding_top_desktop }}px;
+    padding-bottom: {{ section.settings.padding_bottom_desktop }}px;
+  }
+
+  .how-to-play__container {
+    max-width: 1200px; /* DEFAULT */
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .how-to-play__header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .how-to-play__heading {
+    font-family: var(--heading-font);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--color-heading);
+    margin: 0 0 16px;
+  }
+
+  .how-to-play__subheading {
+    font-family: var(--body-font);
+    font-size: 18px;
+    color: var(--color-subheading);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6; /* DEFAULT */
+  }
+
+  .how-to-play__steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+  }
+
+  .how-to-play__step-card {
+    background-color: var(--card-bg);
+    border-radius: var(--card-border-radius);
+    padding: 32px 24px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .how-to-play__step-badge {
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--card-badge-bg);
+    color: var(--card-badge-text);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: var(--heading-font);
+    line-height: 1;
+  }
+
+  .how-to-play__step-icon-wrapper {
+    background-color: var(--card-icon-bg);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .how-to-play__step-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+  }
+
+  .how-to-play__step-title {
+    font-family: var(--heading-font);
+    color: var(--card-title);
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 8px;
+  }
+
+  .how-to-play__step-description {
+    color: var(--card-text);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .how-to-play__scoring-wrapper {
+    background-color: var(--scoring-bg);
+    border-radius: var(--scoring-border-radius);
+    padding: 56px 40px;
+    margin-top: 64px;
+  }
+  
+  .how-to-play__scoring-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .how-to-play__scoring-title {
+    font-family: var(--heading-font);
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--scoring-title);
+    margin: 0;
+  }
+
+  .how-to-play__scoring-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    text-align: center;
+  }
+
+  .how-to-play__score-item-number {
+    font-family: var(--heading-font);
+    font-size: 72px;
+    font-weight: 700;
+    color: var(--scoring-number);
+    line-height: 1;
+    margin: 0 0 16px;
+  }
+
+  .how-to-play__score-item-description {
+    color: var(--scoring-text);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  @media (max-width: 990px) {
+    .how-to-play__steps-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    .how-to-play__scoring-grid {
+        gap: 24px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_mobile }}px;
+      padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+    }
+
+    .how-to-play__container {
+      padding: 0 16px;
+    }
+    
+    .how-to-play__header {
+      margin-bottom: 40px;
+    }
+
+    .how-to-play__heading {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .how-to-play__subheading {
+      font-size: 16px;
+    }
+
+    .how-to-play__steps-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .how-to-play__step-card {
+      padding: 24px;
+    }
+
+    .how-to-play__scoring-wrapper {
+      margin-top: 48px;
+      padding: 40px 24px;
+    }
+    
+    .how-to-play__scoring-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .how-to-play__score-item-number {
+      font-size: 56px;
+    }
+  }
+
+</style>
+
+<section id="section-{{ section.id }}">
+  <div class="how-to-play__container">
+    {% if section.settings.heading != blank or section.settings.subheading != blank %}
+      <div class="how-to-play__header">
+        {% if section.settings.heading != blank %}
+          <h2 class="how-to-play__heading">{{ section.settings.heading | escape }}</h2>
+        {% endif %}
+        {% if section.settings.subheading != blank %}
+          <div class="how-to-play__subheading">{{ section.settings.subheading }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if step_blocks.size > 0 %}
+      <div class="how-to-play__steps-grid">
+        {% for block in step_blocks %}
+          <div class="how-to-play__step-card" {{ block.shopify_attributes }}>
+            <div class="how-to-play__step-badge">{{ forloop.index }}</div>
+            {% if block.settings.icon != blank %}
+              <div class="how-to-play__step-icon-wrapper">
+                <img src="{{ block.settings.icon | image_url: width: 80 }}"
+                     alt="{{ block.settings.title | escape }}"
+                     class="how-to-play__step-icon"
+                     width="40"
+                     height="40"
+                     loading="lazy">
+              </div>
+            {% endif %}
+            {% if block.settings.title != blank %}
+              <h3 class="how-to-play__step-title">{{ block.settings.title | escape }}</h3>
+            {% endif %}
+            {% if block.settings.description != blank %}
+              <div class="how-to-play__step-description">{{ block.settings.description }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if score_blocks.size > 0 %}
+      <div class="how-to-play__scoring-wrapper">
+        {% if section.settings.scoring_title != blank %}
+          <div class="how-to-play__scoring-header">
+            <h3 class="how-to-play__scoring-title">{{ section.settings.scoring_title | escape }}</h3>
+          </div>
+        {% endif %}
+        <div class="how-to-play__scoring-grid">
+          {% for block in score_blocks %}
+            <div class="how-to-play__score-item" {{ block.shopify_attributes }}>
+              {% if block.settings.score != blank %}
+                <div class="how-to-play__score-item-number">{{ block.settings.score | escape }}</div>
+              {% endif %}
+              {% if block.settings.description != blank %}
+                <div class="how-to-play__score-item-description">{{ block.settings.description }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "How to Play",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "How to Play QB54"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "<p>Simple rules, endless fun. Anyone can play in minutes!</p>"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Padding Top (Desktop)",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Padding Bottom (Desktop)",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding Top (Mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding Bottom (Mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "font",
+      "id": "heading_font",
+      "label": "Heading Font"
+    },
+    {
+      "type": "font",
+      "id": "body_font",
+      "label": "Body Font"
+    },
+    {
+      "type": "header",
+      "content": "Section Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#F6F4EC"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#1D2A20"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading Color",
+      "default": "#4E5851"
+    },
+    {
+      "type": "header",
+      "content": "Step Cards"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Card Title Color",
+      "default": "#1D2A20"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Card Text Color",
+      "default": "#4E5851"
+    },
+    {
+      "type": "color",
+      "id": "card_badge_bg",
+      "label": "Badge Background",
+      "default": "#1D2A20"
+    },
+    {
+      "type": "color",
+      "id": "card_badge_text",
+      "label": "Badge Text Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_icon_bg",
+      "label": "Icon Background",
+      "default": "#F5F5F5"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card Border Radius",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Scoring System"
+    },
+    {
+      "type": "text",
+      "id": "scoring_title",
+      "label": "Title",
+      "default": "Scoring System"
+    },
+    {
+      "type": "color",
+      "id": "scoring_container_bg",
+      "label": "Container Background",
+      "default": "#1D2A20"
+    },
+    {
+      "type": "color",
+      "id": "scoring_title_color",
+      "label": "Title Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "scoring_number_color",
+      "label": "Score Number Color",
+      "default": "#F7B543"
+    },
+    {
+      "type": "color",
+      "id": "scoring_text_color",
+      "label": "Score Text Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "scoring_container_border_radius",
+      "label": "Container Border Radius",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Step Title"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Explain the step in a few words.</p>"
+        }
+      ]
+    },
+    {
+      "type": "score_item",
+      "name": "Score Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "score",
+          "label": "Score",
+          "default": "1"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Describe how this score is achieved.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "How to Play",
+      "blocks": [
+        {
+          "type": "step",
+          "settings": {
+            "title": "Set Up",
+            "description": "<p>Unfold the two QB54 chairs and place them 40 feet apart.</p>"
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "Throw",
+            "description": "<p>Toss the football and try to land it in the opposing chair’s bucket.</p>"
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "Score Points",
+            "description": "<p>Hit the bucket for points. Higher points for tougher shots!</p>"
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "First to 54 Wins!",
+            "description": "<p>The first player or team to reach 54 points wins the game.</p>"
+          }
+        },
+        {
+          "type": "score_item",
+          "settings": {
+            "score": "1",
+            "description": "<p>Point - Hit the chair</p>"
+          }
+        },
+        {
+          "type": "score_item",
+          "settings": {
+            "score": "3",
+            "description": "<p>Points - Ball stays in bucket</p>"
+          }
+        },
+        {
+          "type": "score_item",
+          "settings": {
+            "score": "6",
+            "description": "<p>Points - Ball goes through bucket</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

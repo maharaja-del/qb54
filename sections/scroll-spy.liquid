@@ -1,0 +1,185 @@
+<style>
+  #shopify-section-{{ section.id }} {
+    position: sticky;
+    {%- render 'section-variables', section: section -%}
+  }
+</style>
+
+<div class="page-width{% if section.settings.full_width %} page-width--full{% endif %} relative">
+  <scroll-shadow class="scroll-shadow block md:text-{{ section.settings.text_alignment }} text-{{ section.settings.text_alignment_mobile }} overflow-hidden">
+    <nav class="header__menu scroll-area scrollspy-nav inline-flex" is="scroll-spy"{% if section.settings.show_highlight %} data-highlight{% endif %}>
+      <ul class="scrollspy-list flex gap-1 list-menu with-block" role="menu">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'nav_item' %}
+              {%- if block.settings.title != blank -%}
+                {%- assign target_id = block.settings.target_id | split: ',' -%}
+                <li class="scrollspy-item" role="menuitem" {{ block.shopify_attributes }}>
+                  <a href="#{{ target_id | first | strip }}" 
+                    class="scrollspy-link menu__item text-sm-lg flex items-center font-medium z-2 relative cursor-pointer whitespace-nowrap"
+                    data-target="{{ block.settings.target_id | remove: ' ' | strip_newlines }}"
+                  >
+                    <span class="btn-text">{{ block.settings.title }}</span>
+                    <span class="btn-text btn-duplicate">{{ block.settings.title }}</span>
+                  </a>
+                </li>
+              {%- endif -%}
+            
+            {% when 'back_to_top' %}
+              <li class="scrollspy-item" role="menuitem" {{ block.shopify_attributes }}>
+                <button type="button"
+                  class="back-to-top menu__item text-sm-lg flex items-center font-medium z-2 relative cursor-pointer whitespace-nowrap"
+                  aria-label="{{ block.settings.text }}"
+                >
+                  <span class="btn-text">
+                    {%- render 'icon', icon: 'arrow-top' -%}
+                  </span>
+                  <span class="btn-text btn-duplicate">
+                    {%- render 'icon', icon: 'arrow-top' -%}
+                  </span>
+                </button>
+              </li>
+          {% endcase %}
+        {% endfor %}
+      </ul>
+    </nav>
+    <template>
+      <slot></slot>
+      <s dir="{% render 'direction' %}" style="--t: 0;--b: 0;--l: 0;--r: 0;">
+        <span class="l"></span>
+        <span class="r"></span>
+      </s>
+      <style>
+        :host{display:inline-block;position:relative}:host([hidden]){display:none}
+        s{position:absolute;inset:0;pointer-events:none;{% if settings.card_style == 'card' %}--color-background:var(--color-placeholder){% endif %}}
+        s span{position:absolute;inset-block:0;width:var(--sp-12);opacity:0;transition:opacity var(--animation-short);z-index:2;}
+        s .l{inset-inline-start:0;opacity:var(--l);background:linear-gradient(90deg,rgb(var(--color-background)) 0%,transparent 100%);}
+        s .r{inset-inline-end:0;opacity:var(--r);background:linear-gradient(270deg,rgb(var(--color-background)) 0%,transparent 100%);}
+        s[dir=rtl] :is(.icon-chevron-left,.icon-chevron-right){transform:scaleX(-1);}
+      </style>
+    </template>
+  </scroll-shadow>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.scroll-spy.name",
+  "class": "scrollspy-section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:sections.scroll-spy.settings.paragraph.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_highlight",
+      "label": "t:sections.scroll-spy.settings.show_highlight.label",
+      "default": true
+    },
+    {
+      "type": "text_alignment",
+      "id": "text_alignment",
+      "default": "left",
+      "label": "t:sections.global.settings.text_alignment.label"
+    },
+    {
+      "type": "text_alignment",
+      "id": "text_alignment_mobile",
+      "default": "left",
+      "label": "t:sections.global.settings.text_alignment_mobile.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.header__colors.content",
+      "info": "t:sections.global.settings.header__colors.info"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "t:sections.global.settings.color_text.label",
+      "default": "#171717"
+    },
+    {
+      "type": "color",
+      "id": "color_background",
+      "label": "t:sections.global.settings.color_background.label",
+      "default": "#e8eaeb"
+    },
+    {
+      "type": "color_background",
+      "id": "gradient_background",
+      "label": "t:sections.global.settings.gradient_background.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.header__section.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "t:sections.global.settings.full_width.label",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "nav_item",
+      "name": "t:sections.scroll-spy.blocks.nav_item.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.global.settings.title.label"
+        },
+        {
+          "type": "textarea",
+          "id": "target_id",
+          "label": "t:sections.scroll-spy.blocks.nav_item.settings.target_id.label",
+          "info": "t:sections.scroll-spy.blocks.nav_item.settings.target_id.info"
+        }
+      ]
+    },
+    {
+      "type": "back_to_top",
+      "name": "t:sections.scroll-spy.blocks.back_to_top.name",
+      "limit": 1
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.scroll-spy.name",
+      "category": "t:categories.storytelling",
+      "blocks": [
+        {
+          "type": "back_to_top"
+        },
+        {
+          "type": "nav_item",
+          "settings": {
+            "title": "Item 1"
+          }
+        },
+        {
+          "type": "nav_item",
+          "settings": {
+            "title": "Item 2"
+          }
+        },
+        {
+          "type": "nav_item",
+          "settings": {
+            "title": "Item 3"
+          }
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": [
+      "footer",
+      "header",
+      "custom.overlay"
+    ]
+  }
+}
+{% endschema %}

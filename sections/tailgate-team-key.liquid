@@ -1,0 +1,31 @@
+{%- comment -%}
+  Resolves a product title to one of the 32 tailgate-shop team keys.
+  Scans every word in the title (not just the first) so titles like
+  "Chicago Bears 9" Player Football (Williams)" still match 'bears',
+  not just single-word titles like "Bears Blanket".
+  Usage: {% render 'tailgate-team-key', title: product.title %}
+{%- endcomment -%}
+{%- liquid
+  assign clean_title = title | strip | downcase | remove: '(' | remove: ')' | remove: '"' | remove: "'"
+  assign words = clean_title | split: ' '
+  assign team_keys = 'cardinals|falcons|ravens|bills|panthers|bears|bengals|browns|cowboys|broncos|lions|packers|texans|colts|jaguars|chiefs|raiders|chargers|rams|dolphins|vikings|patriots|saints|giants|jets|eagles|steelers|49ers|seahawks|buccaneers|titans|commanders' | split: '|'
+
+  assign resolved = blank
+  for word in words
+    if word == 'cardinal'
+      assign resolved = 'cardinals'
+    elsif word == 'biils'
+      assign resolved = 'bills'
+    elsif team_keys contains word
+      assign resolved = word
+    endif
+    if resolved != blank
+      break
+    endif
+  endfor
+
+  unless resolved
+    assign resolved = words | first
+  endunless
+-%}
+{{- resolved -}}

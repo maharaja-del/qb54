@@ -1,0 +1,921 @@
+<style>
+  #shopify-section-{{ section.id }} {
+    --section-padding-top: {{ section.settings.padding_top }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+    {%- render 'section-variables', section: section -%}
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop {
+    display: grid;
+    gap: clamp(34px, 5vw, 64px);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__instruction {
+    max-width: 700px;
+    margin: -14px auto 0;
+    color: rgb(var(--color-foreground) / 0.68);
+    font-size: 15px;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__teams {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    overflow: hidden;
+    border-top: 1px solid rgb(var(--color-foreground) / 0.14);
+    border-left: 1px solid rgb(var(--color-foreground) / 0.14);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__team {
+    appearance: none;
+    position: relative;
+    display: flex;
+    min-width: 0;
+    min-height: 158px;
+    padding: 18px 10px 20px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: rgb(var(--color-foreground));
+    background: rgb(var(--color-background));
+    border: 0;
+    border-right: 1px solid rgb(var(--color-foreground) / 0.14);
+    border-bottom: 1px solid rgb(var(--color-foreground) / 0.14);
+    cursor: pointer;
+    transition: color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__team::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background: #8cf000;
+    content: '';
+    opacity: 0;
+    transform: scaleX(0.45);
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__team:hover {
+    background: rgb(var(--color-foreground) / 0.045);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__team[aria-selected='true'] {
+    color: #ffffff;
+    background: #171717;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__team[aria-selected='true']::after {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__team:focus-visible {
+    z-index: 2;
+    outline: 3px solid #8cf000;
+    outline-offset: -3px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__logo {
+    position: relative;
+    display: grid;
+    width: 94px;
+    height: 94px;
+    place-items: center;
+    background: #ffffff;
+    border: 1px solid #8cf000;
+    border-radius: 50%;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__logo img {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 82px;
+    height: 82px;
+    padding: 4px;
+    object-fit: contain;
+    background: #ffffff;
+    border-radius: 12px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__logo-fallback {
+    position: absolute;
+    color: #76d900;
+    font-size: 19px;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__logo img.is-broken {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__team-name {
+    display: -webkit-box;
+    min-height: 30px;
+    overflow: hidden;
+    font-size: 12px;
+    font-weight: 850;
+    letter-spacing: 0.02em;
+    line-height: 1.25;
+    text-align: center;
+    text-transform: uppercase;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__results {
+    scroll-margin-top: 100px;
+    outline: none;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__results-header {
+    display: flex;
+    margin-bottom: 24px;
+    align-items: end;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__results-eyebrow {
+    margin: 0 0 7px;
+    color: #5aa900;
+    font-size: 12px;
+    font-weight: 850;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__results-title {
+    margin: 0;
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__count {
+    flex: 0 0 auto;
+    color: rgb(var(--color-foreground) / 0.58);
+    font-size: 13px;
+    font-weight: 750;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__products {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(14px, 2vw, 24px);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__product {
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__product[hidden] {
+    display: none !important;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product {
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+    flex-direction: column;
+    color: rgb(var(--color-foreground));
+    background: rgb(var(--color-background));
+    border: 1px solid rgb(var(--color-foreground) / 0.12);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.06);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product__media {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 1;
+    background: rgb(var(--color-foreground) / 0.035);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product__media img,
+  #shopify-section-{{ section.id }} .tailgate-product__placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 280ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product:hover .tailgate-product__media img {
+    transform: scale(1.035);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product__badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 1;
+    padding: 6px 9px;
+    color: #171717;
+    background: #8cf000;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product__content {
+    display: flex;
+    padding: 18px;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product__type {
+    margin: 0 0 6px;
+    color: rgb(var(--color-foreground) / 0.55);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product__title a {
+    color: inherit;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product__price {
+    margin-top: 10px;
+    font-size: 15px;
+    font-weight: 850;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product__form {
+    margin-top: auto;
+    padding-top: 16px;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product__add {
+    display: inline-flex;
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 14px;
+    align-items: center;
+    justify-content: center;
+    color: #171717;
+    background: #8cf000;
+    border: 1px solid #8cf000;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.03em;
+    text-align: center;
+    text-transform: uppercase;
+    transition: filter 180ms ease, transform 180ms ease;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product__add:not([disabled]):hover {
+    filter: brightness(0.94);
+    transform: translateY(-1px);
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-product__add[disabled] {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__empty {
+    padding: 48px 24px;
+    color: rgb(var(--color-foreground) / 0.66);
+    background: rgb(var(--color-foreground) / 0.035);
+    border: 1px dashed rgb(var(--color-foreground) / 0.2);
+    border-radius: 16px;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .tailgate-shop__empty[hidden] {
+    display: none;
+  }
+
+  @media screen and (max-width: 1199px) {
+    #shopify-section-{{ section.id }} .tailgate-shop__teams {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    #shopify-section-{{ section.id }} .tailgate-shop__teams {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-shop__products {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .tailgate-shop {
+      gap: 34px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-shop__teams {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-shop__team {
+      min-height: 124px;
+      padding: 13px 6px 15px;
+      gap: 8px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-shop__logo {
+      width: 68px;
+      height: 68px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-shop__logo img {
+      width: 60px;
+      height: 60px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-shop__team-name {
+      min-height: 27px;
+      font-size: 10px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-shop__results-header {
+      align-items: start;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-shop__products {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-product {
+      border-radius: 12px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-product__content {
+      padding: 13px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-product__title {
+      font-size: 14px;
+    }
+
+    #shopify-section-{{ section.id }} .tailgate-product__add {
+      min-height: 42px;
+      padding-inline: 8px;
+      font-size: 10px;
+    }
+  }
+
+  @media screen and (max-width: 389px) {
+    #shopify-section-{{ section.id }} .tailgate-shop__teams {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .tailgate-shop__team,
+    #shopify-section-{{ section.id }} .tailgate-shop__team::after,
+    #shopify-section-{{ section.id }} .tailgate-product__media img,
+    #shopify-section-{{ section.id }} .tailgate-product__add {
+      transition: none;
+    }
+  }
+</style>
+
+{%- liquid
+  assign tailgate_collection = section.settings.tailgate_collection
+  if tailgate_collection == blank
+    assign tailgate_collection = collection
+  endif
+
+  assign football_collection = section.settings.football_collection
+  if football_collection == blank
+    assign football_collection = collections['nfl-football']
+  endif
+
+  capture teams_data
+    echo 'cardinals::Arizona Cardinals::ARI::https://cdn.shopify.com/s/files/1/1444/0224/files/Arizona_cardinals.jpg?v=1785794140::arizona cardinals,cardinals'
+    echo '~~falcons::Atlanta Falcons::ATL::https://cdn.shopify.com/s/files/1/1444/0224/files/Atlanta_Falcons_Logo.png::atlanta falcons,falcons'
+    echo '~~ravens::Baltimore Ravens::BAL::https://cdn.shopify.com/s/files/1/1444/0224/files/Baltimore_Ravens_Logo.png::baltimore ravens,ravens'
+    echo '~~bills::Buffalo Bills::BUF::https://cdn.shopify.com/s/files/1/1444/0224/files/Buffalo_Bills_Logo.png?v=1785311202::buffalo bills,bills,biils'
+    echo '~~panthers::Carolina Panthers::CAR::https://cdn.shopify.com/s/files/1/1444/0224/files/Carolina_Panthers_Logo.png?v=1785311202::carolina panthers,panthers'
+    echo '~~bears::Chicago Bears::CHI::https://cdn.shopify.com/s/files/1/1444/0224/files/Chicago_Bears_Logo.png?v=1785311202::chicago bears,bears'
+    echo '~~bengals::Cincinnati Bengals::CIN::https://cdn.shopify.com/s/files/1/1444/0224/files/Cinncinati_Bengals_Logo.png?v=1785311202::cincinnati bengals,cinncinati bengals,bengals'
+    echo '~~browns::Cleveland Browns::CLE::https://cdn.shopify.com/s/files/1/1444/0224/files/Cleveland_Browns_Logo.png?v=1785311203::cleveland browns,browns'
+    echo '~~cowboys::Dallas Cowboys::DAL::https://cdn.shopify.com/s/files/1/1444/0224/files/Dallas_Cowboys_Logo.png?v=1785311202::dallas cowboys,cowboys'
+    echo '~~broncos::Denver Broncos::DEN::https://cdn.shopify.com/s/files/1/1444/0224/files/Denver_Broncos_Logo.png?v=1785311202::denver broncos,broncos'
+    echo '~~lions::Detroit Lions::DET::https://cdn.shopify.com/s/files/1/1444/0224/files/Detroit_Lions_Logo.png?v=1785311203::detroit lions,lions'
+    echo '~~packers::Green Bay Packers::GB::https://cdn.shopify.com/s/files/1/1444/0224/files/Green_Bay_Packers_Logo.png?v=1785311202::green bay packers,packers'
+    echo '~~texans::Houston Texans::HOU::https://cdn.shopify.com/s/files/1/1444/0224/files/Houston_Texans_Logo.png::houston texans,texans'
+    echo '~~colts::Indianapolis Colts::IND::https://cdn.shopify.com/s/files/1/1444/0224/files/Indianapolis_Colts_Logo.png?v=1785311202::indianapolis colts,colts'
+    echo '~~jaguars::Jacksonville Jaguars::JAX::https://cdn.shopify.com/s/files/1/1444/0224/files/Jacksonville_Jaguars_Logo.png?v=1785311202::jacksonville jaguars,jaguars,jags'
+    echo '~~chiefs::Kansas City Chiefs::KC::https://cdn.shopify.com/s/files/1/1444/0224/files/Kansas_City_Chiefs_Logo.png?v=1785311203::kansas city chiefs,chiefs'
+    echo '~~raiders::Las Vegas Raiders::LV::https://cdn.shopify.com/s/files/1/1444/0224/files/Las_Vegas_Raiders_Logo.png?v=1785311202::las vegas raiders,oakland raiders,raiders'
+    echo '~~chargers::Los Angeles Chargers::LAC::https://cdn.shopify.com/s/files/1/1444/0224/files/Los_Angeles_Chargers_Logo.png::los angeles chargers,la chargers,chargers'
+    echo '~~rams::Los Angeles Rams::LAR::https://cdn.shopify.com/s/files/1/1444/0224/files/Los_Angeles_Rams_Logo.png::los angeles rams,la rams,rams'
+    echo '~~dolphins::Miami Dolphins::MIA::https://cdn.shopify.com/s/files/1/1444/0224/files/Miami_Dolphins_Logo.png?v=1785311203::miami dolphins,dolphins'
+    echo '~~vikings::Minnesota Vikings::MIN::https://cdn.shopify.com/s/files/1/1444/0224/files/Minnesota_Vikings_Logo.png::minnesota vikings,vikings'
+    echo '~~patriots::New England Patriots::NE::https://cdn.shopify.com/s/files/1/1444/0224/files/New_England_Patriots_Logo.png?v=1785311202::new england patriots,patriots'
+    echo '~~saints::New Orleans Saints::NO::https://cdn.shopify.com/s/files/1/1444/0224/files/New_Orleans_Saints.jpg?v=1785794140::new orleans saints,saints'
+    echo '~~giants::New York Giants::NYG::https://cdn.shopify.com/s/files/1/1444/0224/files/New_York_Giants.jpg?v=1785794141::new york giants,ny giants,giants'
+    echo '~~jets::New York Jets::NYJ::https://cdn.shopify.com/s/files/1/1444/0224/files/New_York_jets.jpg?v=1785794141::new york jets,ny jets,jets'
+    echo '~~eagles::Philadelphia Eagles::PHI::https://cdn.shopify.com/s/files/1/1444/0224/files/Philadelphia_Eagles_Logo.png?v=1785311202::philadelphia eagles,eagles'
+    echo '~~steelers::Pittsburgh Steelers::PIT::https://cdn.shopify.com/s/files/1/1444/0224/files/Pittsburgh_Steelers_Logo.png::pittsburgh steelers,steelers'
+    echo '~~49ers::San Francisco 49ers::SF::https://cdn.shopify.com/s/files/1/1444/0224/files/San_Francisco_49ers_logo.png?v=1785311202::san francisco 49ers,49ers,niners'
+    echo '~~seahawks::Seattle Seahawks::SEA::https://cdn.shopify.com/s/files/1/1444/0224/files/Seattle_Seahawks_Logo.png::seattle seahawks,seahawks'
+    echo '~~buccaneers::Tampa Bay Buccaneers::TB::https://cdn.shopify.com/s/files/1/1444/0224/files/Tampa_Bay_Buccaneers_Logo.png?v=1785311202::tampa bay buccaneers,buccaneers,bucs'
+    echo '~~titans::Tennessee Titans::TEN::https://cdn.shopify.com/s/files/1/1444/0224/files/Tennessee_TItans_Logo.png::tennessee titans,titans'
+  endcapture
+  assign teams = teams_data | split: '~~'
+-%}
+
+<div id="shop-by-team" class="section section--padding{% if section.settings.divider %} section--divider{% endif %}{% if section.settings.rounded %} section--rounded relative{% endif %}">
+  <div class="page-width{% if section.settings.full_width %} page-width--full{% endif %} relative">
+    {%- render 'section-heading', section: section -%}
+
+    <team-tailgate-shop class="tailgate-shop">
+      <p id="TailgateShopInstruction-{{ section.id }}" class="tailgate-shop__instruction">
+        Choose a team to see every matching tailgate item, including products from the NFL Football collection.
+      </p>
+
+      <div
+        class="tailgate-shop__teams"
+        role="tablist"
+        aria-label="Choose an NFL team"
+        aria-describedby="TailgateShopInstruction-{{ section.id }}"
+      >
+        {%- for team_record in teams -%}
+          {%- liquid
+            assign team_parts = team_record | strip | split: '::'
+            assign team_key = team_parts[0]
+            assign team_name = team_parts[1]
+            assign team_abbreviation = team_parts[2]
+            assign team_logo = team_parts[3]
+            assign team_aliases = team_parts[4]
+          -%}
+          <button
+            id="TailgateTeamTab-{{ section.id }}-{{ team_key }}"
+            class="tailgate-shop__team"
+            type="button"
+            role="tab"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+            aria-controls="TailgateTeamResults-{{ section.id }}"
+            tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+            data-team-tab
+            data-team-key="{{ team_key | escape }}"
+            data-team-name="{{ team_name | escape }}"
+            data-team-aliases="{{ team_aliases | escape }}"
+          >
+            <span class="tailgate-shop__logo">
+              <span class="tailgate-shop__logo-fallback" aria-hidden="true">{{ team_abbreviation | escape }}</span>
+              <img
+                src="{{ team_logo }}"
+                alt="{{ team_name | escape }}"
+                width="164"
+                height="164"
+                loading="lazy"
+                data-team-logo
+              >
+            </span>
+            <span class="tailgate-shop__team-name">{{ team_name | remove: 'Arizona ' | remove: 'Atlanta ' | remove: 'Baltimore ' | remove: 'Buffalo ' | remove: 'Carolina ' | remove: 'Chicago ' | remove: 'Cincinnati ' | remove: 'Cleveland ' | remove: 'Dallas ' | remove: 'Denver ' | remove: 'Detroit ' | remove: 'Green Bay ' | remove: 'Houston ' | remove: 'Indianapolis ' | remove: 'Jacksonville ' | remove: 'Kansas City ' | remove: 'Las Vegas ' | remove: 'Los Angeles ' | remove: 'Miami ' | remove: 'Minnesota ' | remove: 'New England ' | remove: 'New Orleans ' | remove: 'New York ' | remove: 'Philadelphia ' | remove: 'Pittsburgh ' | remove: 'San Francisco ' | remove: 'Seattle ' | remove: 'Tampa Bay ' | remove: 'Tennessee ' | escape }}</span>
+          </button>
+        {%- endfor -%}
+      </div>
+
+      <section
+        id="TailgateTeamResults-{{ section.id }}"
+        class="tailgate-shop__results"
+        role="tabpanel"
+        aria-labelledby="TailgateTeamTab-{{ section.id }}-cardinals"
+        tabindex="-1"
+        data-team-results
+      >
+        <div class="tailgate-shop__results-header">
+          <div>
+            <p class="tailgate-shop__results-eyebrow">Shop the team</p>
+            <h3 class="tailgate-shop__results-title heading" data-results-title>Arizona Cardinals Gear</h3>
+          </div>
+          <span class="tailgate-shop__count" data-results-count></span>
+        </div>
+
+        <div class="tailgate-shop__products" data-products-grid>
+          {%- assign rendered_product_ids = '|' -%}
+
+          {%- if tailgate_collection != blank -%}
+            {%- paginate tailgate_collection.products by 250 -%}
+              {%- for product in tailgate_collection.products -%}
+                {%- liquid
+                  assign product_id_token = '|' | append: product.id | append: '|'
+                  assign rendered_product_ids = rendered_product_ids | append: product.id | append: '|'
+                  assign product_search = product.title | append: ' ' | append: product.handle | downcase
+                  assign product_form_id = 'TailgateProductForm-' | append: section.id | append: '-' | append: product.id
+                -%}
+                <article class="tailgate-shop__product" data-team-product data-product-search="{{ product_search | escape }}">
+                  <div class="tailgate-product">
+                    <a class="tailgate-product__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+                      {%- if product.featured_image != blank -%}
+                        {{- product.featured_image
+                          | image_url: width: 700
+                          | image_tag:
+                            loading: 'lazy',
+                            widths: '240,360,480,600,700',
+                            sizes: '(max-width: 749px) 50vw, 25vw',
+                            alt: product.featured_image.alt | default: product.title
+                        -}}
+                      {%- else -%}
+                        {{- 'product-1' | placeholder_svg_tag: 'tailgate-product__placeholder' -}}
+                      {%- endif -%}
+                      {%- if product_search contains 'football' -%}<span class="tailgate-product__badge">Football</span>{%- endif -%}
+                    </a>
+                    <div class="tailgate-product__content">
+                      {%- if product.type != blank -%}<p class="tailgate-product__type">{{ product.type | escape }}</p>{%- endif -%}
+                      <h4 class="tailgate-product__title"><a href="{{ product.url }}">{{ product.title | escape }}</a></h4>
+                      <div class="tailgate-product__price">{%- render 'product-price', product: product -%}</div>
+                      {%- form 'product', product, id: product_form_id, class: 'tailgate-product__form product-form', data-type: 'add-to-cart-form', is: 'product-form' -%}
+                        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                        <button class="tailgate-product__add" type="submit" name="add" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+                          {%- if product.selected_or_first_available_variant.available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}
+                        </button>
+                        <div class="product-form__error-message alert alert--error text-sm font-medium leading-tight" role="alert" hidden></div>
+                      {%- endform -%}
+                    </div>
+                  </div>
+                </article>
+              {%- endfor -%}
+            {%- endpaginate -%}
+          {%- endif -%}
+
+          {%- if football_collection != blank -%}
+            {%- for product in football_collection.products -%}
+              {%- liquid
+                assign product_id_token = '|' | append: product.id | append: '|'
+                assign product_search = product.title | append: ' ' | append: product.handle | downcase
+                assign product_form_id = 'TailgateFootballForm-' | append: section.id | append: '-' | append: product.id
+              -%}
+              {%- unless rendered_product_ids contains product_id_token -%}
+                <article class="tailgate-shop__product" data-team-product data-product-search="{{ product_search | escape }}">
+                  <div class="tailgate-product">
+                    <a class="tailgate-product__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+                      {%- if product.featured_image != blank -%}
+                        {{- product.featured_image
+                          | image_url: width: 700
+                          | image_tag:
+                            loading: 'lazy',
+                            widths: '240,360,480,600,700',
+                            sizes: '(max-width: 749px) 50vw, 25vw',
+                            alt: product.featured_image.alt | default: product.title
+                        -}}
+                      {%- else -%}
+                        {{- 'product-1' | placeholder_svg_tag: 'tailgate-product__placeholder' -}}
+                      {%- endif -%}
+                      <span class="tailgate-product__badge">Football</span>
+                    </a>
+                    <div class="tailgate-product__content">
+                      {%- if product.type != blank -%}<p class="tailgate-product__type">{{ product.type | escape }}</p>{%- endif -%}
+                      <h4 class="tailgate-product__title"><a href="{{ product.url }}">{{ product.title | escape }}</a></h4>
+                      <div class="tailgate-product__price">{%- render 'product-price', product: product -%}</div>
+                      {%- form 'product', product, id: product_form_id, class: 'tailgate-product__form product-form', data-type: 'add-to-cart-form', is: 'product-form' -%}
+                        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                        <button class="tailgate-product__add" type="submit" name="add" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+                          {%- if product.selected_or_first_available_variant.available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}
+                        </button>
+                        <div class="product-form__error-message alert alert--error text-sm font-medium leading-tight" role="alert" hidden></div>
+                      {%- endform -%}
+                    </div>
+                  </div>
+                </article>
+              {%- endunless -%}
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+
+        <div class="tailgate-shop__empty" data-empty-results hidden>
+          No matching products are available for this team yet.
+        </div>
+      </section>
+    </team-tailgate-shop>
+  </div>
+</div>
+
+<script>
+  if (!customElements.get('team-tailgate-shop')) {
+    customElements.define(
+      'team-tailgate-shop',
+      class TeamTailgateShop extends HTMLElement {
+        connectedCallback() {
+          this.tabs = Array.from(this.querySelectorAll('[data-team-tab]'));
+          this.products = Array.from(this.querySelectorAll('[data-team-product]'));
+          this.results = this.querySelector('[data-team-results]');
+          this.resultsTitle = this.querySelector('[data-results-title]');
+          this.resultsCount = this.querySelector('[data-results-count]');
+          this.emptyResults = this.querySelector('[data-empty-results]');
+
+          this.querySelectorAll('[data-team-logo]').forEach((image) => {
+            image.addEventListener('error', () => image.classList.add('is-broken'));
+            if (image.complete && image.naturalWidth === 0) image.classList.add('is-broken');
+          });
+
+          this.tabs.forEach((tab, index) => {
+            tab.addEventListener('click', () => this.selectTeam(tab, { scroll: true }));
+            tab.addEventListener('keydown', (event) => this.onKeydown(event, index));
+          });
+
+          const initialTab = this.tabs.find((tab) => tab.getAttribute('aria-selected') === 'true') || this.tabs[0];
+          if (initialTab) this.selectTeam(initialTab, { scroll: false });
+        }
+
+        normalize(value) {
+          return String(value || '')
+            .toLowerCase()
+            .normalize('NFKD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[’']/g, '')
+            .replace(/[^a-z0-9]+/g, ' ')
+            .trim();
+        }
+
+        selectTeam(selectedTab, options = {}) {
+          const teamName = selectedTab.dataset.teamName || '';
+          const aliases = (selectedTab.dataset.teamAliases || '')
+            .split(',')
+            .map((alias) => this.normalize(alias))
+            .filter(Boolean);
+
+          this.tabs.forEach((tab) => {
+            const isSelected = tab === selectedTab;
+            tab.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+            tab.setAttribute('tabindex', isSelected ? '0' : '-1');
+          });
+
+          let visibleCount = 0;
+          this.products.forEach((product) => {
+            const searchableText = this.normalize(product.dataset.productSearch);
+            const matches = aliases.some((alias) => searchableText.includes(alias));
+            product.hidden = !matches;
+            if (matches) visibleCount += 1;
+          });
+
+          this.resultsTitle.textContent = `${teamName} Gear`;
+          this.resultsCount.textContent = `${visibleCount} ${visibleCount === 1 ? 'product' : 'products'}`;
+          this.emptyResults.hidden = visibleCount !== 0;
+          this.results.setAttribute('aria-labelledby', selectedTab.id);
+
+          if (options.focus) selectedTab.focus();
+
+          if (options.scroll) {
+            window.requestAnimationFrame(() => {
+              const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+              this.results.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+            });
+          }
+        }
+
+        onKeydown(event, index) {
+          let nextIndex = index;
+
+          if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+            nextIndex = (index + 1) % this.tabs.length;
+          } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+            nextIndex = (index - 1 + this.tabs.length) % this.tabs.length;
+          } else if (event.key === 'Home') {
+            nextIndex = 0;
+          } else if (event.key === 'End') {
+            nextIndex = this.tabs.length - 1;
+          } else {
+            return;
+          }
+
+          event.preventDefault();
+          this.selectTeam(this.tabs[nextIndex], { focus: true, scroll: true });
+        }
+      }
+    );
+  }
+</script>
+
+{% schema %}
+{
+  "name": "NFL Tailgate Team Shop",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "tailgate_collection",
+      "label": "Tailgate products collection",
+      "info": "Leave blank to use the collection currently being viewed."
+    },
+    {
+      "type": "collection",
+      "id": "football_collection",
+      "label": "NFL Football collection",
+      "info": "Defaults to the nfl-football collection when left blank."
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop By Team"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "title-sm", "label": "Small" },
+        { "value": "title-md", "label": "Medium" },
+        { "value": "title-lg tracking-heading", "label": "Large" },
+        { "value": "title-xl tracking-heading", "label": "Extra large" }
+      ],
+      "default": "title-md",
+      "label": "Heading size"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "text-left md:items-end md:flex-row", "label": "Left" },
+        { "value": "text-center md:items-center", "label": "Center" },
+        { "value": "text-right md:items-end md:flex-row-reverse", "label": "Right" }
+      ],
+      "default": "text-center md:items-center"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "div", "label": "Div" }
+      ],
+      "default": "h2",
+      "label": "Heading tag"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Find Your Team"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "Legacy grid settings"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 4,
+      "max": 8,
+      "step": 1,
+      "default": 8,
+      "label": "Teams per row on desktop"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" }
+      ],
+      "default": "3",
+      "label": "Teams per row on mobile"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "Text color"
+    },
+    {
+      "type": "color",
+      "id": "color_background",
+      "label": "Background color"
+    },
+    {
+      "type": "color_background",
+      "id": "gradient_background",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "color_highlight",
+      "label": "Legacy highlight color",
+      "default": "#8cf000"
+    },
+    {
+      "type": "color",
+      "id": "color_button_text",
+      "label": "Legacy button text color",
+      "default": "#171717"
+    },
+    {
+      "type": "color",
+      "id": "color_button_background",
+      "label": "Legacy button background",
+      "default": "#8cf000"
+    },
+    {
+      "type": "color_background",
+      "id": "gradient_highlight",
+      "label": "Legacy highlight gradient"
+    },
+    {
+      "type": "color_background",
+      "id": "color_button_gradient",
+      "label": "Legacy button gradient"
+    },
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 72
+    },
+    {
+      "type": "checkbox",
+      "id": "divider",
+      "label": "Show divider",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "rounded",
+      "default": false,
+      "label": "Rounded section"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "team",
+      "name": "Legacy team block",
+      "settings": [
+        { "type": "image_picker", "id": "team_logo", "label": "Team logo" },
+        { "type": "url", "id": "logo_url", "label": "Hosted team logo URL" },
+        { "type": "text", "id": "team_name", "label": "Team name", "default": "Team Name" },
+        { "type": "color", "id": "accent_color", "label": "Team accent color" },
+        { "type": "text", "id": "player_name", "label": "Featured player name" },
+        { "type": "text", "id": "player_number", "label": "Featured player number" },
+        { "type": "product", "id": "product", "label": "Player football" },
+        { "type": "url", "id": "link", "label": "Fallback product link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "NFL Tailgate Team Shop",
+      "category": "Collections"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["footer", "header", "custom.overlay"]
+  }
+}
+{% endschema %}

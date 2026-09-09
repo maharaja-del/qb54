@@ -1,0 +1,381 @@
+<style>
+  #shopify-section-{{ section.id }} {
+    --qfc-navy: {{ section.settings.background }};
+    --qfc-navy-deep: color-mix(in srgb, {{ section.settings.background }} 74%, #000000);
+    --qfc-gold: {{ section.settings.accent_color }};
+    --qfc-ink: {{ section.settings.heading_color }};
+    --qfc-sub: {{ section.settings.subheading_color }};
+  }
+
+  #shopify-section-{{ section.id }} .qfc {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background:
+      radial-gradient(900px 420px at 50% -20%, color-mix(in srgb, var(--qfc-gold) 14%, transparent), transparent 65%),
+      linear-gradient(170deg, var(--qfc-navy) 0%, var(--qfc-navy-deep) 100%);
+    padding: {{ section.settings.padding_mobile }}px 0;
+    text-align: center;
+  }
+
+  /* End-zone diagonal stripes on the edges */
+  #shopify-section-{{ section.id }} .qfc::before,
+  #shopify-section-{{ section.id }} .qfc::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 46px;
+    z-index: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--qfc-gold) 22%, transparent) 0 14px,
+      transparent 14px 34px
+    );
+    pointer-events: none;
+  }
+  #shopify-section-{{ section.id }} .qfc::before { left: 0; }
+  #shopify-section-{{ section.id }} .qfc::after { right: 0; }
+
+  #shopify-section-{{ section.id }} .qfc-shell {
+    position: relative;
+    z-index: 1;
+    width: min(860px, 100% - 40px);
+    margin-inline: auto;
+  }
+
+  #shopify-section-{{ section.id }} .qfc-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--qfc-gold);
+    color: var(--qfc-navy);
+    font-family: var(--font-heading-family);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    padding: 8px 15px;
+    border-radius: 999px;
+    margin-bottom: 20px;
+  }
+
+  #shopify-section-{{ section.id }} .qfc-heading {
+    font-family: var(--font-heading-family);
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 0.98;
+    letter-spacing: -0.01em;
+    color: var(--qfc-ink);
+    margin: 0 0 16px;
+    font-size: {{ section.settings.heading_size_mobile }}px;
+    text-wrap: balance;
+  }
+  #shopify-section-{{ section.id }} .qfc-heading em {
+    font-style: normal;
+    color: var(--qfc-gold);
+  }
+
+  #shopify-section-{{ section.id }} .qfc-sub {
+    font-family: var(--font-body-family);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--qfc-sub);
+    max-width: 54ch;
+    margin: 0 auto 28px;
+  }
+
+  #shopify-section-{{ section.id }} .qfc-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 30px;
+  }
+
+  #shopify-section-{{ section.id }} .qfc-btn {
+    font-family: var(--font-heading-family);
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 17px 34px;
+    min-height: 54px;
+    border-radius: {{ section.settings.button_radius }}px;
+    border: 1px solid transparent;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+  #shopify-section-{{ section.id }} .qfc-btn:hover { transform: translateY(-2px); }
+
+  #shopify-section-{{ section.id }} .qfc-btn-primary {
+    background: var(--qfc-gold);
+    color: var(--qfc-navy);
+    box-shadow: 0 14px 34px rgb(0 0 0 / 0.3);
+  }
+
+  #shopify-section-{{ section.id }} .qfc-btn-secondary {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--qfc-ink);
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  #shopify-section-{{ section.id }} .qfc-chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 26px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  #shopify-section-{{ section.id }} .qfc-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-body-family);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--qfc-sub);
+  }
+  #shopify-section-{{ section.id }} .qfc-chip svg {
+    flex: none;
+    width: 17px;
+    height: 17px;
+    color: var(--qfc-gold);
+  }
+
+  @media screen and (min-width: 900px) {
+    #shopify-section-{{ section.id }} .qfc {
+      padding: {{ section.settings.padding_desktop }}px 0;
+    }
+    #shopify-section-{{ section.id }} .qfc::before,
+    #shopify-section-{{ section.id }} .qfc::after { width: 84px; }
+    #shopify-section-{{ section.id }} .qfc-heading {
+      font-size: {{ section.settings.heading_size_desktop }}px;
+    }
+    #shopify-section-{{ section.id }} .qfc-sub { font-size: 18px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .qfc-btn { transition: none; }
+  }
+</style>
+
+<div class="qfc">
+  <div class="qfc-shell">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="qfc-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank -%}
+      <h2 class="qfc-heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.subheading != blank -%}
+      <p class="qfc-sub">{{ section.settings.subheading }}</p>
+    {%- endif -%}
+
+    <div class="qfc-actions">
+      {%- if section.settings.primary_button_text != blank -%}
+        <a class="qfc-btn qfc-btn-primary" href="{{ section.settings.primary_button_url | default: '#' }}">
+          {{ section.settings.primary_button_text | escape }}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      {%- endif -%}
+      {%- if section.settings.secondary_button_text != blank -%}
+        <a class="qfc-btn qfc-btn-secondary" href="{{ section.settings.secondary_button_url | default: '#' }}">
+          {{ section.settings.secondary_button_text | escape }}
+        </a>
+      {%- endif -%}
+    </div>
+
+    {%- assign has_chips = false -%}
+    {%- if section.settings.chip_1 != blank or section.settings.chip_2 != blank or section.settings.chip_3 != blank -%}
+      {%- assign has_chips = true -%}
+    {%- endif -%}
+    {%- if has_chips -%}
+      <div class="qfc-chips">
+        {%- if section.settings.chip_1 != blank -%}
+          <span class="qfc-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.2"/><circle cx="18.5" cy="18.5" r="2.2"/></svg>
+            {{ section.settings.chip_1 | escape }}
+          </span>
+        {%- endif -%}
+        {%- if section.settings.chip_2 != blank -%}
+          <span class="qfc-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-3.6 8-10V5l-8-3-8 3v7c0 6.4 8 10 8 10z"/><path d="M9 11.5l2.2 2.2L15.5 9"/></svg>
+            {{ section.settings.chip_2 | escape }}
+          </span>
+        {%- endif -%}
+        {%- if section.settings.chip_3 != blank -%}
+          <span class="qfc-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19"/></svg>
+            {{ section.settings.chip_3 | escape }}
+          </span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "QB54 Final CTA",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow badge",
+      "default": "Ready when you are"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading (italic = gold)",
+      "default": "Game Day Is <em>Calling</em>"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Grab a set today and the next backyard, tailgate or beach day becomes the game everyone remembers."
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "primary_button_text",
+      "label": "Primary button text",
+      "default": "Shop Game Sets"
+    },
+    {
+      "type": "url",
+      "id": "primary_button_url",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_button_text",
+      "label": "Secondary button text",
+      "default": "How to Play"
+    },
+    {
+      "type": "url",
+      "id": "secondary_button_url",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "header",
+      "content": "Trust chips"
+    },
+    {
+      "type": "text",
+      "id": "chip_1",
+      "label": "Chip 1 (truck icon)",
+      "default": "Free shipping on orders $225+"
+    },
+    {
+      "type": "text",
+      "id": "chip_2",
+      "label": "Chip 2 (shield icon)",
+      "default": "30-day money-back guarantee"
+    },
+    {
+      "type": "text",
+      "id": "chip_3",
+      "label": "Chip 3 (card icon)",
+      "default": "Secure checkout — Shop Pay, PayPal, Google Pay"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background navy",
+      "default": "#363a66"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent gold",
+      "default": "#fdc439"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading",
+      "default": "#d8dae8"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "label": "Button radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size mobile",
+      "min": 30,
+      "max": 56,
+      "step": 2,
+      "default": 38
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size desktop",
+      "min": 40,
+      "max": 88,
+      "step": 2,
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_mobile",
+      "label": "Vertical padding mobile",
+      "min": 24,
+      "max": 100,
+      "step": 4,
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_desktop",
+      "label": "Vertical padding desktop",
+      "min": 40,
+      "max": 140,
+      "step": 4,
+      "default": 72
+    }
+  ],
+  "presets": [
+    {
+      "name": "QB54 Final CTA"
+    }
+  ]
+}
+{% endschema %}

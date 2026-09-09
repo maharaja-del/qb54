@@ -1,0 +1,285 @@
+{%- doc -%}
+  Renders a table-based list of gift wrapping items in the cart with detailed product information.
+
+  Displays gift items with images, pricing, quantities, and includes optional modal for gift wrap details.
+
+  @param {object} gift_items - Collection of gift wrapping line items from the cart
+  @param {string} section_id - Section identifier for unique field IDs
+
+  @example
+  {% render 'gift-wrapping-list', gift_items: items, section_id: section.id %}
+{%- enddoc -%}
+
+{%- if gift_items.size > 0 -%}
+  <div class="cart__gift grid gap-4 md:gap-6">
+    <p class="text-base-2xl font-medium leading-none">{{ 'cart.gift_wrapping.gift_wrapping_list' | t }}</p>
+    <div class="cart__items">
+      <table role="table" class="no-headings w-full overflow-visible">
+        <caption class="sr-only">{{ 'cart.gift_wrapping.gift_wrapping_list' | t }}</caption>
+        <thead>
+          <tr>
+            <th colspan="1" scope="col">
+              {{- 'cart.headings.product' | t -}}
+            </th>
+            <th class="hidden md:table-cell" colspan="1" scope="col">
+              {{- 'cart.headings.quantity' | t -}}
+            </th>
+            <th class="text-right hidden md:table-cell" colspan="1" scope="col">
+              {{- 'cart.headings.total' | t -}}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- for item in gift_items -%}
+            <tr class="cart-item" id="CartItem-{{ item.key }}">
+              <td>
+                <div class="flex items-start md:items-center gap-4d5 md:gap-10">
+                  {%- if item.image -%}
+                    <figure class="cart-item__media media relative overflow-hidden shrink-0">
+                      {{- item.image | image_url: width: item.image.width | image_tag: loading: 'lazy', widths: '180,360,540', is: 'lazy-image' -}}
+                    </figure>
+                  {%- endif -%}
+                  
+                  <div class="cart-item__details grow flex flex-col justify-start gap-1d5">
+                    <div class="grid gap-1">
+                      <p class="font-medium text-base leading-tight">{{ item.product.title | escape }}</p>
+            
+                      {%- if item.product.has_only_default_variant == false or item.properties.size != 0 or item.selling_plan_allocation != null -%}
+                        <dl class="grid gap-1d5">
+                          {%- unless item.product.has_only_default_variant -%}
+                            {%- for option in item.options_with_values -%}
+                              <div class="text-xs text-opacity leading-tight">
+                                <dt class="sr-only">{{ option.name }}:</dt>
+                                <dd class="inline">{{ option.value }}</dd>
+                              </div>
+                            {%- endfor -%}
+                          {%- endunless -%}
+            
+                          {%- for property in item.properties -%}
+                            {%- assign property_first_char = property.first | slice: 0 -%}
+                            {%- if property.last != blank and property_first_char != '_' -%}
+                              <div class="text-xs text-opacity leading-tight">
+                                <dt class="inline">{{ property.first }}:&nbsp;</dt>
+                                <dd class="inline">
+                                  {%- if property.last contains '/uploads/' -%}
+                                    <a href="{{ property.last }}" class="link" target="_blank" aria-describedby="a11y-new-window-message">
+                                      {{- property.last | split: '/' | last -}}
+                                    </a>
+                                  {%- else -%}
+                                    {{- property.last -}}
+                                  {%- endif -%}
+                                </dd>
+                              </div>
+                            {%- endif -%}
+                          {%- endfor -%}
+                        </dl>
+            
+                        {%- if item.selling_plan_allocation != null -%}
+                          <p class="text-xs text-opacity">{{ item.selling_plan_allocation.selling_plan.name }}</p>
+                        {%- endif -%}
+                      {%- endif -%}
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <div class="price{% if item.original_price != item.final_price %} price--on-sale{% endif %} text-sm flex flex-wrap gap-1d5">
+                        {%- liquid
+                          assign money_price = item.original_price | money
+                          if settings.currency_code_enabled
+                            assign money_price = item.original_price | money_with_currency
+                          endif
+                        -%}
+                        {%- if item.original_price != item.final_price -%}
+                          <span class="sr-only">{{ 'products.price.regular_price' | t }}</span>
+                          <span class="price__sale inline-flex items-center relative">{{ money_price }}</span>
+                          <span class="sr-only">{{ 'products.price.sale_price' | t }}</span>
+                          <span class="price__regular whitespace-nowrap">
+                            {%- liquid
+                              if settings.currency_code_enabled
+                                echo item.final_price | money_with_currency
+                              else
+                                echo item.final_price | money
+                              endif
+                            -%}
+                          </span>
+                        {%- else -%}
+                          <span class="price__regular whitespace-nowrap">{{ money_price }}</span>
+                        {%- endif -%}
+            
+                        {%- if item.variant.available and item.unit_price_measurement -%}
+                          <span class="sr-only">{{ 'products.price.unit_price' | t }}</span>
+                          <span class="unit-price flex items-center">
+                            {%- liquid
+                              capture unit_price_base_unit
+                                if item.variant.unit_price_measurement
+                                  if item.variant.unit_price_measurement.reference_value != 1
+                                    echo item.variant.unit_price_measurement.reference_value
+                                  endif
+                                  echo item.variant.unit_price_measurement.reference_unit
+                                endif
+                              endcapture
+                            -%}
+                            ({{ item.variant.unit_price | money }}
+                            <span aria-hidden="true">/</span>
+                            <span class="sr-only">&nbsp;{{ 'general.accessibility.unit_price_separator' | t }}&nbsp;</span>
+                            {{ unit_price_base_unit }})
+                          </span>
+                        {%- endif -%}
+                      </div>
+            
+                      {%- if item.line_level_discount_allocations != blank -%}
+                        <ul class="discounts grid gap-2" role="list" aria-label="{{ 'customer.order.discounts' | t | escape }}">
+                          {%- for discount_allocation in item.line_level_discount_allocations -%}
+                            <li class="discounts__discount text-xs flex flex-wrap items-center gap-1">
+                              <span class="badge badge--highlight flex items-center gap-1d5 font-medium leading-none">{{ discount_allocation.discount_application.title }}</span>
+                              <span class="badge badge--onsale flex items-center gap-1d5 font-medium leading-none">-{{ discount_allocation.amount | money }}</span>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <td class="cart-item__quantity text-sm text-right md:text-left">
+                {%- liquid
+                  assign has_qty_rules = false
+                  if item.variant.quantity_rule.increment > 1 or item.variant.quantity_rule.min > 1 or item.variant.quantity_rule.max != null
+                    assign has_qty_rules = true
+                  endif
+
+                  assign has_vol_pricing = false
+                  if item.variant.quantity_price_breaks.size > 0
+                    assign has_vol_pricing = true
+                  endif
+                -%}
+                {%- if has_qty_rules or has_vol_pricing -%}
+                  {%- capture qty_rules_vol_pricing -%}
+                    {%- if has_qty_rules -%}
+                      <div class="quantity__rules text-sm font-medium leading-tight">
+                        {%- if item.variant.quantity_rule.increment > 1 -%}
+                          <span class="divider">
+                            {{- 'products.quantity.multiples_of' | t: quantity: item.variant.quantity_rule.increment -}}
+                          </span>
+                        {%- endif -%}
+                        {%- if item.variant.quantity_rule.min > 1 -%}
+                          <span class="divider">
+                            {{- 'products.quantity.min_of' | t: quantity: item.variant.quantity_rule.min -}}
+                          </span>
+                        {%- endif -%}
+                        {%- if item.variant.quantity_rule.max != null -%}
+                          <span class="divider">
+                            {{- 'products.quantity.max_of' | t: quantity: item.variant.quantity_rule.max -}}
+                          </span>
+                        {%- endif -%}
+                      </div>
+                    {%- endif -%}
+                    {%- if has_vol_pricing -%}
+                      {{ 'volume-pricing.css' | asset_url | stylesheet_tag }}
+                      <volume-pricing class="volume-pricing grid gap-6">
+                        <span class="caption-large font-medium">{{ 'products.volume_pricing.title' | t }}</span>
+                        <ul class="list-unstyled">
+                          <li class="text-sm flex gap-2d5 justify-between">
+                            <span class="font-medium">{{ item.variant.quantity_rule.min }}+</span>
+                            {%- assign price = item.variant.price | money_with_currency -%}
+                            <span> {{ 'sections.quick_order_list.each' | t: money: price }}</span>
+                          </li>
+                          {%- for price_break in item.variant.quantity_price_breaks -%}
+                            <li class="text-sm flex gap-2d5 justify-between">
+                              <span class="font-medium">
+                                {{- price_break.minimum_quantity -}}
+                                <span aria-hidden="true">+</span>
+                              </span>
+                              {%- assign price = price_break.price | money_with_currency -%}
+                              <span> {{ 'sections.quick_order_list.each' | t: money: price }}</span>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      </volume-pricing>
+                    {%- endif -%}
+                  {%- endcapture -%}
+                {%- endif -%}
+                <gift-wrap-item class="cart-quantity__info grid md:flex items-center justify-end md:justify-start gap-3 md:gap-4" data-section-id="{{ section_id }}">
+                  <script type="application/json" data-gift-item>{{ item | json }}</script>
+                  {%- if item.parent_relationship -%}
+                    <script type="application/json" data-line-item>{{ item.parent_relationship.parent | json }}</script>
+                  {%- endif -%}
+                  {%- if has_qty_rules or has_vol_pricing -%}
+                    <hover-element class="hotspot hidden md:flex items-center justify-center relative cursor-pointer">
+                      {%- render 'icon', icon: 'info', size: 'lg' -%}
+                      <div class="hotspot__content absolute z-1 pointer-events-none cursor-default grid gap-6 items-center text-left">
+                        {{- qty_rules_vol_pricing -}}
+                      </div>
+                    </hover-element>
+                  {%- endif -%}
+                  <div class="cart-quantity flex items-center relative">
+                    <label class="sr-only" for="Quantity-{{ section_id }}-{{ item.key }}">
+                      {{- 'products.quantity.label' | t -}}
+                    </label>
+                    <input class="quantity__input input text-center w-full h-full"
+                      type="number"
+                      name="updates[]"
+                      aria-label="{{ 'products.quantity.input_label' | t: product: item.product.title | escape }}"
+                      id="Quantity-{{ section_id }}-{{ item.key }}"
+                      data-index="{{ item.key }}"
+                      inputmode="numeric"
+                      autocomplete="off"
+                      data-quantity-variant-id="{{ item.variant.id }}"
+                      data-cart-quantity="{{ cart | item_count_for_variant: item.variant.id }}"
+                      min="0"
+                      data-min="{{ item.variant.quantity_rule.min }}"
+                      {% if item.variant.quantity_rule.max != null %}
+                        max="{{ item.variant.quantity_rule.max }}"
+                      {% endif %}
+                      step="{{ item.variant.quantity_rule.increment }}"
+                      value="{{ item.quantity }}"
+                      disabled
+                    />
+                  </div>
+                  <div class="text-xs relative">
+                    <div id="Loader-{{ section_id }}-{{ item.key }}" class="loader absolute right-0 md:left-0" hidden>
+                      {%- render 'icon', icon: 'rotator', size: 'xs', class: 'animate-rotator' -%}
+                    </div>
+                    <a class="link" href="{{ item.url_to_remove }}" is="unset-gift-wrap" data-index="{{ item.key }}" data-no-instant>{{ 'cart.general.remove' | t }}</a>
+                  </div>
+                </gift-wrap-item>
+              </td>
+
+              <td class="text-right hidden md:table-cell">
+                <span class="price text-base-xl">
+                  {%- liquid
+                    if settings.currency_code_enabled
+                      echo item.final_line_price | money_with_currency
+                    else
+                      echo item.final_line_price | money
+                    endif
+                  -%}
+                </span>
+              </td>
+            </tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{%- endif -%}
+
+{%- if settings.gift_wrap_per_product_message != blank -%}
+  <modal-element id="GiftWrapInfo-{{ section_id }}" class="modal invisible z-35 fixed bottom-0 left-0 w-full h-full" role="dialog" hidden>
+    <overlay-element class="fixed-modal opacity-0 z-1 absolute top-0 left-0 w-full h-full" aria-controls="GiftWrapInfo-{{ section_id }}" aria-expanded="false"></overlay-element>
+    <div class="modal__container flex flex-col z-3 absolute left-0 bottom-0 w-full">
+      <div class="modal__header flex items-center justify-between relative">
+        <span class="font-medium text-sm md:text-base">{{ 'cart.gift_wrapping.gift_wrapping_label' | t }}</span>
+        <button type="button" class="close flex items-center justify-center absolute top-0 right-0" is="magnet-button" aria-controls="GiftWrapInfo-{{ section_id }}" aria-expanded="false" aria-label="{{ 'general.accessibility.close' | t | escape }}">
+          {%- render 'icon', icon: 'close' -%}
+        </button>
+      </div>
+      <div class="modal__content flex flex-col overflow-hidden">
+        <div class="modal__scrollable grid gap-4">
+          <div class="rte text-sm leading-tight">
+            {{- settings.gift_wrap_per_product_message -}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </modal-element>
+{%- endif -%}

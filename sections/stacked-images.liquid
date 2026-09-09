@@ -1,0 +1,174 @@
+<style>
+  .stacked-images {
+    width: 100%;
+    overflow-x: hidden;
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.bg_color }};
+  }
+
+  .stacked-images__inner {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  .stacked-images__item {
+    width: 100%;
+    margin-bottom: {{ section.settings.image_spacing }}px;
+  }
+
+  .stacked-images img {
+    width: 100%;
+    height: auto;
+    display: block;
+    max-width: 100%;
+  }
+
+  .stacked-images__download {
+    margin-top: {{ section.settings.button_spacing }}px;
+    text-align: center;
+  }
+
+  .stacked-images__download a {
+    display: inline-block;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 16px;
+    background: {{ section.settings.button_bg }};
+    color: {{ section.settings.button_text }};
+  }
+</style>
+
+<section class="stacked-images">
+  <div class="stacked-images__inner">
+
+    {% if section.settings.image_one %}
+      <div class="stacked-images__item">
+        <img
+          src="{{ section.settings.image_one | image_url: width: 2000 }}"
+          alt="{{ section.settings.image_one.alt | escape }}"
+        >
+      </div>
+    {% endif %}
+
+    {% if section.settings.image_two %}
+      <div class="stacked-images__item">
+        <img
+          src="{{ section.settings.image_two | image_url: width: 2000 }}"
+          alt="{{ section.settings.image_two.alt | escape }}"
+        >
+      </div>
+    {% endif %}
+
+    {% if section.settings.pdf_download_url != blank %}
+      <div class="stacked-images__download">
+        <a
+          href="{{ section.settings.pdf_download_url }}"
+          download
+        >
+          {{ section.settings.button_label }}
+        </a>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Stacked Images PDF",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image_one",
+      "label": "Top image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_two",
+      "label": "Bottom image"
+    },
+    {
+      "type": "url",
+      "id": "pdf_download_url",
+      "label": "PDF file URL (Shopify Files)"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button text",
+      "default": "Download Rules PDF"
+    },
+    {
+      "type": "range",
+      "id": "image_spacing",
+      "label": "Space between images",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "button_spacing",
+      "label": "Space above button",
+      "min": 10,
+      "max": 120,
+      "step": 10,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Content max width",
+      "min": 600,
+      "max": 2000,
+      "step": 100,
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "Button background",
+      "default": "#1f6fb2"
+    },
+    {
+      "type": "color",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Stacked Images PDF"
+    }
+  ]
+}
+{% endschema %}

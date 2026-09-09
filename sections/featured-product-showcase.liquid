@@ -1,0 +1,352 @@
+{%- style -%}
+  .featured-product-showcase, .featured-product-showcase * { box-sizing: border-box; }
+  
+  .featured-product-showcase {
+    background: {{ section.settings.section_bg }};
+    overflow-x: hidden;
+    width: 100%;
+    padding: {{ section.settings.section_padding }}px 0;
+  }
+  
+  .featured-product-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ section.settings.content_gap }}px;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .featured-product-image-wrap {
+    position: relative;
+    overflow: hidden;
+    border-radius: {{ section.settings.image_radius }}px;
+    aspect-ratio: 4/3;
+  }
+  
+  .featured-product-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  
+  .featured-product-badge {
+    position: absolute;
+    top: {{ section.settings.badge_top }}px;
+    left: {{ section.settings.badge_left }}px;
+    background: {{ section.settings.badge_bg }};
+    color: {{ section.settings.badge_text_color }};
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    z-index: 2;
+  }
+  
+  .featured-product-content {
+    padding: {{ section.settings.content_padding }}px;
+  }
+  
+  .featured-product-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: {{ section.settings.label_color }};
+    margin-bottom: 16px;
+  }
+  
+  .featured-product-title {
+    font-size: 48px;
+    font-weight: 400;
+    color: {{ section.settings.title_color }};
+    margin-bottom: 24px;
+    line-height: 1.1;
+  }
+  
+  .featured-product-title .title-highlight {
+    color: {{ section.settings.title_highlight_color }};
+    font-style: italic;
+  }
+  
+  .featured-product-description {
+    font-size: 16px;
+    line-height: 1.6;
+    color: {{ section.settings.description_color }};
+    margin-bottom: 40px;
+    max-width: 480px;
+  }
+  
+  .featured-product-features {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+  
+  .featured-product-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+    background: {{ section.settings.feature_bg }};
+    border: 1px solid {{ section.settings.feature_border }};
+    border-radius: 8px;
+  }
+  
+  .featured-product-feature-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: {{ section.settings.feature_icon_color }};
+    margin-top: 2px;
+  }
+  
+  .featured-product-feature-content {
+    flex: 1;
+  }
+  
+  .featured-product-feature-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: {{ section.settings.feature_title_color }};
+    margin-bottom: 4px;
+  }
+  
+  .featured-product-feature-subtitle {
+    font-size: 14px;
+    color: {{ section.settings.feature_subtitle_color }};
+    line-height: 1.4;
+  }
+  
+  .featured-product-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 32px;
+    background: {{ section.settings.cta_bg }};
+    color: {{ section.settings.cta_text_color }};
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+  
+  .featured-product-cta:hover {
+    background: {{ section.settings.cta_hover_bg }};
+    transform: translateX(2px);
+  }
+  
+  .featured-product-cta-icon {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+  }
+  
+  .featured-product-cta:hover .featured-product-cta-icon {
+    transform: translateX(2px);
+  }
+  
+  @media (max-width: 768px) {
+    .featured-product-container {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      padding: 0 16px;
+    }
+    
+    .featured-product-image-wrap {
+      order: -1;
+    }
+    
+    .featured-product-content {
+      padding: 0;
+    }
+    
+    .featured-product-title {
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+    
+    .featured-product-description {
+      font-size: 15px;
+      margin-bottom: 32px;
+    }
+    
+    .featured-product-features {
+      margin-bottom: 32px;
+    }
+    
+    .featured-product-feature {
+      padding: 16px;
+    }
+    
+    .featured-product-feature-title {
+      font-size: 16px;
+    }
+    
+    .featured-product-cta {
+      width: 100%;
+      justify-content: center;
+      padding: 18px 32px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .featured-product-title {
+      font-size: 28px;
+    }
+    
+    .featured-product-badge {
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="featured-product-showcase">
+  <div class="featured-product-container">
+    <div class="featured-product-image-wrap">
+      {% if section.settings.show_badge and section.settings.badge_text != blank %}
+        <div class="featured-product-badge">{{ section.settings.badge_text }}</div>
+      {% endif %}
+      {% if section.settings.product_image != blank %}
+        {{ section.settings.product_image | image_url: width: 800 | image_tag: loading: 'lazy' }}
+      {% endif %}
+    </div>
+    
+    <div class="featured-product-content">
+      {% if section.settings.product_label != blank %}
+        <div class="featured-product-label">{{ section.settings.product_label }}</div>
+      {% endif %}
+      
+      {% if section.settings.product_title_part1 != blank or section.settings.product_title_part2 != blank %}
+        <h2 class="featured-product-title">
+          {{ section.settings.product_title_part1 }}<span class="title-highlight">{{ section.settings.product_title_part2 }}</span>
+        </h2>
+      {% endif %}
+      
+      {% if section.settings.product_description != blank %}
+        <div class="featured-product-description">{{ section.settings.product_description }}</div>
+      {% endif %}
+      
+      {% if section.blocks.size > 0 %}
+        <div class="featured-product-features">
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'feature' %}
+                <div class="featured-product-feature" {{ block.shopify_attributes }}>
+                  <div class="featured-product-feature-icon">
+                    {% case block.settings.icon_type %}
+                      {% when 'suitcase' %}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                        </svg>
+                      {% when 'users' %}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                          <circle cx="9" cy="7" r="4"/>
+                          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                      {% when 'shield' %}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    {% endcase %}
+                  </div>
+                  <div class="featured-product-feature-content">
+                    <div class="featured-product-feature-title">{{ block.settings.feature_title }}</div>
+                    <div class="featured-product-feature-subtitle">{{ block.settings.feature_subtitle }}</div>
+                  </div>
+                </div>
+            {% endcase %}
+          {% endfor %}
+        </div>
+      {% endif %}
+      
+      {% if section.settings.cta_text != blank %}
+        <a href="{{ section.settings.cta_link }}" class="featured-product-cta">
+          {{ section.settings.cta_text }}
+          <div class="featured-product-cta-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12,5 19,12 12,19"/>
+            </svg>
+          </div>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured Product Showcase",
+  "settings": [
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "section_padding", "label": "Section padding", "min": 40, "max": 120, "step": 4, "default": 80 },
+    { "type": "range", "id": "content_gap", "label": "Content gap", "min": 40, "max": 120, "step": 4, "default": 80 },
+    { "type": "range", "id": "content_padding", "label": "Content padding", "min": 0, "max": 80, "step": 4, "default": 40 },
+    
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "section_bg", "label": "Section background", "default": "#000000" },
+    { "type": "color", "id": "label_color", "label": "Label color", "default": "#a3e635" },
+    { "type": "color", "id": "title_color", "label": "Title color", "default": "#ffffff" },
+    { "type": "color", "id": "title_highlight_color", "label": "Title highlight color", "default": "#a3e635" },
+    { "type": "color", "id": "description_color", "label": "Description color", "default": "#9ca3af" },
+    
+    { "type": "header", "content": "Image & Badge" },
+    { "type": "image_picker", "id": "product_image", "label": "Product image" },
+    { "type": "range", "id": "image_radius", "label": "Image border radius", "min": 0, "max": 30, "step": 2, "default": 16 },
+    { "type": "checkbox", "id": "show_badge", "label": "Show badge", "default": true },
+    { "type": "text", "id": "badge_text", "label": "Badge text", "default": "40% OFF" },
+    { "type": "color", "id": "badge_bg", "label": "Badge background", "default": "#a3e635" },
+    { "type": "color", "id": "badge_text_color", "label": "Badge text color", "default": "#000000" },
+    { "type": "range", "id": "badge_top", "label": "Badge top position", "min": 10, "max": 50, "step": 2, "default": 20 },
+    { "type": "range", "id": "badge_left", "label": "Badge left position", "min": 10, "max": 50, "step": 2, "default": 20 },
+    
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "product_label", "label": "Product label", "default": "FEATURED PRODUCT" },
+    { "type": "text", "id": "product_title_part1", "label": "Title part 1", "default": "QB54 " },
+    { "type": "text", "id": "product_title_part2", "label": "Title part 2 (highlighted)", "default": "Game Set" },
+    { "type": "textarea", "id": "product_description", "label": "Product description", "default": "The Comeback Social Media Viral Sensation. Pack it up. Play it Anywhere. Everything you need for the ultimate backyard football experience." },
+    
+    { "type": "header", "content": "Features" },
+    { "type": "color", "id": "feature_bg", "label": "Feature background", "default": "#111111" },
+    { "type": "color", "id": "feature_border", "label": "Feature border", "default": "#333333" },
+    { "type": "color", "id": "feature_icon_color", "label": "Feature icon color", "default": "#a3e635" },
+    { "type": "color", "id": "feature_title_color", "label": "Feature title color", "default": "#ffffff" },
+    { "type": "color", "id": "feature_subtitle_color", "label": "Feature subtitle color", "default": "#9ca3af" },
+    
+    { "type": "header", "content": "Call to Action" },
+    { "type": "text", "id": "cta_text", "label": "CTA text", "default": "SHOP NOW" },
+    { "type": "url", "id": "cta_link", "label": "CTA link" },
+    { "type": "color", "id": "cta_bg", "label": "CTA background", "default": "#a3e635" },
+    { "type": "color", "id": "cta_text_color", "label": "CTA text color", "default": "#000000" },
+    { "type": "color", "id": "cta_hover_bg", "label": "CTA hover background", "default": "#84cc16" }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        { "type": "select", "id": "icon_type", "label": "Icon", "options": [
+          { "value": "suitcase", "label": "Suitcase" },
+          { "value": "users", "label": "Users" },
+          { "value": "shield", "label": "Shield" }
+        ], "default": "suitcase" },
+        { "type": "text", "id": "feature_title", "label": "Feature title", "default": "Take Anywhere" },
+        { "type": "text", "id": "feature_subtitle", "label": "Feature subtitle", "default": "Light Carrying Bag Included" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Featured Product Showcase" }]
+}
+{% endschema %}

@@ -1,0 +1,208 @@
+{%- style -%}
+  /* GLOBAL SAFETY */
+  .simple-links-section, .simple-links-section * { box-sizing: border-box; }
+  
+  .simple-links-section {
+    background: {{ section.settings.section_bg }};
+    width: 100%;
+    padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px;
+  }
+  
+  .simple-links-container {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center;
+  }
+  
+  .simple-links-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: {{ section.settings.link_spacing }}px;
+    flex-wrap: wrap;
+  }
+  
+  .simple-links-item {
+    flex-shrink: 0;
+  }
+  
+  .simple-links-link {
+    display: inline-block;
+    color: {{ section.settings.link_color }};
+    font-size: {{ section.settings.link_font_size }}px;
+    font-weight: {{ section.settings.link_font_weight }};
+    text-decoration: {{ section.settings.link_text_decoration }};
+    padding: {{ section.settings.link_padding_y }}px {{ section.settings.link_padding_x }}px;
+    border-radius: {{ section.settings.link_border_radius }}px;
+    border: {{ section.settings.link_border_width }}px solid {{ section.settings.link_border_color }};
+    background: {{ section.settings.link_bg_color }};
+    transition: all 0.3s ease;
+    letter-spacing: {{ section.settings.link_letter_spacing | times: 0.01 }}em;
+    text-transform: {% if section.settings.link_uppercase %}uppercase{% else %}none{% endif %};
+    white-space: nowrap;
+  }
+  
+  .simple-links-link:hover {
+    color: {{ section.settings.link_hover_color }};
+    background: {{ section.settings.link_hover_bg_color }};
+    border-color: {{ section.settings.link_hover_border_color }};
+    text-decoration: {{ section.settings.link_hover_text_decoration }};
+    transform: translateY({{ section.settings.link_hover_transform }}px);
+  }
+  
+  /* RESPONSIVE DESIGN */
+  @media (max-width: 768px) {
+    .simple-links-section {
+      padding: {{ section.settings.mobile_section_padding_top }}px 0 {{ section.settings.mobile_section_padding_bottom }}px;
+    }
+    
+    .simple-links-container {
+      padding: 0 16px;
+    }
+    
+    .simple-links-list {
+      flex-direction: column;
+      gap: {{ section.settings.mobile_link_spacing }}px;
+      align-items: center;
+    }
+    
+    .simple-links-link {
+      font-size: {{ section.settings.mobile_link_font_size }}px;
+      padding: {{ section.settings.mobile_link_padding_y }}px {{ section.settings.mobile_link_padding_x }}px;
+      width: {{ section.settings.mobile_link_width }}%;
+      text-align: center;
+    }
+  }
+{%- endstyle -%}
+
+<section class="simple-links-section">
+  <div class="simple-links-container">
+    <div class="simple-links-list">
+      {% for block in section.blocks %}
+        {% if block.settings.link_text != blank %}
+          <div class="simple-links-item" {{ block.shopify_attributes }}>
+            {% if block.settings.link_url != blank %}
+              <a href="{{ block.settings.link_url }}" class="simple-links-link">
+                {{ block.settings.link_text }}
+              </a>
+            {% else %}
+              <span class="simple-links-link">
+                {{ block.settings.link_text }}
+              </span>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Simple Links Section",
+  "settings": [
+    { "type": "header", "content": "Section Layout" },
+    { "type": "color", "id": "section_bg", "label": "Section background", "default": "#f8f8f8" },
+    { "type": "range", "id": "section_padding_top", "label": "Section padding top", "min": 10, "max": 80, "step": 2, "default": 30 },
+    { "type": "range", "id": "section_padding_bottom", "label": "Section padding bottom", "min": 10, "max": 80, "step": 2, "default": 30 },
+    { "type": "range", "id": "max_width", "label": "Max container width", "min": 800, "max": 1400, "step": 50, "default": 1200 },
+    { "type": "range", "id": "link_spacing", "label": "Link spacing", "min": 10, "max": 60, "step": 2, "default": 30 },
+    
+    { "type": "header", "content": "Link Styling" },
+    { "type": "color", "id": "link_color", "label": "Link text color", "default": "#333333" },
+    { "type": "color", "id": "link_bg_color", "label": "Link background color", "default": "transparent" },
+    { "type": "color", "id": "link_border_color", "label": "Link border color", "default": "transparent" },
+    { "type": "range", "id": "link_font_size", "label": "Link font size", "min": 12, "max": 24, "step": 1, "default": 16 },
+    { "type": "select", "id": "link_font_weight", "label": "Link font weight", "options": [
+      { "value": "300", "label": "Light" },
+      { "value": "400", "label": "Normal" },
+      { "value": "500", "label": "Medium" },
+      { "value": "600", "label": "Semi Bold" },
+      { "value": "700", "label": "Bold" }
+    ], "default": "400" },
+    { "type": "select", "id": "link_text_decoration", "label": "Link text decoration", "options": [
+      { "value": "none", "label": "None" },
+      { "value": "underline", "label": "Underline" }
+    ], "default": "underline" },
+    { "type": "range", "id": "link_padding_x", "label": "Link horizontal padding", "min": 0, "max": 30, "step": 2, "default": 12 },
+    { "type": "range", "id": "link_padding_y", "label": "Link vertical padding", "min": 0, "max": 20, "step": 2, "default": 8 },
+    { "type": "range", "id": "link_border_radius", "label": "Link border radius", "min": 0, "max": 20, "step": 2, "default": 0 },
+    { "type": "range", "id": "link_border_width", "label": "Link border width", "min": 0, "max": 4, "step": 1, "default": 0 },
+    { "type": "range", "id": "link_letter_spacing", "label": "Link letter spacing", "min": 0, "max": 10, "step": 1, "default": 0 },
+    { "type": "checkbox", "id": "link_uppercase", "label": "Uppercase text", "default": false },
+    
+    { "type": "header", "content": "Link Hover Effects" },
+    { "type": "color", "id": "link_hover_color", "label": "Link hover text color", "default": "#000000" },
+    { "type": "color", "id": "link_hover_bg_color", "label": "Link hover background color", "default": "transparent" },
+    { "type": "color", "id": "link_hover_border_color", "label": "Link hover border color", "default": "transparent" },
+    { "type": "select", "id": "link_hover_text_decoration", "label": "Link hover text decoration", "options": [
+      { "value": "none", "label": "None" },
+      { "value": "underline", "label": "Underline" }
+    ], "default": "none" },
+    { "type": "range", "id": "link_hover_transform", "label": "Link hover transform (negative moves up)", "min": -4, "max": 4, "step": 1, "default": 0 },
+    
+    { "type": "header", "content": "Mobile Settings" },
+    { "type": "range", "id": "mobile_section_padding_top", "label": "Mobile section padding top", "min": 10, "max": 60, "step": 2, "default": 20 },
+    { "type": "range", "id": "mobile_section_padding_bottom", "label": "Mobile section padding bottom", "min": 10, "max": 60, "step": 2, "default": 20 },
+    { "type": "range", "id": "mobile_link_spacing", "label": "Mobile link spacing", "min": 8, "max": 30, "step": 2, "default": 16 },
+    { "type": "range", "id": "mobile_link_font_size", "label": "Mobile link font size", "min": 12, "max": 20, "step": 1, "default": 15 },
+    { "type": "range", "id": "mobile_link_padding_x", "label": "Mobile link horizontal padding", "min": 0, "max": 24, "step": 2, "default": 10 },
+    { "type": "range", "id": "mobile_link_padding_y", "label": "Mobile link vertical padding", "min": 0, "max": 16, "step": 2, "default": 6 },
+    { "type": "range", "id": "mobile_link_width", "label": "Mobile link width (%)", "min": 60, "max": 100, "step": 5, "default": 90 }
+  ],
+  "blocks": [
+    {
+      "type": "link",
+      "name": "Link",
+      "limit": 5,
+      "settings": [
+        { "type": "text", "id": "link_text", "label": "Link text", "default": "Link Text" },
+        { "type": "url", "id": "link_url", "label": "Link URL" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Simple Links Section",
+      "blocks": [
+        {
+          "type": "link",
+          "settings": {
+            "link_text": "Privacy Policy",
+            "link_url": "/pages/privacy-policy"
+          }
+        },
+        {
+          "type": "link",
+          "settings": {
+            "link_text": "Terms of Service",
+            "link_url": "/pages/terms-of-service"
+          }
+        },
+        {
+          "type": "link",
+          "settings": {
+            "link_text": "Contact Us",
+            "link_url": "/pages/contact"
+          }
+        },
+        {
+          "type": "link",
+          "settings": {
+            "link_text": "About Us",
+            "link_url": "/pages/about"
+          }
+        },
+        {
+          "type": "link",
+          "settings": {
+            "link_text": "FAQ",
+            "link_url": "/pages/faq"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

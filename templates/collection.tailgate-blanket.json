@@ -1,0 +1,233 @@
+{
+  "sections": {
+    "collection_banner": {
+      "type": "main-collection-banner",
+      "blocks": {
+        "breadcrumb": {
+          "type": "breadcrumb",
+          "settings": {
+            "show_collections_link": true,
+            "show_collection_title": true
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {
+            "title_size": "title-lg"
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {
+            "text_font": "body",
+            "text_size": "subtext-lg",
+            "secondary_color": false
+          }
+        }
+      },
+      "block_order": [
+        "breadcrumb",
+        "title",
+        "description"
+      ],
+      "settings": {
+        "transparent_header": false,
+        "show_image": true,
+        "image_height": "600px",
+        "content_position": "md:items-end md:justify-start",
+        "text_alignment": "left",
+        "image_height_mobile": "500px",
+        "content_position_mobile": "items-end justify-start",
+        "text_alignment_mobile": "left",
+        "color_text": "#ffffff",
+        "color_overlay": "#171717",
+        "overlay_opacity": 50,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "full_width": true,
+        "rounded": false,
+        "enable_parallax": true,
+        "parallax_direction": "vertical"
+      }
+    },
+    "team_selector": {
+      "type": "tailgate-team-selector",
+      "settings": {
+        "heading": "Choose Your Team",
+        "heading_size": "title-md",
+        "heading_alignment": "text-center md:items-center",
+        "heading_tag": "h2",
+        "subheading": "Shop NFL blankets by team",
+        "description": "<p>Pick your favorite logo to preview the matching blanket and add it directly to your cart.</p>",
+        "instruction": "Select a team logo to reveal its Tailgate Blanket.",
+        "eyebrow": "Wrap up in team pride",
+        "product_type_label": "Blanket",
+        "product_description": "<p>A soft, game-day-ready throw featuring your favorite team design.</p>",
+        "benefit_1": "Official team design",
+        "benefit_2": "Soft and comfortable",
+        "benefit_3": "Gift-ready fan gear",
+        "columns_desktop": 6,
+        "columns_mobile": "3",
+        "color_text": "#171717",
+        "color_background": "#f4f2e8",
+        "color_highlight": "#363a66",
+        "color_button_text": "#ffffff",
+        "color_button_background": "#363a66",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "full_width": false,
+        "rounded": false
+      }
+    },
+    "collection_grid": {
+      "type": "main-collection",
+      "settings": {
+        "products_per_page": 24,
+        "columns": 4,
+        "columns_mobile": "2",
+        "pagination": "click",
+        "enable_filtering": true,
+        "filter_type": "drawer",
+        "filter_collapsed": false,
+        "filter_color_swatches": false,
+        "enable_sorting": true,
+        "show_on_model": false,
+        "buttons_style": "secondary",
+        "padding_top": 32,
+        "padding_bottom": 64,
+        "full_width": false,
+        "rounded": false
+      }
+    },
+    "benefits": {
+      "type": "multicolumn-with-icons",
+      "blocks": {
+        "comfort": {
+          "type": "column",
+          "settings": {
+            "icon": "star",
+            "heading": "Game-Day Comfort",
+            "text": "<p>Cozy coverage for the couch, stadium, campsite, or backyard.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "team_design": {
+          "type": "column",
+          "settings": {
+            "icon": "shield",
+            "heading": "Team-First Design",
+            "text": "<p>Show your colors with a blanket made for real fans.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "gift": {
+          "type": "column",
+          "settings": {
+            "icon": "gift",
+            "heading": "An Easy Fan Gift",
+            "text": "<p>A practical favorite for birthdays, holidays, and kickoff weekend.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        }
+      },
+      "block_order": [
+        "comfort",
+        "team_design",
+        "gift"
+      ],
+      "settings": {
+        "style": "with-border",
+        "columns": 3,
+        "text_alignment": "left",
+        "heading": "Made for Every Kickoff",
+        "heading_size": "title-md",
+        "heading_alignment": "text-center md:items-center",
+        "heading_tag": "h2",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "full_width": false,
+        "rounded": false
+      }
+    },
+    "featured_products": {
+      "type": "featured-collection",
+      "settings": {
+        "collection": "tailgate-blanket",
+        "products": [],
+        "product_limit": 6,
+        "columns": 3,
+        "carousel_on_desktop": false,
+        "show_view_all": false,
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "heading": "Featured Tailgate Blankets",
+        "heading_size": "title-md",
+        "heading_alignment": "text-left md:items-end md:flex-row",
+        "heading_tag": "h2",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "full_width": false,
+        "rounded": false
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "question_1": {
+          "type": "question",
+          "settings": {
+            "title": "How do I find my team?",
+            "text": "<p>Use the team-logo selector above. It only displays products that belong to the Tailgate Blanket collection.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "question_2": {
+          "type": "question",
+          "settings": {
+            "title": "Can I use the blanket outside?",
+            "text": "<p>Yes. It is ideal for tailgates, outdoor events, travel, and relaxing at home.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "question_3": {
+          "type": "question",
+          "settings": {
+            "title": "Will new teams appear automatically?",
+            "text": "<p>Yes. Any active Online Store product added to this collection will automatically appear in the selector and product grid.</p>",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        }
+      },
+      "block_order": [
+        "question_1",
+        "question_2",
+        "question_3"
+      ],
+      "settings": {
+        "style": "with-border",
+        "heading": "Frequently Asked Questions",
+        "heading_size": "title-md",
+        "heading_alignment": "text-left md:items-end md:flex-row",
+        "heading_tag": "h2",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "narrow": true,
+        "rounded": false
+      }
+    }
+  },
+  "order": [
+    "collection_banner",
+    "team_selector",
+    "collection_grid",
+    "benefits",
+    "featured_products",
+    "faq"
+  ]
+}

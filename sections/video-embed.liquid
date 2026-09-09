@@ -1,0 +1,225 @@
+
+{% liquid
+  assign id = section.id
+%}
+
+<section class="video-embed-{{ id }}">
+  <div class="page-width">
+    <div class="header">
+      <h2 class="heading">{{ section.settings.heading }}</h2>
+      <p class="subheading">{{ section.settings.subheading }}</p>
+    </div>
+
+    <div class="video-wrapper">
+      <div class="video-frame">
+        {% if section.settings.video != blank %}
+          {% assign poster = section.settings.video.preview_image | image_url: width: 2000 %}
+         {{
+  section.settings.video
+  | video_tag:
+    controls: true,
+    autoplay: false,
+    loop: false,
+    muted: false,
+    playsinline: true,
+    preload: "metadata",
+    poster: poster
+}}
+        {% elsif section.settings.video_url != blank %}
+          <iframe
+            src="{{ section.settings.video_url | escape }}"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            title="{{ section.settings.heading }}">
+          </iframe>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .video-embed-{{ id }} {
+      background: {{ section.settings.background }};
+      padding: {{ section.settings.padding_mobile }}px 0;
+      text-align: center;
+    }
+
+    .video-embed-{{ id }} .header {
+      max-width: 720px;
+      margin: 0 auto 40px;
+    }
+
+    .video-embed-{{ id }} .heading {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+      margin-bottom: 8px;
+      color: {{ section.settings.heading_color }};
+    }
+
+    .video-embed-{{ id }} .subheading {
+      font-size: {{ section.settings.subheading_size_mobile }}px;
+      color: {{ section.settings.subheading_color }};
+    }
+
+    .video-embed-{{ id }} .video-frame {
+      position: relative;
+      width: 100%;
+      max-width: {{ section.settings.max_width }}px;
+      margin: 0 auto;
+      aspect-ratio: 16 / 9;
+      border-radius: {{ section.settings.radius }}px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      background: #000;
+    }
+
+    .video-embed-{{ id }} video,
+    .video-embed-{{ id }} iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      object-fit: cover;
+    }
+
+    @media (min-width: 750px) {
+      .video-embed-{{ id }} {
+        padding: {{ section.settings.padding_desktop }}px 0;
+      }
+
+      .video-embed-{{ id }} .heading {
+        font-size: {{ section.settings.heading_size_desktop }}px;
+      }
+
+      .video-embed-{{ id }} .subheading {
+        font-size: {{ section.settings.subheading_size_desktop }}px;
+      }
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "Video Embed",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "See QB54 in Action"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Watch how easy it is to set up and play. The ultimate football experience for everyone!"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Shopify hosted video"
+    },
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "YouTube or Vimeo embed URL",
+      "info": "Used only if no Shopify video is selected"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color",
+      "default": "#faf9f5"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading text color",
+      "default": "#fff"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading text color",
+      "default": "#6b7f72"
+    },
+    {
+      "type": "range",
+      "id": "radius",
+      "label": "Video corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max video width (px)",
+      "min": 600,
+      "max": 1400,
+      "step": 50,
+      "default": 1000
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size mobile",
+      "min": 24,
+      "max": 44,
+      "step": 2,
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size desktop",
+      "min": 32,
+      "max": 64,
+      "step": 2,
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_mobile",
+      "label": "Subheading size mobile",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_desktop",
+      "label": "Subheading size desktop",
+      "min": 16,
+      "max": 26,
+      "step": 1,
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "padding_mobile",
+      "label": "Section padding mobile",
+      "min": 40,
+      "max": 120,
+      "step": 4,
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_desktop",
+      "label": "Section padding desktop",
+      "min": 80,
+      "max": 200,
+      "step": 4,
+      "default": 120
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video Embed"
+    }
+  ]
+}
+{% endschema %}

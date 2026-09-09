@@ -1,0 +1,203 @@
+{% comment %}
+  ID4-Features — "Built for the 4th" icon feature grid
+  Patriotic icon cards with star field + flag rule. Pairs with ID4 hero/deals.
+  Section: sections/independence-day-features.liquid
+  Brand: QB54 — navy + gold + patriotic red
+{% endcomment %}
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  #id4-feat-{{ section.id }} {
+    --bg:    {{ section.settings.color_bg }};
+    --card:  {{ section.settings.color_card }};
+    --text:  {{ section.settings.color_text }};
+    --red:   {{ section.settings.color_red }};
+    --blue:  {{ section.settings.color_blue }};
+    --spark: {{ section.settings.color_spark }};
+    --muted: color-mix(in srgb, {{ section.settings.color_text }} 62%, transparent);
+    --line:  color-mix(in srgb, {{ section.settings.color_text }} 12%, transparent);
+
+    position: relative;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    font-family: 'Sora', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    isolation: isolate;
+  }
+  #id4-feat-{{ section.id }} .id4f-rule {
+    position: absolute; left: 0; right: 0; top: 0; height: 4px; z-index: 1;
+    background: repeating-linear-gradient(90deg,
+      var(--red) 0 14%, #fff 14% 28%, var(--blue) 28% 42%, transparent 42% 56%);
+    opacity: .9;
+  }
+  #id4-feat-{{ section.id }} .id4f-stars {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .45;
+    background-image:
+      radial-gradient(1.4px 1.4px at 12% 22%, #fff, transparent),
+      radial-gradient(1.4px 1.4px at 82% 28%, var(--spark), transparent),
+      radial-gradient(1.4px 1.4px at 60% 70%, #fff, transparent),
+      radial-gradient(1.4px 1.4px at 28% 82%, var(--red), transparent);
+  }
+  #id4-feat-{{ section.id }} .id4f-inner {
+    position: relative; z-index: 2; max-width: 1240px; margin: 0 auto;
+    padding: 0 clamp(20px, 4vw, 56px);
+  }
+  #id4-feat-{{ section.id }} .id4f-head { text-align: center; margin-bottom: clamp(36px, 5vw, 54px); }
+  #id4-feat-{{ section.id }} .id4f-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 11px; font-weight: 800; letter-spacing: .26em; text-transform: uppercase;
+    color: var(--spark); margin-bottom: 14px;
+  }
+  #id4-feat-{{ section.id }} .id4f-eyebrow svg { width: 13px; height: 13px; fill: var(--spark); }
+  #id4-feat-{{ section.id }} .id4f-title {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(36px, 5.2vw, 62px); line-height: .94; letter-spacing: .01em;
+    text-transform: uppercase; margin: 0 0 12px;
+  }
+  #id4-feat-{{ section.id }} .id4f-title .spark { color: var(--spark); }
+  #id4-feat-{{ section.id }} .id4f-sub { font-size: clamp(15px, 1.5vw, 17px); color: var(--muted); max-width: 56ch; margin: 0 auto; line-height: 1.6; }
+
+  #id4-feat-{{ section.id }} .id4f-grid {
+    display: grid; grid-template-columns: repeat({{ section.settings.columns }}, 1fr);
+    gap: clamp(16px, 2vw, 24px);
+  }
+  #id4-feat-{{ section.id }} .id4f-card {
+    position: relative; background: var(--card); border: 1px solid var(--line);
+    border-radius: 18px; padding: 28px 24px; text-align: left;
+    transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    overflow: hidden;
+  }
+  #id4-feat-{{ section.id }} .id4f-card::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(120% 80% at 0% 0%, color-mix(in srgb, var(--blue) 22%, transparent), transparent 60%);
+    opacity: .8;
+  }
+  #id4-feat-{{ section.id }} .id4f-card:hover {
+    transform: translateY(-4px); border-color: color-mix(in srgb, var(--spark) 55%, var(--line));
+    box-shadow: 0 18px 44px rgba(0,0,0,.4);
+  }
+  #id4-feat-{{ section.id }} .id4f-ico {
+    position: relative; z-index: 1;
+    width: 60px; height: 60px; border-radius: 14px; display: grid; place-items: center;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--spark) 100%, #fff 8%), var(--spark));
+    box-shadow: 0 8px 22px color-mix(in srgb, var(--spark) 38%, transparent), inset 0 1px 0 rgba(255,255,255,.4);
+    margin-bottom: 18px;
+  }
+  #id4-feat-{{ section.id }} .id4f-ico svg { width: 30px; height: 30px; fill: none; stroke: #131a3c; stroke-width: 2.1; }
+  #id4-feat-{{ section.id }} .id4f-name {
+    position: relative; z-index: 1;
+    font-family: 'Anton', sans-serif; font-size: 26px; letter-spacing: .02em; text-transform: uppercase; margin: 0 0 8px;
+  }
+  #id4-feat-{{ section.id }} .id4f-desc { position: relative; z-index: 1; font-size: 14.5px; line-height: 1.55; color: var(--muted); margin: 0; }
+
+  @media (max-width: 900px) { #id4-feat-{{ section.id }} .id4f-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { #id4-feat-{{ section.id }} .id4f-grid { grid-template-columns: 1fr; } }
+</style>
+
+<div id="id4-feat-{{ section.id }}">
+  <span class="id4f-rule"></span>
+  <div class="id4f-stars"></div>
+  <div class="id4f-inner">
+    <div class="id4f-head">
+      {%- if section.settings.eyebrow != blank -%}
+        <div class="id4f-eyebrow">
+          <svg viewBox="0 0 24 24"><path d="M12 1.5l2.9 6.4 7 .7-5.2 4.7 1.5 6.9L12 17.8 5.8 20.9l1.5-6.9L2.1 8.6l7-.7z"/></svg>
+          {{ section.settings.eyebrow }}
+        </div>
+      {%- endif -%}
+      <h2 class="id4f-title">{{ section.settings.title }}</h2>
+      {%- if section.settings.subtitle != blank -%}<p class="id4f-sub">{{ section.settings.subtitle }}</p>{%- endif -%}
+    </div>
+
+    <div class="id4f-grid">
+      {%- for block in section.blocks -%}
+        <div class="id4f-card" {{ block.shopify_attributes }}>
+          <div class="id4f-ico">
+            {%- case block.settings.icon -%}
+              {%- when 'flag' -%}<svg viewBox="0 0 24 24"><path d="M4 2v20M4 4h13l-2 4 2 4H4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              {%- when 'star' -%}<svg viewBox="0 0 24 24" fill="none"><path d="M12 2.5l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.7 5.9 21.4l1.5-6.8-5.2-4.6 6.9-.7z" stroke-linejoin="round"/></svg>
+              {%- when 'bolt' -%}<svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z" stroke-linejoin="round"/></svg>
+              {%- when 'truck' -%}<svg viewBox="0 0 24 24"><path d="M3 6h11v9H3zM14 9h4l3 3v3h-7M7 18a2 2 0 100-4 2 2 0 000 4zM18 18a2 2 0 100-4 2 2 0 000 4z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              {%- when 'shield' -%}<svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              {%- when 'football' -%}<svg viewBox="0 0 24 24"><path d="M5 19C3 14 4 7 9 5s10-1 10-1 1 5-1 10-7 6-10 6-3-1-3-1z" stroke-linejoin="round"/><path d="M9 15l6-6M10 11h4M11 10v4" stroke-linecap="round"/></svg>
+              {%- when 'clock' -%}<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              {%- when 'users' -%}<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 2.7-5 6-5s6 2 6 5M16 6a3 3 0 010 5M21 20c0-2-1-3.5-3-4.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              {%- when 'person' -%}<svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.4"/><path d="M5 20c0-3.6 3.1-6.2 7-6.2s7 2.6 7 6.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              {%- when 'bag' -%}<svg viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7zM9 8V6a3 3 0 016 0v2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              {%- else -%}<svg viewBox="0 0 24 24"><path d="M12 1.5l2.9 6.4 7 .7-5.2 4.7 1.5 6.9L12 17.8 5.8 20.9l1.5-6.9L2.1 8.6l7-.7z" stroke-linejoin="round"/></svg>
+            {%- endcase -%}
+          </div>
+          <h3 class="id4f-name">{{ block.settings.name }}</h3>
+          <p class="id4f-desc">{{ block.settings.desc }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "4th of July Features",
+  "tag": "div",
+  "class": "independence-day-features-section",
+  "settings": [
+    { "type": "header", "content": "Header" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Why It Wins the Cookout" },
+    { "type": "text", "id": "title", "label": "Title", "default": "Built for the 4th" },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "From the first burger to the last firework, QB54 keeps the whole crew in the game." },
+    { "type": "range", "id": "columns", "label": "Columns (desktop)", "min": 2, "max": 4, "step": 1, "default": 4 },
+
+    { "type": "header", "content": "Section spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 84 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 84 },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_bg", "label": "Background", "default": "#0e1534" },
+    { "type": "color", "id": "color_card", "label": "Card background", "default": "#212c54" },
+    { "type": "color", "id": "color_text", "label": "Text", "default": "#ffffff" },
+    { "type": "color", "id": "color_red", "label": "Red", "default": "#e11d2f" },
+    { "type": "color", "id": "color_blue", "label": "Blue", "default": "#3454c6" },
+    { "type": "color", "id": "color_spark", "label": "Gold accent (QB54 gold)", "default": "#f7b80d" }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "select", "id": "icon", "label": "Icon", "default": "bolt",
+          "options": [
+            { "value": "bolt", "label": "Bolt / fast" },
+            { "value": "clock", "label": "Clock" },
+            { "value": "shield", "label": "Shield / durable" },
+            { "value": "person", "label": "Person / all ages" },
+            { "value": "bag", "label": "Bag / portable" },
+            { "value": "users", "label": "Group / family" },
+            { "value": "football", "label": "Football" },
+            { "value": "truck", "label": "Shipping" },
+            { "value": "flag", "label": "Flag" },
+            { "value": "star", "label": "Star" }
+          ]
+        },
+        { "type": "text", "id": "name", "label": "Title", "default": "Set Up in Seconds" },
+        { "type": "textarea", "id": "desc", "label": "Description", "default": "No tools, no fuss. Pop it open and you're playing before the grill's even hot." }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "4th of July Features",
+      "blocks": [
+        { "type": "feature", "settings": { "icon": "bolt", "name": "Set Up in Seconds", "desc": "No tools, no fuss. Pop it open and you're playing before the grill's even hot." } },
+        { "type": "feature", "settings": { "icon": "shield", "name": "Cookout-Proof", "desc": "Grass, sand, driveway or turf — built tough to survive the whole holiday weekend." } },
+        { "type": "feature", "settings": { "icon": "users", "name": "Everyone Plays", "desc": "Kids, grandparents, and your most competitive cousin — easy to learn, hard to put down." } },
+        { "type": "feature", "settings": { "icon": "truck", "name": "Ships Before the 4th", "desc": "Order by July 1 and it lands in time for the fireworks. Free fast shipping included." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

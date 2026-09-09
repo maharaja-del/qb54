@@ -1,0 +1,356 @@
+{%- style -%}
+  /* GLOBAL SAFETY */
+  .viral-story, .viral-story * { box-sizing: border-box; }
+  
+  .viral-story {
+    background: {{ section.settings.section_bg }};
+    padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px;
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  /* SECTION TITLE */
+  .viral-story__title {
+    font-size: {{ section.settings.title_size }}px;
+    font-weight: 900;
+    color: {{ section.settings.title_color }};
+    text-align: center;
+    margin-bottom: {{ section.settings.title_margin_bottom }}px;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+  
+  .viral-story__fire {
+    font-size: {{ section.settings.fire_size }}px;
+    margin: 0 {{ section.settings.fire_spacing }}px;
+    display: inline-block;
+    animation: flicker 2s infinite alternate;
+  }
+  
+  @keyframes flicker {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1) rotate(1deg); }
+    100% { transform: scale(1) rotate(-1deg); }
+  }
+  
+  /* SLIDER CONTAINER */
+  .viral-story__slider {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  .viral-story__track {
+    display: flex;
+    transition: transform 0.3s ease;
+    gap: {{ section.settings.video_gap }}px;
+    padding: 0 {{ section.settings.container_padding }}px;
+  }
+  
+  .viral-story__slide {
+    flex: 0 0 calc((100% - {{ section.settings.container_padding | times: 2 }}px - {{ section.settings.video_gap | times: 3 }}px) / 4.5);
+    position: relative;
+    border-radius: {{ section.settings.video_radius }}px;
+    overflow: hidden;
+    aspect-ratio: 9 / 16;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .viral-story__slide:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* VIDEO CONTAINER */
+  .viral-story__video {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: #000;
+  }
+  
+  .viral-story__video img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.3s ease;
+  }
+  
+  .viral-story__video video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+  }
+  
+  .viral-story__video iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: none;
+  }
+  
+  .viral-story__video.playing video,
+  .viral-story__video.playing iframe {
+    display: block;
+  }
+  
+  .viral-story__video.playing img {
+    display: none;
+  }
+  
+  /* INSTAGRAM EMBED STYLES */
+  .viral-story__instagram {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    overflow: hidden;
+    background: #000;
+    z-index: 3;
+  }
+  
+  .viral-story__instagram iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+    background: #000;
+  }
+  
+  .viral-story__video.playing .viral-story__instagram {
+    display: block;
+  }
+  
+  /* INSTAGRAM THUMBNAIL LOADING */
+  .instagram-thumb-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 12px;
+    z-index: 2;
+  }
+  
+  .instagram-thumb-error {
+    background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+  }
+  
+  /* PLAY BUTTON */
+  .viral-story__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: {{ section.settings.play_button_size }}px;
+    height: {{ section.settings.play_button_size }}px;
+    background: {{ section.settings.play_button_bg }};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 5;
+    border: none;
+  }
+  
+  .viral-story__play:hover {
+    background: {{ section.settings.play_button_hover_bg }};
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  
+  .viral-story__play svg {
+    width: {{ section.settings.play_icon_size }}px;
+    height: {{ section.settings.play_icon_size }}px;
+    color: {{ section.settings.play_icon_color }};
+    margin-left: 2px;
+  }
+  
+  .viral-story__video.playing .viral-story__play {
+    display: none;
+  }
+  
+  /* SLIDER NAVIGATION */
+  .viral-story__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: {{ section.settings.nav_button_size }}px;
+    height: {{ section.settings.nav_button_size }}px;
+    background: {{ section.settings.nav_button_bg }};
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+    opacity: {{ section.settings.nav_opacity | divided_by: 100.0 }};
+  }
+  
+  .viral-story__nav:hover {
+    background: {{ section.settings.nav_button_hover_bg }};
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+  }
+  
+  .viral-story__nav--prev {
+    left: {{ section.settings.nav_offset }}px;
+  }
+  
+  .viral-story__nav--next {
+    right: {{ section.settings.nav_offset }}px;
+  }
+  
+  .viral-story__nav svg {
+    width: {{ section.settings.nav_icon_size }}px;
+    height: {{ section.settings.nav_icon_size }}px;
+    color: {{ section.settings.nav_icon_color }};
+  }
+  
+  /* RESPONSIVE BREAKPOINTS */
+  @media (max-width: 768px) {
+    .viral-story__title {
+      font-size: {{ section.settings.title_size | times: 0.75 }}px;
+      margin-bottom: {{ section.settings.title_margin_bottom | times: 0.7 }}px;
+    }
+    
+    .viral-story__fire {
+      font-size: {{ section.settings.fire_size | times: 0.75 }}px;
+      margin: 0 {{ section.settings.fire_spacing | times: 0.7 }}px;
+    }
+    
+    .viral-story__slide {
+      flex: 0 0 calc((100% - {{ section.settings.container_padding }}px - {{ section.settings.video_gap | times: 0.5 }}px) / 1.5);
+    }
+    
+    .viral-story__track {
+      gap: {{ section.settings.video_gap | divided_by: 2 }}px;
+      padding: 0 {{ section.settings.container_padding | divided_by: 2 }}px;
+    }
+    
+    .viral-story__play {
+      width: {{ section.settings.play_button_size | times: 0.8 }}px;
+      height: {{ section.settings.play_button_size | times: 0.8 }}px;
+    }
+    
+    .viral-story__play svg {
+      width: {{ section.settings.play_icon_size | times: 0.8 }}px;
+      height: {{ section.settings.play_icon_size | times: 0.8 }}px;
+    }
+    
+    .viral-story__nav {
+      width: {{ section.settings.nav_button_size | times: 0.8 }}px;
+      height: {{ section.settings.nav_button_size | times: 0.8 }}px;
+    }
+    
+    .viral-story__nav svg {
+      width: {{ section.settings.nav_icon_size | times: 0.8 }}px;
+      height: {{ section.settings.nav_icon_size | times: 0.8 }}px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .viral-story {
+      padding: {{ section.settings.section_padding_top | times: 0.6 }}px 0 {{ section.settings.section_padding_bottom | times: 0.6 }}px;
+    }
+    
+    .viral-story__title {
+      font-size: {{ section.settings.title_size | times: 0.6 }}px;
+    }
+    
+    .viral-story__fire {
+      font-size: {{ section.settings.fire_size | times: 0.6 }}px;
+    }
+    
+    .viral-story__slide {
+      border-radius: {{ section.settings.video_radius | times: 0.7 }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="viral-story">
+  <div class="page-width">
+    {% if section.settings.show_title %}
+      <h2 class="viral-story__title">
+        <span class="viral-story__fire">🔥</span>
+        {{ section.settings.title }}
+        <span class="viral-story__fire">🔥</span>
+      </h2>
+    {% endif %}
+    
+    <div class="viral-story__slider" id="viral-slider-{{ section.id }}">
+      <div class="viral-story__track" id="viral-track-{{ section.id }}">
+        {% for block in section.blocks %}
+          <div class="viral-story__slide" {{ block.shopify_attributes }}>
+            <div class="viral-story__video" 
+                 data-video-type="{{ block.settings.video_type }}" 
+                 data-video-id="{% if block.settings.video_type == 'youtube' %}{{ block.settings.youtube_url | split: '=' | last | split: '&' | first }}{% elsif block.settings.video_type == 'vimeo' %}{{ block.settings.vimeo_url | split: '/' | last }}{% endif %}"
+                 {% if block.settings.video_type == 'instagram' and block.settings.instagram_url != blank %}data-instagram-url="{{ block.settings.instagram_url }}"{% endif %}>
+              
+              {% comment %} THUMBNAIL IMAGE {% endcomment %}
+              {% if block.settings.cover_image != blank %}
+                {{ block.settings.cover_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: block.settings.video_title, class: 'viral-story__thumbnail' }}
+              {% else %}
+                {% comment %} Default placeholder or Instagram thumbnail will be loaded via JavaScript {% endcomment %}
+                <img src="https://via.placeholder.com/400x711/cccccc/333333?text=Loading..." alt="{{ block.settings.video_title }}" loading="lazy" class="viral-story__thumbnail">
+              {% endif %}
+              
+              {% comment %} LOADING INDICATOR FOR INSTAGRAM {% endcomment %}
+              {% if block.settings.video_type == 'instagram' and block.settings.cover_image == blank %}
+                <div class="instagram-thumb-loading">Loading thumbnail...</div>
+              {% endif %}
+              
+              {% comment %} VIDEO ELEMENTS {% endcomment %}
+              {% case block.settings.video_type %}
+                {% when 'shopify_video' %}
+                  {% if block.settings.shopify_video != blank %}
+                    <video controls preload="none">
+                      {% for source in block.settings.shopify_video.sources %}
+                        <source src="{{ source.url }}" type="{{ source.mime_type }}">
+                      {% endfor %}
+                    </video>
+                  {% endif %}
+                
+                {% when 'youtube' %}
+                  {% if block.settings.youtube_url != blank %}
+                    <iframe src="" data-src="https://www.youtube.com/embed/{{ block.settings.youtube_url | split: '=' | last | split: '&' | first }}?autoplay=1&rel=0&modestbranding=1" allowfullscreen></iframe>
+                  {% endif %}
+                
+                {% when 'vimeo' %}
+                  {% if block.settings.vimeo_url != blank %}
+                    <iframe src="" data-src="https://player.vimeo.com/video/{{ block.settings.vimeo_url | split: '/' | last }}?autoplay=1&title=0&byline=0&portrait=0" allowfullscreen></iframe>
+                  {% endif %}
+                
+                {% when 'instagram' %}
+                  {% if block.settings.instagram_url != blank %}
+                    <div class="viral-story__instagram">
+                      <iframe src="" data-src="{{ block.settings.instagram_url }}embed/" allowfullscreen></iframe>
+                    </div>
+                  {% endif %}
+              {% endcase %}
+              
+              <button class="viral-story__play" type="button" aria-label="Play video">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
