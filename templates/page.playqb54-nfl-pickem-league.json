@@ -41,7 +41,7 @@
       }
     },
     "pickem_hero": {
-      "type": "NFL-lp-hero",
+      "type": "qb54-pickem-hero",
       "name": "QB54 Pick'em League Hero",
       "settings": {
         "bg_image": "shopify://shop_images/QB54_1000_1000_Header.jpg",

@@ -1,9 +1,10 @@
 {%- liquid
   assign prize_blocks = section.blocks | where: 'type', 'prize'
   assign weekly_block = prize_blocks | where: 'settings.rank', 'weekly' | first
-  assign podium_blocks = prize_blocks | where: 'settings.rank', 'first'
-  assign podium_blocks = podium_blocks | concat: (prize_blocks | where: 'settings.rank', 'second')
-  assign podium_blocks = podium_blocks | concat: (prize_blocks | where: 'settings.rank', 'third')
+  assign first_blocks = prize_blocks | where: 'settings.rank', 'first'
+  assign second_blocks = prize_blocks | where: 'settings.rank', 'second'
+  assign third_blocks = prize_blocks | where: 'settings.rank', 'third'
+  assign podium_blocks = first_blocks | concat: second_blocks | concat: third_blocks
 -%}
 
 <style>
