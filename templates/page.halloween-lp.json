@@ -24,47 +24,123 @@
         "rounded": false
       }
     },
-    "video_embed_4P3pAa": {
-      "type": "video-embed",
-      "name": "Video Embed",
+    "memorial_day_hero_eEC4cQ": {
+      "type": "memorial-day-hero",
+      "name": "Halloween Day",
       "settings": {
-        "heading": "",
-        "subheading": "",
-        "video_url": "https://www.youtube.com/embed/sluX6EQl_3Y",
-        "background": "#faf9f5",
-        "subheading_color": "#6b7f72",
-        "radius": 20,
-        "max_width": 1400,
-        "heading_size_mobile": 32,
-        "heading_size_desktop": 48,
-        "subheading_size_mobile": 16,
-        "subheading_size_desktop": 18,
-        "padding_mobile": 40,
-        "padding_desktop": 80
+        "eyebrow": "Halloween Sale",
+        "heading_line1": "HALLOWEEN",
+        "heading_line2": "IS GAME DAY",
+        "subtitle": "Get the crew together. Bring the games. Make Halloween one to remember.",
+        "show_countdown": true,
+        "countdown_label": "Sale ends in",
+        "target_date": "2026-10-31",
+        "target_time": "23:59",
+        "timezone_offset": "-05:00",
+        "live_message": "★ The Sale Is Live — Shop Now ★",
+        "show_coupon": true,
+        "coupon_label": "Use code at checkout",
+        "coupon_code": "HALLOWEEN2026",
+        "coupon_help": "30% off sitewide. Tap the code to copy.",
+        "coupon_copied_text": "Copied to clipboard",
+        "cta1_label": "Shop the Sale",
+        "cta1_url": "",
+        "cta2_label": "View Bundles",
+        "cta2_url": "",
+        "hero_image": "shopify://shop_images/Halloween.png",
+        "padding_top": 80,
+        "padding_bottom": 100,
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 60,
+        "color_bg": "#0a0f0a",
+        "color_text": "#ffffff",
+        "color_accent": "#F57B14"
       }
     },
-    "stacked_images_yNdcgj": {
-      "type": "stacked-images",
-      "name": "Stacked Images",
+    "product_list_bm673n": {
+      "type": "product_list",
+      "name": "Product List",
       "settings": {
-        "image_one": "shopify://shop_images/1769640975218-f37e7e6e-161a-48e0-9c73-7080e08e27a3_1.jpg",
-        "image_two": "shopify://shop_images/1769640975218-f37e7e6e-161a-48e0-9c73-7080e08e27a3_2.jpg",
-        "pdf_download_url": "https://cdn.shopify.com/s/files/1/1444/0224/files/QB54_How_To_Play_Instructions-compressed.pdf?v=1769646387",
-        "button_label": "Download Rules PDF",
-        "image_spacing": 30,
-        "button_spacing": 40,
-        "max_width": 1200,
-        "padding_top": 40,
-        "padding_bottom": 40,
-        "bg_color": "#ffffff",
-        "button_bg": "#1f6fb2",
-        "button_text": "#ffffff"
+        "heading": "PICK YOUR HALLOWEEN SET",
+        "collection": "qb54-game-set-1",
+        "products_to_show": 3,
+        "show_description": true,
+        "button_text": "Add to Cart"
+      }
+    },
+    "qb54_best_sellers_rN344G": {
+      "type": "qb54-best-sellers",
+      "blocks": {
+        "product_4fRYdG": {
+          "type": "product",
+          "settings": {
+            "product": "qb54-navy-blue-game-set",
+            "rank_label": "Top Rated",
+            "rating_text": "5-star rated"
+          }
+        },
+        "product_HLX96A": {
+          "type": "product",
+          "settings": {
+            "product": "qb54-black-game-set",
+            "rank_label": "Best Seller",
+            "rating_text": "5-star rated"
+          }
+        },
+        "product_pr6ryx": {
+          "type": "product",
+          "settings": {
+            "product": "qb54-red-set",
+            "rank_label": "Best Seller",
+            "rating_text": "5-star rated"
+          }
+        },
+        "product_9eAg9H": {
+          "type": "product",
+          "settings": {
+            "product": "custom-logo-backyard-football-game-qb54",
+            "rank_label": "Best Seller",
+            "rating_text": "5-star rated"
+          }
+        }
+      },
+      "block_order": [
+        "product_4fRYdG",
+        "product_HLX96A",
+        "product_pr6ryx",
+        "product_9eAg9H"
+      ],
+      "name": "QB54 Best Sellers",
+      "settings": {
+        "eyebrow": "Best Sellers",
+        "heading": "HALLOWEEN GAME NIGHT",
+        "subheading": "Pick the game that will keep your Halloween crowd playing.",
+        "bullet_1": "Everything included — 2 chairs, goals, ball, pump, tee, carry bag",
+        "bullet_2": "Sets up anywhere in under 2 minutes",
+        "bullet_3": "Heavy-duty chairs support up to 275 lbs",
+        "atc_label": "Add to Cart",
+        "feat_micro": "30-day money-back guarantee · Secure checkout",
+        "strip_1": "Free shipping on orders $225+",
+        "strip_2": "30-day money-back guarantee",
+        "strip_3": "Ships within 1 business day",
+        "background": "#f4f2e8",
+        "navy_color": "#363a66",
+        "gold_color": "#F57B14",
+        "text_color": "#171717",
+        "star_color": "#f59e0b",
+        "sale_color": "#e11d48",
+        "heading_size_mobile": 34,
+        "heading_size_desktop": 48,
+        "padding_mobile": 44,
+        "padding_desktop": 64,
+        "strip_items": 3
       }
     }
   },
   "order": [
     "main-page",
-    "video_embed_4P3pAa",
-    "stacked_images_yNdcgj"
+    "memorial_day_hero_eEC4cQ",
+    "product_list_bm673n",
+    "qb54_best_sellers_rN344G"
   ]
 }
