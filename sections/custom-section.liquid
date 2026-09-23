@@ -114,177 +114,183 @@
         </div>
 
         <!-- PRODUCT FORM -->
-        {% form 'product',
-          selected_product,
-          id: 'ProductForm-' | append: section.id,
-          class: 'product-card__form'
-        %}
+       ```liquid
+{% assign product_form_id = 'ProductForm-' | append: section.id %}
 
-          <!-- VARIANTS -->
-          {% if section.settings.show_variants and selected_product.has_only_default_variant == false %}
+{% form 'product', selected_product, id: product_form_id, class: 'product-card__form' %}
 
-            <div class="product-card__variants">
+  <!-- VARIANTS -->
+  {% if section.settings.show_variants and selected_product.has_only_default_variant == false %}
 
-              {% for option in selected_product.options_with_values %}
+    <div class="product-card__variants">
 
-                <div class="product-card__option">
+      {% for option in selected_product.options_with_values %}
 
-                  <label
-                    for="Option-{{ section.id }}-{{ forloop.index }}"
-                    class="product-card__option-label"
-                  >
-                    {{ option.name }}
-                  </label>
+        <div class="product-card__option">
 
-                  <select
-                    id="Option-{{ section.id }}-{{ forloop.index }}"
-                    class="product-card__select"
-                    data-option-position="{{ option.position }}"
-                  >
-                    {% for value in option.values %}
-                      <option
-                        value="{{ value | escape }}"
-                        {% if option.selected_value == value %}
-                          selected
-                        {% endif %}
-                      >
-                        {{ value }}
-                      </option>
-                    {% endfor %}
-                  </select>
-
-                </div>
-
-              {% endfor %}
-
-            </div>
-
-          {% endif %}
-
-          <!-- VARIANT ID -->
-          <input
-            type="hidden"
-            name="id"
-            value="{{ current_variant.id }}"
-            data-variant-id
+          <label
+            for="Option-{{ section.id }}-{{ forloop.index }}"
+            class="product-card__option-label"
           >
+            {{ option.name }}
+          </label>
 
-          <!-- QUANTITY -->
-          {% if section.settings.show_quantity %}
-            <div class="product-card__quantity-wrapper">
-
-              <label
-                for="Quantity-{{ section.id }}"
-                class="product-card__quantity-label"
-              >
-                Quantity
-              </label>
-
-              <div class="product-card__quantity">
-
-                <button
-                  type="button"
-                  class="product-card__quantity-button"
-                  data-quantity-minus
-                  aria-label="Decrease quantity"
-                >
-                  −
-                </button>
-
-                <input
-                  id="Quantity-{{ section.id }}"
-                  class="product-card__quantity-input"
-                  type="number"
-                  name="quantity"
-                  value="1"
-                  min="1"
-                  step="1"
-                  inputmode="numeric"
-                  data-quantity-input
-                >
-
-                <button
-                  type="button"
-                  class="product-card__quantity-button"
-                  data-quantity-plus
-                  aria-label="Increase quantity"
-                >
-                  +
-                </button>
-
-              </div>
-
-            </div>
-          {% endif %}
-
-          <!-- ADD TO CART -->
-          {% if section.settings.show_add_to_cart %}
-
-            <button
-              type="submit"
-              name="add"
-              class="product-card__add-to-cart"
-              {% unless current_variant.available %}
-                disabled
-              {% endunless %}
-              data-add-to-cart
-            >
-
-              <span data-button-text>
-                {% if current_variant.available %}
-                  {{ section.settings.button_text }}
-                {% else %}
-                  Sold Out
+          <select
+            id="Option-{{ section.id }}-{{ forloop.index }}"
+            class="product-card__select"
+            data-option-position="{{ option.position }}"
+          >
+            {% for value in option.values %}
+              <option
+                value="{{ value | escape }}"
+                {% if option.selected_value == value %}
+                  selected="selected"
                 {% endif %}
-              </span>
-
-              <span
-                class="product-card__spinner"
-                data-spinner
-                hidden
               >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  aria-hidden="true"
-                >
-                  <circle
-                    cx="10"
-                    cy="10"
-                    r="8"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-dasharray="40"
-                    stroke-dashoffset="10"
-                  >
-                    <animateTransform
-                      attributeName="transform"
-                      type="rotate"
-                      from="0 10 10"
-                      to="360 10 10"
-                      dur="0.8s"
-                      repeatCount="indefinite"
-                    />
-                  </circle>
-                </svg>
-              </span>
+                {{ value }}
+              </option>
+            {% endfor %}
+          </select>
 
-            </button>
+        </div>
 
-          {% endif %}
+      {% endfor %}
 
-          <!-- STATUS MESSAGE -->
-          <div
-            class="product-card__message"
-            role="status"
-            aria-live="polite"
-            data-message
-          ></div>
+    </div>
 
-        {% endform %}
+  {% endif %}
+
+
+  <!-- SELECTED VARIANT ID -->
+  <input
+    type="hidden"
+    name="id"
+    value="{{ current_variant.id }}"
+    data-variant-id
+  >
+
+
+  <!-- QUANTITY -->
+  {% if section.settings.show_quantity %}
+
+    <div class="product-card__quantity-wrapper">
+
+      <label
+        for="Quantity-{{ section.id }}"
+        class="product-card__quantity-label"
+      >
+        Quantity
+      </label>
+
+      <div class="product-card__quantity">
+
+        <button
+          type="button"
+          class="product-card__quantity-button"
+          data-quantity-minus
+          aria-label="Decrease quantity"
+        >
+          −
+        </button>
+
+        <input
+          id="Quantity-{{ section.id }}"
+          class="product-card__quantity-input"
+          type="number"
+          name="quantity"
+          value="1"
+          min="1"
+          step="1"
+          inputmode="numeric"
+          data-quantity-input
+        >
+
+        <button
+          type="button"
+          class="product-card__quantity-button"
+          data-quantity-plus
+          aria-label="Increase quantity"
+        >
+          +
+        </button>
+
+      </div>
+
+    </div>
+
+  {% endif %}
+
+
+  <!-- ADD TO CART -->
+  {% if section.settings.show_add_to_cart %}
+
+    <button
+      type="submit"
+      name="add"
+      class="product-card__add-to-cart"
+      data-add-to-cart
+      {% unless current_variant.available %}
+        disabled="disabled"
+      {% endunless %}
+    >
+
+      <span data-button-text>
+        {% if current_variant.available %}
+          {{ section.settings.button_text }}
+        {% else %}
+          Sold Out
+        {% endif %}
+      </span>
+
+      <span
+        class="product-card__spinner"
+        data-spinner
+        hidden
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          aria-hidden="true"
+        >
+          <circle
+            cx="10"
+            cy="10"
+            r="8"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-dasharray="40"
+            stroke-dashoffset="10"
+          >
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="0 10 10"
+              to="360 10 10"
+              dur="0.8s"
+              repeatCount="indefinite"
+            />
+          </circle>
+        </svg>
+      </span>
+
+    </button>
+
+  {% endif %}
+
+
+  <!-- STATUS MESSAGE -->
+  <div
+    class="product-card__message"
+    role="status"
+    aria-live="polite"
+    data-message
+  ></div>
+
+{% endform %}
+```
 
       </div>
     </div>
