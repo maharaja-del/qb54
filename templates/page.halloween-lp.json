@@ -54,7 +54,7 @@
         "padding_bottom_mobile": 60,
         "color_bg": "#0a0f0a",
         "color_text": "#ffffff",
-        "color_accent": "#F57B14"
+        "color_accent": "#f57b14"
       }
     },
     "product_list_bm673n": {
@@ -62,10 +62,69 @@
       "name": "Product List",
       "settings": {
         "heading": "PICK YOUR HALLOWEEN SET",
+        "heading_description": "<p>Pick your Halloween set from our latest collection.</p>",
         "collection": "qb54-game-set-1",
-        "products_to_show": 3,
-        "show_description": true,
+        "products_to_show": 8,
+        "show_description": false,
         "button_text": "Add to Cart"
+      }
+    },
+    "independence_day_marquee_RxpTwQ": {
+      "type": "independence-day-marquee",
+      "blocks": {
+        "phrase_kefGp8": {
+          "type": "phrase",
+          "settings": {
+            "text": "30% Off Game Sets",
+            "style": "spark"
+          }
+        },
+        "phrase_x46BHd": {
+          "type": "phrase",
+          "settings": {
+            "text": "Free Fast Shipping",
+            "style": "white"
+          }
+        },
+        "phrase_WdLmzX": {
+          "type": "phrase",
+          "settings": {
+            "text": "Code: HALLOWEEN2026",
+            "style": "red"
+          }
+        },
+        "phrase_fpMcRd": {
+          "type": "phrase",
+          "settings": {
+            "text": "Ships Before the night Starts",
+            "style": "spark"
+          }
+        },
+        "phrase_PifjUf": {
+          "type": "phrase",
+          "settings": {
+            "text": "Own the Backyard",
+            "style": "white"
+          }
+        }
+      },
+      "block_order": [
+        "phrase_kefGp8",
+        "phrase_x46BHd",
+        "phrase_WdLmzX",
+        "phrase_fpMcRd",
+        "phrase_PifjUf"
+      ],
+      "name": "4th of July Marquee",
+      "settings": {
+        "speed": 28,
+        "pause_on_hover": true,
+        "padding_y": 22,
+        "color_bg": "#070708",
+        "color_text": "#ffffff",
+        "color_red": "#e11d2f",
+        "color_blue": "#364aa2",
+        "color_spark": "#f57b14"
       }
     },
     "qb54_best_sellers_rN344G": {
@@ -125,7 +184,7 @@
         "strip_3": "Ships within 1 business day",
         "background": "#f4f2e8",
         "navy_color": "#363a66",
-        "gold_color": "#F57B14",
+        "gold_color": "#f57b14",
         "text_color": "#171717",
         "star_color": "#f59e0b",
         "sale_color": "#e11d48",
@@ -135,12 +194,84 @@
         "padding_desktop": 64,
         "strip_items": 3
       }
+    },
+    "images_with_text_zR7dT6": {
+      "type": "images-with-text",
+      "blocks": {
+        "heading_HrDrpn": {
+          "type": "heading",
+          "settings": {
+            "heading": "RED BACKYARD FOOTBALL SET",
+            "heading_size": "title-xl tracking-heading",
+            "heading_tag": "h2",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle",
+            "highlighted_reveal": true
+          }
+        },
+        "text_d8BFmb": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Shop Halloween savings on game sets and tailgate gear for your next game-day gathering, and make every spooky celebration more fun, active, and unforgettable.</p>",
+            "text_font": "body",
+            "text_size": "subtext-md",
+            "text_max_size": 32,
+            "text_line_height": 1.6,
+            "text_letter_spacing": 0,
+            "text_capitalize": false,
+            "secondary_color": false,
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "button_EtMKQt": {
+          "type": "button",
+          "settings": {
+            "button_label": "Explore Halloween Deals",
+            "button_link": "",
+            "button_style": "primary",
+            "button_size": "md",
+            "button_external": false,
+            "button_icon": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_HrDrpn",
+        "text_d8BFmb",
+        "button_EtMKQt"
+      ],
+      "name": "t:sections.images-with-text.name",
+      "settings": {
+        "image": "shopify://shop_images/QB54SetWhatComesWithitRed.jpg",
+        "image_ratio": "square",
+        "image_width": "medium",
+        "layout": "image_first",
+        "text_alignment": "left",
+        "text_alignment_mobile": "center",
+        "color_text": "#ffffff",
+        "color_background": "#070708",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "#070708",
+        "color_button_background": "#f57b14",
+        "color_button_gradient": "",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "divider": false,
+        "full_width": false,
+        "rounded": false,
+        "enable_parallax": true
+      }
     }
   },
   "order": [
     "main-page",
     "memorial_day_hero_eEC4cQ",
     "product_list_bm673n",
-    "qb54_best_sellers_rN344G"
+    "independence_day_marquee_RxpTwQ",
+    "qb54_best_sellers_rN344G",
+    "images_with_text_zR7dT6"
   ]
 }
