@@ -172,7 +172,33 @@
     </div>
   </div>
 </div>
+<style>
+  #shopify-section-{{ section.id }} .button {
+    min-height: 64px;
+    width: 100%;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  box-sizing: border-box;
 
+    box-shadow:
+      0 0 10px rgba(245, 130, 32, 0.65),
+      0 0 20px rgba(245, 130, 32, 0.45),
+      0 0 34px rgba(245, 130, 32, 0.25);
+    transition:
+      box-shadow 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  #shopify-section-{{ section.id }} .button:hover {
+    box-shadow:
+      0 0 12px rgba(245, 130, 32, 0.85),
+      0 0 26px rgba(245, 130, 32, 0.65),
+      0 0 44px rgba(245, 130, 32, 0.4);
+    transform: translateY(-2px);
+  }
+</style>
 {% schema %}
 {
   "name": "t:sections.images-with-text.name",

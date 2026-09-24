@@ -1,0 +1,226 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main-page": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "heading_size": "title-xl tracking-heading",
+        "heading_alignment": "text-left",
+        "heading_tag": "h1",
+        "text_size": "text-base",
+        "padding_top": 72,
+        "padding_bottom": 120,
+        "divider": false,
+        "narrow": true,
+        "rounded": false
+      }
+    },
+    "memorial_day_hero_eEC4cQ": {
+      "type": "memorial-day-hero",
+      "name": "Halloween Day",
+      "settings": {
+        "eyebrow": "Halloween Sale",
+        "heading_line1": "HALLOWEEN",
+        "heading_line2": "IS GAME DAY",
+        "subtitle": "Get the crew together. Bring the games. Make Halloween one to remember.",
+        "show_countdown": true,
+        "countdown_label": "Sale ends in",
+        "target_date": "2026-10-31",
+        "target_time": "23:59",
+        "timezone_offset": "-05:00",
+        "live_message": "★ The Sale Is Live — Shop Now ★",
+        "show_coupon": true,
+        "coupon_label": "Use code at checkout",
+        "coupon_code": "HALLOWEEN2026",
+        "coupon_help": "30% off sitewide. Tap the code to copy.",
+        "coupon_copied_text": "Copied to clipboard",
+        "cta1_label": "Shop the Sale",
+        "cta1_url": "",
+        "cta2_label": "View Bundles",
+        "cta2_url": "",
+        "hero_image": "shopify://shop_images/Halloween.png",
+        "padding_top": 80,
+        "padding_bottom": 100,
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 60,
+        "color_bg": "#0a0f0a",
+        "color_text": "#ffffff",
+        "color_accent": "#f57b14"
+      }
+    },
+    "product_list_bm673n": {
+      "type": "product_list",
+      "name": "Product List",
+      "settings": {
+        "heading": "PICK YOUR HALLOWEEN SET",
+        "heading_description": "<p>Pick your Halloween set from our latest collection.</p>",
+        "collection": "qb54-game-set-1",
+        "products_to_show": 8,
+        "show_description": false,
+        "button_text": "Add to Cart"
+      }
+    },
+    "independence_day_marquee_RxpTwQ": {
+      "type": "independence-day-marquee",
+      "blocks": {
+        "phrase_kefGp8": {
+          "type": "phrase",
+          "settings": {
+            "text": "30% Off Game Sets",
+            "style": "spark"
+          }
+        },
+        "phrase_x46BHd": {
+          "type": "phrase",
+          "settings": {
+            "text": "Free Fast Shipping",
+            "style": "white"
+          }
+        },
+        "phrase_WdLmzX": {
+          "type": "phrase",
+          "settings": {
+            "text": "Code: HALLOWEEN2026",
+            "style": "red"
+          }
+        },
+        "phrase_fpMcRd": {
+          "type": "phrase",
+          "settings": {
+            "text": "Ships Before the night Starts",
+            "style": "spark"
+          }
+        },
+        "phrase_PifjUf": {
+          "type": "phrase",
+          "settings": {
+            "text": "Own the Backyard",
+            "style": "white"
+          }
+        }
+      },
+      "block_order": [
+        "phrase_kefGp8",
+        "phrase_x46BHd",
+        "phrase_WdLmzX",
+        "phrase_fpMcRd",
+        "phrase_PifjUf"
+      ],
+      "disabled": true,
+      "name": "4th of July Marquee",
+      "settings": {
+        "speed": 46,
+        "pause_on_hover": true,
+        "padding_y": 22,
+        "color_bg": "#0a0f0a",
+        "color_text": "#F57B14",
+        "color_red": "#F57B14",
+        "color_blue": "#F57B14",
+        "color_spark": "#f57b14"
+      }
+    },
+    "images_with_text_zR7dT6": {
+      "type": "images-with-text",
+      "blocks": {
+        "heading_HrDrpn": {
+          "type": "heading",
+          "settings": {
+            "heading": "RED BACKYARD FOOTBALL SET",
+            "heading_size": "title-xl tracking-heading",
+            "heading_tag": "h2",
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle",
+            "highlighted_reveal": true
+          }
+        },
+        "text_d8BFmb": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Shop Halloween savings on game sets and tailgate gear for your next game-day gathering, and make every spooky celebration more fun, active, and unforgettable.</p>",
+            "text_font": "body",
+            "text_size": "subtext-md",
+            "text_max_size": 32,
+            "text_line_height": 1.6,
+            "text_letter_spacing": 0,
+            "text_capitalize": false,
+            "secondary_color": false,
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "text_R3BqXC": {
+          "type": "text",
+          "settings": {
+            "text": "<ul><li>Everything&nbsp;included 2 chairs, goals, ball, tee, pump, carrybag.</li><li>Sets up anywhere in under 2 minutes.</li><li>Heavy-duty chairs support upto 275 lbs.</li></ul>",
+            "text_font": "body",
+            "text_size": "subtext-md",
+            "text_max_size": 32,
+            "text_line_height": 1.6,
+            "text_letter_spacing": 0,
+            "text_capitalize": false,
+            "secondary_color": false,
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
+        "button_EtMKQt": {
+          "type": "button",
+          "settings": {
+            "button_label": "ADD TO CART",
+            "button_link": "",
+            "button_style": "primary",
+            "button_size": "lg",
+            "button_external": false,
+            "button_icon": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_HrDrpn",
+        "text_d8BFmb",
+        "text_R3BqXC",
+        "button_EtMKQt"
+      ],
+      "custom_css": [],
+      "name": "t:sections.images-with-text.name",
+      "settings": {
+        "image": "shopify://shop_images/QB54SetWhatComesWithitRed.jpg",
+        "image_ratio": "square",
+        "image_width": "medium",
+        "layout": "image_first",
+        "text_alignment": "left",
+        "text_alignment_mobile": "center",
+        "color_text": "#ffffff",
+        "color_background": "#070708",
+        "gradient_background": "",
+        "color_highlight": "",
+        "gradient_highlight": "",
+        "color_button_text": "#070708",
+        "color_button_background": "#f57b14",
+        "color_button_gradient": "",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "divider": false,
+        "full_width": false,
+        "rounded": false,
+        "enable_parallax": true
+      }
+    }
+  },
+  "order": [
+    "main-page",
+    "memorial_day_hero_eEC4cQ",
+    "product_list_bm673n",
+    "independence_day_marquee_RxpTwQ",
+    "images_with_text_zR7dT6"
+  ]
+}
