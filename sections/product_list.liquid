@@ -205,12 +205,13 @@
       border: 1px solid #ececec;
       border-radius: 6px;
       text-align: center;
-      transition: box-shadow 0.25s ease, transform 0.25s ease;
+      transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
     }
 
     #ProductList-{{ section.id }} .product-list-card:hover {
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
-      transform: translateY(-3px);
+      border-color: #F58220;
+      box-shadow: 0 16px 32px rgba(245, 130, 32, 0.35);
+      transform: translateY(-8px);
     }
 
 
@@ -349,8 +350,8 @@
     }
 
 
-    #ProductList-{{ section.id }} .product-list-card__add-to-cart:hover:not(:disabled) {
-      background: #F58220;
+    #ProductList-{{ section.id }} .product-list-card:hover .product-list-card__add-to-cart:not(:disabled) {
+      background: #252D73;
     }
 
 
