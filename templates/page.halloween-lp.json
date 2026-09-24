@@ -224,6 +224,21 @@
             "highlighted_scribble": "circle"
           }
         },
+        "text_R3BqXC": {
+          "type": "text",
+          "settings": {
+            "text": "<ul><li>Everything&nbsp;included 2 chairs, goals, ball, tee, pump, carrybag.</li><li>Sets up anywhere in under 2 minutes.</li><li>Heavy-duty chairs support upto 275 lbs.</li></ul>",
+            "text_font": "body",
+            "text_size": "subtext-md",
+            "text_max_size": 32,
+            "text_line_height": 1.6,
+            "text_letter_spacing": 0,
+            "text_capitalize": false,
+            "secondary_color": false,
+            "highlighted_text": "none",
+            "highlighted_scribble": "circle"
+          }
+        },
         "button_EtMKQt": {
           "type": "button",
           "settings": {
@@ -239,6 +254,7 @@
       "block_order": [
         "heading_HrDrpn",
         "text_d8BFmb",
+        "text_R3BqXC",
         "button_EtMKQt"
       ],
       "name": "t:sections.images-with-text.name",
