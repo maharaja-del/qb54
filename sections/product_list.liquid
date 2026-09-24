@@ -198,6 +198,8 @@
     /* CARD */
 
     #ProductList-{{ section.id }} .product-list-card {
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
       background: #ffffff;
       border: 1px solid #ececec;
@@ -247,6 +249,9 @@
     /* CONTENT */
 
     #ProductList-{{ section.id }} .product-list-card__content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
       padding: 18px 16px 22px;
     }
 
@@ -279,6 +284,10 @@
       color: #767676;
       font-size: 13px;
       line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
 
@@ -320,6 +329,7 @@
     #ProductList-{{ section.id }} .product-list-card__form {
       display: flex;
       justify-content: center;
+      margin-top: auto;
     }
 
     #ProductList-{{ section.id }} .product-list-card__add-to-cart {
