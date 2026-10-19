@@ -1,0 +1,414 @@
+{
+  "sections": {
+    "simple_logo": {
+      "type": "simple-logo",
+      "name": "Simple Logo Section",
+      "settings": {
+        "section_bg": "#0d0d0d",
+        "section_padding_top": 10,
+        "section_padding_bottom": 10,
+        "max_width": 1400,
+        "logo": "shopify://shop_images/QB54_Ball_Logo_only_copy_copy_410x_25d11a0b-a689-4422-9e25-846e937323d1.png",
+        "logo_alt": "QB54",
+        "logo_link": "https://playqb54.com/",
+        "logo_width": 150,
+        "logo_opacity": 100,
+        "logo_border_radius": 0,
+        "logo_border_width": 0,
+        "logo_border_color": "#e0e0e0",
+        "logo_hover_scale": 104,
+        "logo_hover_transform": -2,
+        "logo_hover_opacity": 80,
+        "logo_hover_border_color": "#cccccc",
+        "mobile_section_padding_top": 10,
+        "mobile_section_padding_bottom": 10,
+        "mobile_logo_width": 130
+      }
+    },
+    "main-page": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "heading_size": "title-xl tracking-heading",
+        "heading_alignment": "text-left",
+        "heading_tag": "h1",
+        "text_size": "text-base",
+        "padding_top": 72,
+        "padding_bottom": 120,
+        "divider": false,
+        "narrow": true,
+        "rounded": false
+      }
+    },
+    "bfcm_hero": {
+      "type": "qb54-pickem-hero",
+      "name": "BFCM Hero",
+      "settings": {
+        "bg_image": "",
+        "bg_opacity": 55,
+        "image_focal_point": "center center",
+        "top_label": "Black Friday - Cyber Monday",
+        "heading_line_1": "30% OFF",
+        "heading_line_2": "GAME SETS.",
+        "heading_line_3": "",
+        "offer_text": "USE CODE BFCM AT CHECKOUT",
+        "subheading": "The biggest sale of the year on QB54 game sets. Black Friday through Cyber Monday only.",
+        "body_copy": "Everything you need for backyard football and tailgate game day — now 30% off. Grab yours before the clock runs out.",
+        "cta_text": "Shop The Sale",
+        "cta_url": "https://playqb54.com/collections/qb54-game-set-1",
+        "secondary_text": "",
+        "secondary_url": "",
+        "video_url": ""
+      }
+    },
+    "countdown": {
+      "type": "qb54-countdown-banner",
+      "name": "BFCM Countdown",
+      "settings": {
+        "badge_text": "Black Friday - Cyber Monday Only",
+        "heading": "30% Off <em>Game Sets</em>",
+        "subheading": "Use code BFCM at checkout. Ends Cyber Monday at midnight.",
+        "target_date": "2026-11-30T23:59:00",
+        "expired_message": "The BFCM Sale Has Ended",
+        "cta_text": "Shop The Sale",
+        "cta_url": "https://playqb54.com/collections/qb54-game-set-1",
+        "background": "#0d0d0d",
+        "tile_background": "#171717",
+        "accent_color": "#9aff00",
+        "text_color": "#ffffff"
+      }
+    },
+    "stats_banner": {
+      "type": "statistics-banner",
+      "name": "Statistics Banner",
+      "blocks": {
+        "stat_discount": {
+          "type": "statistic",
+          "settings": { "number": "30%", "label": "OFF GAME SETS" }
+        },
+        "stat_days": {
+          "type": "statistic",
+          "settings": { "number": "4", "label": "DAYS ONLY" }
+        },
+        "stat_sold": {
+          "type": "statistic",
+          "settings": { "number": "60K+", "label": "SETS SOLD" }
+        },
+        "stat_shipping": {
+          "type": "statistic",
+          "settings": { "number": "FREE", "label": "SHIPPING $225+" }
+        }
+      },
+      "block_order": ["stat_discount", "stat_days", "stat_sold", "stat_shipping"],
+      "settings": {
+        "desktop_columns": 4,
+        "section_padding": 40,
+        "mobile_section_padding": 32,
+        "grid_gap": 40,
+        "mobile_gap": 24,
+        "section_bg": "#9aff00",
+        "number_color": "#000000",
+        "label_color": "#000000",
+        "number_font_size": 56,
+        "number_font_weight": 800,
+        "label_font_size": 12,
+        "label_font_weight": 600,
+        "mobile_number_font_size": 40,
+        "mobile_label_font_size": 11
+      }
+    },
+    "shop_products": {
+      "type": "qb54-best-sellers",
+      "name": "Shop QB54 Game Sets",
+      "blocks": {
+        "product_1": {
+          "type": "product",
+          "settings": {
+            "product": "qb54-black-game-set",
+            "rank_label": "Best Seller",
+            "rating_text": "5-star rated"
+          }
+        },
+        "product_2": {
+          "type": "product",
+          "settings": {
+            "product": "backyard-football-game-qb54-navy-edition",
+            "rank_label": "Navy Edition",
+            "rating_text": "5-star rated"
+          }
+        },
+        "product_3": {
+          "type": "product",
+          "settings": {
+            "product": "backyard-football-game-qb54-red-edition",
+            "rank_label": "Red Edition",
+            "rating_text": "5-star rated"
+          }
+        }
+      },
+      "block_order": ["product_1", "product_2", "product_3"],
+      "settings": {
+        "eyebrow": "Shop The Sale",
+        "heading": "30% Off <em>Every</em> Game Set",
+        "subheading": "Black Friday through Cyber Monday only. Use code BFCM at checkout.",
+        "bullet_1": "Everything included — 2 chairs, goals, ball, pump, tee, carry bag",
+        "bullet_2": "Sets up anywhere in under 2 minutes",
+        "bullet_3": "Heavy-duty chairs support up to 275 lbs",
+        "atc_label": "Add to Cart",
+        "feat_micro": "30-day money-back guarantee · Secure checkout",
+        "strip_1": "Free shipping on orders $225+",
+        "strip_2": "30-day money-back guarantee",
+        "strip_3": "Ships within 1 business day",
+        "background": "#f4f2e8",
+        "navy_color": "#363a66",
+        "gold_color": "#fdc439",
+        "text_color": "#171717",
+        "star_color": "#f59e0b",
+        "sale_color": "#e11d48",
+        "heading_size_mobile": 32,
+        "heading_size_desktop": 46,
+        "padding_mobile": 56,
+        "padding_desktop": 80,
+        "strip_items": 3
+      }
+    },
+    "testimonials": {
+      "type": "testimonial-reviews-section",
+      "name": "Testimonial Reviews",
+      "blocks": {
+        "review_1": {
+          "type": "review",
+          "settings": {
+            "review_text": "This is hands down the best outdoor game I've ever owned. My family plays it every single weekend. It's become a tradition.",
+            "reviewer_name": "Mike R.",
+            "verified_text": "Verified Buyer"
+          }
+        },
+        "review_2": {
+          "type": "review",
+          "settings": {
+            "review_text": "QB54 is one of the most fun tailgate games I've played. It's easy to learn, competitive right away, and the fact that it converts into two chairs makes it perfect for game day.",
+            "reviewer_name": "Ethan S.",
+            "verified_text": "Verified Buyer"
+          }
+        },
+        "review_3": {
+          "type": "review",
+          "settings": {
+            "review_text": "At first I thought QB54 was a little pricey, but after playing it, it completely made sense. It's incredibly fun, well designed, and easily becomes the highlight of any tailgate.",
+            "reviewer_name": "Sara P.",
+            "verified_text": "Verified Buyer"
+          }
+        },
+        "review_4": {
+          "type": "review",
+          "settings": {
+            "review_text": "I bought QB54 as a gift and it ended up being the highlight of the party. Everyone wanted to play, and it quickly turned into a full-on competition.",
+            "reviewer_name": "Lisa L.",
+            "verified_text": "Verified Buyer"
+          }
+        },
+        "review_5": {
+          "type": "review",
+          "settings": {
+            "review_text": "We bought QB54 for our grandson and it turned out to be the perfect gift. Not only does he love playing it, but it's become something we enjoy doing together whenever we visit.",
+            "reviewer_name": "Eugene T",
+            "verified_text": "Verified Buyer"
+          }
+        },
+        "review_6": {
+          "type": "review",
+          "settings": {
+            "review_text": "Kids have loved it! They even played it in the snow today. Easy to assemble and the rules are easy to follow.",
+            "reviewer_name": "Sydney",
+            "verified_text": "Verified Buyer"
+          }
+        }
+      },
+      "block_order": ["review_1", "review_2", "review_3", "review_4", "review_5", "review_6"],
+      "settings": {
+        "section_padding": 80,
+        "desktop_columns": 3,
+        "grid_gap": 24,
+        "hero_bottom_margin": 80,
+        "header_bottom_margin": 48,
+        "section_bg": "#1a1a1a",
+        "hero_text_color": "#ffffff",
+        "hero_highlight_color": "#9aff00",
+        "eyebrow_color": "#9aff00",
+        "main_heading_color": "#ffffff",
+        "card_bg": "#2a2a2a",
+        "card_border_color": "#3a3a3a",
+        "star_color": "#9aff00",
+        "review_text_color": "#ffffff",
+        "reviewer_name_color": "#ffffff",
+        "verified_text_color": "#888888",
+        "hero_font_size": 44,
+        "mobile_hero_font_size": 30,
+        "eyebrow_font_size": 12,
+        "main_heading_font_size": 42,
+        "mobile_main_heading_font_size": 24,
+        "review_text_size": 16,
+        "card_padding": 32,
+        "card_border_radius": 8,
+        "show_hero_text": true,
+        "hero_line_1": "Thousands of 5-Star Reviews",
+        "hero_line_2_before": "",
+        "hero_line_2_highlight": "WALL OF HYPE",
+        "hero_line_2_after": "",
+        "eyebrow_text": "",
+        "main_heading": "",
+        "enable_mobile_slider": true
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "name": "FAQ",
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "title": "When does the BFCM sale start and end?",
+            "text": "<p>The sale runs from Black Friday through Cyber Monday. Use code BFCM at checkout before the countdown above reaches zero.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "title": "How do I use the BFCM code?",
+            "text": "<p>Enter code BFCM at checkout for 30% off QB54 game sets.</p>"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "title": "What does the discount apply to?",
+            "text": "<p>The 30% discount applies to QB54 game sets. See each product page for full details.</p>"
+          }
+        },
+        "q4": {
+          "type": "question",
+          "settings": {
+            "title": "Can I combine BFCM with another code?",
+            "text": "<p>Discount codes generally can't be combined. If you have another active offer, use whichever gives you the better price.</p>"
+          }
+        },
+        "q5": {
+          "type": "question",
+          "settings": {
+            "title": "Will my order ship in time for the holidays?",
+            "text": "<p>Orders ship within 1 business day. For the best chance at holiday delivery, order as early as possible during the sale.</p>"
+          }
+        }
+      },
+      "block_order": ["q1", "q2", "q3", "q4", "q5"],
+      "settings": {
+        "style": "with-border",
+        "heading": "Frequently Asked Questions",
+        "heading_size": "title-md",
+        "heading_alignment": "text-left md:items-end md:flex-row",
+        "heading_tag": "h2",
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "divider": false,
+        "narrow": true,
+        "rounded": false
+      }
+    },
+    "final_cta": {
+      "type": "qb54-final-cta",
+      "name": "Final CTA",
+      "settings": {
+        "eyebrow": "Black Friday - Cyber Monday",
+        "heading": "Don't Miss The <em>Biggest</em> Sale Of The Year.",
+        "subheading": "30% off QB54 game sets with code BFCM. Ends Cyber Monday at midnight.",
+        "primary_button_text": "Shop & Save 30%",
+        "primary_button_url": "https://playqb54.com/collections/qb54-game-set-1",
+        "secondary_button_text": "",
+        "secondary_button_url": "",
+        "chip_1": "",
+        "chip_2": "",
+        "chip_3": "",
+        "background": "#9aff00",
+        "accent_color": "#0d0d0d",
+        "heading_color": "#0a1400",
+        "subheading_color": "#1f2a12",
+        "button_radius": 4,
+        "heading_size_mobile": 36,
+        "heading_size_desktop": 58,
+        "padding_mobile": 56,
+        "padding_desktop": 88
+      }
+    },
+    "footer_links": {
+      "type": "simple-links",
+      "name": "Simple Links Section",
+      "blocks": {
+        "link_privacy": {
+          "type": "link",
+          "settings": { "link_text": "Privacy Policy", "link_url": "https://playqb54.com/pages/privacy-policy" }
+        },
+        "link_terms": {
+          "type": "link",
+          "settings": { "link_text": "Terms of Service", "link_url": "https://playqb54.com/pages/terms-of-service" }
+        },
+        "link_return": {
+          "type": "link",
+          "settings": { "link_text": "Return Policy", "link_url": "https://playqb54.com/pages/return-policy" }
+        },
+        "link_refund": {
+          "type": "link",
+          "settings": { "link_text": "Refund Policy", "link_url": "https://playqb54.com/pages/refund-policy" }
+        },
+        "link_shipping": {
+          "type": "link",
+          "settings": { "link_text": "Shipping Policy", "link_url": "https://playqb54.com/pages/shipping-policy" }
+        }
+      },
+      "block_order": ["link_privacy", "link_terms", "link_return", "link_refund", "link_shipping"],
+      "settings": {
+        "section_bg": "#0d0d0d",
+        "section_padding_top": 30,
+        "section_padding_bottom": 30,
+        "max_width": 1200,
+        "link_spacing": 30,
+        "link_color": "#9aff00",
+        "link_bg_color": "rgba(0,0,0,0)",
+        "link_border_color": "rgba(0,0,0,0)",
+        "link_font_size": 16,
+        "link_font_weight": "400",
+        "link_text_decoration": "underline",
+        "link_padding_x": 12,
+        "link_padding_y": 8,
+        "link_border_radius": 0,
+        "link_border_width": 0,
+        "link_letter_spacing": 0,
+        "link_uppercase": false,
+        "link_hover_color": "#000000",
+        "link_hover_bg_color": "rgba(0,0,0,0)",
+        "link_hover_border_color": "rgba(0,0,0,0)",
+        "link_hover_text_decoration": "none",
+        "link_hover_transform": 0,
+        "mobile_section_padding_top": 20,
+        "mobile_section_padding_bottom": 20,
+        "mobile_link_spacing": 16,
+        "mobile_link_font_size": 15,
+        "mobile_link_padding_x": 10,
+        "mobile_link_padding_y": 6,
+        "mobile_link_width": 90
+      }
+    }
+  },
+  "order": [
+    "simple_logo",
+    "main-page",
+    "bfcm_hero",
+    "countdown",
+    "stats_banner",
+    "shop_products",
+    "testimonials",
+    "faq",
+    "final_cta",
+    "footer_links"
+  ]
+}
