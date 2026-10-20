@@ -1,0 +1,481 @@
+{
+  "sections": {
+    "main-page": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "heading_size": "title-xl tracking-heading",
+        "heading_alignment": "text-left",
+        "heading_tag": "h1",
+        "text_size": "text-base",
+        "padding_top": 72,
+        "padding_bottom": 120,
+        "divider": false,
+        "narrow": true,
+        "rounded": false
+      }
+    },
+    "promo": {
+      "type": "qb54-promo-landing",
+      "name": "Holiday Landing",
+      "blocks": {
+        "gift_dad": {
+          "type": "product",
+          "settings": {
+            "product": "qb54-black-game-set",
+            "tab_label": "For Dad",
+            "swatch": "#171717",
+            "swatch_label": "Black",
+            "title_override": "QB54 Black Game Set",
+            "recipient": "The gift for <b>Dad</b>",
+            "pitch": "His new Sunday ritual. The original black set — ready for the backyard, the tailgate and the in-laws.",
+            "flag": "#1 <b>Best Seller</b>",
+            "rating_text": "5-star rated",
+            "needs_customization": false,
+            "options_label": "Choose Options"
+          }
+        },
+        "gift_family": {
+          "type": "product",
+          "settings": {
+            "product": "backyard-football-game-qb54-navy-edition",
+            "tab_label": "For the Family",
+            "swatch": "#2a3163",
+            "swatch_label": "Navy",
+            "title_override": "QB54 Navy Game Set",
+            "recipient": "The gift for <b>the whole family</b>",
+            "pitch": "Kids vs. parents, grandparents on the sidelines. 2 to 8 players, and everyone learns it in minutes.",
+            "rating_text": "5-star rated",
+            "needs_customization": false,
+            "options_label": "Choose Options"
+          }
+        },
+        "gift_crew": {
+          "type": "product",
+          "settings": {
+            "product": "backyard-football-game-qb54-red-edition",
+            "tab_label": "For the Tailgate Crew",
+            "swatch": "#c8102e",
+            "swatch_label": "Red",
+            "title_override": "QB54 Red Game Set",
+            "recipient": "The gift for <b>the tailgate crew</b>",
+            "pitch": "Bold red chairs built for game day. Toss it in the trunk, unfold it in the lot, sit back in it after.",
+            "rating_text": "5-star rated",
+            "needs_customization": false,
+            "options_label": "Choose Options"
+          }
+        },
+        "gift_custom": {
+          "type": "product",
+          "settings": {
+            "product": "custom-logo-backyard-football-game-qb54",
+            "tab_label": "The Ultimate Gift",
+            "swatch": "#fdc439",
+            "swatch_label": "Custom logo",
+            "title_override": "Custom Logo Game Set",
+            "recipient": "The <b>ultimate</b> gift",
+            "pitch": "Their family name, company logo or league crest printed right onto the chairs. A one-of-one gift nobody else will have.",
+            "flag": "Top <b>gift pick</b>",
+            "rating_text": "5-star rated",
+            "ship_note": "Made to order with your logo",
+            "needs_customization": true,
+            "options_label": "Customize Yours"
+          }
+        },
+        "reel_showdown": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://playqb54.com/cdn/shop/videos/c/vp/89ce1bad12b6430ab45a295f1f4fed48/89ce1bad12b6430ab45a295f1f4fed48.HD-1080p-2.5Mbps-66302483.mp4",
+            "poster_url": "https://playqb54.com/cdn/shop/files/preview_images/89ce1bad12b6430ab45a295f1f4fed48.thumbnail.0000000000.jpg",
+            "caption": "Backyard showdown"
+          }
+        },
+        "reel_tailgate": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://playqb54.com/cdn/shop/videos/c/vp/8d48b3879cfc4fda95a105b184ff4332/8d48b3879cfc4fda95a105b184ff4332.HD-1080p-3.3Mbps-66302480.mp4",
+            "poster_url": "https://playqb54.com/cdn/shop/files/preview_images/8d48b3879cfc4fda95a105b184ff4332.thumbnail.0000000000.jpg",
+            "caption": "Tailgate MVP"
+          }
+        },
+        "reel_tank": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://playqb54.com/cdn/shop/videos/c/vp/3f1f3ebf0d4f4a25b9dff325cdd1fc97/3f1f3ebf0d4f4a25b9dff325cdd1fc97.HD-1080p-2.5Mbps-66302479.mp4",
+            "poster_url": "https://playqb54.com/cdn/shop/files/preview_images/3f1f3ebf0d4f4a25b9dff325cdd1fc97.thumbnail.0000000000.jpg",
+            "chip": "Shark Tank",
+            "caption": "We took it to the Tank"
+          }
+        },
+        "reel_ten": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://playqb54.com/cdn/shop/videos/c/vp/8fcca6a05fcb43dd8db8202e2f25e739/8fcca6a05fcb43dd8db8202e2f25e739.HD-1080p-2.5Mbps-66302481.mp4",
+            "poster_url": "https://playqb54.com/cdn/shop/files/preview_images/8fcca6a05fcb43dd8db8202e2f25e739.thumbnail.0000000000.jpg",
+            "caption": "10 out of 10"
+          }
+        },
+        "reel_backyard": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://playqb54.com/cdn/shop/videos/c/vp/c947441f882049beba7ecea3659ec269/c947441f882049beba7ecea3659ec269.HD-1080p-2.5Mbps-66302482.mp4",
+            "poster_url": "https://playqb54.com/cdn/shop/files/preview_images/c947441f882049beba7ecea3659ec269.thumbnail.0000000000.jpg",
+            "caption": "Sunday in the backyard"
+          }
+        },
+        "reel_howto": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://playqb54.com/cdn/shop/videos/c/vp/ae0988a22e2b4313ab4b63b30b3c590d/ae0988a22e2b4313ab4b63b30b3c590d.HD-1080p-2.5Mbps-66302478.mp4",
+            "poster_url": "https://playqb54.com/cdn/shop/files/preview_images/ae0988a22e2b4313ab4b63b30b3c590d.thumbnail.0000000000.jpg",
+            "caption": "Learn it in seconds"
+          }
+        },
+        "photo_backyard": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/QB54_Backyard_Screenshot.jpg",
+            "label": "The Backyard",
+            "caption": "Where the family rivalries start"
+          }
+        },
+        "photo_tailgate": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/Tailgaiting_1.webp",
+            "label": "The Tailgate",
+            "caption": "Unfold it in the lot"
+          }
+        },
+        "photo_beach": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/QB54_Beach_Play.png",
+            "label": "The Beach",
+            "caption": "Winter getaway approved"
+          }
+        },
+        "photo_park": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/QB54_Park_Play.jpg",
+            "label": "The Park",
+            "caption": "Any patch of grass"
+          }
+        },
+        "photo_tank": {
+          "type": "photo",
+          "settings": {
+            "image": "shopify://shop_images/Shark_Tank_Michael_Throwing.jpg",
+            "label": "Shark Tank",
+            "caption": "Yes, we played it in the Tank"
+          }
+        },
+        "step_pick": {
+          "type": "step",
+          "settings": {
+            "title": "Pick the gift",
+            "text": "Black, Navy, Red — or their own logo printed on the chairs."
+          }
+        },
+        "step_code": {
+          "type": "step",
+          "settings": {
+            "title": "Use code HOLIDAY",
+            "text": "Enter HOLIDAY at checkout to take 20% off your game set."
+          }
+        },
+        "step_wrap": {
+          "type": "step",
+          "settings": {
+            "title": "Wrap it up",
+            "text": "In-stock sets ship within 1 business day. Order early for holiday delivery."
+          }
+        },
+        "review_gift": {
+          "type": "review",
+          "settings": {
+            "quote": "I bought QB54 as a gift and it ended up being the highlight of the party. Everyone wanted to play, and it quickly turned into a full-on competition.",
+            "name": "Lisa L.",
+            "tag": "Bought as a gift"
+          }
+        },
+        "review_grandson": {
+          "type": "review",
+          "settings": {
+            "quote": "We bought QB54 for our grandson and it turned out to be the perfect gift. Not only does he love playing it, but it's become something we enjoy doing together whenever we visit.",
+            "name": "Eugene T.",
+            "tag": "Gift for a grandson"
+          }
+        },
+        "review_snow": {
+          "type": "review",
+          "settings": {
+            "quote": "Kids have loved it! They even played it in the snow today. Easy to assemble and the rules are easy to follow.",
+            "name": "Sydney",
+            "tag": "Played in the snow"
+          }
+        },
+        "review_tradition": {
+          "type": "review",
+          "settings": {
+            "quote": "This is hands down the best outdoor game I've ever owned. My family plays it every single weekend. It's become a tradition.",
+            "name": "Mike R.",
+            "tag": "Family tradition"
+          }
+        },
+        "review_tailgate": {
+          "type": "review",
+          "settings": {
+            "quote": "QB54 is one of the most fun tailgate games I've played. It's easy to learn, competitive right away, and the fact that it converts into two chairs makes it perfect for game day.",
+            "name": "Ethan S."
+          }
+        },
+        "review_value": {
+          "type": "review",
+          "settings": {
+            "quote": "At first I thought QB54 was a little pricey, but after playing it, it completely made sense. It's incredibly fun, well designed, and easily becomes the highlight of any tailgate.",
+            "name": "Sara P."
+          }
+        },
+        "faq_dates": {
+          "type": "faq",
+          "settings": {
+            "question": "When does the Holiday deal start and end?",
+            "answer": "<p>The Holiday deal runs from November 1 through Thanksgiving, November 26 at 11:59pm ET.</p>"
+          }
+        },
+        "faq_code": {
+          "type": "faq",
+          "settings": {
+            "question": "How do I get 20% off?",
+            "answer": "<p>Use code HOLIDAY at checkout. If you shop from this page during the deal, we apply the code for you automatically.</p>"
+          }
+        },
+        "faq_scope": {
+          "type": "faq",
+          "settings": {
+            "question": "What does the code apply to?",
+            "answer": "<p>QB54 game sets. The prices on this page already show what you'll pay with code HOLIDAY.</p>"
+          }
+        },
+        "faq_arrive": {
+          "type": "faq",
+          "settings": {
+            "question": "Will it arrive before the holidays?",
+            "answer": "<p>In-stock game sets ship within 1 business day. Custom Logo sets are made to order with your artwork, so order those as early as you can.</p>"
+          }
+        },
+        "faq_combine": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I combine HOLIDAY with another code?",
+            "answer": "<p>Discount codes generally can't be combined. If you have another active offer, use whichever gives you the better price.</p>"
+          }
+        },
+        "faq_returns": {
+          "type": "faq",
+          "settings": {
+            "question": "What if the gift isn't a hit?",
+            "answer": "<p>Returns are accepted within 30 days on unused items in their original packaging. See our <a href=\"/pages/return-policy\">return policy</a> for full details.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "gift_dad",
+        "gift_family",
+        "gift_crew",
+        "gift_custom",
+        "reel_showdown",
+        "reel_tailgate",
+        "reel_tank",
+        "reel_ten",
+        "reel_backyard",
+        "reel_howto",
+        "photo_backyard",
+        "photo_tailgate",
+        "photo_beach",
+        "photo_park",
+        "photo_tank",
+        "step_pick",
+        "step_code",
+        "step_wrap",
+        "review_gift",
+        "review_grandson",
+        "review_snow",
+        "review_tradition",
+        "review_tailgate",
+        "review_value",
+        "faq_dates",
+        "faq_code",
+        "faq_scope",
+        "faq_arrive",
+        "faq_combine",
+        "faq_returns"
+      ],
+      "settings": {
+        "discount_code": "HOLIDAY",
+        "discount_percent": 20,
+        "start_datetime": "2026-11-01T00:00:00",
+        "end_datetime": "2026-11-26T23:59:59",
+        "timezone": "-05:00",
+        "live_label": "Holiday deal ends in",
+        "before_label": "Holiday deal starts in",
+        "auto_apply_code": true,
+        "auto_apply_note": "Shopping from this page? We apply HOLIDAY for you automatically.",
+        "shop_url": "shopify://collections/qb54-game-set-1",
+        "festive": true,
+        "logo": "shopify://shop_images/QB54_Ball_Logo_only_copy_copy_410x_25d11a0b-a689-4422-9e25-846e937323d1.png",
+        "bar_cta": "Shop Gifts",
+        "hero_image": "shopify://shop_images/friends-drinking-having-fun-at-a-backyard-bbq-throwing-a-football.png",
+        "hero_focal": "70% center",
+        "hero_badge": "As seen on Shark Tank",
+        "rating_fallback": "Hundreds of 5-star reviews",
+        "hero_kicker": "The Holiday Gift Event",
+        "hero_line": "The gift that wins the holidays",
+        "hero_text": "The backyard football game that folds out of two chairs. Gift it to Dad, the whole family or the tailgate crew — 20% off every game set through Thanksgiving.",
+        "hero_cta": "Shop Holiday Gifts",
+        "hero_cta_2": "Watch it in action",
+        "stat_1_n": "100M+",
+        "stat_1_l": "Video views",
+        "stat_2_n": "2 Min",
+        "stat_2_l": "Setup time",
+        "stat_3_n": "2–8",
+        "stat_3_l": "Players",
+        "tag_label": "Gift price",
+        "stock_note": "In stock — ships within 1 business day",
+        "card_foot": "30-day returns · Secure checkout · Free shipping $225+",
+        "ticker_items": "20% off game sets|Code HOLIDAY|Now through Thanksgiving|Free shipping on orders $225+|Ships in 1 business day",
+        "reels_eyebrow": "As seen on your feed",
+        "reels_heading": "The gift <em>everyone's</em> watching",
+        "reels_text": "100M+ views across backyards, tailgates and the Shark Tank stage. Here's what they'll be unwrapping.",
+        "instagram_label": "Follow @playqb54",
+        "press_label": "As seen on",
+        "stage_eyebrow": "Holiday Gift Guide",
+        "stage_heading": "Find the <em>perfect gift</em>",
+        "stage_text": "Pick who you're shopping for. Every set is the complete game, ready to unwrap and play.",
+        "tab_style": "thumb",
+        "included_items": "2 chairs that support up to 275 lbs each|2 sets of goal posts and a football|Kicking tee, ball pump and printed rules|Carrying bag",
+        "shipping_note": "Free shipping $225+",
+        "returns_note": "30-day returns",
+        "where_eyebrow": "Play it anywhere",
+        "where_heading": "Unwrap it. <em>Play it anywhere.</em>",
+        "where_text": "Throw it, kick it, score it — first to 54 wins. Then everyone sits back in the chairs it came in.",
+        "feat_1_t": "2 Chairs",
+        "feat_1_s": "Support up to 275 lbs each",
+        "feat_2_t": "2 Minutes",
+        "feat_2_s": "From box to kickoff",
+        "feat_3_t": "2–8 Players",
+        "feat_3_s": "Kids to grandparents",
+        "feat_4_t": "1 Bag",
+        "feat_4_s": "Grab it and go",
+        "steps_eyebrow": "How it works",
+        "steps_heading": "Gift it in 3 steps",
+        "reviews_eyebrow": "Gifted & loved",
+        "reviews_heading": "The gift they <em>can't put down</em>",
+        "faq_eyebrow": "FAQ",
+        "faq_heading": "Gifting questions? Answered.",
+        "faq_text": "Everything you need to know about the Holiday deal.",
+        "close_eyebrow": "Ends Thanksgiving",
+        "close_heading": "Wrap up the best gift of the year.",
+        "close_text": "20% off every game set ends Thanksgiving night at 11:59pm ET.",
+        "close_cta": "Shop Holiday Gifts",
+        "after_heading": "The Holiday deal has ended",
+        "after_text": "Thanks for gifting QB54! Game sets are still available at everyday prices.",
+        "after_cta": "Shop Game Sets",
+        "show_sticky_bar": true,
+        "sticky_cta": "Shop Gifts",
+        "color_primary": "#fdc439",
+        "color_navy": "#363a66",
+        "color_night": "#12142b",
+        "color_cream": "#f4f2e8",
+        "color_festive": "#d42a3c",
+        "press_items": "Shark Tank|ABC|Good Morning America|The View"
+      }
+    },
+    "footer_links": {
+      "type": "simple-links",
+      "name": "Simple Links Section",
+      "blocks": {
+        "link_privacy": {
+          "type": "link",
+          "settings": {
+            "link_text": "Privacy Policy",
+            "link_url": "https://playqb54.com/pages/privacy-policy"
+          }
+        },
+        "link_terms": {
+          "type": "link",
+          "settings": {
+            "link_text": "Terms of Service",
+            "link_url": "https://playqb54.com/pages/terms-of-service"
+          }
+        },
+        "link_return": {
+          "type": "link",
+          "settings": {
+            "link_text": "Return Policy",
+            "link_url": "https://playqb54.com/pages/return-policy"
+          }
+        },
+        "link_refund": {
+          "type": "link",
+          "settings": {
+            "link_text": "Refund Policy",
+            "link_url": "https://playqb54.com/pages/refund-policy"
+          }
+        },
+        "link_shipping": {
+          "type": "link",
+          "settings": {
+            "link_text": "Shipping Policy",
+            "link_url": "https://playqb54.com/pages/shipping-policy"
+          }
+        }
+      },
+      "block_order": [
+        "link_privacy",
+        "link_terms",
+        "link_return",
+        "link_refund",
+        "link_shipping"
+      ],
+      "settings": {
+        "section_bg": "#12142b",
+        "section_padding_top": 30,
+        "section_padding_bottom": 30,
+        "max_width": 1200,
+        "link_spacing": 30,
+        "link_color": "#fdc439",
+        "link_bg_color": "rgba(0,0,0,0)",
+        "link_border_color": "rgba(0,0,0,0)",
+        "link_font_size": 15,
+        "link_font_weight": "400",
+        "link_text_decoration": "underline",
+        "link_padding_x": 12,
+        "link_padding_y": 8,
+        "link_border_radius": 0,
+        "link_border_width": 0,
+        "link_letter_spacing": 0,
+        "link_uppercase": false,
+        "link_hover_color": "#ffffff",
+        "link_hover_bg_color": "rgba(0,0,0,0)",
+        "link_hover_border_color": "rgba(0,0,0,0)",
+        "link_hover_text_decoration": "none",
+        "link_hover_transform": 0,
+        "mobile_section_padding_top": 20,
+        "mobile_section_padding_bottom": 20,
+        "mobile_link_spacing": 16,
+        "mobile_link_font_size": 14,
+        "mobile_link_padding_x": 10,
+        "mobile_link_padding_y": 6,
+        "mobile_link_width": 90
+      }
+    }
+  },
+  "order": [
+    "main-page",
+    "promo",
+    "footer_links"
+  ]
+}

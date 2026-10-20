@@ -1,0 +1,33 @@
+{%- comment -%}
+  Buy button for the qb54-promo-landing section.
+  Products with options or customization link to the product page; the rest add to cart in place.
+
+  Accepts:
+  - product: {Object}
+  - variant: {Object}
+  - needs_page: {Boolean}
+  - label: {String} Button text when linking to the product page
+{%- endcomment -%}
+<div class="qb54-pl-buy-action">
+  {%- if needs_page -%}
+    <a class="qb54-pl-btn qb54-pl-btn--navy" href="{{ product.url }}">
+      {{- label | default: 'Choose Options' | escape -}}
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  {%- elsif variant.available -%}
+    <button
+      type="button"
+      class="qb54-pl-btn qb54-pl-btn--gold"
+      data-qb54-add
+      data-variant-id="{{ variant.id }}"
+      data-qb54-title="{{ product.title | escape }}"
+      data-qb54-label="Add to Cart"
+    >
+      <span data-qb54-btn-icon><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h3l2.4 12h11l2.1-8H6.4"/></svg></span>
+      <span data-qb54-btn-label>Add to Cart</span>
+    </button>
+    <p class="qb54-pl-err" data-qb54-err role="alert" hidden></p>
+  {%- else -%}
+    <button type="button" class="qb54-pl-btn" disabled>Sold Out</button>
+  {%- endif -%}
+</div>

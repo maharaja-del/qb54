@@ -1,0 +1,1807 @@
+{%- liquid
+  assign scope = '#qb54-pl-' | append: section.id
+  assign code = section.settings.discount_code | strip | upcase
+  assign pct = section.settings.discount_percent
+  assign keep = 100 | minus: pct
+  assign tz = section.settings.timezone
+  assign start_raw = section.settings.start_datetime | strip
+  assign end_raw = section.settings.end_datetime | strip
+  assign start_iso = start_raw | append: tz
+  assign end_iso = end_raw | append: tz
+  assign start_label = start_raw | date: '%b %-d'
+  assign shop_url = section.settings.shop_url | default: routes.all_products_collection_url
+  assign festive = section.settings.festive
+  assign checkout_url = routes.root_url | append: '/checkout' | replace: '//', '/'
+
+  assign product_blocks = section.blocks | where: 'type', 'product'
+  assign reel_blocks = section.blocks | where: 'type', 'reel'
+  assign photo_blocks = section.blocks | where: 'type', 'photo'
+  assign step_blocks = section.blocks | where: 'type', 'step'
+  assign review_blocks = section.blocks | where: 'type', 'review'
+  assign faq_blocks = section.blocks | where: 'type', 'faq'
+
+  assign lead_rating = blank
+  assign lead_count = blank
+  for block in product_blocks
+    assign rp = block.settings.product
+    if rp != blank and rp.metafields.reviews.rating.value != blank
+      assign lead_rating = rp.metafields.reviews.rating.value.rating | round: 1
+      assign lead_count = rp.metafields.reviews.rating_count.value
+      break
+    endif
+  endfor
+
+  assign included = section.settings.included_items | split: '|'
+-%}
+
+<style>
+  {{ scope }} {
+    --gold: {{ section.settings.color_primary }};
+    --gold-deep: color-mix(in srgb, var(--gold) 82%, #000000);
+    --gold-soft: color-mix(in srgb, var(--gold) 16%, transparent);
+    --gold-glow: color-mix(in srgb, var(--gold) 42%, transparent);
+    --on-gold: #1a1c3a;
+    --night: {{ section.settings.color_night }};
+    --navy: {{ section.settings.color_navy }};
+    --navy-2: color-mix(in srgb, var(--navy) 70%, var(--night));
+    --cream: {{ section.settings.color_cream }};
+    --festive: {{ section.settings.color_festive }};
+    --sale: #e11d48;
+    --ok: #15803d;
+    --paper: #ffffff;
+    --ink: #171717;
+    --ink-2: #4a4c57;
+    --muted: #6b6d78;
+    --line: #e6e2d3;
+    --line-dark: rgba(255, 255, 255, 0.12);
+    --fh: var(--font-heading-family);
+    --fb: var(--font-body-family);
+    --pad-y: clamp(64px, 8vw, 112px);
+    --max: 1320px;
+    --gutter: clamp(16px, 4vw, 40px);
+    --r-btn: 8px;
+    --r-card: 18px;
+    --r-panel: 24px;
+    --shadow: 0 1px 2px rgba(17, 18, 40, 0.06), 0 14px 34px -20px rgba(17, 18, 40, 0.35);
+    --shadow-lg: 0 2px 6px rgba(17, 18, 40, 0.08), 0 34px 70px -30px rgba(17, 18, 40, 0.6);
+    --ease: cubic-bezier(0.2, 0, 0, 1);
+    --ease-emph: cubic-bezier(0.05, 0.7, 0.1, 1);
+    background: var(--night);
+    color: #ffffff;
+    font-family: var(--fb);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+  {{ scope }} *, {{ scope }} *::before, {{ scope }} *::after { box-sizing: border-box; }
+  {{ scope }} a { text-decoration: none; color: inherit; }
+  {{ scope }} [hidden] { display: none !important; }
+  {{ scope }} :focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+  {{ scope }} .qb54-pl-wrap { width: min(var(--max), 100% - var(--gutter) * 2); margin-inline: auto; }
+  {{ scope }} .qb54-pl-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  {{ scope }} ul, {{ scope }} ol { list-style: none; margin: 0; padding: 0; }
+  {{ scope }} .qb54-pl-head__aside { justify-self: start; }
+
+  /* ---------- Type ---------- */
+  {{ scope }} .qb54-pl-h2 {
+    margin: 0;
+    font-family: var(--fh);
+    font-weight: 700;
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 0.96;
+    letter-spacing: -0.005em;
+    text-transform: uppercase;
+    text-wrap: balance;
+    color: inherit;
+  }
+  {{ scope }} .qb54-pl-h2 em { font-style: normal; color: var(--gold); }
+  {{ scope }} .qb54-pl-light .qb54-pl-h2 em { color: var(--navy); }
+  {{ scope }} .qb54-pl-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 16px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  {{ scope }} .qb54-pl-eyebrow::before { content: ''; width: 28px; height: 3px; border-radius: 3px; background: var(--gold); }
+  {{ scope }} .qb54-pl-light .qb54-pl-eyebrow { color: var(--navy); }
+  {{ scope }} .qb54-pl-center .qb54-pl-eyebrow { justify-content: center; }
+  {{ scope }} .qb54-pl-center .qb54-pl-eyebrow::after { content: ''; width: 28px; height: 3px; border-radius: 3px; background: currentColor; }
+  {{ scope }} .qb54-pl-center .qb54-pl-eyebrow::before { background: currentColor; }
+  {{ scope }} .qb54-pl-lede { margin: 18px 0 0; font-size: clamp(16px, 1.3vw, 18.5px); line-height: 1.6; max-width: 60ch; }
+  {{ scope }} p, {{ scope }} blockquote { text-wrap: pretty; }
+  {{ scope }} .qb54-pl-center { text-align: center; }
+  {{ scope }} .qb54-pl-center .qb54-pl-lede { margin-inline: auto; }
+  {{ scope }} .qb54-pl-head { margin-bottom: clamp(32px, 4vw, 52px); }
+  {{ scope }} .qb54-pl-head--split { display: grid; gap: 20px; }
+
+  /* ---------- Buttons ---------- */
+  {{ scope }} .qb54-pl-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 54px;
+    padding: 0 28px;
+    border-radius: var(--r-btn);
+    font-family: var(--fh);
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    overflow: hidden;
+    isolation: isolate;
+    transition: transform 160ms var(--ease), box-shadow 160ms var(--ease), background-color 160ms var(--ease), color 160ms var(--ease);
+  }
+  {{ scope }} .qb54-pl-btn svg { width: 18px; height: 18px; flex: none; }
+  {{ scope }} .qb54-pl-btn [data-qb54-btn-icon] { display: inline-flex; }
+  {{ scope }} .qb54-pl-btn--gold { background: var(--gold); color: var(--on-gold); box-shadow: 0 14px 32px -14px var(--gold-glow); }
+  {{ scope }} .qb54-pl-btn--gold:hover { background: color-mix(in srgb, var(--gold) 88%, #ffffff); transform: translateY(-2px); box-shadow: 0 20px 40px -16px var(--gold-glow); }
+  {{ scope }} .qb54-pl-btn--shine::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.7) 48%, transparent 66%);
+    transform: translateX(-120%);
+    animation: qb54-pl-shine 4s var(--ease) infinite 1.4s;
+  }
+  {{ scope }} .qb54-pl-btn--ghost { color: #ffffff; background: rgba(255, 255, 255, 0.08); box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.45); backdrop-filter: blur(6px); }
+  {{ scope }} .qb54-pl-btn--ghost:hover { background: rgba(255, 255, 255, 0.16); transform: translateY(-2px); }
+  {{ scope }} .qb54-pl-btn--navy { background: var(--navy); color: #ffffff; }
+  {{ scope }} .qb54-pl-btn--navy:hover { background: color-mix(in srgb, var(--navy) 85%, #ffffff); transform: translateY(-2px); }
+  {{ scope }} .qb54-pl-btn--white { background: #ffffff; color: var(--on-gold); box-shadow: 0 16px 34px -16px rgba(17, 18, 40, 0.55); }
+  {{ scope }} .qb54-pl-btn--white:hover { background: color-mix(in srgb, var(--navy) 8%, #ffffff); transform: translateY(-2px); }
+  {{ scope }} .qb54-pl-btn[aria-busy='true'] { pointer-events: none; opacity: 0.85; }
+  {{ scope }} .qb54-pl-btn.is-added { background: var(--ok); color: #ffffff; box-shadow: none; }
+  {{ scope }} .qb54-pl-btn.is-error { background: #b91c1c; color: #ffffff; box-shadow: none; }
+  {{ scope }} .qb54-pl-btn[disabled] { background: #e7e5dd; color: var(--muted); box-shadow: none; cursor: not-allowed; }
+  {{ scope }} .qb54-pl-spin { width: 18px; height: 18px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: qb54-pl-rot 700ms linear infinite; }
+  @keyframes qb54-pl-shine { 0% { transform: translateX(-120%); } 55%, 100% { transform: translateX(120%); } }
+  @keyframes qb54-pl-rot { to { transform: rotate(360deg); } }
+
+  /* ---------- Shared bits ---------- */
+  {{ scope }} .qb54-pl-stars { display: inline-flex; gap: 2px; color: var(--gold); }
+  {{ scope }} .qb54-pl-stars svg { width: 15px; height: 15px; }
+  {{ scope }} .qb54-pl-rating { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 500; }
+  {{ scope }} .qb54-pl-rating b { font-weight: 700; }
+  {{ scope }} .qb54-pl-save { display: inline-flex; align-items: center; padding: 5px 10px; border-radius: 6px; background: var(--sale); color: #ffffff; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  {{ scope }} .qb54-pl-was { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1.5px; font-variant-numeric: tabular-nums; }
+  {{ scope }} .qb54-pl-now { font-family: var(--fh); font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; color: var(--navy); }
+  {{ scope }} .qb54-pl-code-note { font-size: 13px; color: var(--ink-2); }
+  {{ scope }} .qb54-pl-code-note strong { color: var(--ink); }
+  {{ scope }} .qb54-pl-instock { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); }
+  {{ scope }} .qb54-pl-instock::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18); }
+  {{ scope }} .qb54-pl-err { margin: 8px 0 0; font-size: 13px; color: #b91c1c; }
+
+  /* ---------- Top bar ---------- */
+  {{ scope }} .qb54-pl-bar { position: relative; z-index: 5; background: var(--night); border-bottom: 1px solid var(--line-dark); }
+  {{ scope }} .qb54-pl-bar__in { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 72px; }
+  {{ scope }} .qb54-pl-bar__logo img { width: auto; height: 42px; }
+  {{ scope }} .qb54-pl-bar__logo span { font-family: var(--fh); font-weight: 700; font-size: 26px; color: #ffffff; }
+  {{ scope }} .qb54-pl-bar__mid { display: none; align-items: center; gap: 12px; font-size: 13px; color: rgba(255, 255, 255, 0.72); }
+  {{ scope }} .qb54-pl-bar__mid strong { color: #ffffff; font-weight: 700; font-variant-numeric: tabular-nums; }
+  {{ scope }} .qb54-pl-bar__code { padding: 5px 10px; border-radius: 6px; background: var(--gold); color: var(--on-gold); font-weight: 700; letter-spacing: 0.1em; }
+  {{ scope }} .qb54-pl-bar__end { display: flex; align-items: center; gap: 10px; }
+  {{ scope }} .qb54-pl-bar .qb54-pl-btn { min-height: 44px; padding: 0 18px; font-size: 15px; }
+  {{ scope }} .qb54-pl-cart { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; color: #ffffff; box-shadow: inset 0 0 0 1px var(--line-dark); }
+  {{ scope }} .qb54-pl-cart:hover { background: rgba(255, 255, 255, 0.08); }
+  {{ scope }} .qb54-pl-cart svg { width: 21px; height: 21px; }
+  {{ scope }} .qb54-pl-cart__n { position: absolute; top: -3px; right: -3px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: var(--gold); color: var(--on-gold); font-size: 11px; font-weight: 700; line-height: 20px; text-align: center; }
+  {{ scope }} .qb54-pl-cart__n.is-bump { animation: qb54-pl-bump 420ms var(--ease-emph); }
+  @keyframes qb54-pl-bump { 0% { transform: scale(0.4); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+
+  /* ---------- Hero ---------- */
+  {{ scope }} .qb54-pl-hero { position: relative; isolation: isolate; overflow: hidden; min-height: min(900px, 100svh); display: flex; align-items: center; padding-block: clamp(56px, 7vw, 104px); background: var(--night); }
+  {{ scope }} .qb54-pl-hero__bg { position: absolute; inset: 0; z-index: -3; }
+  {{ scope }} .qb54-pl-hero__bg img { width: 100%; height: 100%; object-fit: cover; object-position: {{ section.settings.hero_focal }}; }
+  {{ scope }} .qb54-pl-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--night) 94%, transparent) 0%, color-mix(in srgb, var(--night) 82%, transparent) 38%, color-mix(in srgb, var(--night) 35%, transparent) 72%, color-mix(in srgb, var(--night) 55%, transparent) 100%),
+      linear-gradient(0deg, var(--night) 0%, transparent 34%);
+  }
+  {{ scope }} .qb54-pl-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background: radial-gradient(640px 420px at 14% 70%, color-mix(in srgb, var(--gold) 16%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  {{ scope }} .qb54-pl-hero__grid { position: relative; z-index: 2; display: grid; gap: clamp(40px, 5vw, 72px); align-items: center; }
+  {{ scope }} .qb54-pl-hero__badges { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-bottom: 22px; }
+  {{ scope }} .qb54-pl-chip-gold { display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 999px; background: var(--gold); color: var(--on-gold); font-family: var(--fh); font-weight: 700; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; }
+  {{ scope }} .qb54-pl-hero .qb54-pl-rating { color: rgba(255, 255, 255, 0.9); }
+  {{ scope }} .qb54-pl-kicker { margin: 0 0 14px; font-size: 13px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255, 255, 255, 0.82); }
+  {{ scope }} .qb54-pl-title { margin: 0; font-family: var(--fh); font-weight: 700; text-transform: uppercase; color: #ffffff; letter-spacing: -0.01em; line-height: 0.88; }
+  {{ scope }} .qb54-pl-title__offer {
+    display: block;
+    font-size: min(23vw, 196px);
+    white-space: nowrap;
+    line-height: 0.86;
+    padding-bottom: 0.04em;
+    letter-spacing: -0.025em;
+    background: linear-gradient(180deg, #fff6d6 0%, var(--gold) 46%, var(--gold-deep) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    filter: drop-shadow(0 12px 40px color-mix(in srgb, var(--gold) 30%, transparent));
+  }
+  {{ scope }} .qb54-pl-title__line { display: block; margin-top: 8px; font-size: clamp(40px, 5.2vw, 78px); line-height: 0.95; }
+  {{ scope }} .qb54-pl-hero .qb54-pl-lede { color: rgba(255, 255, 255, 0.86); max-width: 54ch; }
+
+  {{ scope }} .qb54-pl-deal { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  {{ scope }} .qb54-pl-timer { display: grid; gap: 8px; padding: 12px 14px; border-radius: 16px; background: rgba(9, 10, 26, 0.5); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16); backdrop-filter: blur(10px); }
+  {{ scope }} .qb54-pl-timer__label { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); }
+  {{ scope }} .qb54-pl-cd { display: flex; align-items: center; gap: 6px; }
+  {{ scope }} .qb54-pl-cd__u { display: grid; justify-items: center; min-width: 58px; padding: 8px 6px 7px; border-radius: 10px; background: rgba(255, 255, 255, 0.08); }
+  {{ scope }} .qb54-pl-cd__n { font-family: var(--fh); font-weight: 700; font-size: 30px; line-height: 1; color: #ffffff; font-variant-numeric: tabular-nums; }
+  {{ scope }} .qb54-pl-cd__n.is-tick { animation: qb54-pl-tick 360ms var(--ease-emph); }
+  {{ scope }} .qb54-pl-cd__l { margin-top: 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255, 255, 255, 0.6); }
+  {{ scope }} .qb54-pl-cd__s { margin-top: -14px; font-family: var(--fh); font-size: 22px; font-weight: 700; color: rgba(255, 255, 255, 0.4); }
+  @keyframes qb54-pl-tick { 0% { transform: translateY(-35%); opacity: 0; } 100% { transform: none; opacity: 1; } }
+
+  {{ scope }} .qb54-pl-ticket { display: flex; align-items: stretch; border-radius: 16px; background: var(--gold); color: var(--on-gold); overflow: hidden; }
+  {{ scope }} .qb54-pl-ticket__main { display: grid; gap: 3px; align-content: center; padding: 12px 18px; }
+  {{ scope }} .qb54-pl-ticket__l { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.78; }
+  {{ scope }} .qb54-pl-ticket__c { font-family: var(--fh); font-weight: 700; font-size: 36px; line-height: 0.95; letter-spacing: 0.06em; }
+  {{ scope }} .qb54-pl-ticket__perf { width: 0; margin-block: 10px; border-left: 2px dashed color-mix(in srgb, var(--on-gold) 35%, transparent); }
+  {{ scope }} .qb54-pl-ticket__copy { display: inline-flex; align-items: center; gap: 7px; padding: 0 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--on-gold); cursor: pointer; }
+  {{ scope }} .qb54-pl-ticket__copy:hover { background: rgba(0, 0, 0, 0.07); }
+  {{ scope }} .qb54-pl-ticket__copy svg { width: 16px; height: 16px; }
+
+  {{ scope }} .qb54-pl-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  {{ scope }} .qb54-pl-hero .qb54-pl-ctas .qb54-pl-btn { min-height: 60px; padding: 0 34px; font-size: 18px; }
+  {{ scope }} .qb54-pl-before { margin: 14px 0 0; font-size: 13.5px; color: rgba(255, 255, 255, 0.82); }
+  {{ scope }} .qb54-pl-before strong { color: var(--gold); }
+
+  {{ scope }} .qb54-pl-stats { display: flex; flex-wrap: wrap; gap: 14px 34px; margin-top: 34px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.18); }
+  {{ scope }} .qb54-pl-stats li { display: grid; gap: 4px; }
+  {{ scope }} .qb54-pl-stats strong { font-family: var(--fh); font-weight: 700; font-size: clamp(30px, 3vw, 40px); line-height: 1; color: var(--gold); }
+  {{ scope }} .qb54-pl-stats span { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255, 255, 255, 0.72); }
+
+  {{ scope }} .qb54-pl-ended { padding: 26px; border-radius: var(--r-card); background: rgba(9, 10, 26, 0.6); box-shadow: inset 0 0 0 1px var(--line-dark); backdrop-filter: blur(10px); }
+  {{ scope }} .qb54-pl-ended__t { margin: 0 0 10px; font-family: var(--fh); font-weight: 700; font-size: clamp(34px, 4vw, 52px); line-height: 0.95; letter-spacing: 0; text-transform: uppercase; color: #ffffff; }
+  {{ scope }} .qb54-pl-ended__x { margin: 0 0 20px; color: rgba(255, 255, 255, 0.8); line-height: 1.55; }
+
+  /* Hero buy card */
+  {{ scope }} .qb54-pl-buy { position: relative; justify-self: center; width: min(100%, 440px); }
+  {{ scope }} .qb54-pl-buy__card { position: relative; border-radius: var(--r-card); background: var(--paper); color: var(--ink); box-shadow: var(--shadow-lg); }
+  {{ scope }} .qb54-pl-buy__media { position: relative; aspect-ratio: 1 / 0.86; border-radius: var(--r-card) var(--r-card) 0 0; background: #ffffff; overflow: hidden; }
+  {{ scope }} .qb54-pl-buy__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 5% 6% 3%; }
+  {{ scope }} .qb54-pl-flag { position: absolute; z-index: 2; top: 14px; left: 14px; padding: 7px 11px; border-radius: 6px; background: var(--navy); color: #ffffff; font-family: var(--fh); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; }
+  {{ scope }} .qb54-pl-flag b { color: var(--gold); }
+  {{ scope }} .qb54-pl-badge { position: absolute; z-index: 2; top: 14px; right: 14px; padding: 7px 11px; border-radius: 999px; background: var(--gold); color: var(--on-gold); font-family: var(--fh); font-weight: 700; font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; box-shadow: 0 8px 18px -10px var(--gold-glow); }
+  {{ scope }} .qb54-pl-buy__body { display: grid; gap: 10px; padding: 20px 22px 22px; border-top: 1px solid var(--line); }
+  {{ scope }} .qb54-pl-buy__title { margin: 0; font-family: var(--fh); font-weight: 700; font-size: 23px; line-height: 1.08; text-transform: uppercase; letter-spacing: 0; color: var(--ink); }
+  {{ scope }} .qb54-pl-buy .qb54-pl-rating { color: var(--ink-2); }
+  {{ scope }} .qb54-pl-price { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+  {{ scope }} .qb54-pl-buy .qb54-pl-now { font-size: 40px; }
+  {{ scope }} .qb54-pl-buy .qb54-pl-was { font-size: 16px; }
+  {{ scope }} .qb54-pl-swatches { display: flex; align-items: center; gap: 10px; }
+  {{ scope }} .qb54-pl-swatches__l { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+  {{ scope }} .qb54-pl-sw { position: relative; width: 30px; height: 30px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.6), 0 0 0 1px var(--line); cursor: pointer; transition: box-shadow 160ms var(--ease), transform 160ms var(--ease); }
+  {{ scope }} .qb54-pl-sw:hover { transform: scale(1.08); }
+  {{ scope }} .qb54-pl-sw[aria-pressed='true'] { box-shadow: inset 0 0 0 2px #ffffff, 0 0 0 2.5px var(--gold); }
+  {{ scope }} .qb54-pl-buy .qb54-pl-btn { width: 100%; min-height: 56px; margin-top: 4px; }
+  {{ scope }} .qb54-pl-buy__foot { margin: 2px 0 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
+
+  /* ---------- Festive layer ---------- */
+  {{ scope }} .qb54-pl-lights, {{ scope }} .qb54-pl-snow, {{ scope }} .qb54-pl-bow, {{ scope }} .qb54-pl-ribbon { display: none; }
+  {{ scope }}.qb54-pl--festive .qb54-pl-lights { display: block; position: absolute; z-index: 1; top: 0; left: 0; right: 0; height: 64px; pointer-events: none; }
+  {{ scope }}.qb54-pl--festive .qb54-pl-lights svg { width: 100%; height: 40px; }
+  {{ scope }} .qb54-pl-bulb { position: absolute; top: 18px; width: 10px; height: 16px; margin-left: -5px; border-radius: 50% 50% 46% 46%; background: var(--b); box-shadow: 0 0 14px 3px var(--b); animation: qb54-pl-twinkle 2.6s ease-in-out infinite; }
+  {{ scope }} .qb54-pl-bulb::before { content: ''; position: absolute; top: -4px; left: 2px; width: 6px; height: 5px; border-radius: 2px; background: #3a3d55; }
+  @keyframes qb54-pl-twinkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+  {{ scope }}.qb54-pl--festive .qb54-pl-snow {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    /* Keep flakes out of the copy column so they never sit inside letters. */
+    -webkit-mask-image: linear-gradient(90deg, transparent 50%, #000 70%);
+    mask-image: linear-gradient(90deg, transparent 50%, #000 70%);
+  }
+  {{ scope }} .qb54-pl-snow i {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -100%;
+    height: 200%;
+    background-image:
+      radial-gradient(circle, rgba(255, 255, 255, 0.85) 0 1.6px, transparent 2.2px),
+      radial-gradient(circle, rgba(255, 255, 255, 0.6) 0 1.1px, transparent 1.6px),
+      radial-gradient(circle, rgba(255, 255, 255, 0.7) 0 1.3px, transparent 1.9px);
+    background-size: 197px 211px, 131px 149px, 263px 241px;
+    background-position: 0 0, 53px 71px, 117px 29px;
+    animation: qb54-pl-fall 26s linear infinite;
+  }
+  {{ scope }} .qb54-pl-snow i + i { background-size: 307px 293px, 173px 181px, 229px 251px; background-position: 91px 37px, 23px 127px, 160px 200px; opacity: 0.55; animation-duration: 40s; }
+  @keyframes qb54-pl-fall { from { transform: translateY(0); } to { transform: translateY(50%); } }
+  {{ scope }}.qb54-pl--festive .qb54-pl-ribbon { display: block; position: absolute; z-index: 3; left: 0; right: 0; top: 0; height: 14px; border-radius: var(--r-card) var(--r-card) 0 0; background: linear-gradient(180deg, color-mix(in srgb, var(--festive) 80%, #ffffff), var(--festive) 45%, color-mix(in srgb, var(--festive) 78%, #000000)); }
+  {{ scope }}.qb54-pl--festive .qb54-pl-bow { display: block; position: absolute; z-index: 4; top: -38px; left: 50%; width: 112px; height: 64px; margin-left: -56px; filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.35)); }
+  {{ scope }}.qb54-pl--festive .qb54-pl-buy__media { border-radius: 0; }
+  {{ scope }}.qb54-pl--festive .qb54-pl-buy__card { padding-top: 14px; }
+  {{ scope }} .qb54-pl-tag { display: none; }
+  {{ scope }}.qb54-pl--festive .qb54-pl-tag {
+    display: grid;
+    place-items: center;
+    position: absolute;
+    z-index: 5;
+    top: 34px;
+    right: -18px;
+    width: 92px;
+    height: 54px;
+    padding-left: 12px;
+    background: var(--cream);
+    color: var(--on-gold);
+    clip-path: polygon(16% 0, 100% 0, 100% 100%, 16% 100%, 0 50%);
+    transform: rotate(8deg);
+    font-family: var(--fh);
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 0.95;
+    text-align: center;
+    text-transform: uppercase;
+    filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.3));
+  }
+  {{ scope }}.qb54-pl--festive .qb54-pl-tag small { display: block; font-family: var(--fb); font-size: 9px; letter-spacing: 0.12em; opacity: 0.75; }
+  {{ scope }}.qb54-pl--festive .qb54-pl-buy .qb54-pl-badge { display: none; }
+
+  /* ---------- Ticker ---------- */
+  {{ scope }} .qb54-pl-ticker { overflow: hidden; background: var(--gold); color: var(--on-gold); }
+  {{ scope }} .qb54-pl-ticker__track { display: flex; width: max-content; animation: qb54-pl-marquee 40s linear infinite; }
+  {{ scope }} .qb54-pl-ticker:hover .qb54-pl-ticker__track { animation-play-state: paused; }
+  {{ scope }} .qb54-pl-ticker__g { display: flex; flex: none; }
+  {{ scope }} .qb54-pl-ticker__i { display: inline-flex; align-items: center; gap: 24px; padding: 17px 0 17px 24px; font-family: var(--fh); font-weight: 700; font-size: 19px; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+  {{ scope }} .qb54-pl-ticker__i svg { width: 16px; height: 16px; }
+  @keyframes qb54-pl-marquee { to { transform: translateX(-50%); } }
+
+  /* ---------- Reels ---------- */
+  {{ scope }} .qb54-pl-reels { position: relative; padding-block: var(--pad-y); background: var(--night); }
+  {{ scope }} .qb54-pl-reels::before { content: ''; position: absolute; inset: 0; background: radial-gradient(800px 380px at 80% 0%, color-mix(in srgb, var(--navy) 70%, transparent), transparent 70%); pointer-events: none; }
+  {{ scope }} .qb54-pl-reels .qb54-pl-wrap { position: relative; }
+  {{ scope }} .qb54-pl-reels .qb54-pl-lede { color: rgba(255, 255, 255, 0.75); }
+  {{ scope }} .qb54-pl-follow { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: 14px; color: #ffffff; }
+  {{ scope }} .qb54-pl-follow svg { width: 20px; height: 20px; color: var(--gold); }
+  {{ scope }} .qb54-pl-follow:hover { color: var(--gold); }
+  {{ scope }} .qb54-pl-rail {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(66%, 260px);
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding: 6px var(--gutter) 10px;
+    margin-inline: calc(var(--gutter) * -1);
+    scroll-padding-inline: var(--gutter);
+  }
+  {{ scope }} .qb54-pl-rail::-webkit-scrollbar { display: none; }
+  {{ scope }} .qb54-pl-reel {
+    position: relative;
+    scroll-snap-align: start;
+    aspect-ratio: 9 / 16;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--navy-2);
+    box-shadow: 0 0 0 1px var(--line-dark), 0 24px 48px -24px rgba(0, 0, 0, 0.8);
+    cursor: pointer;
+    margin: 0;
+  }
+  {{ scope }} .qb54-pl-reel video, {{ scope }} .qb54-pl-reel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  {{ scope }} .qb54-pl-reel::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, transparent 22%, transparent 58%, rgba(5, 6, 18, 0.88) 100%); pointer-events: none; }
+  {{ scope }} .qb54-pl-reel__chip { position: absolute; z-index: 2; top: 12px; left: 12px; display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: rgba(9, 10, 26, 0.62); backdrop-filter: blur(8px); font-size: 12px; font-weight: 700; color: #ffffff; }
+  {{ scope }} .qb54-pl-reel__chip svg { width: 14px; height: 14px; color: var(--gold); }
+  {{ scope }} .qb54-pl-reel figcaption { position: absolute; z-index: 2; left: 14px; right: 14px; bottom: 14px; font-family: var(--fh); font-weight: 700; font-size: 20px; line-height: 1.05; text-transform: uppercase; color: #ffffff; }
+  {{ scope }} .qb54-pl-reel__snd { position: absolute; z-index: 3; top: 10px; right: 10px; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(9, 10, 26, 0.62); backdrop-filter: blur(8px); color: #ffffff; }
+  {{ scope }} .qb54-pl-reel__snd svg { width: 16px; height: 16px; }
+  {{ scope }} .qb54-pl-reel__snd .is-on { display: none; }
+  {{ scope }} .qb54-pl-reel.is-unmuted .qb54-pl-reel__snd .is-on { display: block; }
+  {{ scope }} .qb54-pl-reel.is-unmuted .qb54-pl-reel__snd .is-off { display: none; }
+  {{ scope }} .qb54-pl-reel__play { position: absolute; z-index: 2; top: 50%; left: 50%; display: grid; place-items: center; width: 60px; height: 60px; margin: -30px 0 0 -30px; border-radius: 50%; background: rgba(255, 255, 255, 0.92); color: var(--on-gold); transition: opacity 200ms var(--ease); }
+  {{ scope }} .qb54-pl-reel__play svg { width: 22px; height: 22px; margin-left: 3px; }
+  {{ scope }} .qb54-pl-reel.is-playing .qb54-pl-reel__play { opacity: 0; }
+  {{ scope }} .qb54-pl-press { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px 40px; margin-top: clamp(40px, 5vw, 64px); padding-top: 32px; border-top: 1px solid var(--line-dark); }
+  {{ scope }} .qb54-pl-press__l { font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255, 255, 255, 0.5); }
+  {{ scope }} .qb54-pl-press__i { font-family: var(--fh); font-weight: 700; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase; color: rgba(255, 255, 255, 0.78); }
+
+  /* ---------- Stage (colorways / gift guide) ---------- */
+  {{ scope }} .qb54-pl-stage { padding-block: var(--pad-y); background: var(--cream); color: var(--ink); }
+  {{ scope }} .qb54-pl-stage .qb54-pl-h2 { color: var(--ink); }
+  {{ scope }} .qb54-pl-stage .qb54-pl-lede { color: var(--ink-2); }
+  {{ scope }} .qb54-pl-timerpill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 999px; background: var(--navy); color: #ffffff; font-size: 13.5px; font-weight: 500; }
+  {{ scope }} .qb54-pl-timerpill strong { color: var(--gold); font-variant-numeric: tabular-nums; }
+  {{ scope }} .qb54-pl-timerpill svg { width: 16px; height: 16px; color: var(--gold); }
+  {{ scope }} .qb54-pl-tabs { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; padding: 4px; margin: 0 -4px 22px; }
+  {{ scope }} .qb54-pl-tabs::-webkit-scrollbar { display: none; }
+  {{ scope }} .qb54-pl-tab {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 64px;
+    padding: 10px 18px 10px 10px;
+    border-radius: 14px;
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: inset 0 0 0 1.5px var(--line);
+    text-align: left;
+    cursor: pointer;
+    transition: box-shadow 180ms var(--ease), background-color 180ms var(--ease), transform 180ms var(--ease);
+  }
+  {{ scope }} .qb54-pl-tab:hover { transform: translateY(-2px); }
+  {{ scope }} .qb54-pl-tab[aria-selected='true'] { background: color-mix(in srgb, var(--gold) 16%, #ffffff); box-shadow: inset 0 0 0 2px var(--gold), 0 10px 22px -16px rgba(17, 18, 40, 0.5); }
+  {{ scope }} .qb54-pl-tab__dot { width: 42px; height: 42px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 3px #ffffff, 0 0 0 1px var(--line); flex: none; }
+  {{ scope }} .qb54-pl-tab__thumb { width: 44px; height: 44px; border-radius: 10px; overflow: hidden; background: #ffffff; flex: none; box-shadow: 0 0 0 1px var(--line); }
+  {{ scope }} .qb54-pl-tab__thumb img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
+  {{ scope }} .qb54-pl-tab__t { display: grid; gap: 3px; }
+  {{ scope }} .qb54-pl-tab__t strong { font-family: var(--fh); font-weight: 700; font-size: 18px; line-height: 1; text-transform: uppercase; letter-spacing: 0.02em; }
+  {{ scope }} .qb54-pl-tab__t span { font-size: 12.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+  {{ scope }} .qb54-pl-panel { display: grid; gap: 22px; padding: clamp(14px, 2vw, 22px); border-radius: var(--r-panel); background: var(--paper); box-shadow: var(--shadow); animation: qb54-pl-in 380ms var(--ease); }
+  @keyframes qb54-pl-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  {{ scope }} .qb54-pl-gallery { display: grid; gap: 10px; }
+  {{ scope }} .qb54-pl-gallery__main { position: relative; aspect-ratio: 1 / 0.86; border-radius: 16px; background: #ffffff; box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+  {{ scope }} .qb54-pl-gallery__main img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 4% 6%; }
+  {{ scope }} .qb54-pl-thumbs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  {{ scope }} .qb54-pl-thumb { position: relative; aspect-ratio: 1; border-radius: 12px; background: #ffffff; box-shadow: inset 0 0 0 1.5px var(--line); overflow: hidden; cursor: pointer; }
+  {{ scope }} .qb54-pl-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 6%; }
+  {{ scope }} .qb54-pl-thumb[aria-pressed='true'] { box-shadow: inset 0 0 0 2.5px var(--gold); }
+  {{ scope }} .qb54-pl-info { display: grid; align-content: start; gap: 14px; padding: 6px 4px; }
+  {{ scope }} .qb54-pl-info__flag { justify-self: start; padding: 6px 10px; border-radius: 6px; background: var(--navy); color: #ffffff; font-family: var(--fh); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; }
+  {{ scope }} .qb54-pl-info__flag b { color: var(--gold); }
+  {{ scope }} .qb54-pl-info__title { margin: 0; font-family: var(--fh); font-weight: 700; font-size: clamp(30px, 3vw, 42px); line-height: 1; text-transform: uppercase; letter-spacing: 0; color: var(--ink); }
+  {{ scope }} .qb54-pl-info .qb54-pl-rating { color: var(--ink-2); }
+  {{ scope }} .qb54-pl-pitch { margin: 0; font-size: 16px; line-height: 1.6; color: var(--ink-2); }
+  {{ scope }} .qb54-pl-info .qb54-pl-now { font-size: clamp(44px, 4.4vw, 58px); }
+  {{ scope }} .qb54-pl-info .qb54-pl-was { font-size: 18px; }
+  {{ scope }} .qb54-pl-from { font-size: 14px; font-weight: 700; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.08em; }
+  {{ scope }} .qb54-pl-checks { display: grid; gap: 9px; padding: 16px 0; border-block: 1px solid var(--line); }
+  {{ scope }} .qb54-pl-checks li { display: flex; align-items: flex-start; gap: 10px; font-size: 15px; line-height: 1.45; color: var(--ink); }
+  {{ scope }} .qb54-pl-checks svg { width: 18px; height: 18px; margin-top: 1px; flex: none; padding: 3px; border-radius: 50%; background: var(--gold); color: var(--on-gold); }
+  {{ scope }} .qb54-pl-info .qb54-pl-btn { width: 100%; min-height: 60px; font-size: 19px; }
+  {{ scope }} .qb54-pl-trustline { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--ink-2); }
+  {{ scope }} .qb54-pl-trustline span { display: inline-flex; align-items: center; gap: 7px; }
+  {{ scope }} .qb54-pl-trustline svg { width: 16px; height: 16px; color: var(--navy); }
+
+  /* ---------- Where (photo mosaic) ---------- */
+  {{ scope }} .qb54-pl-where { padding-block: var(--pad-y); background: var(--night); }
+  {{ scope }} .qb54-pl-where .qb54-pl-lede { color: rgba(255, 255, 255, 0.75); }
+  {{ scope }} .qb54-pl-mosaic { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 180px; }
+  {{ scope }} .qb54-pl-tile { position: relative; margin: 0; border-radius: var(--r-card); overflow: hidden; background: var(--navy-2); isolation: isolate; }
+  {{ scope }} .qb54-pl-tile:first-child { grid-column: span 2; grid-row: span 2; }
+  {{ scope }} .qb54-pl-tile img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; transition: transform 700ms var(--ease); }
+  {{ scope }} .qb54-pl-tile::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, transparent 45%, rgba(5, 6, 18, 0.85) 100%); }
+  @media (hover: hover) { {{ scope }} .qb54-pl-tile:hover img { transform: scale(1.05); } }
+  {{ scope }} .qb54-pl-tile figcaption { position: absolute; left: 16px; right: 16px; bottom: 14px; display: grid; gap: 4px; }
+  {{ scope }} .qb54-pl-tile strong { font-family: var(--fh); font-weight: 700; font-size: clamp(20px, 2vw, 30px); line-height: 1; text-transform: uppercase; color: #ffffff; }
+  {{ scope }} .qb54-pl-tile span { font-size: 13px; color: rgba(255, 255, 255, 0.8); }
+  {{ scope }} .qb54-pl-feats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+  {{ scope }} .qb54-pl-feat { display: flex; align-items: center; gap: 14px; padding: 18px; border-radius: var(--r-card); background: rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 0 1px var(--line-dark); }
+  {{ scope }} .qb54-pl-feat i { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 12px; background: var(--gold-soft); color: var(--gold); flex: none; }
+  {{ scope }} .qb54-pl-feat svg { width: 24px; height: 24px; }
+  {{ scope }} .qb54-pl-feat strong { display: block; font-family: var(--fh); font-weight: 700; font-size: 20px; line-height: 1; text-transform: uppercase; color: #ffffff; }
+  {{ scope }} .qb54-pl-feat span { display: block; margin-top: 4px; font-size: 13px; color: rgba(255, 255, 255, 0.68); }
+
+  /* ---------- Steps ---------- */
+  {{ scope }} .qb54-pl-steps { position: relative; isolation: isolate; overflow: hidden; padding-block: var(--pad-y); background: var(--gold); color: var(--on-gold); }
+  {{ scope }} .qb54-pl-steps::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(620px 300px at 10% 0%, rgba(255, 255, 255, 0.5), transparent 70%), radial-gradient(520px 320px at 100% 100%, rgba(0, 0, 0, 0.1), transparent 70%); }
+  {{ scope }} .qb54-pl-steps .qb54-pl-h2, {{ scope }} .qb54-pl-steps .qb54-pl-eyebrow { color: var(--on-gold); }
+  {{ scope }} .qb54-pl-steps__list { display: grid; gap: 14px; margin-top: clamp(30px, 4vw, 48px); }
+  {{ scope }} .qb54-pl-step { position: relative; display: grid; gap: 10px; padding: 26px 24px; border-radius: var(--r-card); background: #ffffff; color: var(--ink); box-shadow: 0 20px 40px -28px rgba(17, 18, 40, 0.55); overflow: hidden; }
+  {{ scope }} .qb54-pl-step__n { position: absolute; right: 14px; top: -10px; font-family: var(--fh); font-weight: 700; font-size: 110px; line-height: 1; color: color-mix(in srgb, var(--navy) 10%, transparent); }
+  {{ scope }} .qb54-pl-step__i { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--navy); color: var(--gold); font-family: var(--fh); font-weight: 700; font-size: 20px; }
+  {{ scope }} .qb54-pl-step h3 { position: relative; margin: 8px 0 0; font-family: var(--fh); font-weight: 700; font-size: 26px; line-height: 1.02; text-transform: uppercase; letter-spacing: 0; color: var(--ink); }
+  {{ scope }} .qb54-pl-step p { position: relative; margin: 0; font-size: 15.5px; line-height: 1.55; color: var(--ink-2); }
+  {{ scope }} .qb54-pl-step mark { padding: 1px 7px; border-radius: 5px; background: var(--gold); color: var(--on-gold); font-weight: 700; letter-spacing: 0.06em; }
+  {{ scope }} .qb54-pl-steps__note { margin: 22px 0 0; text-align: center; font-size: 14.5px; font-weight: 500; }
+
+  /* ---------- Reviews ---------- */
+  {{ scope }} .qb54-pl-reviews { padding-block: var(--pad-y); background: var(--cream); color: var(--ink); }
+  {{ scope }} .qb54-pl-reviews .qb54-pl-h2 { color: var(--ink); }
+  {{ scope }} .qb54-pl-score { display: inline-flex; align-items: center; gap: 12px; margin-top: 18px; padding: 10px 16px; border-radius: 999px; background: #ffffff; box-shadow: var(--shadow); font-size: 14px; color: var(--ink-2); }
+  {{ scope }} .qb54-pl-score b { font-family: var(--fh); font-size: 22px; color: var(--ink); }
+  {{ scope }} .qb54-pl-score .qb54-pl-stars svg { width: 18px; height: 18px; }
+  {{ scope }} .qb54-pl-revrail { display: grid; grid-auto-flow: column; grid-auto-columns: 84%; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 6px var(--gutter) 10px; margin-inline: calc(var(--gutter) * -1); scroll-padding-inline: var(--gutter); }
+  {{ scope }} .qb54-pl-revrail::-webkit-scrollbar { display: none; }
+  {{ scope }} .qb54-pl-review { scroll-snap-align: start; display: flex; flex-direction: column; gap: 16px; margin: 0; padding: 26px; border-radius: var(--r-card); background: #ffffff; box-shadow: var(--shadow); }
+  {{ scope }} .qb54-pl-review__tag { justify-self: start; align-self: flex-start; padding: 5px 10px; border-radius: 999px; background: var(--gold-soft); color: var(--on-gold); font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  {{ scope }} .qb54-pl-review blockquote { margin: 0; padding: 0; border: 0; font-family: var(--fb); font-style: normal; font-weight: 500; font-size: 17px; line-height: 1.6; letter-spacing: 0; text-transform: none; color: var(--ink); }
+  {{ scope }} .qb54-pl-review footer { margin-top: auto; display: flex; align-items: center; gap: 12px; }
+  {{ scope }} .qb54-pl-av { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--navy); color: var(--gold); font-family: var(--fh); font-weight: 700; font-size: 18px; }
+  {{ scope }} .qb54-pl-review cite { display: block; font-style: normal; font-weight: 700; font-size: 14.5px; color: var(--ink); }
+  {{ scope }} .qb54-pl-verified { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--ok); }
+  {{ scope }} .qb54-pl-verified svg { width: 13px; height: 13px; }
+  {{ scope }} .qb54-pl-dots { display: flex; justify-content: center; gap: 8px; margin-top: 18px; }
+  {{ scope }} .qb54-pl-dots button { width: 8px; height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--navy) 25%, transparent); transition: width 260ms var(--ease), background-color 260ms var(--ease); }
+  {{ scope }} .qb54-pl-dots button[aria-current='true'] { width: 24px; background: var(--navy); }
+
+  /* ---------- FAQ ---------- */
+  {{ scope }} .qb54-pl-faq { padding-block: var(--pad-y); background: var(--paper); color: var(--ink); }
+  {{ scope }} .qb54-pl-faq .qb54-pl-h2 { color: var(--ink); }
+  {{ scope }} .qb54-pl-faq .qb54-pl-lede { color: var(--ink-2); }
+  {{ scope }} .qb54-pl-faq__grid { display: grid; gap: 30px; }
+  {{ scope }} .qb54-pl-qa { border-top: 1px solid var(--line); }
+  {{ scope }} .qb54-pl-qa:last-child { border-bottom: 1px solid var(--line); }
+  {{ scope }} .qb54-pl-qa summary { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 22px 0; list-style: none; cursor: pointer; font-weight: 700; font-size: 17.5px; line-height: 1.35; color: var(--ink); }
+  {{ scope }} .qb54-pl-qa summary::-webkit-details-marker { display: none; }
+  {{ scope }} .qb54-pl-plus { position: relative; flex: none; width: 36px; height: 36px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--line); transition: background-color 220ms var(--ease), box-shadow 220ms var(--ease), transform 260ms var(--ease); }
+  {{ scope }} .qb54-pl-plus::before, {{ scope }} .qb54-pl-plus::after { content: ''; position: absolute; left: 50%; top: 50%; width: 12px; height: 2px; margin: -1px 0 0 -6px; border-radius: 2px; background: var(--ink); transition: transform 260ms var(--ease); }
+  {{ scope }} .qb54-pl-plus::after { transform: rotate(90deg); }
+  {{ scope }} .qb54-pl-qa[open] .qb54-pl-plus { background: var(--gold); box-shadow: none; transform: rotate(180deg); }
+  {{ scope }} .qb54-pl-qa[open] .qb54-pl-plus::after { transform: rotate(0deg); }
+  {{ scope }} .qb54-pl-qa__a { padding: 0 54px 24px 0; font-size: 15.5px; line-height: 1.65; color: var(--ink-2); }
+  {{ scope }} .qb54-pl-qa__a p { margin: 0 0 10px; }
+  {{ scope }} .qb54-pl-qa__a p:last-child { margin: 0; }
+  {{ scope }} .qb54-pl-qa__a a { color: var(--navy); font-weight: 700; text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+
+  /* ---------- Closing ---------- */
+  {{ scope }} .qb54-pl-close { position: relative; isolation: isolate; overflow: hidden; padding-block: var(--pad-y); background: var(--gold); color: var(--on-gold); text-align: center; }
+  {{ scope }} .qb54-pl-close::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(700px 360px at 50% 0%, rgba(255, 255, 255, 0.45), transparent 70%); }
+  {{ scope }} .qb54-pl-close .qb54-pl-eyebrow { color: var(--on-gold); }
+  {{ scope }} .qb54-pl-close__big { margin: 0; font-family: var(--fh); font-weight: 700; font-size: clamp(84px, 13vw, 190px); line-height: 0.84; letter-spacing: -0.025em; text-transform: uppercase; color: var(--on-gold); }
+  {{ scope }} .qb54-pl-close .qb54-pl-h2 { margin-top: clamp(26px, 3vw, 40px); font-size: clamp(28px, 3.6vw, 44px); color: var(--on-gold); }
+  {{ scope }} .qb54-pl-close .qb54-pl-lede { color: color-mix(in srgb, var(--on-gold) 85%, transparent); }
+  {{ scope }} .qb54-pl-close__l { margin: 30px 0 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.75; }
+  {{ scope }} .qb54-pl-close .qb54-pl-cd { justify-content: center; }
+  {{ scope }} .qb54-pl-close .qb54-pl-cd__u { min-width: 78px; padding: 12px 8px 10px; background: #ffffff; box-shadow: 0 12px 24px -16px rgba(17, 18, 40, 0.6); }
+  {{ scope }} .qb54-pl-close .qb54-pl-cd__n { font-size: 44px; color: var(--on-gold); }
+  {{ scope }} .qb54-pl-close .qb54-pl-cd__l { color: var(--muted); }
+  {{ scope }} .qb54-pl-close .qb54-pl-cd__s { color: color-mix(in srgb, var(--on-gold) 45%, transparent); }
+  {{ scope }} .qb54-pl-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 28px; }
+  {{ scope }} .qb54-pl-chips li { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 999px; background: #ffffff; color: var(--on-gold); font-size: 13px; font-weight: 700; }
+  {{ scope }} .qb54-pl-chips svg { width: 15px; height: 15px; color: var(--navy); }
+  {{ scope }} .qb54-pl-close .qb54-pl-btn { margin-top: 30px; min-height: 62px; padding: 0 42px; font-size: 19px; }
+
+  /* ---------- Sticky bar + toast ---------- */
+  {{ scope }} .qb54-pl-sticky { position: fixed; z-index: 30; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: var(--navy); color: #ffffff; box-shadow: 0 -14px 34px -14px rgba(0, 0, 0, 0.55); border-top: 3px solid var(--gold); transform: translateY(115%); transition: transform 320ms var(--ease-emph); }
+  {{ scope }} .qb54-pl-sticky.is-visible { transform: translateY(0); }
+  {{ scope }} .qb54-pl-sticky__t { display: grid; gap: 2px; min-width: 0; }
+  {{ scope }} .qb54-pl-sticky__t strong { font-family: var(--fh); font-weight: 700; font-size: 19px; line-height: 1; text-transform: uppercase; color: var(--gold); }
+  {{ scope }} .qb54-pl-sticky__t span { font-size: 12px; font-variant-numeric: tabular-nums; color: rgba(255, 255, 255, 0.82); }
+  {{ scope }} .qb54-pl-sticky .qb54-pl-btn { min-height: 46px; padding: 0 20px; font-size: 16px; flex: none; }
+
+  {{ scope }} .qb54-pl-toast { position: fixed; z-index: 40; left: 12px; right: 12px; bottom: calc(86px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px 14px; padding: 14px 14px 14px 16px; border-radius: 16px; background: #ffffff; color: var(--ink); box-shadow: 0 26px 60px -18px rgba(17, 18, 40, 0.6), 0 0 0 1px rgba(17, 18, 40, 0.06); animation: qb54-pl-toast 360ms var(--ease-emph); }
+  @keyframes qb54-pl-toast { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+  {{ scope }} .qb54-pl-toast__ok { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #dcfce7; color: var(--ok); }
+  {{ scope }} .qb54-pl-toast__ok svg { width: 20px; height: 20px; }
+  {{ scope }} .qb54-pl-toast__t { display: grid; gap: 2px; min-width: 0; padding-right: 30px; }
+  {{ scope }} .qb54-pl-toast__t strong { font-size: 15px; font-weight: 700; }
+  {{ scope }} .qb54-pl-toast__t span { font-size: 13px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  {{ scope }} .qb54-pl-toast__a { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; }
+  {{ scope }} .qb54-pl-toast__a .qb54-pl-btn { flex: 1; min-height: 50px; }
+  {{ scope }} .qb54-pl-toast__cart { font-size: 14px; font-weight: 700; color: var(--navy); text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  {{ scope }} .qb54-pl-toast__x { position: absolute; top: 10px; right: 10px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; color: var(--muted); }
+  {{ scope }} .qb54-pl-toast__x:hover { background: var(--cream); color: var(--ink); }
+  {{ scope }} .qb54-pl-toast__x svg { width: 16px; height: 16px; }
+
+  /* ---------- Reveal ---------- */
+  {{ scope }}.qb54-pl--js [data-qb54-reveal] { opacity: 0; transform: translateY(22px); transition: opacity 520ms var(--ease), transform 520ms var(--ease); }
+  {{ scope }}.qb54-pl--js [data-qb54-reveal].is-in { opacity: 1; transform: none; }
+
+  /* ---------- Breakpoints ---------- */
+  @media screen and (min-width: 600px) {
+    {{ scope }} .qb54-pl-rail { grid-auto-columns: 240px; }
+    {{ scope }} .qb54-pl-mosaic { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 200px; }
+    {{ scope }} .qb54-pl-feats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    {{ scope }} .qb54-pl-steps__list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    {{ scope }} .qb54-pl-revrail { grid-auto-columns: 46%; }
+  }
+  @media screen and (min-width: 750px) {
+    {{ scope }} .qb54-pl-sticky { display: none; }
+    {{ scope }} .qb54-pl-toast { left: auto; right: 24px; bottom: 24px; width: 390px; }
+  }
+  @media screen and (min-width: 990px) {
+    {{ scope }} .qb54-pl-bar__mid { display: inline-flex; }
+    {{ scope }} .qb54-pl-hero__grid { grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr); }
+    {{ scope }} .qb54-pl-title__offer { font-size: min(13vw, 196px); }
+    {{ scope }} .qb54-pl-buy { justify-self: end; }
+    {{ scope }} .qb54-pl-head--split { grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+    {{ scope }} .qb54-pl-head__aside { justify-self: end; }
+    {{ scope }} .qb54-pl-panel { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 36px; padding: 22px 36px 22px 22px; }
+    {{ scope }} .qb54-pl-info { padding: 18px 0; }
+    {{ scope }} .qb54-pl-rail { grid-auto-flow: row; grid-template-columns: repeat(6, minmax(0, 1fr)); overflow: visible; margin-inline: 0; padding-inline: 0; }
+    {{ scope }} .qb54-pl-mosaic { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 230px; }
+    {{ scope }} .qb54-pl-revrail { grid-auto-flow: row; grid-auto-columns: auto; grid-template-columns: repeat(3, minmax(0, 1fr)); overflow: visible; margin-inline: 0; padding-inline: 0; }
+    {{ scope }} .qb54-pl-dots { display: none; }
+    {{ scope }} .qb54-pl-faq__grid { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 72px; align-items: start; }
+    {{ scope }} .qb54-pl-faq__aside { position: sticky; top: 32px; }
+  }
+  @media screen and (max-width: 599px) {
+    {{ scope }} .qb54-pl-hero { min-height: 0; }
+    {{ scope }} .qb54-pl-deal { display: grid; grid-template-columns: 1fr; }
+    {{ scope }} .qb54-pl-timer { justify-items: center; }
+    {{ scope }} .qb54-pl-cd__u { min-width: 0; flex: 1; }
+    {{ scope }} .qb54-pl-ticket { justify-content: space-between; }
+    {{ scope }} .qb54-pl-ctas .qb54-pl-btn { width: 100%; }
+    {{ scope }} .qb54-pl-close .qb54-pl-cd { width: 100%; }
+    {{ scope }} .qb54-pl-close .qb54-pl-cd__u { min-width: 0; padding: 10px 4px 9px; }
+    {{ scope }} .qb54-pl-close .qb54-pl-cd__n { font-size: 34px; }
+    {{ scope }} .qb54-pl-close .qb54-pl-btn { width: 100%; }
+    {{ scope }} .qb54-pl-bar .qb54-pl-btn { padding: 0 14px; }
+    {{ scope }}.qb54-pl--festive .qb54-pl-tag { right: -6px; }
+    {{ scope }} .qb54-pl-press { gap: 8px 22px; }
+    {{ scope }} .qb54-pl-press__l { width: 100%; text-align: center; }
+    {{ scope }} .qb54-pl-press__i { font-size: 18px; }
+    {{ scope }} .qb54-pl-bulb:nth-of-type(even) { display: none; }
+  }
+  @media screen and (max-width: 989px) {
+    {{ scope }}.qb54-pl--festive .qb54-pl-snow { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    {{ scope }} *, {{ scope }} *::before, {{ scope }} *::after { animation: none !important; transition: none !important; }
+    {{ scope }}.qb54-pl--js [data-qb54-reveal] { opacity: 1; transform: none; }
+  }
+  body.qb54-pl-bar-on { padding-bottom: calc(70px + env(safe-area-inset-bottom)); }
+  @media screen and (min-width: 750px) { body.qb54-pl-bar-on { padding-bottom: 0; } }
+</style>
+
+{%- capture i_bolt -%}<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.4 2 4.6 13.4h6.1L9.8 22l8.6-11.4h-6.1L13.4 2z"/></svg>{%- endcapture -%}
+{%- capture i_star -%}<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.6 7.7l5.8-.8z"/></svg>{%- endcapture -%}
+{%- capture i_arrow -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>{%- endcapture -%}
+{%- capture i_check -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>{%- endcapture -%}
+{%- capture i_copy -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>{%- endcapture -%}
+{%- capture i_clock -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>{%- endcapture -%}
+{%- capture i_cart -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h3l2.4 12h11l2.1-8H6.4"/></svg>{%- endcapture -%}
+{%- capture i_truck -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 4h14v12H1zM15 9h4l4 4v3h-8z"/><circle cx="6" cy="18.5" r="2"/><circle cx="18" cy="18.5" r="2"/></svg>{%- endcapture -%}
+{%- capture i_shield -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-3.6 8-10V5l-8-3-8 3v7c0 6.4 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>{%- endcapture -%}
+{%- capture i_tag -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>{%- endcapture -%}
+{%- capture i_eye -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>{%- endcapture -%}
+{%- capture i_play -%}<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>{%- endcapture -%}
+{%- capture i_mute -%}<svg class="is-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m23 9-6 6M17 9l6 6"/></svg><svg class="is-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>{%- endcapture -%}
+{%- capture i_insta -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor"/></svg>{%- endcapture -%}
+
+{%- capture stars_5 -%}<span class="qb54-pl-stars">{{ i_star }}{{ i_star }}{{ i_star }}{{ i_star }}{{ i_star }}</span>{%- endcapture -%}
+
+{%- capture cd_units -%}
+  <div class="qb54-pl-cd__u"><span class="qb54-pl-cd__n" data-u="d">00</span><span class="qb54-pl-cd__l">Days</span></div>
+  <span class="qb54-pl-cd__s" aria-hidden="true">:</span>
+  <div class="qb54-pl-cd__u"><span class="qb54-pl-cd__n" data-u="h">00</span><span class="qb54-pl-cd__l">Hrs</span></div>
+  <span class="qb54-pl-cd__s" aria-hidden="true">:</span>
+  <div class="qb54-pl-cd__u"><span class="qb54-pl-cd__n" data-u="m">00</span><span class="qb54-pl-cd__l">Min</span></div>
+  <span class="qb54-pl-cd__s" aria-hidden="true">:</span>
+  <div class="qb54-pl-cd__u"><span class="qb54-pl-cd__n" data-u="s">00</span><span class="qb54-pl-cd__l">Sec</span></div>
+{%- endcapture -%}
+
+{%- capture live_label -%}<span data-qb54-when="live">{{ section.settings.live_label | escape }}</span><span data-qb54-when="before" hidden>{{ section.settings.before_label | escape }}</span>{%- endcapture -%}
+
+<div
+  id="qb54-pl-{{ section.id }}"
+  class="qb54-pl{% if festive %} qb54-pl--festive{% endif %}"
+  data-state="live"
+  data-start="{{ start_iso | escape }}"
+  data-end="{{ end_iso | escape }}"
+  data-code="{{ code | escape }}"
+  data-auto-apply="{{ section.settings.auto_apply_code }}"
+>
+  <header class="qb54-pl-bar">
+    <div class="qb54-pl-wrap qb54-pl-bar__in">
+      <a class="qb54-pl-bar__logo" href="{{ routes.root_url }}">
+        {%- if section.settings.logo != blank -%}
+          {{- section.settings.logo | image_url: width: 260 | image_tag: loading: 'eager', alt: shop.name, widths: '130,260', sizes: '130px' -}}
+        {%- else -%}
+          <span>{{ shop.name }}</span>
+        {%- endif -%}
+      </a>
+      <p class="qb54-pl-bar__mid" data-qb54-when="before live">
+        {{ live_label }} <strong data-qb54-cd-compact>0d 00:00:00</strong>
+        {%- if code != blank -%}<span class="qb54-pl-bar__code">{{ code }}</span>{%- endif -%}
+      </p>
+      <div class="qb54-pl-bar__end">
+        <a class="qb54-pl-cart" href="{{ routes.cart_url }}" aria-label="Cart">{{ i_cart }}<span class="qb54-pl-cart__n" data-qb54-cart-count hidden>0</span></a>
+        <a class="qb54-pl-btn qb54-pl-btn--gold" href="#qb54-pl-deals-{{ section.id }}">{{ section.settings.bar_cta | escape }}</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="qb54-pl-hero" data-qb54-hero aria-labelledby="qb54-pl-h1-{{ section.id }}">
+    {%- if section.settings.hero_image != blank -%}
+      <div class="qb54-pl-hero__bg">
+        {{- section.settings.hero_image | image_url: width: 2400 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '800,1200,1600,2000,2400', sizes: '100vw', alt: '' -}}
+      </div>
+    {%- endif -%}
+    <div class="qb54-pl-snow" aria-hidden="true"><i></i><i></i></div>
+    <div class="qb54-pl-lights" aria-hidden="true">
+      <svg viewBox="0 0 1440 40" preserveAspectRatio="none"><path d="M0 4 Q60 34 120 4 Q180 34 240 4 Q300 34 360 4 Q420 34 480 4 Q540 34 600 4 Q660 34 720 4 Q780 34 840 4 Q900 34 960 4 Q1020 34 1080 4 Q1140 34 1200 4 Q1260 34 1320 4 Q1380 34 1440 4" fill="none" stroke="#2a2d48" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>
+      {%- for i in (0..11) -%}
+        {%- assign left = i | times: 120 | plus: 60 | times: 100.0 | divided_by: 1440 -%}
+        {%- assign mod = i | modulo: 3 -%}
+        <span class="qb54-pl-bulb" style="left: {{ left }}%; --b: {% if mod == 0 %}var(--gold){% elsif mod == 1 %}var(--festive){% else %}#f3f6ff{% endif %}; animation-delay: {{ i | times: 0.22 }}s;"></span>
+      {%- endfor -%}
+    </div>
+
+    <div class="qb54-pl-wrap qb54-pl-hero__grid">
+      <div class="qb54-pl-hero__copy">
+        <div class="qb54-pl-hero__badges">
+          {%- if section.settings.hero_badge != blank -%}<span class="qb54-pl-chip-gold">{{ section.settings.hero_badge | escape }}</span>{%- endif -%}
+          <span class="qb54-pl-rating">{{ stars_5 }}
+            {%- if lead_rating != blank and lead_count != blank -%}<span><b>{{ lead_rating }}</b> · {{ lead_count }} reviews</span>
+            {%- else -%}<span>{{ section.settings.rating_fallback | escape }}</span>{%- endif -%}
+          </span>
+        </div>
+
+        <div data-qb54-when="before live">
+          <p class="qb54-pl-kicker">{{ section.settings.hero_kicker | escape }}</p>
+          <h1 class="qb54-pl-title" id="qb54-pl-h1-{{ section.id }}">
+            <span class="qb54-pl-title__offer">{{ pct }}% Off</span>
+            <span class="qb54-pl-title__line">{{ section.settings.hero_line | escape }}</span>
+          </h1>
+          <p class="qb54-pl-lede">{{ section.settings.hero_text | escape }}</p>
+          <div class="qb54-pl-deal">
+            <div class="qb54-pl-timer">
+              <span class="qb54-pl-timer__label">{{ live_label }}</span>
+              <div class="qb54-pl-cd" data-qb54-cd role="timer" aria-label="Time remaining">{{ cd_units }}</div>
+            </div>
+            {%- if code != blank -%}
+              <div class="qb54-pl-ticket">
+                <div class="qb54-pl-ticket__main"><span class="qb54-pl-ticket__l">Use code</span><span class="qb54-pl-ticket__c">{{ code }}</span></div>
+                <span class="qb54-pl-ticket__perf" aria-hidden="true"></span>
+                <button type="button" class="qb54-pl-ticket__copy" data-qb54-copy="{{ code | escape }}">{{ i_copy }}<span data-qb54-copy-label aria-live="polite">Copy</span></button>
+              </div>
+            {%- endif -%}
+          </div>
+          <p class="qb54-pl-before" data-qb54-when="before" hidden>Code <strong>{{ code }}</strong> unlocks {{ start_label }} — bookmark this page so you're first in line.</p>
+          <div class="qb54-pl-ctas">
+            <a class="qb54-pl-btn qb54-pl-btn--gold qb54-pl-btn--shine" href="#qb54-pl-deals-{{ section.id }}">{{ section.settings.hero_cta | escape }}{{ i_arrow }}</a>
+            {%- if section.settings.hero_cta_2 != blank -%}<a class="qb54-pl-btn qb54-pl-btn--ghost" href="#qb54-pl-reels-{{ section.id }}">{{ section.settings.hero_cta_2 | escape }}</a>{%- endif -%}
+          </div>
+        </div>
+
+        <div class="qb54-pl-ended" data-qb54-when="after" hidden>
+          <h2 class="qb54-pl-ended__t">{{ section.settings.after_heading | escape }}</h2>
+          <p class="qb54-pl-ended__x">{{ section.settings.after_text | escape }}</p>
+          <a class="qb54-pl-btn qb54-pl-btn--gold" href="{{ section.settings.after_url | default: shop_url }}">{{ section.settings.after_cta | escape }}{{ i_arrow }}</a>
+        </div>
+
+        <ul class="qb54-pl-stats">
+          {%- if section.settings.stat_1_n != blank -%}<li><strong>{{ section.settings.stat_1_n | escape }}</strong><span>{{ section.settings.stat_1_l | escape }}</span></li>{%- endif -%}
+          {%- if section.settings.stat_2_n != blank -%}<li><strong>{{ section.settings.stat_2_n | escape }}</strong><span>{{ section.settings.stat_2_l | escape }}</span></li>{%- endif -%}
+          {%- if section.settings.stat_3_n != blank -%}<li><strong>{{ section.settings.stat_3_n | escape }}</strong><span>{{ section.settings.stat_3_l | escape }}</span></li>{%- endif -%}
+        </ul>
+      </div>
+
+      {%- if product_blocks.size > 0 -%}
+        <aside class="qb54-pl-buy" aria-label="Featured deal" data-qb54-switch>
+          <div class="qb54-pl-buy__card">
+            <span class="qb54-pl-ribbon" aria-hidden="true"></span>
+            <svg class="qb54-pl-bow" viewBox="0 0 112 64" aria-hidden="true">
+              <path d="M56 34 C38 6 10 2 8 22 C6 38 30 40 56 34Z" fill="var(--festive)"/>
+              <path d="M56 34 C74 6 102 2 104 22 C106 38 82 40 56 34Z" fill="var(--festive)"/>
+              <path d="M56 34 C44 18 22 14 20 24 C19 31 34 34 56 34Z" fill="rgba(0,0,0,.18)"/>
+              <path d="M56 34 C68 18 90 14 92 24 C93 31 78 34 56 34Z" fill="rgba(0,0,0,.18)"/>
+              <path d="M50 36 L38 62 L46 58 L50 64 L56 38Z" fill="var(--festive)"/>
+              <path d="M62 36 L74 62 L66 58 L62 64 L56 38Z" fill="var(--festive)"/>
+              <ellipse cx="56" cy="34" rx="9" ry="8" fill="color-mix(in srgb, var(--festive) 75%, #000)"/>
+            </svg>
+            <span class="qb54-pl-tag" aria-hidden="true"><span>{{ pct }}% Off<small>{{ section.settings.tag_label | escape }}</small></span></span>
+            {%- liquid
+              assign hero_count = 0
+              for hb in product_blocks
+                if hb.settings.product != blank and hero_count < 3
+                  assign hero_count = hero_count | plus: 1
+                endif
+              endfor
+              assign hero_i = 0
+            -%}
+            {%- for block in product_blocks -%}
+              {%- assign p = block.settings.product -%}
+              {%- if p == blank or hero_i >= 3 -%}{%- continue -%}{%- endif -%}
+              {%- liquid
+                assign hero_i = hero_i | plus: 1
+                assign v = p.selected_or_first_available_variant
+                assign multi = true
+                if p.has_only_default_variant
+                  assign multi = false
+                endif
+                assign base = v.price
+                if multi
+                  assign base = p.price_min
+                endif
+                assign sale = base | times: keep | divided_by: 100
+                assign save = base | minus: sale
+                assign needs_page = false
+                if block.settings.needs_customization or multi
+                  assign needs_page = true
+                endif
+                assign r = p.metafields.reviews.rating.value
+                assign rc = p.metafields.reviews.rating_count.value
+              -%}
+              <div data-qb54-panel="{{ hero_i }}"{% if hero_i > 1 %} hidden{% endif %}>
+                <div class="qb54-pl-buy__media">
+                  {%- if block.settings.flag != blank -%}<span class="qb54-pl-flag">{{ block.settings.flag }}</span>{%- endif -%}
+                  <span class="qb54-pl-badge" data-qb54-when="before live">{{ pct }}% Off</span>
+                  {%- if p.featured_media != blank -%}
+                    {{- p.featured_media.preview_image | image_url: width: 900 | image_tag: loading: 'eager', widths: '450,700,900', sizes: '(min-width: 990px) 440px, 92vw', alt: p.featured_media.alt | default: p.title -}}
+                  {%- endif -%}
+                </div>
+                <div class="qb54-pl-buy__body">
+                  <span class="qb54-pl-rating">{{ stars_5 }}
+                    {%- if r != blank and rc != blank -%}<span><b>{{ r.rating | round: 1 }}</b> · {{ rc }} reviews</span>{%- else -%}<span>{{ block.settings.rating_text | escape }}</span>{%- endif -%}
+                  </span>
+                  <h2 class="qb54-pl-buy__title">{{ block.settings.title_override | default: p.title | escape }}</h2>
+                  <div class="qb54-pl-price" data-qb54-when="before live">
+                    {%- if multi -%}<span class="qb54-pl-from">From</span>{%- endif -%}
+                    <span class="qb54-pl-now">{{ sale | money }}</span>
+                    <s class="qb54-pl-was"><span class="qb54-pl-sr">Regular price </span>{{ base | money }}</s>
+                    <span class="qb54-pl-save">Save {{ save | money }}</span>
+                  </div>
+                  <p class="qb54-pl-code-note" data-qb54-when="live">With code <strong>{{ code }}</strong> at checkout</p>
+                  <p class="qb54-pl-code-note" data-qb54-when="before" hidden>With code <strong>{{ code }}</strong> · starts {{ start_label }}</p>
+                  <div class="qb54-pl-price" data-qb54-when="after" hidden><span class="qb54-pl-now">{{ base | money }}</span></div>
+                  {%- if hero_count > 1 -%}
+                    <div class="qb54-pl-swatches" role="group" aria-label="Choose a color">
+                      <span class="qb54-pl-swatches__l">Color</span>
+                      {%- assign sw_i = 0 -%}
+                      {%- for sb in product_blocks -%}
+                        {%- if sb.settings.product == blank or sw_i >= 3 -%}{%- continue -%}{%- endif -%}
+                        {%- assign sw_i = sw_i | plus: 1 -%}
+                        <button type="button" class="qb54-pl-sw" style="--sw: {{ sb.settings.swatch }};" data-qb54-switch-to="{{ sw_i }}" aria-pressed="{% if sw_i == hero_i %}true{% else %}false{% endif %}" aria-label="{{ sb.settings.swatch_label | default: sb.settings.product.title | escape }}"></button>
+                      {%- endfor -%}
+                    </div>
+                  {%- endif -%}
+                  {%- render 'qb54-pl-buy-button', product: p, variant: v, needs_page: needs_page, label: block.settings.options_label -%}
+                  <span class="qb54-pl-instock">{{ block.settings.ship_note | default: section.settings.stock_note | escape }}</span>
+                  <p class="qb54-pl-buy__foot">{{ section.settings.card_foot | escape }}</p>
+                </div>
+              </div>
+            {%- endfor -%}
+          </div>
+        </aside>
+      {%- endif -%}
+    </div>
+  </section>
+
+  {%- assign ticker = section.settings.ticker_items | split: '|' -%}
+  {%- if ticker.size > 0 -%}
+    <div class="qb54-pl-ticker">
+      <div class="qb54-pl-ticker__track">
+        {%- for pass in (1..2) -%}
+          <div class="qb54-pl-ticker__g"{% if pass == 2 %} aria-hidden="true"{% endif %}>
+            {%- for rep in (1..2) -%}{%- for item in ticker -%}<span class="qb54-pl-ticker__i">{{ item | strip | escape }}{{ i_bolt }}</span>{%- endfor -%}{%- endfor -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- if reel_blocks.size > 0 -%}
+    <section class="qb54-pl-reels" id="qb54-pl-reels-{{ section.id }}" aria-labelledby="qb54-pl-reels-h-{{ section.id }}">
+      <div class="qb54-pl-wrap">
+        <header class="qb54-pl-head qb54-pl-head--split" data-qb54-reveal>
+          <div>
+            <p class="qb54-pl-eyebrow">{{ section.settings.reels_eyebrow | escape }}</p>
+            <h2 class="qb54-pl-h2" id="qb54-pl-reels-h-{{ section.id }}">{{ section.settings.reels_heading }}</h2>
+            {%- if section.settings.reels_text != blank -%}<p class="qb54-pl-lede">{{ section.settings.reels_text | escape }}</p>{%- endif -%}
+          </div>
+          {%- if section.settings.instagram_url != blank -%}<a class="qb54-pl-follow qb54-pl-head__aside" href="{{ section.settings.instagram_url }}" target="_blank" rel="noopener">{{ i_insta }}{{ section.settings.instagram_label | escape }}</a>{%- endif -%}
+        </header>
+        <div class="qb54-pl-rail" data-qb54-reel-rail>
+          {%- for block in reel_blocks -%}
+            {%- liquid
+              assign reel_src = block.settings.video_url
+              assign reel_poster = block.settings.poster_url
+              if block.settings.video != blank
+                for s in block.settings.video.sources
+                  if s.mime_type == 'video/mp4'
+                    assign reel_src = s.url
+                  endif
+                endfor
+                assign reel_poster = block.settings.video.preview_image | image_url: width: 540
+              endif
+            -%}
+            <figure class="qb54-pl-reel" data-qb54-reveal data-qb54-reel {{ block.shopify_attributes }}>
+              {%- comment %}theme-check-disable RemoteAsset{% endcomment -%}
+              {%- if reel_poster != blank -%}<img src="{{ reel_poster }}" alt="" loading="lazy" width="540" height="960">{%- endif -%}
+              {%- comment %}theme-check-enable RemoteAsset{% endcomment -%}
+              <video muted loop playsinline preload="none" data-src="{{ reel_src | escape }}"{% if reel_poster != blank %} poster="{{ reel_poster }}"{% endif %} aria-label="{{ block.settings.caption | escape }}"></video>
+              {%- if block.settings.chip != blank -%}<span class="qb54-pl-reel__chip">{{ i_eye }}{{ block.settings.chip | escape }}</span>{%- endif -%}
+              <button type="button" class="qb54-pl-reel__snd" data-qb54-reel-sound aria-label="Turn sound on">{{ i_mute }}</button>
+              <span class="qb54-pl-reel__play" aria-hidden="true">{{ i_play }}</span>
+              {%- if block.settings.caption != blank -%}<figcaption>{{ block.settings.caption | escape }}</figcaption>{%- endif -%}
+            </figure>
+          {%- endfor -%}
+        </div>
+        {%- assign press = section.settings.press_items | default: '' | split: '|' -%}
+        {%- if press.size > 0 -%}
+          <div class="qb54-pl-press" data-qb54-reveal>
+            <span class="qb54-pl-press__l">{{ section.settings.press_label | escape }}</span>
+            {%- for item in press -%}<span class="qb54-pl-press__i">{{ item | strip | escape }}</span>{%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </section>
+  {%- endif -%}
+
+  <section class="qb54-pl-stage qb54-pl-light" id="qb54-pl-deals-{{ section.id }}" aria-labelledby="qb54-pl-deals-h-{{ section.id }}">
+    <div class="qb54-pl-wrap">
+      <header class="qb54-pl-head qb54-pl-head--split" data-qb54-reveal>
+        <div>
+          <p class="qb54-pl-eyebrow">{{ section.settings.stage_eyebrow | escape }}</p>
+          <h2 class="qb54-pl-h2" id="qb54-pl-deals-h-{{ section.id }}">{{ section.settings.stage_heading }}</h2>
+          {%- if section.settings.stage_text != blank -%}<p class="qb54-pl-lede">{{ section.settings.stage_text | escape }}</p>{%- endif -%}
+        </div>
+        <p class="qb54-pl-timerpill qb54-pl-head__aside" data-qb54-when="before live">{{ i_clock }}<span>{{ live_label }} <strong data-qb54-cd-compact>0d 00:00:00</strong></span></p>
+      </header>
+
+      <div data-qb54-switch data-qb54-reveal>
+        <div class="qb54-pl-tabs" role="tablist" aria-label="{{ section.settings.stage_eyebrow | escape }}">
+          {%- assign t_i = 0 -%}
+          {%- for block in product_blocks -%}
+            {%- assign p = block.settings.product -%}
+            {%- if p == blank -%}{%- continue -%}{%- endif -%}
+            {%- liquid
+              assign t_i = t_i | plus: 1
+              assign v = p.selected_or_first_available_variant
+              assign base = v.price
+              if p.has_only_default_variant == false
+                assign base = p.price_min
+              endif
+              assign sale = base | times: keep | divided_by: 100
+            -%}
+            <button type="button" class="qb54-pl-tab" role="tab" id="qb54-pl-tab-{{ section.id }}-{{ t_i }}" aria-controls="qb54-pl-panel-{{ section.id }}-{{ t_i }}" aria-selected="{% if t_i == 1 %}true{% else %}false{% endif %}" tabindex="{% if t_i == 1 %}0{% else %}-1{% endif %}" data-qb54-switch-to="{{ t_i }}" {{ block.shopify_attributes }}>
+              {%- if section.settings.tab_style == 'thumb' -%}
+                <span class="qb54-pl-tab__thumb">{{- p.featured_media.preview_image | image_url: width: 120 | image_tag: loading: 'lazy', alt: '' -}}</span>
+              {%- else -%}
+                <span class="qb54-pl-tab__dot" style="--sw: {{ block.settings.swatch }};"></span>
+              {%- endif -%}
+              <span class="qb54-pl-tab__t">
+                <strong>{{ block.settings.tab_label | default: p.title | escape }}</strong>
+                <span data-qb54-when="before live">{% if p.has_only_default_variant == false %}From {% endif %}{{ sale | money }} with {{ code }}</span>
+                <span data-qb54-when="after" hidden>{{ base | money }}</span>
+              </span>
+            </button>
+          {%- endfor -%}
+        </div>
+
+        {%- assign t_i = 0 -%}
+        {%- for block in product_blocks -%}
+          {%- assign p = block.settings.product -%}
+          {%- if p == blank -%}{%- continue -%}{%- endif -%}
+          {%- liquid
+            assign t_i = t_i | plus: 1
+            assign v = p.selected_or_first_available_variant
+            assign multi = true
+            if p.has_only_default_variant
+              assign multi = false
+            endif
+            assign base = v.price
+            if multi
+              assign base = p.price_min
+            endif
+            assign sale = base | times: keep | divided_by: 100
+            assign save = base | minus: sale
+            assign needs_page = false
+            if block.settings.needs_customization or multi
+              assign needs_page = true
+            endif
+            assign r = p.metafields.reviews.rating.value
+            assign rc = p.metafields.reviews.rating_count.value
+            assign items = included
+            if block.settings.included_override != blank
+              assign items = block.settings.included_override | split: '|'
+            endif
+          -%}
+          <div class="qb54-pl-panel" role="tabpanel" id="qb54-pl-panel-{{ section.id }}-{{ t_i }}" aria-labelledby="qb54-pl-tab-{{ section.id }}-{{ t_i }}" data-qb54-panel="{{ t_i }}"{% if t_i > 1 %} hidden{% endif %}>
+            <div class="qb54-pl-gallery" data-qb54-gallery>
+              <div class="qb54-pl-gallery__main">
+                {%- if block.settings.flag != blank -%}<span class="qb54-pl-flag">{{ block.settings.flag }}</span>{%- endif -%}
+                <span class="qb54-pl-badge" data-qb54-when="before live">{{ pct }}% Off</span>
+                {%- if p.featured_media != blank -%}
+                  {{- p.featured_media.preview_image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '500,800,1200', sizes: '(min-width: 990px) 640px, 92vw', alt: p.featured_media.alt | default: p.title -}}
+                {%- endif -%}
+              </div>
+              {%- if p.media.size > 1 -%}
+                <div class="qb54-pl-thumbs">
+                  {%- for m in p.media limit: 4 -%}
+                    <button type="button" class="qb54-pl-thumb" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" aria-label="Show image {{ forloop.index }}" data-qb54-thumb="{{ m.preview_image | image_url: width: 1200 }}">
+                      {{- m.preview_image | image_url: width: 240 | image_tag: loading: 'lazy', alt: '' -}}
+                    </button>
+                  {%- endfor -%}
+                </div>
+              {%- endif -%}
+            </div>
+            <div class="qb54-pl-info">
+              {%- if block.settings.recipient != blank -%}<span class="qb54-pl-info__flag">{{ block.settings.recipient }}</span>{%- endif -%}
+              <h3 class="qb54-pl-info__title">{{ block.settings.title_override | default: p.title | escape }}</h3>
+              <span class="qb54-pl-rating">{{ stars_5 }}
+                {%- if r != blank and rc != blank -%}<span><b>{{ r.rating | round: 1 }}</b> · {{ rc }} reviews</span>{%- else -%}<span>{{ block.settings.rating_text | escape }}</span>{%- endif -%}
+              </span>
+              {%- if block.settings.pitch != blank -%}<p class="qb54-pl-pitch">{{ block.settings.pitch | escape }}</p>{%- endif -%}
+              <div class="qb54-pl-price" data-qb54-when="before live">
+                {%- if multi -%}<span class="qb54-pl-from">From</span>{%- endif -%}
+                <span class="qb54-pl-now">{{ sale | money }}</span>
+                <s class="qb54-pl-was"><span class="qb54-pl-sr">Regular price </span>{{ base | money }}</s>
+                <span class="qb54-pl-save">Save {{ save | money }}</span>
+              </div>
+              <p class="qb54-pl-code-note" data-qb54-when="live">With code <strong>{{ code }}</strong> at checkout</p>
+              <p class="qb54-pl-code-note" data-qb54-when="before" hidden>With code <strong>{{ code }}</strong> · starts {{ start_label }}</p>
+              <div class="qb54-pl-price" data-qb54-when="after" hidden><span class="qb54-pl-now">{{ base | money }}</span></div>
+              {%- if items.size > 0 -%}
+                <ul class="qb54-pl-checks">{%- for item in items -%}<li>{{ i_check }}{{ item | strip | escape }}</li>{%- endfor -%}</ul>
+              {%- endif -%}
+              {%- render 'qb54-pl-buy-button', product: p, variant: v, needs_page: needs_page, label: block.settings.options_label -%}
+              <div class="qb54-pl-trustline">
+                <span class="qb54-pl-instock">{{ block.settings.ship_note | default: section.settings.stock_note | escape }}</span>
+                <span>{{ i_truck }}{{ section.settings.shipping_note | escape }}</span>
+                <span>{{ i_shield }}{{ section.settings.returns_note | escape }}</span>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+
+  {%- if photo_blocks.size > 0 -%}
+    <section class="qb54-pl-where" aria-labelledby="qb54-pl-where-h-{{ section.id }}">
+      <div class="qb54-pl-wrap">
+        <header class="qb54-pl-head qb54-pl-center" data-qb54-reveal>
+          <p class="qb54-pl-eyebrow">{{ section.settings.where_eyebrow | escape }}</p>
+          <h2 class="qb54-pl-h2" id="qb54-pl-where-h-{{ section.id }}">{{ section.settings.where_heading }}</h2>
+          {%- if section.settings.where_text != blank -%}<p class="qb54-pl-lede">{{ section.settings.where_text | escape }}</p>{%- endif -%}
+        </header>
+        <div class="qb54-pl-mosaic">
+          {%- for block in photo_blocks -%}
+            <figure class="qb54-pl-tile" data-qb54-reveal {{ block.shopify_attributes }}>
+              {%- if block.settings.image != blank -%}
+                {%- if forloop.first -%}
+                  {{- block.settings.image | image_url: width: 1400 | image_tag: loading: 'lazy', widths: '600,900,1400', sizes: '(min-width: 990px) 50vw, 100vw', alt: block.settings.label -}}
+                {%- else -%}
+                  {{- block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '400,600,800', sizes: '(min-width: 990px) 25vw, 50vw', alt: block.settings.label -}}
+                {%- endif -%}
+              {%- endif -%}
+              <figcaption><strong>{{ block.settings.label | escape }}</strong>{%- if block.settings.caption != blank -%}<span>{{ block.settings.caption | escape }}</span>{%- endif -%}</figcaption>
+            </figure>
+          {%- endfor -%}
+        </div>
+        <div class="qb54-pl-feats">
+          <div class="qb54-pl-feat" data-qb54-reveal><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3v9h12V3M4 12h16v3H4zM6 15l-2 6M18 15l2 6M8 15v6M16 15v6"/></svg></i><div><strong>{{ section.settings.feat_1_t | escape }}</strong><span>{{ section.settings.feat_1_s | escape }}</span></div></div>
+          <div class="qb54-pl-feat" data-qb54-reveal><i>{{ i_clock }}</i><div><strong>{{ section.settings.feat_2_t | escape }}</strong><span>{{ section.settings.feat_2_s | escape }}</span></div></div>
+          <div class="qb54-pl-feat" data-qb54-reveal><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.3a3.5 3.5 0 0 1 0 7.4M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/></svg></i><div><strong>{{ section.settings.feat_3_t | escape }}</strong><span>{{ section.settings.feat_3_s | escape }}</span></div></div>
+          <div class="qb54-pl-feat" data-qb54-reveal><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 13H6L5 8zM9 8V6a3 3 0 0 1 6 0v2"/></svg></i><div><strong>{{ section.settings.feat_4_t | escape }}</strong><span>{{ section.settings.feat_4_s | escape }}</span></div></div>
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+
+  {%- if step_blocks.size > 0 -%}
+    <section class="qb54-pl-steps" data-qb54-when="before live" aria-labelledby="qb54-pl-steps-h-{{ section.id }}">
+      <div class="qb54-pl-wrap">
+        <div class="qb54-pl-center" data-qb54-reveal>
+          <p class="qb54-pl-eyebrow">{{ section.settings.steps_eyebrow | escape }}</p>
+          <h2 class="qb54-pl-h2" id="qb54-pl-steps-h-{{ section.id }}">{{ section.settings.steps_heading | escape }}</h2>
+        </div>
+        <ol class="qb54-pl-steps__list">
+          {%- for block in step_blocks -%}
+            {%- assign step_text = block.settings.text | escape -%}
+            {%- if code != blank -%}
+              {%- assign marked = '<mark>' | append: code | append: '</mark>' -%}
+              {%- assign step_text = step_text | replace: code, marked -%}
+            {%- endif -%}
+            <li class="qb54-pl-step" data-qb54-reveal {{ block.shopify_attributes }}>
+              <span class="qb54-pl-step__n" aria-hidden="true">0{{ forloop.index }}</span>
+              <span class="qb54-pl-step__i" aria-hidden="true">{{ forloop.index }}</span>
+              <h3>{{ block.settings.title | escape }}</h3>
+              <p>{{ step_text }}</p>
+            </li>
+          {%- endfor -%}
+        </ol>
+        {%- if section.settings.auto_apply_code -%}<p class="qb54-pl-steps__note" data-qb54-when="live">{{ section.settings.auto_apply_note | escape }}</p>{%- endif -%}
+      </div>
+    </section>
+  {%- endif -%}
+
+  {%- if review_blocks.size > 0 -%}
+    <section class="qb54-pl-reviews qb54-pl-light" aria-labelledby="qb54-pl-rev-h-{{ section.id }}">
+      <div class="qb54-pl-wrap">
+        <header class="qb54-pl-head qb54-pl-center" data-qb54-reveal>
+          <p class="qb54-pl-eyebrow">{{ section.settings.reviews_eyebrow | escape }}</p>
+          <h2 class="qb54-pl-h2" id="qb54-pl-rev-h-{{ section.id }}">{{ section.settings.reviews_heading }}</h2>
+          <p class="qb54-pl-score">{{ stars_5 }}
+            {%- if lead_rating != blank and lead_count != blank -%}<span><b>{{ lead_rating }}</b> average · {{ lead_count }} reviews</span>
+            {%- else -%}<span>{{ section.settings.rating_fallback | escape }}</span>{%- endif -%}
+          </p>
+        </header>
+        <div class="qb54-pl-revrail" data-qb54-rail tabindex="0" aria-label="Customer reviews">
+          {%- for block in review_blocks -%}
+            <figure class="qb54-pl-review" {{ block.shopify_attributes }}>
+              {{ stars_5 }}
+              {%- if block.settings.tag != blank -%}<span class="qb54-pl-review__tag">{{ block.settings.tag | escape }}</span>{%- endif -%}
+              <blockquote>“{{ block.settings.quote | escape }}”</blockquote>
+              <footer>
+                <span class="qb54-pl-av" aria-hidden="true">{{ block.settings.name | slice: 0 | upcase }}</span>
+                <span><cite>{{ block.settings.name | escape }}</cite><span class="qb54-pl-verified">{{ i_check }}Verified Buyer</span></span>
+              </footer>
+            </figure>
+          {%- endfor -%}
+        </div>
+        <div class="qb54-pl-dots" data-qb54-dots></div>
+      </div>
+    </section>
+  {%- endif -%}
+
+  {%- if faq_blocks.size > 0 -%}
+    <section class="qb54-pl-faq qb54-pl-light" aria-labelledby="qb54-pl-faq-h-{{ section.id }}">
+      <div class="qb54-pl-wrap qb54-pl-faq__grid">
+        <div class="qb54-pl-faq__aside" data-qb54-reveal>
+          <p class="qb54-pl-eyebrow">{{ section.settings.faq_eyebrow | escape }}</p>
+          <h2 class="qb54-pl-h2" id="qb54-pl-faq-h-{{ section.id }}">{{ section.settings.faq_heading | escape }}</h2>
+          {%- if section.settings.faq_text != blank -%}<p class="qb54-pl-lede">{{ section.settings.faq_text | escape }}</p>{%- endif -%}
+        </div>
+        <div>
+          {%- for block in faq_blocks -%}
+            <details class="qb54-pl-qa"{% if forloop.first %} open{% endif %} {{ block.shopify_attributes }}>
+              <summary>{{ block.settings.question | escape }}<span class="qb54-pl-plus" aria-hidden="true"></span></summary>
+              <div class="qb54-pl-qa__a">{{ block.settings.answer }}</div>
+            </details>
+          {%- endfor -%}
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+
+  <section class="qb54-pl-close" data-qb54-close aria-labelledby="qb54-pl-close-h-{{ section.id }}">
+    <div class="qb54-pl-wrap qb54-pl-center">
+      <div data-qb54-when="before live">
+        <p class="qb54-pl-eyebrow">{{ section.settings.close_eyebrow | escape }}</p>
+        <p class="qb54-pl-close__big" aria-hidden="true">{{ pct }}% Off</p>
+        <h2 class="qb54-pl-h2" id="qb54-pl-close-h-{{ section.id }}">{{ section.settings.close_heading | escape }}</h2>
+        {%- if section.settings.close_text != blank -%}<p class="qb54-pl-lede">{{ section.settings.close_text | escape }}</p>{%- endif -%}
+        <p class="qb54-pl-close__l">{{ live_label }}</p>
+        <div class="qb54-pl-cd" data-qb54-cd role="timer" aria-label="Time remaining">{{ cd_units }}</div>
+        <ul class="qb54-pl-chips">
+          {%- if code != blank -%}<li>{{ i_tag }}Code {{ code }}</li>{%- endif -%}
+          <li>{{ i_truck }}{{ section.settings.shipping_note | escape }}</li>
+          <li>{{ i_shield }}{{ section.settings.returns_note | escape }}</li>
+        </ul>
+        <a class="qb54-pl-btn qb54-pl-btn--white" href="#qb54-pl-deals-{{ section.id }}">{{ section.settings.close_cta | escape }}{{ i_arrow }}</a>
+      </div>
+      <div data-qb54-when="after" hidden>
+        <h2 class="qb54-pl-h2">{{ section.settings.after_heading | escape }}</h2>
+        <p class="qb54-pl-lede">{{ section.settings.after_text | escape }}</p>
+        <a class="qb54-pl-btn qb54-pl-btn--white" href="{{ section.settings.after_url | default: shop_url }}">{{ section.settings.after_cta | escape }}{{ i_arrow }}</a>
+      </div>
+    </div>
+  </section>
+
+  {%- if section.settings.show_sticky_bar -%}
+    <div class="qb54-pl-sticky" data-qb54-sticky data-qb54-when="before live" aria-hidden="true">
+      <div class="qb54-pl-sticky__t">
+        <strong>{{ pct }}% off · {{ code }}</strong>
+        <span>{{ live_label }} <span data-qb54-cd-compact>0d 00:00:00</span></span>
+      </div>
+      <a class="qb54-pl-btn qb54-pl-btn--gold" href="#qb54-pl-deals-{{ section.id }}" tabindex="-1" data-qb54-sticky-shop>{{ section.settings.sticky_cta | escape }}</a>
+      <a class="qb54-pl-btn qb54-pl-btn--gold" href="{{ checkout_url }}" tabindex="-1" data-qb54-checkout data-qb54-sticky-checkout hidden>Checkout <span data-qb54-cart-count>0</span></a>
+    </div>
+  {%- endif -%}
+
+  <div class="qb54-pl-toast" data-qb54-toast role="status" aria-live="polite" hidden>
+    <span class="qb54-pl-toast__ok" aria-hidden="true">{{ i_check }}</span>
+    <div class="qb54-pl-toast__t"><strong>Added to cart</strong><span data-qb54-toast-meta></span></div>
+    <div class="qb54-pl-toast__a">
+      <a class="qb54-pl-btn qb54-pl-btn--gold" href="{{ checkout_url }}" data-qb54-checkout>Checkout</a>
+      <a class="qb54-pl-toast__cart" href="{{ routes.cart_url }}">View cart</a>
+    </div>
+    <button type="button" class="qb54-pl-toast__x" data-qb54-toast-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var id = '{{ section.id }}';
+    var root = document.getElementById('qb54-pl-' + id);
+    if (!root) return;
+    window.__qb54Pl = window.__qb54Pl || {};
+    if (window.__qb54Pl[id]) window.__qb54Pl[id].destroy();
+
+    var cleanups = [];
+    var shopRoot = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var start = Date.parse(root.getAttribute('data-start'));
+    var end = Date.parse(root.getAttribute('data-end'));
+    var code = root.getAttribute('data-code');
+    var state = null;
+    root.classList.add('qb54-pl--js');
+
+    function $all(sel, ctx) { return Array.prototype.slice.call((ctx || root).querySelectorAll(sel)); }
+
+    /* ---- Switchers: stage tabs and hero swatches toggle their panels ---- */
+    function select(container, index, focus) {
+      $all('[data-qb54-switch-to]', container).forEach(function (btn) {
+        var on = btn.getAttribute('data-qb54-switch-to') === String(index);
+        if (btn.getAttribute('role') === 'tab') {
+          btn.setAttribute('aria-selected', on ? 'true' : 'false');
+          btn.tabIndex = on ? 0 : -1;
+        } else {
+          btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        }
+      });
+      $all('[data-qb54-panel]', container).forEach(function (panel) {
+        panel.hidden = panel.getAttribute('data-qb54-panel') !== String(index);
+      });
+      if (focus) {
+        var match = $all('[data-qb54-switch-to="' + index + '"]', container).filter(function (b) { return b.offsetParent !== null; })[0];
+        if (match) match.focus();
+      }
+    }
+    $all('[data-qb54-switch]').forEach(function (container) {
+      container.addEventListener('click', function (event) {
+        var btn = event.target.closest('[data-qb54-switch-to]');
+        if (!btn || !container.contains(btn)) return;
+        // Hero swatches live inside the panels they switch, so focus moves to the twin in the new panel.
+        select(container, btn.getAttribute('data-qb54-switch-to'), btn.classList.contains('qb54-pl-sw'));
+      });
+      container.addEventListener('keydown', function (event) {
+        var tab = event.target.closest('.qb54-pl-tab');
+        if (!tab || (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft')) return;
+        var tabs = $all('.qb54-pl-tab', container);
+        var i = tabs.indexOf(tab) + (event.key === 'ArrowRight' ? 1 : -1);
+        if (i < 0) i = tabs.length - 1;
+        if (i >= tabs.length) i = 0;
+        select(container, tabs[i].getAttribute('data-qb54-switch-to'), true);
+        event.preventDefault();
+      });
+    });
+
+    /* ---- Gallery thumbs ---- */
+    root.addEventListener('click', function (event) {
+      var thumb = event.target.closest('[data-qb54-thumb]');
+      if (!thumb) return;
+      var gallery = thumb.closest('[data-qb54-gallery]');
+      var main = gallery && gallery.querySelector('.qb54-pl-gallery__main img');
+      if (main) { main.removeAttribute('srcset'); main.src = thumb.getAttribute('data-qb54-thumb'); }
+      $all('[data-qb54-thumb]', gallery).forEach(function (t) { t.setAttribute('aria-pressed', t === thumb ? 'true' : 'false'); });
+    });
+
+    /* ---- Sale state + countdown (one shared clock) ---- */
+    var checkoutLinks = $all('[data-qb54-checkout]');
+    function stateAt(now) {
+      if (!isNaN(start) && now < start) return 'before';
+      if (!isNaN(end) && now >= end) return 'after';
+      return 'live';
+    }
+    function applyState(next, silent) {
+      if (!next) return;
+      root.setAttribute('data-state', next);
+      $all('[data-qb54-when]').forEach(function (el) {
+        var when = ' ' + el.getAttribute('data-qb54-when') + ' ';
+        el.hidden = when.indexOf(' ' + next + ' ') === -1;
+      });
+      var href = shopRoot + 'checkout' + (next === 'live' && code ? '?discount=' + encodeURIComponent(code) : '');
+      checkoutLinks.forEach(function (a) { a.setAttribute('href', href); });
+      if (!silent) {
+        if (next === 'live') maybeApplyCode();
+        updateSticky();
+      }
+    }
+    function pad(n) { return n < 10 ? '0' + n : String(n); }
+    function setNum(el, value) {
+      if (el.textContent === value) return;
+      el.textContent = value;
+      if (!reduce) { el.classList.remove('is-tick'); void el.offsetWidth; el.classList.add('is-tick'); }
+    }
+    var groups = $all('[data-qb54-cd]');
+    var compacts = $all('[data-qb54-cd-compact]');
+    function tick() {
+      var now = Date.now();
+      var next = stateAt(now);
+      if (next !== state) { state = next; applyState(next); }
+      if (state === 'after') return;
+      var diff = Math.max(0, (state === 'before' ? start : end) - now);
+      var d = Math.floor(diff / 86400000), h = Math.floor(diff % 86400000 / 3600000), m = Math.floor(diff % 3600000 / 60000), s = Math.floor(diff % 60000 / 1000);
+      var parts = { d: pad(d), h: pad(h), m: pad(m), s: pad(s) };
+      groups.forEach(function (g) { $all('[data-u]', g).forEach(function (n) { setNum(n, parts[n.getAttribute('data-u')]); }); });
+      var compact = d + 'd ' + pad(h) + ':' + pad(m) + ':' + pad(s);
+      compacts.forEach(function (c) { c.textContent = compact; });
+    }
+    var applied = false;
+    function maybeApplyCode() {
+      if (applied || !code || root.getAttribute('data-auto-apply') !== 'true') return;
+      if (window.Shopify && window.Shopify.designMode) return;
+      applied = true;
+      var key = 'qb54_pl_code_' + code;
+      try { if (sessionStorage.getItem(key)) return; } catch (e) {}
+      fetch(shopRoot + 'discount/' + encodeURIComponent(code) + '?redirect=' + encodeURIComponent(shopRoot + 'cart.js'), { credentials: 'same-origin' })
+        .then(function () { try { sessionStorage.setItem(key, '1'); } catch (e) {} })
+        .catch(function () {});
+    }
+
+    /* ---- Copy code ---- */
+    function onCopy(event) {
+      var btn = event.target.closest('[data-qb54-copy]');
+      if (!btn) return;
+      var value = btn.getAttribute('data-qb54-copy');
+      var label = btn.querySelector('[data-qb54-copy-label]');
+      var done = function () { if (label) { label.textContent = 'Copied!'; setTimeout(function () { label.textContent = 'Copy'; }, 1800); } };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(value).then(done, done);
+      else {
+        var ta = document.createElement('textarea');
+        ta.value = value; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta); done();
+      }
+    }
+
+    /* ---- Cart: count, toast, checkout path (no header or drawer on these pages) ---- */
+    var countEls = $all('[data-qb54-cart-count]');
+    var stickyShop = root.querySelector('[data-qb54-sticky-shop]');
+    var stickyCheckout = root.querySelector('[data-qb54-sticky-checkout]');
+    var toast = root.querySelector('[data-qb54-toast]');
+    var toastMeta = root.querySelector('[data-qb54-toast-meta]');
+    var toastTimer = 0;
+    function updateCartUi(cart, bump) {
+      var count = (cart && cart.item_count) || 0;
+      countEls.forEach(function (el) {
+        el.textContent = count;
+        if (el.classList.contains('qb54-pl-cart__n')) {
+          el.hidden = count === 0;
+          if (bump && !reduce) { el.classList.remove('is-bump'); void el.offsetWidth; el.classList.add('is-bump'); }
+        }
+      });
+      if (stickyShop && stickyCheckout) { stickyCheckout.hidden = count === 0; stickyShop.hidden = count > 0; }
+    }
+    function hideToast() { clearTimeout(toastTimer); if (toast) toast.hidden = true; }
+    function showToast(title, cart) {
+      if (!toast) return;
+      var count = (cart && cart.item_count) || 0;
+      if (toastMeta) toastMeta.textContent = (title ? title + ' · ' : '') + count + (count === 1 ? ' item' : ' items') + ' in your cart';
+      toast.hidden = false;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(hideToast, 9000);
+    }
+    cleanups.push(function () { clearTimeout(toastTimer); });
+    fetch(shopRoot + 'cart.js', { headers: { 'Accept': 'application/json' } })
+      .then(function (r) { return r.json(); }).then(function (cart) { updateCartUi(cart, false); }).catch(function () {});
+
+    var cartIconHtml = '';
+    var anyIcon = root.querySelector('[data-qb54-add] [data-qb54-btn-icon]');
+    if (anyIcon) cartIconHtml = anyIcon.innerHTML;
+    function setButton(btn, mode, message) {
+      var label = btn.querySelector('[data-qb54-btn-label]');
+      var icon = btn.querySelector('[data-qb54-btn-icon]');
+      var err = btn.parentNode.querySelector('[data-qb54-err]');
+      btn.classList.remove('is-added', 'is-error');
+      btn.removeAttribute('aria-busy');
+      if (err) { err.hidden = true; err.textContent = ''; }
+      if (mode === 'loading') {
+        btn.setAttribute('aria-busy', 'true');
+        if (icon) icon.innerHTML = '<span class="qb54-pl-spin"></span>';
+        if (label) label.textContent = 'Adding…';
+      } else if (mode === 'added') {
+        btn.classList.add('is-added');
+        if (icon) icon.innerHTML = '{{ i_check | strip_newlines }}';
+        if (label) label.textContent = 'Added';
+        setTimeout(function () { setButton(btn, 'idle'); }, 2200);
+      } else if (mode === 'error') {
+        btn.classList.add('is-error');
+        if (label) label.textContent = 'Try Again';
+        if (icon) icon.innerHTML = cartIconHtml;
+        if (err && message) { err.textContent = message; err.hidden = false; }
+      } else {
+        if (label) label.textContent = btn.getAttribute('data-qb54-label') || 'Add to Cart';
+        if (icon) icon.innerHTML = cartIconHtml;
+      }
+    }
+    function onAdd(event) {
+      var btn = event.target.closest('[data-qb54-add]');
+      if (!btn) return;
+      event.preventDefault();
+      if (btn.getAttribute('aria-busy') === 'true') return;
+      var variantId = btn.getAttribute('data-variant-id');
+      if (!variantId) return;
+      setButton(btn, 'loading');
+      var bundled = [];
+      document.documentElement.dispatchEvent(new CustomEvent('cart:bundled-sections', { bubbles: true, detail: { sections: bundled } }));
+      var body = { items: [{ id: Number(variantId), quantity: 1 }] };
+      if (bundled.length) { body.sections = bundled.join(','); body.sections_url = window.location.pathname; }
+      fetch(shopRoot + 'cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        body: JSON.stringify(body)
+      })
+        .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, json: j }; }); })
+        .then(function (res) {
+          if (!res.ok || res.json.status) throw res.json;
+          if (window.theme && theme.settings && theme.settings.cartType === 'page') { window.location.href = shopRoot + 'cart'; return; }
+          var drawer = document.querySelector('cart-drawer');
+          var hasDrawer = !!(drawer && typeof drawer.show === 'function');
+          if (hasDrawer) drawer.show(btn);
+          return fetch(shopRoot + 'cart.js', { headers: { 'Accept': 'application/json' } })
+            .then(function (r) { return r.json(); })
+            .then(function (cart) {
+              cart.sections = res.json.sections;
+              if (window.theme && theme.pubsub && theme.pubsub.publish) theme.pubsub.publish(theme.pubsub.PUB_SUB_EVENTS.cartUpdate, { source: 'qb54-promo', productVariantId: variantId, cart: cart });
+              updateCartUi(cart, true);
+              if (!hasDrawer) showToast(btn.getAttribute('data-qb54-title'), cart);
+              setButton(btn, 'added');
+            });
+        })
+        .catch(function (error) {
+          var message = error && (error.description || error.message);
+          setButton(btn, 'error', typeof message === 'string' ? message : 'Something went wrong. Please try again.');
+        });
+    }
+    function onClick(event) {
+      if (event.target.closest('[data-qb54-toast-close]')) { hideToast(); return; }
+      onCopy(event);
+      onAdd(event);
+    }
+    root.addEventListener('click', onClick);
+    cleanups.push(function () { root.removeEventListener('click', onClick); });
+
+    /* ---- Viral reels: lazy load, one plays at a time (first in view, or hovered), tap for sound ---- */
+    var reels = $all('[data-qb54-reel]');
+    var reelRatios = [];
+    var activeReel = null;
+    function loadReel(fig) {
+      var video = fig.querySelector('video');
+      if (!video || video.getAttribute('src') || !video.getAttribute('data-src')) return video;
+      video.setAttribute('src', video.getAttribute('data-src'));
+      video.preload = 'metadata';
+      return video;
+    }
+    function playReel(fig) {
+      var video = loadReel(fig);
+      if (!video) return;
+      var p = video.play();
+      if (p && p.then) p.then(function () { fig.classList.add('is-playing'); }).catch(function () {});
+      else fig.classList.add('is-playing');
+    }
+    function pauseReel(fig) {
+      var video = fig.querySelector('video');
+      if (video && !video.paused) video.pause();
+      fig.classList.remove('is-playing');
+    }
+    function activateReel(fig) {
+      if (fig === activeReel) return;
+      if (activeReel) pauseReel(activeReel);
+      activeReel = fig;
+      if (fig) playReel(fig);
+    }
+    if (reels.length && 'IntersectionObserver' in window) {
+      var reelIo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { reelRatios[reels.indexOf(e.target)] = e.isIntersecting ? e.intersectionRatio : 0; });
+        if (reduce) return;
+        if (activeReel && (reelRatios[reels.indexOf(activeReel)] || 0) >= 0.6) return;
+        var next = null;
+        reels.forEach(function (r, i) { if (!next && (reelRatios[i] || 0) >= 0.6) next = r; });
+        activateReel(next);
+      }, { threshold: [0, 0.6, 1] });
+      reels.forEach(function (r) { reelIo.observe(r); });
+      cleanups.push(function () { reelIo.disconnect(); });
+    }
+    reels.forEach(function (fig) {
+      fig.addEventListener('mouseenter', function () { if (!reduce) activateReel(fig); });
+      fig.addEventListener('click', function (event) {
+        var video = loadReel(fig);
+        if (!video) return;
+        var soundBtn = event.target.closest('[data-qb54-reel-sound]');
+        if (video.paused) {
+          if (activeReel === fig) activeReel = null;
+          activateReel(fig);
+          if (!soundBtn) return;
+        }
+        var unmute = video.muted;
+        reels.forEach(function (other) {
+          var ov = other.querySelector('video');
+          if (ov) ov.muted = true;
+          other.classList.remove('is-unmuted');
+          var b = other.querySelector('[data-qb54-reel-sound]');
+          if (b) b.setAttribute('aria-label', 'Turn sound on');
+        });
+        video.muted = !unmute;
+        fig.classList.toggle('is-unmuted', unmute);
+        var sb = fig.querySelector('[data-qb54-reel-sound]');
+        if (sb) sb.setAttribute('aria-label', unmute ? 'Turn sound off' : 'Turn sound on');
+      });
+    });
+
+    /* ---- Sticky bar ---- */
+    var sticky = root.querySelector('[data-qb54-sticky]');
+    var hero = root.querySelector('[data-qb54-hero]');
+    var closing = root.querySelector('[data-qb54-close]');
+    var heroVisible = true, closeVisible = false;
+    function drawerOpen() { return !!document.querySelector('cart-drawer[open], .drawer[open]'); }
+    function updateSticky() {
+      if (!sticky) return;
+      var show = state !== 'after' && !heroVisible && !closeVisible && !drawerOpen();
+      sticky.classList.toggle('is-visible', show);
+      sticky.setAttribute('aria-hidden', show ? 'false' : 'true');
+      $all('a', sticky).forEach(function (a) { a.tabIndex = show ? 0 : -1; });
+      document.body.classList.toggle('qb54-pl-bar-on', show);
+    }
+    if (sticky && 'IntersectionObserver' in window) {
+      var stickyIo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.target === hero) heroVisible = e.isIntersecting; if (e.target === closing) closeVisible = e.isIntersecting; });
+        updateSticky();
+      });
+      if (hero) stickyIo.observe(hero);
+      if (closing) stickyIo.observe(closing);
+      cleanups.push(function () { stickyIo.disconnect(); });
+    }
+    cleanups.push(function () { document.body.classList.remove('qb54-pl-bar-on'); });
+
+    /* ---- Reveal ---- */
+    var reveals = $all('[data-qb54-reveal]');
+    if (!reduce && 'IntersectionObserver' in window) {
+      var revealIo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-in'); revealIo.unobserve(e.target); } });
+      }, { rootMargin: '0px 0px -8% 0px' });
+      reveals.forEach(function (el) { revealIo.observe(el); });
+      cleanups.push(function () { revealIo.disconnect(); });
+    } else {
+      reveals.forEach(function (el) { el.classList.add('is-in'); });
+    }
+
+    /* ---- Review rail dots ---- */
+    var rail = root.querySelector('[data-qb54-rail]');
+    var dotsWrap = root.querySelector('[data-qb54-dots]');
+    if (rail && dotsWrap && 'IntersectionObserver' in window) {
+      var cards = Array.prototype.slice.call(rail.children);
+      var dots = cards.map(function (card, index) {
+        var dot = document.createElement('button');
+        dot.type = 'button';
+        dot.setAttribute('aria-label', 'Show review ' + (index + 1));
+        dot.addEventListener('click', function () { rail.scrollTo({ left: card.offsetLeft - rail.offsetLeft - parseFloat(getComputedStyle(rail).paddingLeft), behavior: reduce ? 'auto' : 'smooth' }); });
+        dotsWrap.appendChild(dot);
+        return dot;
+      });
+      var railIo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting && e.intersectionRatio > 0.6) {
+            var idx = cards.indexOf(e.target);
+            dots.forEach(function (d, i) { d.setAttribute('aria-current', i === idx ? 'true' : 'false'); });
+          }
+        });
+      }, { root: rail, threshold: [0.6] });
+      cards.forEach(function (c) { railIo.observe(c); });
+      if (dots[0]) dots[0].setAttribute('aria-current', 'true');
+      cleanups.push(function () { railIo.disconnect(); });
+    }
+
+    tick();
+    var interval = setInterval(tick, 1000);
+    cleanups.push(function () { clearInterval(interval); });
+
+    function onUnload(event) { if (event.detail && event.detail.sectionId === id) destroy(); }
+    document.addEventListener('shopify:section:unload', onUnload);
+    cleanups.push(function () { document.removeEventListener('shopify:section:unload', onUnload); });
+    function destroy() {
+      reels.forEach(pauseReel);
+      while (cleanups.length) { try { cleanups.pop()(); } catch (e) {} }
+      delete window.__qb54Pl[id];
+    }
+    window.__qb54Pl[id] = { destroy: destroy };
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "QB54 Promo Landing",
+  "tag": "section",
+  "class": "qb54-pl-section",
+  "settings": [
+    { "type": "header", "content": "Campaign" },
+    { "type": "text", "id": "discount_code", "label": "Discount code", "info": "Must exist in Shopify Admin > Discounts.", "default": "BFCM" },
+    { "type": "range", "id": "discount_percent", "label": "Discount percent", "min": 5, "max": 90, "step": 5, "unit": "%", "default": 30 },
+    { "type": "text", "id": "start_datetime", "label": "Sale starts", "info": "YYYY-MM-DDTHH:MM:SS", "default": "2026-11-27T00:00:00" },
+    { "type": "text", "id": "end_datetime", "label": "Sale ends", "info": "YYYY-MM-DDTHH:MM:SS", "default": "2026-11-30T23:59:59" },
+    {
+      "type": "select", "id": "timezone", "label": "Timezone",
+      "options": [
+        { "value": "-05:00", "label": "Eastern (EST, UTC-5)" },
+        { "value": "-04:00", "label": "Eastern daylight (EDT, UTC-4)" },
+        { "value": "-06:00", "label": "Central (CST, UTC-6)" },
+        { "value": "-07:00", "label": "Mountain (MST, UTC-7)" },
+        { "value": "-08:00", "label": "Pacific (PST, UTC-8)" },
+        { "value": "+00:00", "label": "UTC" }
+      ],
+      "default": "-05:00"
+    },
+    { "type": "text", "id": "live_label", "label": "Countdown label while live", "default": "Sale ends in" },
+    { "type": "text", "id": "before_label", "label": "Countdown label before start", "default": "Sale starts in" },
+    { "type": "checkbox", "id": "auto_apply_code", "label": "Apply the code automatically while live", "default": true },
+    { "type": "text", "id": "auto_apply_note", "label": "Auto-apply note", "default": "Shopping from this page? We apply the code for you automatically." },
+    { "type": "url", "id": "shop_url", "label": "Shop link" },
+    { "type": "checkbox", "id": "festive", "label": "Festive holiday decorations", "info": "String lights, snow and a gift-wrapped product card.", "default": false },
+    { "type": "header", "content": "Top bar" },
+    { "type": "image_picker", "id": "logo", "label": "Logo" },
+    { "type": "text", "id": "bar_cta", "label": "Button", "default": "Shop the Sale" },
+    { "type": "header", "content": "Hero" },
+    { "type": "image_picker", "id": "hero_image", "label": "Background photo" },
+    {
+      "type": "select", "id": "hero_focal", "label": "Photo position",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top" },
+        { "value": "center bottom", "label": "Bottom" },
+        { "value": "70% center", "label": "Right" },
+        { "value": "30% center", "label": "Left" }
+      ],
+      "default": "center center"
+    },
+    { "type": "text", "id": "hero_badge", "label": "Gold badge", "default": "As seen on Shark Tank" },
+    { "type": "text", "id": "rating_fallback", "label": "Rating text when no review data", "default": "Hundreds of 5-star reviews" },
+    { "type": "text", "id": "hero_kicker", "label": "Kicker", "default": "Black Friday → Cyber Monday" },
+    { "type": "text", "id": "hero_line", "label": "Line under the offer", "default": "Every game set." },
+    { "type": "textarea", "id": "hero_text", "label": "Text", "default": "Two chairs. One football. A full stadium anywhere you unfold it." },
+    { "type": "text", "id": "hero_cta", "label": "Primary button", "default": "Shop the Sale" },
+    { "type": "text", "id": "hero_cta_2", "label": "Secondary button", "default": "Watch it in action" },
+    { "type": "text", "id": "stat_1_n", "label": "Stat 1 number", "default": "100M+" },
+    { "type": "text", "id": "stat_1_l", "label": "Stat 1 label", "default": "Video views" },
+    { "type": "text", "id": "stat_2_n", "label": "Stat 2 number", "default": "2 Min" },
+    { "type": "text", "id": "stat_2_l", "label": "Stat 2 label", "default": "Setup time" },
+    { "type": "text", "id": "stat_3_n", "label": "Stat 3 number", "default": "2–8" },
+    { "type": "text", "id": "stat_3_l", "label": "Stat 3 label", "default": "Players" },
+    { "type": "text", "id": "tag_label", "label": "Gift tag label (festive)", "default": "Gift price" },
+    { "type": "text", "id": "stock_note", "label": "Stock note", "default": "In stock — ships within 1 business day" },
+    { "type": "text", "id": "card_foot", "label": "Hero card footnote", "default": "30-day returns · Secure checkout · Free shipping $225+" },
+    { "type": "header", "content": "Ticker" },
+    { "type": "text", "id": "ticker_items", "label": "Items", "info": "Separate with |", "default": "30% off game sets|Code BFCM|Free shipping on orders $225+|Ships in 1 business day" },
+    { "type": "header", "content": "Viral videos" },
+    { "type": "text", "id": "reels_eyebrow", "label": "Eyebrow", "default": "As seen on your feed" },
+    { "type": "inline_richtext", "id": "reels_heading", "label": "Heading", "default": "100M+ views. <em>Zero chill.</em>" },
+    { "type": "textarea", "id": "reels_text", "label": "Text", "default": "Backyards, tailgates and the Shark Tank stage — this is QB54 in the wild." },
+    { "type": "url", "id": "instagram_url", "label": "Instagram link" },
+    { "type": "text", "id": "instagram_label", "label": "Instagram label", "default": "Follow @playqb54" },
+    { "type": "text", "id": "press_label", "label": "Press label", "default": "As seen on" },
+    { "type": "text", "id": "press_items", "label": "Press names", "info": "Separate with |. Leave empty to hide the row." },
+    { "type": "header", "content": "Product stage" },
+    { "type": "text", "id": "stage_eyebrow", "label": "Eyebrow", "default": "The Deals" },
+    { "type": "inline_richtext", "id": "stage_heading", "label": "Heading", "default": "Choose your <em>colorway</em>" },
+    { "type": "textarea", "id": "stage_text", "label": "Text", "default": "Every set is the complete game. The only question is what color you fly." },
+    {
+      "type": "select", "id": "tab_style", "label": "Tab style",
+      "options": [ { "value": "swatch", "label": "Color swatch" }, { "value": "thumb", "label": "Product thumbnail" } ],
+      "default": "swatch"
+    },
+    { "type": "text", "id": "included_items", "label": "What's included", "info": "Separate with |", "default": "2 chairs that support up to 275 lbs each|2 sets of goal posts and a football|Kicking tee, ball pump and printed rules|Carrying bag" },
+    { "type": "text", "id": "shipping_note", "label": "Shipping note", "default": "Free shipping $225+" },
+    { "type": "text", "id": "returns_note", "label": "Returns note", "default": "30-day returns" },
+    { "type": "header", "content": "Where to play" },
+    { "type": "text", "id": "where_eyebrow", "label": "Eyebrow", "default": "Play it anywhere" },
+    { "type": "inline_richtext", "id": "where_heading", "label": "Heading", "default": "One bag. <em>Any field.</em>" },
+    { "type": "textarea", "id": "where_text", "label": "Text", "default": "Throw it, kick it, score it — first team to 54 wins. Then sit back in the chairs it came in." },
+    { "type": "text", "id": "feat_1_t", "label": "Feature 1", "default": "2 Chairs" },
+    { "type": "text", "id": "feat_1_s", "label": "Feature 1 detail", "default": "Support up to 275 lbs each" },
+    { "type": "text", "id": "feat_2_t", "label": "Feature 2", "default": "2 Minutes" },
+    { "type": "text", "id": "feat_2_s", "label": "Feature 2 detail", "default": "From bag to kickoff" },
+    { "type": "text", "id": "feat_3_t", "label": "Feature 3", "default": "2–8 Players" },
+    { "type": "text", "id": "feat_3_s", "label": "Feature 3 detail", "default": "Kids to grandparents" },
+    { "type": "text", "id": "feat_4_t", "label": "Feature 4", "default": "1 Bag" },
+    { "type": "text", "id": "feat_4_s", "label": "Feature 4 detail", "default": "Grab it and go" },
+    { "type": "header", "content": "Steps" },
+    { "type": "text", "id": "steps_eyebrow", "label": "Eyebrow", "default": "How it works" },
+    { "type": "text", "id": "steps_heading", "label": "Heading", "default": "Claim your deal in 3 steps" },
+    { "type": "header", "content": "Reviews" },
+    { "type": "text", "id": "reviews_eyebrow", "label": "Eyebrow", "default": "Wall of hype" },
+    { "type": "inline_richtext", "id": "reviews_heading", "label": "Heading", "default": "Families are <em>obsessed</em>" },
+    { "type": "header", "content": "FAQ" },
+    { "type": "text", "id": "faq_eyebrow", "label": "Eyebrow", "default": "FAQ" },
+    { "type": "text", "id": "faq_heading", "label": "Heading", "default": "Questions? Answered." },
+    { "type": "textarea", "id": "faq_text", "label": "Text", "default": "Everything you need to know about the sale." },
+    { "type": "header", "content": "Closing" },
+    { "type": "text", "id": "close_eyebrow", "label": "Eyebrow", "default": "Last call" },
+    { "type": "text", "id": "close_heading", "label": "Heading", "default": "Don't sit this one out." },
+    { "type": "textarea", "id": "close_text", "label": "Text", "default": "Our biggest discount of the season ends Cyber Monday at midnight." },
+    { "type": "text", "id": "close_cta", "label": "Button", "default": "Shop the Sale" },
+    { "type": "header", "content": "After the sale" },
+    { "type": "text", "id": "after_heading", "label": "Heading", "default": "This sale has ended" },
+    { "type": "textarea", "id": "after_text", "label": "Text", "default": "Thanks for an incredible weekend. QB54 game sets are still available at everyday prices." },
+    { "type": "text", "id": "after_cta", "label": "Button", "default": "Shop Game Sets" },
+    { "type": "url", "id": "after_url", "label": "Button link" },
+    { "type": "header", "content": "Mobile sticky bar" },
+    { "type": "checkbox", "id": "show_sticky_bar", "label": "Show sticky bar on mobile", "default": true },
+    { "type": "text", "id": "sticky_cta", "label": "Button", "default": "Shop" },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_primary", "label": "Primary (gold)", "default": "#fdc439" },
+    { "type": "color", "id": "color_navy", "label": "Navy", "default": "#363a66" },
+    { "type": "color", "id": "color_night", "label": "Dark background", "default": "#12142b" },
+    { "type": "color", "id": "color_cream", "label": "Cream", "default": "#f4f2e8" },
+    { "type": "color", "id": "color_festive", "label": "Festive accent", "default": "#d42a3c" }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "limit": 6,
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "text", "id": "tab_label", "label": "Tab label", "info": "e.g. Black, or For Dad" },
+        { "type": "color", "id": "swatch", "label": "Swatch color", "default": "#171717" },
+        { "type": "text", "id": "swatch_label", "label": "Color name", "info": "Read out for the hero card's color buttons, e.g. Black" },
+        { "type": "text", "id": "title_override", "label": "Title override" },
+        { "type": "text", "id": "recipient", "label": "Panel tag", "info": "Shown above the title, e.g. The gift for Dad" },
+        { "type": "textarea", "id": "pitch", "label": "Pitch" },
+        { "type": "text", "id": "flag", "label": "Image flag", "info": "e.g. #1 Best Seller" },
+        { "type": "text", "id": "rating_text", "label": "Rating text when no review data", "default": "5-star rated" },
+        { "type": "text", "id": "included_override", "label": "What's included override", "info": "Separate with |" },
+        { "type": "text", "id": "ship_note", "label": "Stock note override", "info": "e.g. Made to order with your logo" },
+        { "type": "checkbox", "id": "needs_customization", "label": "Requires customization", "info": "Links to the product page instead of adding to cart.", "default": false },
+        { "type": "text", "id": "options_label", "label": "Button label when linking to the product page", "default": "Choose Options" }
+      ]
+    },
+    {
+      "type": "reel",
+      "name": "Video",
+      "limit": 8,
+      "settings": [
+        { "type": "video", "id": "video", "label": "Shopify video" },
+        { "type": "text", "id": "video_url", "label": "Or video URL (.mp4)" },
+        { "type": "text", "id": "poster_url", "label": "Poster image URL", "info": "Used with a video URL." },
+        { "type": "text", "id": "chip", "label": "Chip", "info": "e.g. 18.7M views" },
+        { "type": "text", "id": "caption", "label": "Caption" }
+      ]
+    },
+    {
+      "type": "photo",
+      "name": "Photo",
+      "limit": 6,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "label", "label": "Label", "default": "The Backyard" },
+        { "type": "text", "id": "caption", "label": "Caption" }
+      ]
+    },
+    {
+      "type": "step",
+      "name": "Step",
+      "limit": 3,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Pick your set" },
+        { "type": "textarea", "id": "text", "label": "Text", "info": "The discount code is highlighted automatically.", "default": "Black, Navy or Red. Same game, your colors." }
+      ]
+    },
+    {
+      "type": "review",
+      "name": "Review",
+      "limit": 9,
+      "settings": [
+        { "type": "textarea", "id": "quote", "label": "Quote", "default": "This is hands down the best outdoor game I've ever owned." },
+        { "type": "text", "id": "name", "label": "Name", "default": "Mike R." },
+        { "type": "text", "id": "tag", "label": "Tag", "info": "e.g. Bought as a gift" }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ",
+      "limit": 10,
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "When does the sale end?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>The sale ends Cyber Monday at 11:59pm ET.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "QB54 Promo Landing",
+      "blocks": [
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "reel" },
+        { "type": "photo" },
+        { "type": "step" },
+        { "type": "review" },
+        { "type": "faq" }
+      ]
+    }
+  ],
+  "disabled_on": { "groups": ["header", "footer", "custom.overlay"] }
+}
+{% endschema %}
