@@ -1,0 +1,66 @@
+{%- comment -%}
+  Best-seller shelf for the qb54-promo-landing section.
+  Shows hand-picked products (in the order picked) or a collection, skipping sold-out items.
+
+  Accepts:
+  - block: {Object} "shelf" block
+  - section_id: {String}
+  - keep: {Number} Percent of the price kept after the code
+  - code: {String}
+  - eligible: {String} "|id|id|" list of product IDs that get the code price
+  - start_label: {String}
+  - live_label: {String} Countdown label markup
+  - low_stock: {Number}
+{%- endcomment -%}
+{%- liquid
+  assign s = block.settings
+  assign source = s.products
+  if source == blank or source.size == 0
+    assign source = s.collection.products
+  endif
+  assign max_cents = s.max_price | times: 100
+  assign light = true
+  if s.background == 'night'
+    assign light = false
+  endif
+-%}
+{%- if source != blank -%}
+  <section class="qb54-pl-shelf qb54-pl-shelf--{{ s.background }}{% if light %} qb54-pl-light{% endif %}" id="qb54-pl-shelf-{{ section_id }}-{{ block.id }}" aria-labelledby="qb54-pl-shelf-h-{{ block.id }}" {{ block.shopify_attributes }}>
+    <div class="qb54-pl-wrap">
+      <header class="qb54-pl-head qb54-pl-head--split" data-qb54-reveal>
+        <div>
+          {%- if s.eyebrow != blank -%}<p class="qb54-pl-eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
+          <h2 class="qb54-pl-h2" id="qb54-pl-shelf-h-{{ block.id }}">{{ s.heading }}</h2>
+          {%- if s.text != blank -%}<p class="qb54-pl-lede">{{ s.text | escape }}</p>{%- endif -%}
+        </div>
+        <div class="qb54-pl-shelf__aside qb54-pl-head__aside">
+          {%- if s.show_timer -%}
+            <p class="qb54-pl-timerpill" data-qb54-when="before live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>{{ live_label }} <strong data-qb54-cd-compact>0d 00:00:00</strong></span></p>
+          {%- endif -%}
+          {%- if s.link_url != blank and s.link_label != blank -%}<a class="qb54-pl-store__all" href="{{ s.link_url }}">{{ s.link_label | escape }}</a>{%- endif -%}
+        </div>
+      </header>
+      <div class="qb54-pl-shelf__grid">
+        {%- assign shown = 0 -%}
+        {%- for p in source -%}
+          {%- if shown >= s.limit -%}{%- break -%}{%- endif -%}
+          {%- unless p.available -%}{%- continue -%}{%- endunless -%}
+          {%- if max_cents > 0 and p.price > max_cents -%}{%- continue -%}{%- endif -%}
+          {%- liquid
+            assign shown = shown | plus: 1
+            assign token = '|' | append: p.id | append: '|'
+            assign code_ok = false
+            if eligible contains token
+              assign code_ok = true
+            endif
+            assign card_rank = nil
+            if s.ranked
+              assign card_rank = shown
+            endif
+          -%}
+          {%- render 'qb54-pl-card', product: p, keep: keep, code: code, code_ok: code_ok, start_label: start_label, rank: card_rank, low_stock: low_stock, sizes: '(min-width: 990px) 300px, (min-width: 600px) 31vw, 46vw' -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+{%- endif -%}

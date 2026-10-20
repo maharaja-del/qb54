@@ -1,0 +1,68 @@
+{%- comment -%}
+  Product card for the qb54-promo-landing section (best-seller shelves and the team gear store).
+
+  Accepts:
+  - product: {Object}
+  - keep: {Number} Percent of the price kept after the code (70 for 30% off)
+  - code: {String} Discount code
+  - code_ok: {Boolean} Show the price after the code
+  - start_label: {String} Sale start date, e.g. "Nov 27"
+  - tag: {String} Small label over the image (optional)
+  - rank: {Number} Best-seller rank badge (optional)
+  - attrs: {String} Extra attributes for the card element (optional)
+  - low_stock: {Number} Show "Only N left" at or below this stock level; 0 turns it off
+  - sizes: {String} Image sizes attribute
+{%- endcomment -%}
+{%- liquid
+  assign v = product.selected_or_first_available_variant
+  assign card_price = v.price
+  assign card_sale = card_price | times: keep | divided_by: 100
+  assign card_save = card_price | minus: card_sale
+  assign card_multi = true
+  if product.has_only_default_variant
+    assign card_multi = false
+  endif
+  assign card_rating = product.metafields.reviews.rating.value
+  assign card_count = product.metafields.reviews.rating_count.value
+  assign stock_left = 0
+  if low_stock > 0 and v.inventory_management == 'shopify' and v.inventory_policy == 'deny'
+    if v.inventory_quantity > 0 and v.inventory_quantity <= low_stock
+      assign stock_left = v.inventory_quantity
+    endif
+  endif
+-%}
+<article class="qb54-pl-card{% if rank %} qb54-pl-card--ranked{% endif %}" {{ attrs }}>
+  <a class="qb54-pl-card__media" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+    {%- if product.featured_image != blank -%}
+      {{- product.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300,450,600', sizes: sizes, alt: '' -}}
+    {%- endif -%}
+    {%- if rank -%}<span class="qb54-pl-card__rank"><small>#</small>{{ rank }}</span>{%- endif -%}
+    {%- if tag != blank -%}<span class="qb54-pl-card__tag">{{ tag | escape }}</span>{%- endif -%}
+    {%- if code_ok -%}<span class="qb54-pl-card__off" data-qb54-when="before live">{{ 100 | minus: keep }}% off</span>{%- endif -%}
+  </a>
+  <div class="qb54-pl-card__body">
+    {%- if card_rating != blank and card_count != blank -%}
+      <span class="qb54-pl-card__stars" aria-label="Rated {{ card_rating.rating | round: 1 }} out of 5 from {{ card_count }} reviews">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.6 7.7l5.8-.8z"/></svg>
+        <b>{{ card_rating.rating | round: 1 }}</b> ({{ card_count }})
+      </span>
+    {%- endif -%}
+    <h3 class="qb54-pl-card__t"><a href="{{ product.url }}">{{ product.title | escape }}</a></h3>
+    <div class="qb54-pl-card__p">
+      {%- if code_ok -%}
+        <span class="qb54-pl-now" data-qb54-when="before live">{% if card_multi %}<small>From </small>{% endif %}{{ card_sale | money }}</span>
+        <s class="qb54-pl-was" data-qb54-when="before live"><span class="qb54-pl-sr">Regular price </span>{{ card_price | money }}</s>
+        <span class="qb54-pl-now" data-qb54-when="after" hidden>{{ card_price | money }}</span>
+      {%- else -%}
+        <span class="qb54-pl-now">{% if card_multi %}<small>From </small>{% endif %}{{ card_price | money }}</span>
+        {%- if v.compare_at_price > card_price -%}<s class="qb54-pl-was"><span class="qb54-pl-sr">Regular price </span>{{ v.compare_at_price | money }}</s>{%- endif -%}
+      {%- endif -%}
+    </div>
+    {%- if code_ok -%}
+      <p class="qb54-pl-card__code" data-qb54-when="live">Save {{ card_save | money }} with <strong>{{ code }}</strong></p>
+      <p class="qb54-pl-card__code" data-qb54-when="before" hidden><strong>{{ code }}</strong> starts {{ start_label }}</p>
+    {%- endif -%}
+    {%- if stock_left > 0 -%}<p class="qb54-pl-card__low">Only {{ stock_left }} left</p>{%- endif -%}
+    {%- render 'qb54-pl-buy-button', product: product, variant: v, needs_page: card_multi, label: 'Choose Options' -%}
+  </div>
+</article>

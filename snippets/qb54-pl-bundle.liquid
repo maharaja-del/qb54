@@ -1,0 +1,144 @@
+{%- comment -%}
+  Bundle builder for the qb54-promo-landing section: pick a game set, tick extras, add them all at once.
+
+  Accepts:
+  - block: {Object} "bundle" block
+  - section_id: {String}
+  - sets: {Array} The section's product blocks; the first three single-variant ones become the set choices
+  - keep: {Number} Percent of the price kept after the code
+  - code: {String}
+  - pct: {Number} Discount percent
+  - eligible: {String} "|id|id|" list of product IDs that get the code price
+  - free_ship: {Number} Free shipping threshold in cents; 0 hides the meter
+  - start_label: {String}
+{%- endcomment -%}
+{%- liquid
+  assign s = block.settings
+  assign notes = s.addon_notes | newline_to_br | split: '<br />'
+  assign set_count = 0
+  for sb in sets
+    if sb.settings.product != blank and sb.settings.product.has_only_default_variant and sb.settings.product.available
+      assign set_count = set_count | plus: 1
+    endif
+  endfor
+-%}
+{%- if set_count > 0 -%}
+  <section class="qb54-pl-bundle" id="qb54-pl-bundle-{{ section_id }}-{{ block.id }}" aria-labelledby="qb54-pl-bundle-h-{{ block.id }}" data-qb54-bundle data-free="{{ free_ship }}" {{ block.shopify_attributes }}>
+    <div class="qb54-pl-wrap">
+      <header class="qb54-pl-head qb54-pl-center" data-qb54-reveal>
+        {%- if s.eyebrow != blank -%}<p class="qb54-pl-eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
+        <h2 class="qb54-pl-h2" id="qb54-pl-bundle-h-{{ block.id }}">{{ s.heading }}</h2>
+        {%- if s.text != blank -%}<p class="qb54-pl-lede">{{ s.text | escape }}</p>{%- endif -%}
+      </header>
+
+      <div class="qb54-pl-bundle__card" data-qb54-reveal>
+        <div class="qb54-pl-bundle__visual" aria-hidden="true">
+          <div class="qb54-pl-bundle__hero">
+            {%- assign first_set = true -%}
+            {%- for sb in sets -%}
+              {%- assign sp = sb.settings.product -%}
+              {%- if sp == blank or sp.has_only_default_variant == false or sp.available == false -%}{%- continue -%}{%- endif -%}
+              {%- if first_set -%}
+                {{- sp.featured_image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '450,700,900', sizes: '(min-width: 990px) 520px, 90vw', alt: '' -}}
+                {%- assign first_set = false -%}
+              {%- endif -%}
+            {%- endfor -%}
+            <span class="qb54-pl-bundle__off" data-qb54-when="before live">{{ pct }}% off the set</span>
+          </div>
+          <div class="qb54-pl-bundle__thumbs">
+            {%- assign add_i = 0 -%}
+            {%- for p in s.products -%}
+              {%- unless p.available and p.has_only_default_variant -%}{%- continue -%}{%- endunless -%}
+              {%- assign add_i = add_i | plus: 1 -%}
+              <span class="qb54-pl-bundle__plus">+</span>
+              <span class="qb54-pl-bundle__thumb{% if add_i > s.preselect %} is-off{% endif %}" data-qb54-bundle-thumb="{{ add_i }}">
+                {{- p.featured_image | image_url: width: 240 | image_tag: loading: 'lazy', widths: '120,240', sizes: '120px', alt: '' -}}
+              </span>
+            {%- endfor -%}
+          </div>
+        </div>
+
+        <div class="qb54-pl-bundle__form">
+          <fieldset class="qb54-pl-bundle__group">
+            <legend><span>1</span>{{ s.set_label | escape }}</legend>
+            <div class="qb54-pl-bundle__sets">
+              {%- assign set_i = 0 -%}
+              {%- for sb in sets -%}
+                {%- assign sp = sb.settings.product -%}
+                {%- if sp == blank or sp.has_only_default_variant == false or sp.available == false -%}{%- continue -%}{%- endif -%}
+                {%- liquid
+                  assign set_i = set_i | plus: 1
+                  assign sv = sp.selected_or_first_available_variant
+                  assign set_sale = sv.price | times: keep | divided_by: 100
+                -%}
+                <label class="qb54-pl-bundle__set">
+                  <input type="radio" name="qb54-bundle-{{ block.id }}" value="{{ sv.id }}" data-price="{{ set_sale }}" data-reg="{{ sv.price }}" data-img="{{ sp.featured_image | image_url: width: 900 }}" data-title="{{ sp.title | escape }}"{% if set_i == 1 %} checked{% endif %}>
+                  <span class="qb54-pl-bundle__sw" style="--sw: {{ sb.settings.swatch }};"></span>
+                  <span class="qb54-pl-bundle__setname">{{ sb.settings.swatch_label | default: sb.settings.tab_label | default: sp.title | escape }}</span>
+                  <span class="qb54-pl-bundle__setprice">{{ set_sale | money }}</span>
+                </label>
+              {%- endfor -%}
+            </div>
+          </fieldset>
+
+          <fieldset class="qb54-pl-bundle__group">
+            <legend><span>2</span>{{ s.addons_label | escape }}</legend>
+            <div class="qb54-pl-bundle__adds">
+              {%- assign add_i = 0 -%}
+              {%- for p in s.products -%}
+                {%- unless p.available and p.has_only_default_variant -%}{%- continue -%}{%- endunless -%}
+                {%- liquid
+                  assign add_i = add_i | plus: 1
+                  assign av = p.selected_or_first_available_variant
+                  assign token = '|' | append: p.id | append: '|'
+                  assign add_price = av.price
+                  if eligible contains token
+                    assign add_price = av.price | times: keep | divided_by: 100
+                  endif
+                  assign note_index = add_i | minus: 1
+                  assign note_line = notes[note_index] | strip
+                  assign add_name = p.title
+                  assign add_note = ''
+                  if note_line contains ':'
+                    assign add_name = note_line | split: ':' | first | strip
+                    assign add_note = note_line | remove_first: add_name | remove_first: ':' | strip
+                  endif
+                -%}
+                <label class="qb54-pl-bundle__add">
+                  <input type="checkbox" value="{{ av.id }}" data-price="{{ add_price }}" data-reg="{{ av.price }}" data-qb54-bundle-i="{{ add_i }}"{% if add_i <= s.preselect %} checked{% endif %}>
+                  <span class="qb54-pl-bundle__box" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                  <span class="qb54-pl-bundle__img">{{- p.featured_image | image_url: width: 160 | image_tag: loading: 'lazy', widths: '80,160', sizes: '56px', alt: '' -}}</span>
+                  <span class="qb54-pl-bundle__name"><strong>{{ add_name | escape }}</strong>{%- if add_note != blank -%}<small>{{ add_note | escape }}</small>{%- endif -%}</span>
+                  <span class="qb54-pl-bundle__price">{{ add_price | money }}</span>
+                </label>
+              {%- endfor -%}
+            </div>
+          </fieldset>
+
+          <div class="qb54-pl-bundle__sum">
+            <div class="qb54-pl-bundle__total">
+              <span>{{ s.total_label | escape }}</span>
+              <strong data-qb54-bundle-total>$0.00</strong>
+              <s data-qb54-bundle-was hidden></s>
+            </div>
+            <p class="qb54-pl-bundle__codenote" data-qb54-when="live">Includes {{ pct }}% off the set with <strong>{{ code }}</strong></p>
+            <p class="qb54-pl-bundle__codenote" data-qb54-when="before" hidden>Set price with <strong>{{ code }}</strong>, which starts {{ start_label }}</p>
+            {%- if free_ship > 0 -%}
+              <div class="qb54-pl-meter" data-qb54-meter>
+                <span class="qb54-pl-meter__bar"><i data-qb54-meter-fill></i></span>
+                <span class="qb54-pl-meter__t" data-qb54-meter-text></span>
+              </div>
+            {%- endif -%}
+            <div class="qb54-pl-buy-action">
+              <button type="button" class="qb54-pl-btn qb54-pl-btn--gold qb54-pl-btn--shine" data-qb54-bundle-add data-qb54-label="Add bundle to cart">
+                <span data-qb54-btn-icon><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h3l2.4 12h11l2.1-8H6.4"/></svg></span>
+                <span data-qb54-btn-label>Add bundle to cart</span>
+              </button>
+              <p class="qb54-pl-err" data-qb54-err role="alert" hidden></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{%- endif -%}

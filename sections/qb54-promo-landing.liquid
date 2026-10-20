@@ -33,6 +33,21 @@
   endfor
 
   assign included = section.settings.included_items | split: '|'
+
+  # Products that show the price after the code: the deal products plus the code collection.
+  assign eligible = '|'
+  for block in product_blocks
+    if block.settings.product != blank
+      assign eligible = eligible | append: block.settings.product.id | append: '|'
+    endif
+  endfor
+  if section.settings.code_collection != blank
+    for p in section.settings.code_collection.products limit: 50
+      assign eligible = eligible | append: p.id | append: '|'
+    endfor
+  endif
+  assign free_ship = section.settings.free_ship_threshold | times: 100
+  assign low_stock = section.settings.low_stock
 -%}
 
 <style>
@@ -67,10 +82,12 @@
     --shadow-lg: 0 2px 6px rgba(17, 18, 40, 0.08), 0 34px 70px -30px rgba(17, 18, 40, 0.6);
     --ease: cubic-bezier(0.2, 0, 0, 1);
     --ease-emph: cubic-bezier(0.05, 0.7, 0.1, 1);
+    position: relative;
     background: var(--night);
     color: #ffffff;
     font-family: var(--fb);
     -webkit-font-smoothing: antialiased;
+    /* position + clip: absolutely positioned bits (e.g. screen-reader labels in off-screen rail cards) cannot widen the page */
     overflow-x: clip;
   }
   {{ scope }} *, {{ scope }} *::before, {{ scope }} *::after { box-sizing: border-box; }
@@ -538,7 +555,7 @@
   {{ scope }} .qb54-pl-cat[aria-pressed='true'] { background: var(--navy); color: #ffffff; }
   {{ scope }} .qb54-pl-cat[aria-pressed='true'] small { color: var(--gold); }
   {{ scope }} .qb54-pl-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  {{ scope }} .qb54-pl-card { display: flex; flex-direction: column; min-width: 0; border: 1px solid var(--line); border-radius: 16px; background: #ffffff; overflow: hidden; transition: box-shadow 200ms var(--ease), transform 200ms var(--ease), border-color 200ms var(--ease); }
+  {{ scope }} .qb54-pl-card { position: relative; display: flex; flex-direction: column; min-width: 0; border: 1px solid var(--line); border-radius: 16px; background: #ffffff; overflow: hidden; transition: box-shadow 200ms var(--ease), transform 200ms var(--ease), border-color 200ms var(--ease); }
   @media (hover: hover) {
     {{ scope }} .qb54-pl-card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--gold) 60%, var(--line)); box-shadow: 0 22px 40px -26px rgba(17, 18, 40, 0.55); }
     {{ scope }} .qb54-pl-card:hover .qb54-pl-card__media img { transform: scale(1.04); }
@@ -561,6 +578,103 @@
   {{ scope }} .qb54-pl-store__count { width: 100%; margin: 0; font-size: 13.5px; color: var(--muted); }
   {{ scope }} .qb54-pl-store__all { font-weight: 700; font-size: 15px; color: var(--navy); text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 4px; }
   {{ scope }} .qb54-pl-store__note { margin: 18px auto 0; max-width: 60ch; text-align: center; font-size: 13px; color: var(--muted); }
+
+  /* ---------- Card extras: rank, offer, rating, stock ---------- */
+  {{ scope }} .qb54-pl-card__rank { position: absolute; z-index: 2; top: 10px; left: 10px; display: inline-flex; align-items: baseline; min-width: 46px; height: 46px; padding: 9px 10px 0; border-radius: 12px; background: var(--navy); color: var(--gold); font-family: var(--fh); font-weight: 700; font-size: 26px; line-height: 1; justify-content: center; box-shadow: 0 10px 18px -12px rgba(17, 18, 40, 0.7); }
+  {{ scope }} .qb54-pl-card__rank small { font-size: 14px; margin-right: 1px; color: rgba(255, 255, 255, 0.7); }
+  {{ scope }} .qb54-pl-card--ranked:first-child .qb54-pl-card__rank { background: var(--gold); color: var(--on-gold); }
+  {{ scope }} .qb54-pl-card--ranked:first-child .qb54-pl-card__rank small { color: color-mix(in srgb, var(--on-gold) 60%, transparent); }
+  {{ scope }} .qb54-pl-card__off { position: absolute; z-index: 2; top: 10px; right: 10px; padding: 5px 9px; border-radius: 999px; background: var(--gold); color: var(--on-gold); font-family: var(--fh); font-weight: 700; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; }
+  {{ scope }} .qb54-pl-card__stars { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; color: var(--ink-2); }
+  {{ scope }} .qb54-pl-card__stars svg { width: 14px; height: 14px; color: var(--gold); }
+  {{ scope }} .qb54-pl-card__stars b { color: var(--ink); }
+  {{ scope }} .qb54-pl-card__p .qb54-pl-now small { margin-right: 2px; font-family: var(--fb); font-weight: 700; font-size: 11.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); }
+  {{ scope }} .qb54-pl-card__code { margin: -2px 0 0; font-size: 12.5px; font-weight: 700; color: var(--sale); }
+  {{ scope }} .qb54-pl-card__code strong { letter-spacing: 0.06em; }
+  {{ scope }} .qb54-pl-card__low { display: inline-flex; align-items: center; gap: 6px; margin: 0; font-size: 12.5px; font-weight: 700; color: #b45309; }
+  {{ scope }} .qb54-pl-card__low::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.22); }
+
+  /* ---------- Best-seller shelves ---------- */
+  {{ scope }} .qb54-pl-shelf { padding-block: var(--pad-y); }
+  {{ scope }} .qb54-pl-shelf--paper { background: var(--paper); color: var(--ink); }
+  {{ scope }} .qb54-pl-shelf--cream { background: var(--cream); color: var(--ink); }
+  {{ scope }} .qb54-pl-shelf--night { background: var(--night); color: #ffffff; }
+  {{ scope }} .qb54-pl-shelf.qb54-pl-light .qb54-pl-h2 { color: var(--ink); }
+  {{ scope }} .qb54-pl-shelf.qb54-pl-light .qb54-pl-lede { color: var(--ink-2); }
+  {{ scope }} .qb54-pl-shelf--night .qb54-pl-lede { color: rgba(255, 255, 255, 0.75); }
+  {{ scope }} .qb54-pl-shelf--night .qb54-pl-store__all { color: #ffffff; }
+  {{ scope }} .qb54-pl-shelf--night .qb54-pl-timerpill { background: rgba(255, 255, 255, 0.1); }
+  {{ scope }} .qb54-pl-shelf__aside { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; }
+  {{ scope }} .qb54-pl-shelf__grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 46%;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding: 4px var(--gutter) 10px;
+    margin-inline: calc(var(--gutter) * -1);
+    scroll-padding-inline: var(--gutter);
+  }
+  {{ scope }} .qb54-pl-shelf__grid::-webkit-scrollbar { display: none; }
+  {{ scope }} .qb54-pl-shelf__grid > .qb54-pl-card { scroll-snap-align: start; }
+
+  /* ---------- Bundle builder ---------- */
+  {{ scope }} .qb54-pl-bundle { position: relative; isolation: isolate; overflow: hidden; padding-block: var(--pad-y); background: var(--night); color: #ffffff; }
+  {{ scope }} .qb54-pl-bundle::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(720px 420px at 12% 18%, color-mix(in srgb, var(--navy) 85%, transparent), transparent 70%), radial-gradient(620px 380px at 92% 92%, color-mix(in srgb, var(--gold) 14%, transparent), transparent 70%); }
+  {{ scope }} .qb54-pl-bundle .qb54-pl-lede { color: rgba(255, 255, 255, 0.78); }
+  {{ scope }} .qb54-pl-bundle__card { display: grid; gap: 20px; padding: clamp(14px, 2vw, 24px); border-radius: var(--r-panel); background: var(--paper); color: var(--ink); box-shadow: var(--shadow-lg); }
+  {{ scope }} .qb54-pl-bundle__visual { display: grid; gap: 12px; align-content: start; }
+  {{ scope }} .qb54-pl-bundle__hero { position: relative; aspect-ratio: 1 / 0.8; border-radius: 16px; background: #ffffff; box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+  {{ scope }} .qb54-pl-bundle__hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 5%; transition: opacity 200ms var(--ease); }
+  {{ scope }} .qb54-pl-bundle__off { position: absolute; top: 12px; left: 12px; padding: 6px 11px; border-radius: 999px; background: var(--gold); color: var(--on-gold); font-family: var(--fh); font-weight: 700; font-size: 14px; letter-spacing: 0.04em; text-transform: uppercase; }
+  {{ scope }} .qb54-pl-bundle__thumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  {{ scope }} .qb54-pl-bundle__plus { font-family: var(--fh); font-weight: 700; font-size: 22px; line-height: 1; color: var(--muted); }
+  {{ scope }} .qb54-pl-bundle__thumb { width: 64px; height: 64px; border-radius: 12px; background: #ffffff; box-shadow: inset 0 0 0 1.5px var(--line); overflow: hidden; transition: opacity 200ms var(--ease), filter 200ms var(--ease); }
+  {{ scope }} .qb54-pl-bundle__thumb img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+  {{ scope }} .qb54-pl-bundle__thumb.is-off { opacity: 0.35; filter: grayscale(1); }
+  {{ scope }} .qb54-pl-bundle__form { display: grid; gap: 18px; align-content: start; }
+  {{ scope }} .qb54-pl-bundle__group { min-width: 0; margin: 0; padding: 0; border: 0; }
+  {{ scope }} .qb54-pl-bundle__group legend { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; padding: 0; font-family: var(--fh); font-weight: 700; font-size: 20px; line-height: 1; text-transform: uppercase; color: var(--ink); }
+  {{ scope }} .qb54-pl-bundle__group legend span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--navy); color: var(--gold); font-size: 15px; }
+  {{ scope }} .qb54-pl-bundle__set input, {{ scope }} .qb54-pl-bundle__add input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  {{ scope }} .qb54-pl-bundle__sets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  {{ scope }} .qb54-pl-bundle__set { position: relative; display: grid; justify-items: center; gap: 6px; padding: 12px 6px; border-radius: 14px; background: #ffffff; box-shadow: inset 0 0 0 1.5px var(--line); text-align: center; cursor: pointer; transition: box-shadow 160ms var(--ease), background-color 160ms var(--ease); }
+  {{ scope }} .qb54-pl-bundle__set.is-on { background: color-mix(in srgb, var(--gold) 14%, #ffffff); box-shadow: inset 0 0 0 2.5px var(--gold); }
+  {{ scope }} .qb54-pl-bundle__set:focus-within, {{ scope }} .qb54-pl-bundle__add:focus-within { outline: 3px solid var(--gold); outline-offset: 2px; }
+  {{ scope }} .qb54-pl-bundle__sw { width: 30px; height: 30px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 2px #ffffff, 0 0 0 1px var(--line); }
+  {{ scope }} .qb54-pl-bundle__setname { font-family: var(--fh); font-weight: 700; font-size: 16px; line-height: 1; text-transform: uppercase; }
+  {{ scope }} .qb54-pl-bundle__setprice { font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  {{ scope }} .qb54-pl-bundle__adds { display: grid; gap: 8px; }
+  {{ scope }} .qb54-pl-bundle__add { position: relative; display: grid; grid-template-columns: auto 56px minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 10px 14px 10px 12px; border-radius: 14px; background: #ffffff; box-shadow: inset 0 0 0 1.5px var(--line); cursor: pointer; transition: box-shadow 160ms var(--ease); }
+  {{ scope }} .qb54-pl-bundle__add.is-on { box-shadow: inset 0 0 0 2px var(--navy); }
+  {{ scope }} .qb54-pl-bundle__box { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 7px; box-shadow: inset 0 0 0 2px var(--line); color: transparent; transition: background-color 160ms var(--ease); }
+  {{ scope }} .qb54-pl-bundle__add.is-on .qb54-pl-bundle__box { background: var(--navy); box-shadow: none; color: var(--gold); }
+  {{ scope }} .qb54-pl-bundle__box svg { width: 15px; height: 15px; }
+  {{ scope }} .qb54-pl-bundle__img { width: 56px; height: 56px; border-radius: 10px; background: #ffffff; box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+  {{ scope }} .qb54-pl-bundle__img img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+  {{ scope }} .qb54-pl-bundle__name { display: grid; gap: 2px; min-width: 0; }
+  {{ scope }} .qb54-pl-bundle__name strong { font-size: 15px; font-weight: 700; color: var(--ink); }
+  {{ scope }} .qb54-pl-bundle__name small { font-size: 12.5px; line-height: 1.4; color: var(--ink-2); }
+  {{ scope }} .qb54-pl-bundle__price { font-family: var(--fh); font-weight: 700; font-size: 20px; color: var(--navy); font-variant-numeric: tabular-nums; }
+  {{ scope }} .qb54-pl-bundle__sum { display: grid; gap: 10px; padding-top: 16px; border-top: 1px solid var(--line); }
+  {{ scope }} .qb54-pl-bundle__total { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+  {{ scope }} .qb54-pl-bundle__total span { font-size: 12.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); }
+  {{ scope }} .qb54-pl-bundle__total strong { font-family: var(--fh); font-weight: 700; font-size: 46px; line-height: 1; color: var(--navy); font-variant-numeric: tabular-nums; }
+  {{ scope }} .qb54-pl-bundle__total s { font-size: 17px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  {{ scope }} .qb54-pl-bundle__codenote { margin: 0; font-size: 13px; color: var(--ink-2); }
+  {{ scope }} .qb54-pl-bundle .qb54-pl-btn { width: 100%; min-height: 60px; font-size: 19px; }
+
+  /* ---------- Free-shipping meter (bundle + toast) ---------- */
+  {{ scope }} .qb54-pl-meter { display: grid; gap: 6px; }
+  {{ scope }} .qb54-pl-meter__bar { position: relative; height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--navy) 12%, transparent); overflow: hidden; }
+  {{ scope }} .qb54-pl-meter__bar i { position: absolute; top: 0; bottom: 0; left: 0; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--gold), #f59e0b); transition: width 450ms var(--ease); }
+  {{ scope }} .qb54-pl-meter.is-done .qb54-pl-meter__bar i { background: var(--ok); }
+  {{ scope }} .qb54-pl-meter__t { font-size: 13px; color: var(--ink-2); }
+  {{ scope }} .qb54-pl-meter__t strong { color: var(--ink); }
+  {{ scope }} .qb54-pl-meter.is-done .qb54-pl-meter__t strong { color: var(--ok); }
+  {{ scope }} .qb54-pl-toast .qb54-pl-meter { grid-column: 1 / -1; }
 
   /* ---------- Where (photo mosaic) ---------- */
   {{ scope }} .qb54-pl-where { padding-block: var(--pad-y); background: var(--night); }
@@ -685,6 +799,7 @@
     {{ scope }} .qb54-pl-steps__list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     {{ scope }} .qb54-pl-revrail { grid-auto-columns: 46%; }
     {{ scope }} .qb54-pl-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    {{ scope }} .qb54-pl-shelf__grid { grid-auto-columns: 31%; }
   }
   @media screen and (min-width: 750px) {
     {{ scope }} .qb54-pl-sticky { display: none; }
@@ -703,6 +818,9 @@
     {{ scope }} .qb54-pl-mosaic { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 230px; }
     {{ scope }} .qb54-pl-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
     {{ scope }} .qb54-pl-cats { flex-wrap: wrap; overflow: visible; }
+    {{ scope }} .qb54-pl-shelf__grid { grid-auto-flow: row; grid-auto-columns: auto; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; overflow: visible; margin-inline: 0; padding-inline: 0; }
+    {{ scope }} .qb54-pl-bundle__card { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 36px; padding: 28px; }
+    {{ scope }} .qb54-pl-bundle__thumb { width: 76px; height: 76px; }
     {{ scope }} .qb54-pl-revrail { grid-auto-flow: row; grid-auto-columns: auto; grid-template-columns: repeat(3, minmax(0, 1fr)); overflow: visible; margin-inline: 0; padding-inline: 0; }
     {{ scope }} .qb54-pl-dots { display: none; }
     {{ scope }} .qb54-pl-faq__grid { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 72px; align-items: start; }
@@ -730,6 +848,12 @@
     {{ scope }} .qb54-pl-card__t { font-size: 13.5px; }
     {{ scope }} .qb54-pl-card__p .qb54-pl-now { font-size: 20px; }
     {{ scope }} .qb54-pl-card .qb54-pl-btn { font-size: 13.5px; padding: 0 8px; }
+    {{ scope }} .qb54-pl-card__rank { min-width: 38px; height: 38px; padding-top: 7px; font-size: 21px; }
+    {{ scope }} .qb54-pl-bundle__add { grid-template-columns: auto 46px minmax(0, 1fr) auto; gap: 10px; padding: 10px; }
+    {{ scope }} .qb54-pl-bundle__img { width: 46px; height: 46px; }
+    {{ scope }} .qb54-pl-bundle__price { font-size: 17px; }
+    {{ scope }} .qb54-pl-bundle__total strong { font-size: 38px; }
+    {{ scope }} .qb54-pl-bundle__thumb { width: 52px; height: 52px; }
   }
   @media screen and (max-width: 989px) {
     {{ scope }}.qb54-pl--festive .qb54-pl-snow { display: none; }
@@ -970,6 +1094,8 @@
     </div>
   {%- endif -%}
 
+  {%- render 'qb54-pl-slot', position: 'after_hero', blocks: section.blocks, section_id: section.id, sets: product_blocks, keep: keep, code: code, pct: pct, eligible: eligible, free_ship: free_ship, low_stock: low_stock, start_label: start_label, live_label: live_label -%}
+
   {%- if reel_blocks.size > 0 -%}
     <section class="qb54-pl-reels" id="qb54-pl-reels-{{ section.id }}" aria-labelledby="qb54-pl-reels-h-{{ section.id }}">
       <div class="qb54-pl-wrap">
@@ -1138,6 +1264,8 @@
     </div>
   </section>
 
+  {%- render 'qb54-pl-slot', position: 'after_deals', blocks: section.blocks, section_id: section.id, sets: product_blocks, keep: keep, code: code, pct: pct, eligible: eligible, free_ship: free_ship, low_stock: low_stock, start_label: start_label, live_label: live_label -%}
+
   {%- if store_blocks.size > 0 -%}
     {%- assign nfl_teams = 'cardinals:Arizona Cardinals|falcons:Atlanta Falcons|ravens:Baltimore Ravens|bills:Buffalo Bills|panthers:Carolina Panthers|bears:Chicago Bears|bengals:Cincinnati Bengals|browns:Cleveland Browns|cowboys:Dallas Cowboys|broncos:Denver Broncos|lions:Detroit Lions|packers:Green Bay Packers|texans:Houston Texans|colts:Indianapolis Colts|jaguars:Jacksonville Jaguars|chiefs:Kansas City Chiefs|raiders:Las Vegas Raiders|chargers:Los Angeles Chargers|rams:Los Angeles Rams|dolphins:Miami Dolphins|vikings:Minnesota Vikings|patriots:New England Patriots|saints:New Orleans Saints|giants:New York Giants|jets:New York Jets|eagles:Philadelphia Eagles|steelers:Pittsburgh Steelers|49ers:San Francisco 49ers|seahawks:Seattle Seahawks|buccaneers:Tampa Bay Buccaneers|titans:Tennessee Titans|commanders:Washington Commanders' | split: '|' -%}
     <section class="qb54-pl-store qb54-pl-light" id="qb54-pl-store-{{ section.id }}" aria-labelledby="qb54-pl-store-h-{{ section.id }}" data-qb54-store data-initial="{{ section.settings.store_initial }}">
@@ -1204,36 +1332,15 @@
               {%- capture card_team -%}{%- render 'qb54-pl-team-key', title: p.title -%}{%- endcapture -%}
               {%- liquid
                 assign rank = rank | plus: 1
-                assign pv = p.selected_or_first_available_variant
-                assign card_price = pv.price
-                assign card_sale = card_price | times: keep | divided_by: 100
-                assign card_multi = true
-                if p.has_only_default_variant
-                  assign card_multi = false
+                assign card_team = card_team | strip
+                assign card_attrs = 'data-qb54-card data-cat="' | append: cat_i | append: '" data-rank="' | append: rank | append: '" data-team="' | append: card_team | append: '"'
+                assign token = '|' | append: p.id | append: '|'
+                assign card_code = block.settings.code_applies
+                if eligible contains token
+                  assign card_code = true
                 endif
               -%}
-              <article class="qb54-pl-card" data-qb54-card data-cat="{{ cat_i }}" data-rank="{{ rank }}" data-team="{{ card_team | strip }}">
-                <a class="qb54-pl-card__media" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
-                  {%- if p.featured_image != blank -%}
-                    {{- p.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300,450,600', sizes: '(min-width: 990px) 300px, (min-width: 600px) 31vw, 46vw', alt: '' -}}
-                  {%- endif -%}
-                  <span class="qb54-pl-card__tag">{{ block.settings.label | escape }}</span>
-                </a>
-                <div class="qb54-pl-card__body">
-                  <h3 class="qb54-pl-card__t"><a href="{{ p.url }}">{{ p.title | escape }}</a></h3>
-                  <div class="qb54-pl-card__p">
-                    {%- if block.settings.code_applies -%}
-                      <span class="qb54-pl-now" data-qb54-when="before live">{{ card_sale | money }}</span>
-                      <s class="qb54-pl-was" data-qb54-when="before live"><span class="qb54-pl-sr">Regular price </span>{{ card_price | money }}</s>
-                      <span class="qb54-pl-now" data-qb54-when="after" hidden>{{ card_price | money }}</span>
-                    {%- else -%}
-                      <span class="qb54-pl-now">{{ card_price | money }}</span>
-                      {%- if pv.compare_at_price > card_price -%}<s class="qb54-pl-was"><span class="qb54-pl-sr">Regular price </span>{{ pv.compare_at_price | money }}</s>{%- endif -%}
-                    {%- endif -%}
-                  </div>
-                  {%- render 'qb54-pl-buy-button', product: p, variant: pv, needs_page: card_multi, label: 'Choose Options' -%}
-                </div>
-              </article>
+              {%- render 'qb54-pl-card', product: p, keep: keep, code: code, code_ok: card_code, start_label: start_label, tag: block.settings.label, attrs: card_attrs, low_stock: low_stock, sizes: '(min-width: 990px) 300px, (min-width: 600px) 31vw, 46vw' -%}
             {%- endfor -%}
           {%- endfor -%}
         </div>
@@ -1247,6 +1354,8 @@
       </div>
     </section>
   {%- endif -%}
+
+  {%- render 'qb54-pl-slot', position: 'after_store', blocks: section.blocks, section_id: section.id, sets: product_blocks, keep: keep, code: code, pct: pct, eligible: eligible, free_ship: free_ship, low_stock: low_stock, start_label: start_label, live_label: live_label -%}
 
   {%- if photo_blocks.size > 0 -%}
     <section class="qb54-pl-where" aria-labelledby="qb54-pl-where-h-{{ section.id }}">
@@ -1279,6 +1388,8 @@
       </div>
     </section>
   {%- endif -%}
+
+  {%- render 'qb54-pl-slot', position: 'after_where', blocks: section.blocks, section_id: section.id, sets: product_blocks, keep: keep, code: code, pct: pct, eligible: eligible, free_ship: free_ship, low_stock: low_stock, start_label: start_label, live_label: live_label -%}
 
   {%- if step_blocks.size > 0 -%}
     <section class="qb54-pl-steps" data-qb54-when="before live" aria-labelledby="qb54-pl-steps-h-{{ section.id }}">
@@ -1394,6 +1505,12 @@
   <div class="qb54-pl-toast" data-qb54-toast role="status" aria-live="polite" hidden>
     <span class="qb54-pl-toast__ok" aria-hidden="true">{{ i_check }}</span>
     <div class="qb54-pl-toast__t"><strong>Added to cart</strong><span data-qb54-toast-meta></span></div>
+    {%- if free_ship > 0 -%}
+      <div class="qb54-pl-meter" data-qb54-meter data-qb54-toast-meter>
+        <span class="qb54-pl-meter__bar"><i data-qb54-meter-fill></i></span>
+        <span class="qb54-pl-meter__t" data-qb54-meter-text></span>
+      </div>
+    {%- endif -%}
     <div class="qb54-pl-toast__a">
       <a class="qb54-pl-btn qb54-pl-btn--gold" href="{{ checkout_url }}" data-qb54-checkout>Checkout</a>
       <a class="qb54-pl-toast__cart" href="{{ routes.cart_url }}">View cart</a>
@@ -1417,6 +1534,9 @@
     var end = Date.parse(root.getAttribute('data-end'));
     var code = root.getAttribute('data-code');
     var state = null;
+    var moneyFormat = {{ shop.money_format | json }};
+    var freeShip = {{ free_ship | default: 0 }};
+    var bundleRefreshers = [];
     root.classList.add('qb54-pl--js');
 
     function $all(sel, ctx) { return Array.prototype.slice.call((ctx || root).querySelectorAll(sel)); }
@@ -1487,6 +1607,7 @@
       checkoutLinks.forEach(function (a) { a.setAttribute('href', href); });
       if (!silent) {
         if (next === 'live') maybeApplyCode();
+        bundleRefreshers.forEach(function (fn) { fn(); });
         updateSticky();
       }
     }
@@ -1562,6 +1683,8 @@
       if (!toast) return;
       var count = (cart && cart.item_count) || 0;
       if (toastMeta) toastMeta.textContent = (title ? title + ' · ' : '') + count + (count === 1 ? ' item' : ' items') + ' in your cart';
+      var toastMeter = toast.querySelector('[data-qb54-toast-meter]');
+      if (toastMeter) setMeter(toastMeter, (cart && cart.total_price) || 0, 'Your order');
       toast.hidden = false;
       clearTimeout(toastTimer);
       toastTimer = setTimeout(hideToast, 9000);
@@ -1599,17 +1722,54 @@
         if (icon) icon.innerHTML = cartIconHtml;
       }
     }
+    function formatMoney(cents) {
+      var value = (cents / 100).toFixed(2);
+      var withCommas = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      return String(moneyFormat || '${{ "{{" }}amount}}').replace(/\{\{\s*(\w+)\s*\}\}/, function (m, kind) {
+        if (kind === 'amount_no_decimals') return Math.round(cents / 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        if (kind === 'amount_with_comma_separator') return value.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        return withCommas;
+      });
+    }
+    // Free-shipping progress for a total in cents.
+    function setMeter(meter, total, subject) {
+      if (!meter || !freeShip) return;
+      var fill = meter.querySelector('[data-qb54-meter-fill]');
+      var text = meter.querySelector('[data-qb54-meter-text]');
+      var left = freeShip - total;
+      var goal = formatMoney(freeShip).replace(/[.,]00(?=\D*$)/, '');
+      meter.classList.toggle('is-done', left <= 0);
+      if (fill) fill.style.width = Math.min(100, Math.round(total / freeShip * 100)) + '%';
+      if (!text) return;
+      text.textContent = '';
+      var strong = document.createElement('strong');
+      if (left <= 0) {
+        strong.textContent = 'Free shipping unlocked.';
+        text.appendChild(strong);
+        text.appendChild(document.createTextNode(' ' + subject + ' is ' + goal + ' or more.'));
+      } else {
+        text.appendChild(document.createTextNode('Add '));
+        strong.textContent = formatMoney(left);
+        text.appendChild(strong);
+        text.appendChild(document.createTextNode(' more for free shipping (' + goal + '+).'));
+      }
+    }
+
     function onAdd(event) {
       var btn = event.target.closest('[data-qb54-add]');
       if (!btn) return;
       event.preventDefault();
-      if (btn.getAttribute('aria-busy') === 'true') return;
       var variantId = btn.getAttribute('data-variant-id');
       if (!variantId) return;
+      submitAdd(btn, [{ id: Number(variantId), quantity: 1 }], btn.getAttribute('data-qb54-title'));
+    }
+    function submitAdd(btn, items, title) {
+      if (btn.getAttribute('aria-busy') === 'true' || !items.length) return;
+      var variantId = String(items[0].id);
       setButton(btn, 'loading');
       var bundled = [];
       document.documentElement.dispatchEvent(new CustomEvent('cart:bundled-sections', { bubbles: true, detail: { sections: bundled } }));
-      var body = { items: [{ id: Number(variantId), quantity: 1 }] };
+      var body = { items: items };
       if (bundled.length) { body.sections = bundled.join(','); body.sections_url = window.location.pathname; }
       fetch(shopRoot + 'cart/add.js', {
         method: 'POST',
@@ -1629,7 +1789,7 @@
               cart.sections = res.json.sections;
               if (window.theme && theme.pubsub && theme.pubsub.publish) theme.pubsub.publish(theme.pubsub.PUB_SUB_EVENTS.cartUpdate, { source: 'qb54-promo', productVariantId: variantId, cart: cart });
               updateCartUi(cart, true);
-              if (!hasDrawer) showToast(btn.getAttribute('data-qb54-title'), cart);
+              if (!hasDrawer) showToast(title, cart);
               setButton(btn, 'added');
             });
         })
@@ -1645,6 +1805,59 @@
     }
     root.addEventListener('click', onClick);
     cleanups.push(function () { root.removeEventListener('click', onClick); });
+
+    /* ---- Bundles: pick a set, tick extras, live total + free-shipping meter, add all in one request ---- */
+    $all('[data-qb54-bundle]').forEach(function (bundle) {
+      var totalEl = bundle.querySelector('[data-qb54-bundle-total]');
+      var wasEl = bundle.querySelector('[data-qb54-bundle-was]');
+      var meterEl = bundle.querySelector('[data-qb54-meter]');
+      var addBtn = bundle.querySelector('[data-qb54-bundle-add]');
+      var heroImg = bundle.querySelector('.qb54-pl-bundle__hero img');
+      function priceOf(input) { return parseInt(input.getAttribute(state === 'after' ? 'data-reg' : 'data-price'), 10) || 0; }
+      function chosen() {
+        var set = bundle.querySelector('input[type="radio"]:checked');
+        return (set ? [set] : []).concat($all('input[type="checkbox"]:checked', bundle));
+      }
+      function refresh() {
+        var items = chosen();
+        var total = 0, regular = 0;
+        items.forEach(function (input) { total += priceOf(input); regular += parseInt(input.getAttribute('data-reg'), 10) || 0; });
+        if (totalEl) totalEl.textContent = formatMoney(total);
+        if (wasEl) { wasEl.hidden = regular <= total; wasEl.textContent = formatMoney(regular); }
+        setMeter(meterEl, total, 'This bundle');
+        $all('label', bundle).forEach(function (label) {
+          var input = label.querySelector('input');
+          if (input) label.classList.toggle('is-on', input.checked);
+        });
+        $all('input[type="checkbox"]', bundle).forEach(function (box) {
+          var thumb = bundle.querySelector('[data-qb54-bundle-thumb="' + box.getAttribute('data-qb54-bundle-i') + '"]');
+          if (thumb) thumb.classList.toggle('is-off', !box.checked);
+        });
+        var set = bundle.querySelector('input[type="radio"]:checked');
+        if (heroImg && set && heroImg.getAttribute('data-src-now') !== set.getAttribute('data-img')) {
+          heroImg.removeAttribute('srcset');
+          heroImg.src = set.getAttribute('data-img');
+          heroImg.setAttribute('data-src-now', set.getAttribute('data-img'));
+        }
+        if (addBtn) {
+          var label = 'Add ' + items.length + (items.length === 1 ? ' item' : ' items') + ' to cart';
+          addBtn.setAttribute('data-qb54-label', label);
+          if (addBtn.getAttribute('aria-busy') !== 'true' && !addBtn.classList.contains('is-added')) {
+            var labelEl = addBtn.querySelector('[data-qb54-btn-label]');
+            if (labelEl) labelEl.textContent = label;
+          }
+        }
+      }
+      bundle.addEventListener('change', refresh);
+      if (addBtn) addBtn.addEventListener('click', function () {
+        var items = chosen();
+        var set = bundle.querySelector('input[type="radio"]:checked');
+        var title = (set ? set.getAttribute('data-title') : 'Bundle') + (items.length > 1 ? ' + ' + (items.length - 1) + ' more' : '');
+        submitAdd(addBtn, items.map(function (input) { return { id: Number(input.value), quantity: 1 }; }), title);
+      });
+      bundleRefreshers.push(refresh);
+      refresh();
+    });
 
     /* ---- Team gear store: category chips, team picker (?team=chiefs), show more ---- */
     var store = root.querySelector('[data-qb54-store]');
@@ -1931,6 +2144,9 @@
     { "type": "checkbox", "id": "auto_apply_code", "label": "Apply the code automatically while live", "default": true },
     { "type": "text", "id": "auto_apply_note", "label": "Auto-apply note", "default": "Shopping from this page? We apply the code for you automatically." },
     { "type": "url", "id": "shop_url", "label": "Shop link" },
+    { "type": "collection", "id": "code_collection", "label": "Products the code applies to", "info": "Products in this collection show the price after the code in shelves, bundles and the store. Deal products always do." },
+    { "type": "range", "id": "free_ship_threshold", "label": "Free shipping threshold", "info": "Shows progress toward free shipping in bundles and the cart popup. 0 turns it off.", "min": 0, "max": 500, "step": 5, "unit": "$", "default": 225 },
+    { "type": "range", "id": "low_stock", "label": "Show \"Only N left\" at or below", "info": "Uses real inventory for products tracked by Shopify. 0 turns it off.", "min": 0, "max": 20, "step": 1, "default": 10 },
     { "type": "checkbox", "id": "festive", "label": "Festive holiday decorations", "info": "String lights, snow and a gift-wrapped product card.", "default": false },
     { "type": "header", "content": "Top bar" },
     { "type": "image_picker", "id": "logo", "label": "Logo" },
@@ -2067,6 +2283,66 @@
         { "type": "text", "id": "label", "label": "Category label", "default": "Blankets" },
         { "type": "range", "id": "limit", "label": "Max products", "min": 4, "max": 50, "step": 2, "default": 32 },
         { "type": "checkbox", "id": "code_applies", "label": "Discount code applies", "info": "Shows the price after the code on these products.", "default": false }
+      ]
+    },
+    {
+      "type": "shelf",
+      "name": "Best-seller shelf",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "select", "id": "position", "label": "Position",
+          "options": [
+            { "value": "after_hero", "label": "After the hero" },
+            { "value": "after_deals", "label": "After the deals" },
+            { "value": "after_store", "label": "After the team store" },
+            { "value": "after_where", "label": "After the photos" }
+          ],
+          "default": "after_hero"
+        },
+        {
+          "type": "select", "id": "background", "label": "Background",
+          "options": [ { "value": "paper", "label": "White" }, { "value": "cream", "label": "Cream" }, { "value": "night", "label": "Dark" } ],
+          "default": "paper"
+        },
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Best sellers" },
+        { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "What fans buy <em>most</em>" },
+        { "type": "textarea", "id": "text", "label": "Text" },
+        { "type": "product_list", "id": "products", "label": "Products", "info": "Shown in this order. Leave empty to use the collection.", "limit": 24 },
+        { "type": "collection", "id": "collection", "label": "Or a collection" },
+        { "type": "range", "id": "limit", "label": "Products to show", "min": 4, "max": 24, "step": 4, "default": 8 },
+        { "type": "range", "id": "max_price", "label": "Only products up to", "info": "0 shows any price.", "min": 0, "max": 300, "step": 5, "unit": "$", "default": 0 },
+        { "type": "checkbox", "id": "ranked", "label": "Show rank badges (#1, #2...)", "info": "Only when the products are in real best-selling order.", "default": false },
+        { "type": "checkbox", "id": "show_timer", "label": "Show the sale countdown", "default": true },
+        { "type": "url", "id": "link_url", "label": "Link" },
+        { "type": "text", "id": "link_label", "label": "Link label", "default": "Shop all" }
+      ]
+    },
+    {
+      "type": "bundle",
+      "name": "Bundle builder",
+      "limit": 2,
+      "settings": [
+        { "type": "paragraph", "content": "Shoppers pick one of the first three Product blocks as their set, then add the extras below in one click." },
+        {
+          "type": "select", "id": "position", "label": "Position",
+          "options": [
+            { "value": "after_hero", "label": "After the hero" },
+            { "value": "after_deals", "label": "After the deals" },
+            { "value": "after_store", "label": "After the team store" },
+            { "value": "after_where", "label": "After the photos" }
+          ],
+          "default": "after_deals"
+        },
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Bundle and save" },
+        { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Build your <em>game-day bundle</em>" },
+        { "type": "textarea", "id": "text", "label": "Text" },
+        { "type": "text", "id": "set_label", "label": "Step 1 label", "default": "Choose your set" },
+        { "type": "text", "id": "addons_label", "label": "Step 2 label", "default": "Add the extras" },
+        { "type": "product_list", "id": "products", "label": "Extras", "info": "Single-option products only.", "limit": 6 },
+        { "type": "textarea", "id": "addon_notes", "label": "Extra names and notes", "info": "One line per extra, in order: Short name: note" },
+        { "type": "range", "id": "preselect", "label": "Extras ticked at first", "min": 0, "max": 6, "step": 1, "default": 2 },
+        { "type": "text", "id": "total_label", "label": "Total label", "default": "Bundle total" }
       ]
     },
     {

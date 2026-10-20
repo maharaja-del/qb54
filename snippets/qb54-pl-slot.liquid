@@ -1,0 +1,17 @@
+{%- comment -%}
+  Renders the qb54-promo-landing shelf and bundle blocks placed at one position on the page.
+
+  Accepts:
+  - position: {String} after_hero | after_deals | after_store | after_where
+  - blocks: {Array} section.blocks
+  - Everything qb54-pl-shelf and qb54-pl-bundle need (passed through)
+{%- endcomment -%}
+{%- for block in blocks -%}
+  {%- if block.settings.position != position -%}{%- continue -%}{%- endif -%}
+  {%- case block.type -%}
+    {%- when 'shelf' -%}
+      {%- render 'qb54-pl-shelf', block: block, section_id: section_id, keep: keep, code: code, eligible: eligible, start_label: start_label, live_label: live_label, low_stock: low_stock -%}
+    {%- when 'bundle' -%}
+      {%- render 'qb54-pl-bundle', block: block, section_id: section_id, sets: sets, keep: keep, code: code, pct: pct, eligible: eligible, free_ship: free_ship, start_label: start_label -%}
+  {%- endcase -%}
+{%- endfor -%}

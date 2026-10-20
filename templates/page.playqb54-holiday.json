@@ -38,7 +38,7 @@
         "gift_family": {
           "type": "product",
           "settings": {
-            "product": "backyard-football-game-qb54-navy-edition",
+            "product": "qb54-navy-blue-game-set",
             "tab_label": "For the Family",
             "swatch": "#2a3163",
             "swatch_label": "Navy",
@@ -53,7 +53,7 @@
         "gift_crew": {
           "type": "product",
           "settings": {
-            "product": "backyard-football-game-qb54-red-edition",
+            "product": "qb54-red-set",
             "tab_label": "For the Tailgate Crew",
             "swatch": "#c8102e",
             "swatch_label": "Red",
@@ -396,6 +396,78 @@
             "limit": 32,
             "code_applies": false
           }
+        },
+        "shelf_best": {
+          "type": "shelf",
+          "settings": {
+            "position": "after_hero",
+            "background": "paper",
+            "eyebrow": "Ranked by sales",
+            "heading": "The gifts fans <em>buy most</em>",
+            "text": "Our 8 best sellers, in order. Game sets show the HOLIDAY price.",
+            "products": [
+              "qb54-black-game-set",
+              "qb54-navy-blue-game-set",
+              "scoring-kit-and-football-bundle",
+              "qb54-red-set",
+              "custom-logo-backyard-football-game-qb54",
+              "qb54-scoring-kit",
+              "qb54-football",
+              "1-pair-of-referee-flags-contains-2-flags"
+            ],
+            "limit": 8,
+            "max_price": 0,
+            "ranked": true,
+            "show_timer": true,
+            "link_url": "https://playqb54.com/collections/all?sort_by=best-selling",
+            "link_label": "Shop all best sellers"
+          }
+        },
+        "bundle_gift": {
+          "type": "bundle",
+          "settings": {
+            "position": "after_deals",
+            "eyebrow": "The complete gift",
+            "heading": "Wrap up the <em>whole game day</em>",
+            "text": "Pick their set at 20% off, add the extras, and it all goes in your cart in one click.",
+            "set_label": "Choose their set",
+            "addons_label": "Add the extras",
+            "products": [
+              "qb54-scoring-kit",
+              "1-pair-of-referee-flags-contains-2-flags",
+              "ref54",
+              "qb54-trucker-hat"
+            ],
+            "addon_notes": "Scoring Kit: Point decals (0 to 54) and 2 scoring bands for both goal posts\nReferee Flags: A pair of weighted penalty flags, like the ones on TV\nREF54: A toss game you play on your QB54 chairs\nQB54 Trucker Hat: Navy and gold, adjustable, 54 on the back",
+            "preselect": 2,
+            "total_label": "Gift total"
+          }
+        },
+        "shelf_stuffers": {
+          "type": "shelf",
+          "settings": {
+            "position": "after_where",
+            "background": "cream",
+            "eyebrow": "Stocking stuffers",
+            "heading": "Gifts <em>under $50</em>",
+            "text": "Small gifts for big fans: hats, ornaments, flags, tumblers and more.",
+            "products": [
+              "qb54-trucker-hat",
+              "philadelphia-football-stadium-3d-ornament",
+              "philadelphia-eagles-fan-flag-1-flag",
+              "chiefs-tumbler",
+              "green-bay-football-stadium-3d-ornament",
+              "qb54-kicking-tee",
+              "buffalo-football-stadium-3d-ornament",
+              "eagles-throw-blanket"
+            ],
+            "limit": 8,
+            "max_price": 50,
+            "ranked": false,
+            "show_timer": false,
+            "link_url": "shopify://collections/ornaments",
+            "link_label": "Shop all ornaments"
+          }
         }
       },
       "block_order": [
@@ -403,6 +475,9 @@
         "gift_family",
         "gift_crew",
         "gift_custom",
+        "shelf_best",
+        "bundle_gift",
+        "shelf_stuffers",
         "store_ornaments",
         "store_tumblers",
         "store_flags",
@@ -454,6 +529,9 @@
         "auto_apply_code": true,
         "auto_apply_note": "Shopping from this page? We apply HOLIDAY for you automatically.",
         "shop_url": "shopify://collections/qb54-game-set-1",
+        "code_collection": "qb54-game-set-1",
+        "free_ship_threshold": 225,
+        "low_stock": 10,
         "festive": true,
         "logo": "shopify://shop_images/QB54_Ball_Logo_only_copy_copy_410x_25d11a0b-a689-4422-9e25-846e937323d1.png",
         "bar_cta": "Shop Gifts",
