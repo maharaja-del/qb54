@@ -1,0 +1,44 @@
+{%- comment -%}
+  Resolves a product title to an NFL team key for the qb54-promo-landing store filter.
+  Matches team nicknames anywhere in the title ("Chicago Bears 9" Player Football") and,
+  for products named by city only ("Green Bay Football Stadium 3D Ornament"), cities with
+  a single NFL team. Outputs nothing when no team matches (team-neutral products).
+
+  Accepts:
+  - title: {String}
+{%- endcomment -%}
+{%- liquid
+  assign clean_title = title | strip | downcase | remove: '(' | remove: ')' | remove: '"' | remove: "'" | remove: ','
+  assign words = clean_title | split: ' '
+  assign team_keys = 'cardinals|falcons|ravens|bills|panthers|bears|bengals|browns|cowboys|broncos|lions|packers|texans|colts|jaguars|chiefs|raiders|chargers|rams|dolphins|vikings|patriots|saints|giants|jets|eagles|steelers|49ers|seahawks|buccaneers|titans|commanders' | split: '|'
+
+  assign resolved = ''
+  for word in words
+    if word == 'cardinal'
+      assign resolved = 'cardinals'
+    elsif word == 'biils'
+      assign resolved = 'bills'
+    elsif word == 'redskins'
+      assign resolved = 'commanders'
+    elsif team_keys contains word
+      assign resolved = word
+    endif
+    if resolved != ''
+      break
+    endif
+  endfor
+
+  if resolved == ''
+    assign padded = ' ' | append: clean_title | append: ' '
+    assign cities = 'arizona:cardinals|atlanta:falcons|baltimore:ravens|buffalo:bills|carolina:panthers|chicago:bears|cincinnati:bengals|cleveland:browns|dallas:cowboys|denver:broncos|detroit:lions|green bay:packers|houston:texans|indianapolis:colts|jacksonville:jaguars|kansas city:chiefs|las vegas:raiders|miami:dolphins|minnesota:vikings|new england:patriots|new orleans:saints|philadelphia:eagles|pittsburgh:steelers|san francisco:49ers|seattle:seahawks|tampa bay:buccaneers|tennessee:titans|washington:commanders' | split: '|'
+    for pair in cities
+      assign city = pair | split: ':' | first
+      assign needle = ' ' | append: city | append: ' '
+      if padded contains needle
+        assign resolved = pair | split: ':' | last
+        break
+      endif
+    endfor
+  endif
+-%}
+{{- resolved -}}

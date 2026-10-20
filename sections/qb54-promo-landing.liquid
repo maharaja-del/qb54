@@ -19,6 +19,7 @@
   assign step_blocks = section.blocks | where: 'type', 'step'
   assign review_blocks = section.blocks | where: 'type', 'review'
   assign faq_blocks = section.blocks | where: 'type', 'faq'
+  assign store_blocks = section.blocks | where: 'type', 'collection'
 
   assign lead_rating = blank
   assign lead_count = blank
@@ -479,6 +480,88 @@
   {{ scope }} .qb54-pl-trustline span { display: inline-flex; align-items: center; gap: 7px; }
   {{ scope }} .qb54-pl-trustline svg { width: 16px; height: 16px; color: var(--navy); }
 
+  /* ---------- Team gear store ---------- */
+  {{ scope }} .qb54-pl-store { padding-block: var(--pad-y); background: var(--paper); color: var(--ink); }
+  {{ scope }} .qb54-pl-store .qb54-pl-h2 { color: var(--ink); }
+  {{ scope }} .qb54-pl-store .qb54-pl-lede { color: var(--ink-2); }
+  {{ scope }} .qb54-pl-team { display: grid; gap: 8px; }
+  {{ scope }} .qb54-pl-team__l { font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-2); }
+  {{ scope }} .qb54-pl-team__box { position: relative; display: flex; align-items: center; }
+  {{ scope }} .qb54-pl-team__box select {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    min-width: 290px;
+    min-height: 56px;
+    margin: 0;
+    padding: 0 50px 0 52px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--navy);
+    background-image: none;
+    color: #ffffff;
+    font-family: var(--fh);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 14px 28px -18px rgba(17, 18, 40, 0.7);
+  }
+  {{ scope }} .qb54-pl-team__box select:hover { background-color: color-mix(in srgb, var(--navy) 88%, #ffffff); }
+  {{ scope }} .qb54-pl-team__box option { color: var(--ink); background: #ffffff; text-transform: none; font-family: var(--fb); }
+  {{ scope }} .qb54-pl-team__box svg { position: absolute; width: 20px; height: 20px; color: var(--gold); pointer-events: none; }
+  {{ scope }} .qb54-pl-team__ico { left: 20px; }
+  {{ scope }} .qb54-pl-team__chev { right: 20px; }
+  {{ scope }} .qb54-pl-cats { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 4px; margin: 0 -4px 20px; }
+  {{ scope }} .qb54-pl-cats::-webkit-scrollbar { display: none; }
+  {{ scope }} .qb54-pl-cat {
+    flex: none;
+    display: grid;
+    justify-items: start;
+    gap: 3px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--fh);
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 160ms var(--ease), color 160ms var(--ease), transform 160ms var(--ease);
+  }
+  {{ scope }} .qb54-pl-cat:hover { transform: translateY(-1px); background: color-mix(in srgb, var(--gold) 22%, var(--cream)); }
+  {{ scope }} .qb54-pl-cat small { font-family: var(--fb); font-weight: 500; font-size: 12px; letter-spacing: 0; text-transform: none; color: var(--ink-2); }
+  {{ scope }} .qb54-pl-cat[aria-pressed='true'] { background: var(--navy); color: #ffffff; }
+  {{ scope }} .qb54-pl-cat[aria-pressed='true'] small { color: var(--gold); }
+  {{ scope }} .qb54-pl-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  {{ scope }} .qb54-pl-card { display: flex; flex-direction: column; min-width: 0; border: 1px solid var(--line); border-radius: 16px; background: #ffffff; overflow: hidden; transition: box-shadow 200ms var(--ease), transform 200ms var(--ease), border-color 200ms var(--ease); }
+  @media (hover: hover) {
+    {{ scope }} .qb54-pl-card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--gold) 60%, var(--line)); box-shadow: 0 22px 40px -26px rgba(17, 18, 40, 0.55); }
+    {{ scope }} .qb54-pl-card:hover .qb54-pl-card__media img { transform: scale(1.04); }
+  }
+  {{ scope }}:not(.qb54-pl--js) .qb54-pl-card:nth-child(n+13) { display: none; }
+  {{ scope }} .qb54-pl-card__media { position: relative; display: block; aspect-ratio: 1; background: #ffffff; }
+  {{ scope }} .qb54-pl-card__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 7%; transition: transform 500ms var(--ease); }
+  {{ scope }} .qb54-pl-card__tag { position: absolute; top: 10px; left: 10px; max-width: calc(100% - 20px); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 4px 8px; border-radius: 6px; background: var(--cream); color: var(--ink-2); font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  {{ scope }} .qb54-pl-card__body { display: flex; flex-direction: column; gap: 8px; flex: 1; padding: 12px 14px 14px; border-top: 1px solid var(--line); }
+  {{ scope }} .qb54-pl-card__t { margin: 0; min-height: 2.6em; font-family: var(--fb); font-weight: 700; font-size: 14.5px; line-height: 1.3; letter-spacing: 0; text-transform: none; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  {{ scope }} .qb54-pl-card__t a:hover { text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  {{ scope }} .qb54-pl-card__p { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; margin-top: auto; }
+  {{ scope }} .qb54-pl-card__p .qb54-pl-now { font-size: 22px; }
+  {{ scope }} .qb54-pl-card__p .qb54-pl-was { font-size: 13px; }
+  {{ scope }} .qb54-pl-card .qb54-pl-btn { width: 100%; min-height: 44px; padding: 0 12px; font-size: 14.5px; gap: 8px; }
+  {{ scope }} .qb54-pl-card .qb54-pl-btn svg { width: 16px; height: 16px; }
+  {{ scope }} .qb54-pl-store__empty { margin: 0; padding: 36px 20px; border-radius: 16px; background: var(--cream); text-align: center; font-size: 15.5px; color: var(--ink-2); }
+  {{ scope }} .qb54-pl-store__empty a { color: var(--navy); font-weight: 700; text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  {{ scope }} .qb54-pl-store__foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 24px; margin-top: 26px; text-align: center; }
+  {{ scope }} .qb54-pl-store__count { width: 100%; margin: 0; font-size: 13.5px; color: var(--muted); }
+  {{ scope }} .qb54-pl-store__all { font-weight: 700; font-size: 15px; color: var(--navy); text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  {{ scope }} .qb54-pl-store__note { margin: 18px auto 0; max-width: 60ch; text-align: center; font-size: 13px; color: var(--muted); }
+
   /* ---------- Where (photo mosaic) ---------- */
   {{ scope }} .qb54-pl-where { padding-block: var(--pad-y); background: var(--night); }
   {{ scope }} .qb54-pl-where .qb54-pl-lede { color: rgba(255, 255, 255, 0.75); }
@@ -601,6 +684,7 @@
     {{ scope }} .qb54-pl-feats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     {{ scope }} .qb54-pl-steps__list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     {{ scope }} .qb54-pl-revrail { grid-auto-columns: 46%; }
+    {{ scope }} .qb54-pl-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
   }
   @media screen and (min-width: 750px) {
     {{ scope }} .qb54-pl-sticky { display: none; }
@@ -617,6 +701,8 @@
     {{ scope }} .qb54-pl-info { padding: 18px 0; }
     {{ scope }} .qb54-pl-rail { grid-auto-flow: row; grid-template-columns: repeat(6, minmax(0, 1fr)); overflow: visible; margin-inline: 0; padding-inline: 0; }
     {{ scope }} .qb54-pl-mosaic { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 230px; }
+    {{ scope }} .qb54-pl-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+    {{ scope }} .qb54-pl-cats { flex-wrap: wrap; overflow: visible; }
     {{ scope }} .qb54-pl-revrail { grid-auto-flow: row; grid-auto-columns: auto; grid-template-columns: repeat(3, minmax(0, 1fr)); overflow: visible; margin-inline: 0; padding-inline: 0; }
     {{ scope }} .qb54-pl-dots { display: none; }
     {{ scope }} .qb54-pl-faq__grid { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 72px; align-items: start; }
@@ -639,6 +725,11 @@
     {{ scope }} .qb54-pl-press__l { width: 100%; text-align: center; }
     {{ scope }} .qb54-pl-press__i { font-size: 18px; }
     {{ scope }} .qb54-pl-bulb:nth-of-type(even) { display: none; }
+    {{ scope }} .qb54-pl-team__box select { min-width: 0; }
+    {{ scope }} .qb54-pl-card__body { padding: 10px 10px 12px; }
+    {{ scope }} .qb54-pl-card__t { font-size: 13.5px; }
+    {{ scope }} .qb54-pl-card__p .qb54-pl-now { font-size: 20px; }
+    {{ scope }} .qb54-pl-card .qb54-pl-btn { font-size: 13.5px; padding: 0 8px; }
   }
   @media screen and (max-width: 989px) {
     {{ scope }}.qb54-pl--festive .qb54-pl-snow { display: none; }
@@ -1047,6 +1138,116 @@
     </div>
   </section>
 
+  {%- if store_blocks.size > 0 -%}
+    {%- assign nfl_teams = 'cardinals:Arizona Cardinals|falcons:Atlanta Falcons|ravens:Baltimore Ravens|bills:Buffalo Bills|panthers:Carolina Panthers|bears:Chicago Bears|bengals:Cincinnati Bengals|browns:Cleveland Browns|cowboys:Dallas Cowboys|broncos:Denver Broncos|lions:Detroit Lions|packers:Green Bay Packers|texans:Houston Texans|colts:Indianapolis Colts|jaguars:Jacksonville Jaguars|chiefs:Kansas City Chiefs|raiders:Las Vegas Raiders|chargers:Los Angeles Chargers|rams:Los Angeles Rams|dolphins:Miami Dolphins|vikings:Minnesota Vikings|patriots:New England Patriots|saints:New Orleans Saints|giants:New York Giants|jets:New York Jets|eagles:Philadelphia Eagles|steelers:Pittsburgh Steelers|49ers:San Francisco 49ers|seahawks:Seattle Seahawks|buccaneers:Tampa Bay Buccaneers|titans:Tennessee Titans|commanders:Washington Commanders' | split: '|' -%}
+    <section class="qb54-pl-store qb54-pl-light" id="qb54-pl-store-{{ section.id }}" aria-labelledby="qb54-pl-store-h-{{ section.id }}" data-qb54-store data-initial="{{ section.settings.store_initial }}">
+      <div class="qb54-pl-wrap">
+        <header class="qb54-pl-head qb54-pl-head--split" data-qb54-reveal>
+          <div>
+            <p class="qb54-pl-eyebrow">{{ section.settings.store_eyebrow | escape }}</p>
+            <h2 class="qb54-pl-h2" id="qb54-pl-store-h-{{ section.id }}">{{ section.settings.store_heading }}</h2>
+            {%- if section.settings.store_text != blank -%}<p class="qb54-pl-lede">{{ section.settings.store_text | escape }}</p>{%- endif -%}
+          </div>
+          <div class="qb54-pl-team qb54-pl-head__aside">
+            <label class="qb54-pl-team__l" for="qb54-pl-team-{{ section.id }}">{{ section.settings.store_team_label | escape }}</label>
+            <div class="qb54-pl-team__box">
+              <svg class="qb54-pl-team__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14.5C4 8.7 7.6 4 12.6 4c4.4 0 7.4 3.4 7.4 7.6v2.9H14l-1.6 3.5H8.2A4.2 4.2 0 0 1 4 14.5z"/><path d="M14 14.5 13 20M9.5 9.5h5.5"/></svg>
+              <select id="qb54-pl-team-{{ section.id }}" data-qb54-team>
+                <option value="">All NFL teams</option>
+                {%- for pair in nfl_teams -%}
+                  {%- assign pair_parts = pair | split: ':' -%}
+                  <option value="{{ pair_parts[0] }}">{{ pair_parts[1] }}</option>
+                {%- endfor -%}
+              </select>
+              <svg class="qb54-pl-team__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          </div>
+        </header>
+
+        {%- assign store_total = 0 -%}
+        {%- capture store_chips -%}
+          {%- for block in store_blocks -%}
+            {%- assign c = block.settings.collection -%}
+            {%- if c == blank -%}{%- continue -%}{%- endif -%}
+            {%- liquid
+              assign from_price = 0
+              for p in c.products limit: block.settings.limit
+                if p.available
+                  assign store_total = store_total | plus: 1
+                  if from_price == 0 or p.price < from_price
+                    assign from_price = p.price
+                  endif
+                endif
+              endfor
+              if block.settings.code_applies
+                assign from_price = from_price | times: keep | divided_by: 100
+              endif
+            -%}
+            <button type="button" class="qb54-pl-cat" aria-pressed="false" data-qb54-cat="{{ forloop.index }}" data-url="{{ c.url }}" data-label="{{ block.settings.label | escape }}" {{ block.shopify_attributes }}>
+              {{- block.settings.label | escape -}}<small>from {{ from_price | money }}</small>
+            </button>
+          {%- endfor -%}
+        {%- endcapture -%}
+        <div class="qb54-pl-cats" role="group" aria-label="Shop by category">
+          <button type="button" class="qb54-pl-cat" aria-pressed="true" data-qb54-cat="all">{{ section.settings.store_all_label | escape }}<small>{{ store_total }} items</small></button>
+          {{- store_chips -}}
+        </div>
+
+        <div class="qb54-pl-grid" data-qb54-grid>
+          {%- for block in store_blocks -%}
+            {%- assign c = block.settings.collection -%}
+            {%- if c == blank -%}{%- continue -%}{%- endif -%}
+            {%- assign cat_i = forloop.index -%}
+            {%- assign rank = 0 -%}
+            {%- for p in c.products limit: block.settings.limit -%}
+              {%- unless p.available -%}{%- continue -%}{%- endunless -%}
+              {%- capture card_team -%}{%- render 'qb54-pl-team-key', title: p.title -%}{%- endcapture -%}
+              {%- liquid
+                assign rank = rank | plus: 1
+                assign pv = p.selected_or_first_available_variant
+                assign card_price = pv.price
+                assign card_sale = card_price | times: keep | divided_by: 100
+                assign card_multi = true
+                if p.has_only_default_variant
+                  assign card_multi = false
+                endif
+              -%}
+              <article class="qb54-pl-card" data-qb54-card data-cat="{{ cat_i }}" data-rank="{{ rank }}" data-team="{{ card_team | strip }}">
+                <a class="qb54-pl-card__media" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
+                  {%- if p.featured_image != blank -%}
+                    {{- p.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300,450,600', sizes: '(min-width: 990px) 300px, (min-width: 600px) 31vw, 46vw', alt: '' -}}
+                  {%- endif -%}
+                  <span class="qb54-pl-card__tag">{{ block.settings.label | escape }}</span>
+                </a>
+                <div class="qb54-pl-card__body">
+                  <h3 class="qb54-pl-card__t"><a href="{{ p.url }}">{{ p.title | escape }}</a></h3>
+                  <div class="qb54-pl-card__p">
+                    {%- if block.settings.code_applies -%}
+                      <span class="qb54-pl-now" data-qb54-when="before live">{{ card_sale | money }}</span>
+                      <s class="qb54-pl-was" data-qb54-when="before live"><span class="qb54-pl-sr">Regular price </span>{{ card_price | money }}</s>
+                      <span class="qb54-pl-now" data-qb54-when="after" hidden>{{ card_price | money }}</span>
+                    {%- else -%}
+                      <span class="qb54-pl-now">{{ card_price | money }}</span>
+                      {%- if pv.compare_at_price > card_price -%}<s class="qb54-pl-was"><span class="qb54-pl-sr">Regular price </span>{{ pv.compare_at_price | money }}</s>{%- endif -%}
+                    {%- endif -%}
+                  </div>
+                  {%- render 'qb54-pl-buy-button', product: p, variant: pv, needs_page: card_multi, label: 'Choose Options' -%}
+                </div>
+              </article>
+            {%- endfor -%}
+          {%- endfor -%}
+        </div>
+        <p class="qb54-pl-store__empty" data-qb54-empty hidden></p>
+        <div class="qb54-pl-store__foot">
+          <p class="qb54-pl-store__count" data-qb54-count aria-live="polite"></p>
+          <button type="button" class="qb54-pl-btn qb54-pl-btn--navy" data-qb54-more hidden>Show more</button>
+          <a class="qb54-pl-store__all" href="{{ shop_url }}" data-qb54-viewall hidden></a>
+        </div>
+        {%- if section.settings.store_note != blank -%}<p class="qb54-pl-store__note">{{ section.settings.store_note | escape }}</p>{%- endif -%}
+      </div>
+    </section>
+  {%- endif -%}
+
   {%- if photo_blocks.size > 0 -%}
     <section class="qb54-pl-where" aria-labelledby="qb54-pl-where-h-{{ section.id }}">
       <div class="qb54-pl-wrap">
@@ -1445,6 +1646,117 @@
     root.addEventListener('click', onClick);
     cleanups.push(function () { root.removeEventListener('click', onClick); });
 
+    /* ---- Team gear store: category chips, team picker (?team=chiefs), show more ---- */
+    var store = root.querySelector('[data-qb54-store]');
+    if (store) {
+      var grid = store.querySelector('[data-qb54-grid]');
+      var storeCards = $all('[data-qb54-card]', store);
+      var catChips = $all('[data-qb54-cat]', store);
+      var teamSelect = store.querySelector('[data-qb54-team]');
+      var moreBtn = store.querySelector('[data-qb54-more]');
+      var countEl = store.querySelector('[data-qb54-count]');
+      var emptyEl = store.querySelector('[data-qb54-empty]');
+      var viewAll = store.querySelector('[data-qb54-viewall]');
+      var pageSize = parseInt(store.getAttribute('data-initial'), 10) || 12;
+      var cat = 'all';
+      var team = '';
+      var limit = pageSize;
+      var teamKey = 'qb54_pl_team';
+
+      // Only offer teams that have gear.
+      var teamCounts = {};
+      storeCards.forEach(function (c) { var t = c.getAttribute('data-team'); if (t) teamCounts[t] = (teamCounts[t] || 0) + 1; });
+      if (teamSelect) $all('option', teamSelect).forEach(function (o) { if (o.value && !teamCounts[o.value]) o.parentNode.removeChild(o); });
+
+      function num(c, attr) { return parseInt(c.getAttribute(attr), 10) || 0; }
+      function chipFor(value) { return catChips.filter(function (b) { return b.getAttribute('data-qb54-cat') === value; })[0]; }
+      function teamName() { return teamSelect && teamSelect.selectedIndex > 0 ? teamSelect.options[teamSelect.selectedIndex].text : ''; }
+
+      function renderStore(focusFrom) {
+        var list = storeCards.filter(function (c) {
+          if (cat !== 'all' && c.getAttribute('data-cat') !== cat) return false;
+          var t = c.getAttribute('data-team');
+          return !team || !t || t === team;
+        });
+        // All gear + all teams: round-robin across categories so the first rows show a mix.
+        list.sort(function (a, b) {
+          if (team) {
+            var na = a.getAttribute('data-team') ? 0 : 1, nb = b.getAttribute('data-team') ? 0 : 1;
+            if (na !== nb) return na - nb;
+          }
+          if (cat === 'all' && !team) return (num(a, 'data-rank') - num(b, 'data-rank')) || (num(a, 'data-cat') - num(b, 'data-cat'));
+          return (num(a, 'data-cat') - num(b, 'data-cat')) || (num(a, 'data-rank') - num(b, 'data-rank'));
+        });
+        storeCards.forEach(function (c) { c.hidden = true; });
+        list.forEach(function (c, i) { grid.appendChild(c); c.hidden = i >= limit; });
+
+        var shown = Math.min(limit, list.length);
+        var chip = cat === 'all' ? null : chipFor(cat);
+        var label = chip ? chip.getAttribute('data-label') : '';
+        if (emptyEl) {
+          emptyEl.hidden = list.length > 0;
+          if (!list.length) {
+            emptyEl.textContent = 'No ' + label + ' for the ' + teamName() + ' yet. ';
+            if (chip) {
+              var a = document.createElement('a');
+              a.href = chip.getAttribute('data-url');
+              a.textContent = 'Browse all ' + label;
+              emptyEl.appendChild(a);
+            }
+          }
+        }
+        if (countEl) {
+          var teamItems = list.filter(function (c) { return c.getAttribute('data-team'); }).length;
+          var items = function (n) { return n + (n === 1 ? ' item' : ' items'); };
+          var text = '';
+          if (team && teamItems) text = items(teamItems) + ' for ' + teamName() + ' fans' + (teamItems < list.length ? ', plus gear for any fan' : '');
+          else if (list.length) text = 'Showing ' + shown + ' of ' + items(list.length);
+          countEl.textContent = text;
+        }
+        if (moreBtn) {
+          moreBtn.hidden = shown >= list.length;
+          moreBtn.textContent = 'Show more (' + (list.length - shown) + ')';
+        }
+        if (viewAll) {
+          viewAll.hidden = !chip;
+          if (chip) { viewAll.href = chip.getAttribute('data-url'); viewAll.textContent = 'View all ' + label; }
+        }
+        if (typeof focusFrom === 'number' && list[focusFrom]) {
+          var link = list[focusFrom].querySelector('.qb54-pl-card__t a');
+          if (link) link.focus();
+        }
+      }
+
+      catChips.forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          cat = chip.getAttribute('data-qb54-cat');
+          limit = pageSize;
+          catChips.forEach(function (b) { b.setAttribute('aria-pressed', b === chip ? 'true' : 'false'); });
+          renderStore();
+        });
+      });
+      if (teamSelect) {
+        teamSelect.addEventListener('change', function () {
+          team = teamSelect.value;
+          limit = pageSize;
+          try { if (team) localStorage.setItem(teamKey, team); else localStorage.removeItem(teamKey); } catch (e) {}
+          renderStore();
+        });
+        var preset = '';
+        var match = /[?&]team=([^&#]+)/.exec(window.location.search);
+        if (match) preset = decodeURIComponent(match[1]).toLowerCase();
+        if (preset && teamCounts[preset]) { try { localStorage.setItem(teamKey, preset); } catch (e) {} }
+        else { try { preset = localStorage.getItem(teamKey) || ''; } catch (e) {} }
+        if (preset && teamCounts[preset]) { teamSelect.value = preset; team = preset; }
+      }
+      if (moreBtn) moreBtn.addEventListener('click', function () {
+        var from = limit;
+        limit += pageSize;
+        renderStore(from);
+      });
+      renderStore();
+    }
+
     /* ---- Viral reels: lazy load, one plays at a time (first in view, or hovered), tap for sound ---- */
     var reels = $all('[data-qb54-reel]');
     var reelRatios = [];
@@ -1674,6 +1986,15 @@
     { "type": "text", "id": "included_items", "label": "What's included", "info": "Separate with |", "default": "2 chairs that support up to 275 lbs each|2 sets of goal posts and a football|Kicking tee, ball pump and printed rules|Carrying bag" },
     { "type": "text", "id": "shipping_note", "label": "Shipping note", "default": "Free shipping $225+" },
     { "type": "text", "id": "returns_note", "label": "Returns note", "default": "30-day returns" },
+    { "type": "header", "content": "Team gear store" },
+    { "type": "paragraph", "content": "Add Store collection blocks to show more products, with a team picker. Link ads to ?team=chiefs (any team nickname) to open pre-filtered." },
+    { "type": "text", "id": "store_eyebrow", "label": "Eyebrow", "default": "The Tailgate Store" },
+    { "type": "inline_richtext", "id": "store_heading", "label": "Heading", "default": "Complete your <em>tailgate</em>" },
+    { "type": "textarea", "id": "store_text", "label": "Text", "default": "Team gear for NFL fans. Pick your team and see the whole setup." },
+    { "type": "text", "id": "store_team_label", "label": "Team picker label", "default": "Pick your team" },
+    { "type": "text", "id": "store_all_label", "label": "All categories label", "default": "All gear" },
+    { "type": "range", "id": "store_initial", "label": "Products shown at first", "min": 4, "max": 24, "step": 4, "default": 12 },
+    { "type": "text", "id": "store_note", "label": "Note under the products" },
     { "type": "header", "content": "Where to play" },
     { "type": "text", "id": "where_eyebrow", "label": "Eyebrow", "default": "Play it anywhere" },
     { "type": "inline_richtext", "id": "where_heading", "label": "Heading", "default": "One bag. <em>Any field.</em>" },
@@ -1735,6 +2056,17 @@
         { "type": "text", "id": "ship_note", "label": "Stock note override", "info": "e.g. Made to order with your logo" },
         { "type": "checkbox", "id": "needs_customization", "label": "Requires customization", "info": "Links to the product page instead of adding to cart.", "default": false },
         { "type": "text", "id": "options_label", "label": "Button label when linking to the product page", "default": "Choose Options" }
+      ]
+    },
+    {
+      "type": "collection",
+      "name": "Store collection",
+      "limit": 14,
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "text", "id": "label", "label": "Category label", "default": "Blankets" },
+        { "type": "range", "id": "limit", "label": "Max products", "min": 4, "max": 50, "step": 2, "default": 32 },
+        { "type": "checkbox", "id": "code_applies", "label": "Discount code applies", "info": "Shows the price after the code on these products.", "default": false }
       ]
     },
     {

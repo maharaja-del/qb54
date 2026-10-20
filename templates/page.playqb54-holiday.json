@@ -279,6 +279,123 @@
             "question": "What if the gift isn't a hit?",
             "answer": "<p>Returns are accepted within 30 days on unused items in their original packaging. See our <a href=\"/pages/return-policy\">return policy</a> for full details.</p>"
           }
+        },
+        "store_ornaments": {
+          "type": "collection",
+          "settings": {
+            "collection": "ornaments",
+            "label": "Ornaments",
+            "limit": 32,
+            "code_applies": false
+          }
+        },
+        "store_tumblers": {
+          "type": "collection",
+          "settings": {
+            "collection": "tailgate-tumbler",
+            "label": "Tumblers",
+            "limit": 32,
+            "code_applies": false
+          }
+        },
+        "store_flags": {
+          "type": "collection",
+          "settings": {
+            "collection": "fan-flags-for-your-qb54-game-set",
+            "label": "Fan Flags",
+            "limit": 32,
+            "code_applies": false
+          }
+        },
+        "store_blankets": {
+          "type": "collection",
+          "settings": {
+            "collection": "tailgate-blanket",
+            "label": "Blankets",
+            "limit": 32,
+            "code_applies": false
+          }
+        },
+        "store_player_footballs": {
+          "type": "collection",
+          "settings": {
+            "collection": "nfl-football",
+            "label": "Player Footballs",
+            "limit": 32,
+            "code_applies": false
+          }
+        },
+        "store_throwback_footballs": {
+          "type": "collection",
+          "settings": {
+            "collection": "nfl-footballs",
+            "label": "Throwback Footballs",
+            "limit": 32,
+            "code_applies": false
+          }
+        },
+        "store_coolers": {
+          "type": "collection",
+          "settings": {
+            "collection": "tailgate-cooler",
+            "label": "Coolers",
+            "limit": 32,
+            "code_applies": false
+          }
+        },
+        "store_caddies": {
+          "type": "collection",
+          "settings": {
+            "collection": "tailgate-caddy",
+            "label": "Caddies",
+            "limit": 32,
+            "code_applies": false
+          }
+        },
+        "store_tables": {
+          "type": "collection",
+          "settings": {
+            "collection": "tailgate-table",
+            "label": "Tables",
+            "limit": 32,
+            "code_applies": false
+          }
+        },
+        "store_tents": {
+          "type": "collection",
+          "settings": {
+            "collection": "tailgate-tent",
+            "label": "Tents",
+            "limit": 32,
+            "code_applies": false
+          }
+        },
+        "store_mascots": {
+          "type": "collection",
+          "settings": {
+            "collection": "tailgate-inflatable-mascot",
+            "label": "Inflatable Mascots",
+            "limit": 32,
+            "code_applies": false
+          }
+        },
+        "store_accessories": {
+          "type": "collection",
+          "settings": {
+            "collection": "accessories",
+            "label": "QB54 Accessories",
+            "limit": 32,
+            "code_applies": false
+          }
+        },
+        "store_gift_cards": {
+          "type": "collection",
+          "settings": {
+            "collection": "qb54-gift-cards",
+            "label": "Gift Cards",
+            "limit": 32,
+            "code_applies": false
+          }
         }
       },
       "block_order": [
@@ -286,6 +403,19 @@
         "gift_family",
         "gift_crew",
         "gift_custom",
+        "store_ornaments",
+        "store_tumblers",
+        "store_flags",
+        "store_blankets",
+        "store_player_footballs",
+        "store_throwback_footballs",
+        "store_coolers",
+        "store_caddies",
+        "store_tables",
+        "store_tents",
+        "store_mascots",
+        "store_accessories",
+        "store_gift_cards",
         "reel_showdown",
         "reel_tailgate",
         "reel_tank",
@@ -358,6 +488,13 @@
         "included_items": "2 chairs that support up to 275 lbs each|2 sets of goal posts and a football|Kicking tee, ball pump and printed rules|Carrying bag",
         "shipping_note": "Free shipping $225+",
         "returns_note": "30-day returns",
+        "store_eyebrow": "Stocking stuffers & team gear",
+        "store_heading": "Gifts for <em>every fan</em>",
+        "store_text": "Ornaments, tumblers, blankets and more in their team's colors, plus gift cards when you can't decide. Pick their team to see everything.",
+        "store_team_label": "Shopping for a fan of",
+        "store_all_label": "All gifts",
+        "store_initial": 12,
+        "store_note": "Code HOLIDAY applies to QB54 game sets. Team gear and gift cards are shown at their regular price.",
         "where_eyebrow": "Play it anywhere",
         "where_heading": "Unwrap it. <em>Play it anywhere.</em>",
         "where_text": "Throw it, kick it, score it — first to 54 wins. Then everyone sits back in the chairs it came in.",
