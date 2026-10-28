@@ -1,0 +1,1180 @@
+{%- liquid
+  assign scope = '#qb54-rl-' | append: section.id
+  assign p = section.settings.product
+  assign v = p.selected_or_first_available_variant
+  assign set_p = section.settings.set_product
+  assign set_v = set_p.selected_or_first_available_variant
+  assign free_ship = section.settings.free_ship_threshold | times: 100
+  assign shop_url = section.settings.shop_url | default: routes.all_products_collection_url
+
+  assign reason_blocks = section.blocks | where: 'type', 'reason'
+  assign step_blocks = section.blocks | where: 'type', 'step'
+  assign story_blocks = section.blocks | where: 'type', 'story'
+  assign faq_blocks = section.blocks | where: 'type', 'faq'
+  assign reason_total = reason_blocks.size
+
+  assign can_buy = false
+  if p != blank and v.available
+    assign can_buy = true
+  endif
+  assign combo_ok = false
+  if can_buy and set_p != blank and set_v.available
+    assign combo_ok = true
+    assign combo_total = set_v.price | plus: v.price
+  endif
+
+  assign set_rating = set_p.metafields.reviews.rating.value
+  assign set_count = set_p.metafields.reviews.rating_count.value
+  assign bag_items = section.settings.bag_items | split: '|'
+-%}
+
+<style>
+  {{ scope }} {
+    --gold: {{ section.settings.color_gold }};
+    --gold-deep: color-mix(in srgb, var(--gold) 80%, #000000);
+    --gold-soft: color-mix(in srgb, var(--gold) 18%, transparent);
+    --on-gold: #1a1c3a;
+    --navy: {{ section.settings.color_navy }};
+    --night: {{ section.settings.color_night }};
+    --cream: {{ section.settings.color_cream }};
+    --paper: #ffffff;
+    --ink: #171717;
+    --ink-2: #4a4c57;
+    --muted: #6b6d78;
+    --line: #e6e2d3;
+    --line-dark: rgba(255, 255, 255, 0.14);
+    --flag-y: #f7c824;
+    --flag-r: #d42a3c;
+    --bag: #2563eb;
+    --turf: #3fae49;
+    --ok: #15803d;
+    --fh: var(--font-heading-family);
+    --fb: var(--font-body-family);
+    --pad-y: clamp(64px, 8vw, 116px);
+    --max: 1240px;
+    --gutter: clamp(16px, 4vw, 40px);
+    --ease: cubic-bezier(0.2, 0, 0, 1);
+    --ease-emph: cubic-bezier(0.05, 0.7, 0.1, 1);
+    --shadow-lg: 0 2px 6px rgba(9, 10, 26, 0.12), 0 40px 80px -36px rgba(9, 10, 26, 0.75);
+    position: relative;
+    background: var(--night);
+    color: #ffffff;
+    font-family: var(--fb);
+    -webkit-font-smoothing: antialiased;
+    /* position + clip: absolutely positioned bits can never widen the page */
+    overflow-x: clip;
+  }
+  {{ scope }} *, {{ scope }} *::before, {{ scope }} *::after { box-sizing: border-box; }
+  {{ scope }} a { color: inherit; text-decoration: none; }
+  {{ scope }} ul, {{ scope }} ol { list-style: none; margin: 0; padding: 0; }
+  {{ scope }} p, {{ scope }} blockquote { text-wrap: pretty; }
+  {{ scope }} [hidden] { display: none !important; }
+  {{ scope }} :focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+  {{ scope }} img { display: block; max-width: 100%; }
+  {{ scope }} .qb54-rl-wrap { width: min(var(--max), 100% - var(--gutter) * 2); margin-inline: auto; }
+  {{ scope }} .qb54-rl-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  /* ---------- Type ---------- */
+  {{ scope }} .qb54-rl-h2 { margin: 0; font-family: var(--fh); font-weight: 700; font-size: clamp(36px, 5vw, 66px); line-height: 0.95; letter-spacing: -0.005em; text-transform: uppercase; text-wrap: balance; color: inherit; }
+  {{ scope }} .qb54-rl-h2 em { font-style: normal; color: var(--gold); }
+  {{ scope }} .qb54-rl-light .qb54-rl-h2 { color: var(--ink); }
+  {{ scope }} .qb54-rl-light .qb54-rl-h2 em { color: var(--navy); }
+  {{ scope }} .qb54-rl-eyebrow { display: flex; align-items: center; gap: 12px; margin: 0 0 16px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+  {{ scope }} .qb54-rl-eyebrow::before { content: ''; width: 28px; height: 3px; border-radius: 3px; background: currentColor; }
+  {{ scope }} .qb54-rl-light .qb54-rl-eyebrow { color: var(--navy); }
+  {{ scope }} .qb54-rl-center { text-align: center; }
+  {{ scope }} .qb54-rl-center .qb54-rl-eyebrow { justify-content: center; }
+  {{ scope }} .qb54-rl-center .qb54-rl-eyebrow::after { content: ''; width: 28px; height: 3px; border-radius: 3px; background: currentColor; }
+  {{ scope }} .qb54-rl-lede { margin: 18px 0 0; max-width: 60ch; font-size: clamp(16px, 1.3vw, 18.5px); line-height: 1.65; }
+  {{ scope }} .qb54-rl-center .qb54-rl-lede { margin-inline: auto; }
+  {{ scope }} .qb54-rl-head { margin-bottom: clamp(32px, 4vw, 56px); }
+
+  /* ---------- Buttons ---------- */
+  {{ scope }} .qb54-rl-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 54px;
+    padding: 0 26px;
+    border: 0;
+    border-radius: 10px;
+    font-family: var(--fh);
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 1;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    overflow: hidden;
+    isolation: isolate;
+    transition: transform 160ms var(--ease), box-shadow 160ms var(--ease), background-color 160ms var(--ease);
+  }
+  {{ scope }} .qb54-rl-btn svg { width: 18px; height: 18px; flex: none; }
+  {{ scope }} .qb54-rl-btn [data-qb54-rl-icon] { display: inline-flex; }
+  {{ scope }} .qb54-rl-btn--gold { background: var(--gold); color: var(--on-gold); box-shadow: 0 14px 30px -14px color-mix(in srgb, var(--gold) 70%, transparent); }
+  {{ scope }} .qb54-rl-btn--gold:hover { background: color-mix(in srgb, var(--gold) 86%, #ffffff); transform: translateY(-2px); }
+  {{ scope }} .qb54-rl-btn--shine::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.7) 48%, transparent 66%); transform: translateX(-120%); animation: qb54-rl-shine 4.2s var(--ease) infinite 1.2s; }
+  {{ scope }} .qb54-rl-btn--ghost { background: rgba(255, 255, 255, 0.07); color: #ffffff; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.4); }
+  {{ scope }} .qb54-rl-btn--ghost:hover { background: rgba(255, 255, 255, 0.14); transform: translateY(-2px); }
+  {{ scope }} .qb54-rl-btn--navy { background: var(--navy); color: #ffffff; }
+  {{ scope }} .qb54-rl-btn--navy:hover { background: color-mix(in srgb, var(--navy) 85%, #ffffff); transform: translateY(-2px); }
+  {{ scope }} .qb54-rl-btn[aria-busy='true'] { pointer-events: none; opacity: 0.85; }
+  {{ scope }} .qb54-rl-btn.is-added { background: var(--ok); color: #ffffff; box-shadow: none; }
+  {{ scope }} .qb54-rl-btn.is-error { background: #b91c1c; color: #ffffff; box-shadow: none; }
+  {{ scope }} .qb54-rl-btn[disabled] { background: #e7e5dd; color: var(--muted); box-shadow: none; cursor: not-allowed; }
+  {{ scope }} .qb54-rl-btn small { font-family: var(--fb); font-size: 13px; font-weight: 700; letter-spacing: 0; text-transform: none; opacity: 0.8; }
+  {{ scope }} .qb54-rl-spin { width: 18px; height: 18px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: qb54-rl-rot 700ms linear infinite; }
+  {{ scope }} .qb54-rl-err { margin: 8px 0 0; font-size: 13px; color: #fca5a5; }
+  {{ scope }} .qb54-rl-light .qb54-rl-err { color: #b91c1c; }
+  @keyframes qb54-rl-shine { 0% { transform: translateX(-120%); } 55%, 100% { transform: translateX(120%); } }
+  @keyframes qb54-rl-rot { to { transform: rotate(360deg); } }
+
+  /* ---------- Sticky top bar + reading progress ---------- */
+  {{ scope }} .qb54-rl-bar { position: sticky; top: 0; z-index: 30; background: color-mix(in srgb, var(--night) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line-dark); }
+  {{ scope }} .qb54-rl-bar__in { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 68px; }
+  {{ scope }} .qb54-rl-bar__logo img { width: auto; height: 40px; }
+  {{ scope }} .qb54-rl-bar__logo span { font-family: var(--fh); font-weight: 700; font-size: 24px; }
+  {{ scope }} .qb54-rl-bar__mid { display: none; align-items: center; gap: 10px; font-size: 13px; color: rgba(255, 255, 255, 0.72); }
+  {{ scope }} .qb54-rl-bar__mid strong { color: #ffffff; }
+  {{ scope }} .qb54-rl-bar__end { display: flex; align-items: center; gap: 10px; }
+  {{ scope }} .qb54-rl-bar .qb54-rl-btn { min-height: 44px; padding: 0 16px; font-size: 15px; }
+  {{ scope }} .qb54-rl-cart { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--line-dark); color: #ffffff; }
+  {{ scope }} .qb54-rl-cart:hover { background: rgba(255, 255, 255, 0.08); }
+  {{ scope }} .qb54-rl-cart svg { width: 21px; height: 21px; }
+  {{ scope }} .qb54-rl-cart__n { position: absolute; top: -3px; right: -3px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: var(--gold); color: var(--on-gold); font-size: 11px; font-weight: 700; line-height: 20px; text-align: center; }
+  {{ scope }} .qb54-rl-cart__n.is-bump { animation: qb54-rl-bump 420ms var(--ease-emph); }
+  @keyframes qb54-rl-bump { 0% { transform: scale(0.4); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+  {{ scope }} .qb54-rl-progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; overflow: hidden; }
+  {{ scope }} .qb54-rl-progress i { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), #ffe08a); transform: scaleX(0); transform-origin: left center; will-change: transform; }
+
+  /* ---------- Hero ---------- */
+  {{ scope }} .qb54-rl-hero { position: relative; isolation: isolate; overflow: hidden; padding-block: clamp(44px, 6vw, 96px) clamp(56px, 7vw, 110px); background: radial-gradient(900px 620px at 82% 18%, color-mix(in srgb, var(--gold) 20%, transparent), transparent 62%), radial-gradient(900px 520px at 6% 110%, color-mix(in srgb, var(--turf) 26%, transparent), transparent 62%), linear-gradient(180deg, var(--night), color-mix(in srgb, var(--navy) 55%, var(--night))); }
+  {{ scope }} .qb54-rl-hero::before {
+    content: '';
+    position: absolute;
+    left: -20%;
+    right: -20%;
+    bottom: -8%;
+    z-index: -1;
+    height: 58%;
+    background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.07) 0 2px, transparent 2px 9%), linear-gradient(0deg, color-mix(in srgb, var(--turf) 22%, transparent), transparent);
+    transform: perspective(640px) rotateX(62deg);
+    transform-origin: 50% 100%;
+    -webkit-mask-image: linear-gradient(0deg, #000 30%, transparent 100%);
+    mask-image: linear-gradient(0deg, #000 30%, transparent 100%);
+    pointer-events: none;
+  }
+  {{ scope }} .qb54-rl-hero__grid { display: grid; gap: clamp(36px, 5vw, 72px); align-items: center; }
+  {{ scope }} .qb54-rl-kicker { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 22px; padding: 7px 14px 7px 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); box-shadow: inset 0 0 0 1px var(--line-dark); font-size: 12.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #ffffff; }
+  {{ scope }} .qb54-rl-kicker b { padding: 4px 9px; border-radius: 999px; background: var(--gold); color: var(--on-gold); letter-spacing: 0.08em; }
+  {{ scope }} .qb54-rl-title { margin: 0; font-family: var(--fh); font-weight: 700; font-size: clamp(42px, 6.2vw, 88px); line-height: 0.92; letter-spacing: -0.01em; text-transform: uppercase; text-wrap: balance; color: #ffffff; }
+  {{ scope }} .qb54-rl-title em { font-style: normal; background: linear-gradient(180deg, #fff3c4, var(--gold) 55%, var(--gold-deep)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; padding-right: 0.04em; }
+  {{ scope }} .qb54-rl-hero .qb54-rl-lede { color: rgba(255, 255, 255, 0.84); font-size: clamp(17px, 1.4vw, 20px); }
+  {{ scope }} .qb54-rl-byline { display: flex; align-items: center; gap: 12px; margin-top: 22px; font-size: 13.5px; color: rgba(255, 255, 255, 0.7); }
+  {{ scope }} .qb54-rl-byline__av { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--navy); box-shadow: inset 0 0 0 2px var(--gold); overflow: hidden; }
+  {{ scope }} .qb54-rl-byline__av img { width: 30px; height: auto; }
+  {{ scope }} .qb54-rl-byline strong { color: #ffffff; font-weight: 700; }
+  {{ scope }} .qb54-rl-byline i { width: 4px; height: 4px; border-radius: 50%; background: rgba(255, 255, 255, 0.4); }
+  {{ scope }} .qb54-rl-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+  {{ scope }} .qb54-rl-hero .qb54-rl-ctas .qb54-rl-btn { min-height: 60px; padding: 0 30px; font-size: 18px; }
+  {{ scope }} .qb54-rl-proof { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--line-dark); }
+  {{ scope }} .qb54-rl-proof li { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 500; color: rgba(255, 255, 255, 0.85); }
+  {{ scope }} .qb54-rl-proof svg { width: 17px; height: 17px; color: var(--gold); flex: none; }
+
+  {{ scope }} .qb54-rl-stage { position: relative; justify-self: center; width: min(78vw, 380px); margin-block: 10px 24px; }
+  {{ scope }} .qb54-rl-phone { position: relative; z-index: 2; aspect-ratio: 9 / 16; border-radius: 34px; padding: 6px; background: linear-gradient(160deg, var(--gold), var(--gold-deep) 45%, var(--gold)); box-shadow: var(--shadow-lg), 0 0 0 10px rgba(255, 255, 255, 0.04); transform: rotate(-3deg); animation: qb54-rl-tilt 9s ease-in-out infinite; }
+  {{ scope }} .qb54-rl-phone__screen { position: relative; width: 100%; height: 100%; border-radius: 28px; overflow: hidden; background: var(--navy); }
+  {{ scope }} .qb54-rl-phone__screen img { width: 100%; height: 100%; object-fit: cover; }
+  {{ scope }} .qb54-rl-price { position: absolute; z-index: 3; right: -14px; bottom: 16%; display: grid; place-items: center; width: 108px; height: 108px; border-radius: 50%; background: var(--gold); color: var(--on-gold); text-align: center; box-shadow: 0 18px 30px -16px rgba(0, 0, 0, 0.7); transform: rotate(10deg); }
+  {{ scope }} .qb54-rl-price span { display: block; font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+  {{ scope }} .qb54-rl-price strong { display: block; font-family: var(--fh); font-weight: 700; font-size: 30px; line-height: 1; }
+  {{ scope }} .qb54-rl-fly { position: absolute; z-index: 3; filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.55)) drop-shadow(0 16px 20px rgba(0, 0, 0, 0.5)); animation: qb54-rl-float 6s ease-in-out infinite; pointer-events: none; }
+  {{ scope }} .qb54-rl-fly img { width: 100%; height: auto; }
+  {{ scope }} .qb54-rl-fly--y { left: -52px; top: 4%; width: 66px; transform: rotate(-24deg); }
+  {{ scope }} .qb54-rl-fly--r { right: -44px; top: -4%; width: 72px; animation-delay: -2s; transform: rotate(26deg); }
+  {{ scope }} .qb54-rl-fly--b { left: -58px; bottom: 9%; width: 122px; animation-delay: -4s; transform: rotate(-12deg); }
+  @keyframes qb54-rl-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -14px; } }
+  @keyframes qb54-rl-tilt { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(-1.5deg) translateY(-6px); } }
+
+  /* ---------- Article nav (TOC) ---------- */
+  {{ scope }} .qb54-rl-toc { position: relative; z-index: 20; padding-block: 18px; background: var(--night); border-bottom: 1px solid var(--line-dark); }
+  {{ scope }} .qb54-rl-toc__l { margin: 0 0 10px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255, 255, 255, 0.55); }
+  {{ scope }} .qb54-rl-toc ol { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 calc(var(--gutter) * -1); padding: 2px var(--gutter); scroll-padding-inline: var(--gutter); }
+  {{ scope }} .qb54-rl-toc ol::-webkit-scrollbar { display: none; }
+  {{ scope }} .qb54-rl-toc a { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px 8px 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); box-shadow: inset 0 0 0 1px var(--line-dark); white-space: nowrap; font-size: 14px; font-weight: 700; color: rgba(255, 255, 255, 0.86); transition: background-color 200ms var(--ease), color 200ms var(--ease), box-shadow 200ms var(--ease); }
+  {{ scope }} .qb54-rl-toc a span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); font-family: var(--fh); font-size: 14px; color: var(--gold); }
+  {{ scope }} .qb54-rl-toc a:hover { background: rgba(255, 255, 255, 0.12); }
+  {{ scope }} .qb54-rl-toc a[aria-current='true'] { background: var(--gold); color: var(--on-gold); box-shadow: none; }
+  {{ scope }} .qb54-rl-toc a[aria-current='true'] span { background: var(--on-gold); color: var(--gold); }
+
+  /* ---------- The list ---------- */
+  {{ scope }} .qb54-rl-list__body { padding-top: clamp(48px, 6vw, 96px); }
+  {{ scope }} .qb54-rl-list { position: relative; padding-block: 0 clamp(48px, 6vw, 96px); background: linear-gradient(180deg, var(--night), color-mix(in srgb, var(--navy) 70%, var(--night)) 40%, var(--night)); }
+  {{ scope }} .qb54-rl-reason { display: grid; gap: 22px; grid-template-areas: 'head' 'media' 'body'; align-items: center; scroll-margin-top: 150px; }
+  {{ scope }} .qb54-rl-reason + .qb54-rl-reason, {{ scope }} .qb54-rl-strip + .qb54-rl-reason { margin-top: clamp(72px, 9vw, 140px); }
+  {{ scope }} .qb54-rl-reason__head { grid-area: head; }
+  {{ scope }} .qb54-rl-reason__media { grid-area: media; position: relative; }
+  {{ scope }} .qb54-rl-reason__body { grid-area: body; }
+  {{ scope }} .qb54-rl-reason__media--inset { margin-bottom: 40px; }
+  {{ scope }} .qb54-rl-num { display: flex; align-items: flex-end; gap: 14px; margin: 0 0 14px; }
+  {{ scope }} .qb54-rl-num b { font-family: var(--fh); font-weight: 700; font-size: clamp(76px, 9vw, 140px); line-height: 0.78; letter-spacing: -0.03em; background: linear-gradient(180deg, #fff3c4, var(--gold) 50%, var(--gold-deep)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; padding-bottom: 0.04em; }
+  {{ scope }} .qb54-rl-num span { margin-bottom: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255, 255, 255, 0.55); }
+  {{ scope }} .qb54-rl-reason h2 { margin: 0; font-family: var(--fh); font-weight: 700; font-size: clamp(34px, 4.4vw, 60px); line-height: 0.95; letter-spacing: -0.005em; text-transform: uppercase; text-wrap: balance; color: #ffffff; }
+  {{ scope }} .qb54-rl-reason h2 em { display: block; font-style: normal; color: var(--gold); }
+  {{ scope }} .qb54-rl-reason__body { font-size: clamp(16.5px, 1.3vw, 18.5px); line-height: 1.7; color: rgba(255, 255, 255, 0.84); }
+  {{ scope }} .qb54-rl-reason__body p { margin: 0 0 14px; max-width: 58ch; }
+  {{ scope }} .qb54-rl-reason__body p:last-child { margin-bottom: 0; }
+  {{ scope }} .qb54-rl-reason__body strong { color: #ffffff; }
+
+  {{ scope }} .qb54-rl-frame { position: relative; aspect-ratio: 4 / 5; border-radius: 28px; padding: 4px; background: linear-gradient(160deg, var(--gold), var(--gold-deep) 50%, var(--gold)); box-shadow: var(--shadow-lg); }
+  {{ scope }} .qb54-rl-frame__in { position: relative; width: 100%; height: 100%; border-radius: 24px; overflow: hidden; background: var(--navy); }
+  {{ scope }} .qb54-rl-frame__in img { width: 100%; height: 100%; object-fit: cover; transition: transform 900ms var(--ease); }
+  @media (hover: hover) { {{ scope }} .qb54-rl-reason:hover .qb54-rl-frame__in img { transform: scale(1.035); } }
+  {{ scope }} .qb54-rl-frame--top .qb54-rl-frame__in img { object-position: center 20%; }
+  {{ scope }} .qb54-rl-frame--bottom .qb54-rl-frame__in img { object-position: center 80%; }
+  {{ scope }} .qb54-rl-inset { position: absolute; z-index: 2; right: -10px; bottom: -26px; width: 44%; transform: rotate(4deg); }
+  {{ scope }} .qb54-rl-reason--flip .qb54-rl-inset { right: auto; left: -10px; transform: rotate(-4deg); }
+  {{ scope }} .qb54-rl-inset__img { aspect-ratio: 5 / 4; border-radius: 18px; padding: 3px; background: var(--gold); box-shadow: 0 24px 40px -20px rgba(0, 0, 0, 0.75); }
+  {{ scope }} .qb54-rl-inset__img img { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; background: #ffffff; }
+  {{ scope }} .qb54-rl-inset__l { position: absolute; left: 12px; bottom: -12px; padding: 6px 11px; border-radius: 999px; background: var(--night); box-shadow: inset 0 0 0 1px var(--gold); font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); white-space: nowrap; }
+
+  {{ scope }} .qb54-rl-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  {{ scope }} .qb54-rl-chips li { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px 8px 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.07); box-shadow: inset 0 0 0 1px var(--line-dark); font-size: 14px; font-weight: 700; color: #ffffff; }
+  {{ scope }} .qb54-rl-chips img { width: 30px; height: 30px; padding: 4px; border-radius: 50%; background: #ffffff; object-fit: contain; }
+
+  /* Inline buy strip */
+  {{ scope }} .qb54-rl-strip { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 14px 16px; margin-top: clamp(56px, 7vw, 100px); padding: 16px; border-radius: 22px; background: rgba(255, 255, 255, 0.06); box-shadow: inset 0 0 0 1px var(--line-dark); backdrop-filter: blur(6px); }
+  {{ scope }} .qb54-rl-strip__img { width: 72px; height: 72px; border-radius: 14px; background: #ffffff; overflow: hidden; }
+  {{ scope }} .qb54-rl-strip__img img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+  {{ scope }} .qb54-rl-strip__t strong { display: block; font-family: var(--fh); font-weight: 700; font-size: 22px; line-height: 1.05; text-transform: uppercase; color: #ffffff; }
+  {{ scope }} .qb54-rl-strip__t span { display: block; margin-top: 4px; font-size: 13.5px; color: rgba(255, 255, 255, 0.72); }
+  {{ scope }} .qb54-rl-strip .qb54-rl-buy { grid-column: 1 / -1; }
+  {{ scope }} .qb54-rl-strip .qb54-rl-btn { width: 100%; }
+
+  /* ---------- What's in the bag ---------- */
+  {{ scope }} .qb54-rl-bag { padding-block: var(--pad-y); background: var(--cream); color: var(--ink); }
+  {{ scope }} .qb54-rl-bag__grid { display: grid; gap: clamp(28px, 4vw, 64px); align-items: center; }
+  {{ scope }} .qb54-rl-bag__img { position: relative; aspect-ratio: 1; border-radius: 28px; background: #ffffff; box-shadow: 0 30px 60px -40px rgba(17, 18, 40, 0.55), inset 0 0 0 1px var(--line); overflow: hidden; }
+  {{ scope }} .qb54-rl-bag__img img { width: 100%; height: 100%; object-fit: contain; padding: 6%; }
+  {{ scope }} .qb54-rl-bag__tag { position: absolute; left: 16px; top: 16px; padding: 7px 12px; border-radius: 999px; background: var(--navy); color: #ffffff; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+  {{ scope }} .qb54-rl-bag .qb54-rl-lede { color: var(--ink-2); }
+  {{ scope }} .qb54-rl-team { display: grid; gap: 10px; margin: 26px 0 0; }
+  {{ scope }} .qb54-rl-team li { display: flex; align-items: center; gap: 14px; padding: 12px 16px 12px 12px; border-radius: 16px; background: #ffffff; box-shadow: inset 0 0 0 1px var(--line); font-size: 16px; font-weight: 700; color: var(--ink); }
+  {{ scope }} .qb54-rl-team li img { width: 44px; height: 44px; padding: 5px; border-radius: 12px; background: var(--cream); object-fit: contain; flex: none; }
+  {{ scope }} .qb54-rl-team li small { margin-left: auto; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  {{ scope }} .qb54-rl-bag__note { margin: 14px 0 0; font-size: 13.5px; color: var(--muted); }
+  {{ scope }} .qb54-rl-pricerow { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 28px; }
+  {{ scope }} .qb54-rl-pricerow strong { font-family: var(--fh); font-weight: 700; font-size: 48px; line-height: 1; color: var(--navy); }
+  {{ scope }} .qb54-rl-stock { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink-2); }
+  {{ scope }} .qb54-rl-stock::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18); }
+  {{ scope }} .qb54-rl-bag .qb54-rl-buy { margin-top: 18px; }
+  {{ scope }} .qb54-rl-bag .qb54-rl-btn { width: 100%; min-height: 60px; font-size: 19px; }
+
+  /* ---------- How to play ---------- */
+  {{ scope }} .qb54-rl-how { padding-block: var(--pad-y); background: var(--paper); color: var(--ink); }
+  {{ scope }} .qb54-rl-how__grid { display: grid; gap: clamp(28px, 4vw, 60px); align-items: center; }
+  {{ scope }} .qb54-rl-how__img { position: relative; aspect-ratio: 4 / 3; border-radius: 28px; overflow: hidden; box-shadow: 0 30px 60px -36px rgba(17, 18, 40, 0.6); }
+  {{ scope }} .qb54-rl-how__img img { width: 100%; height: 100%; object-fit: cover; }
+  {{ scope }} .qb54-rl-steps { position: relative; display: grid; gap: 14px; }
+  {{ scope }} .qb54-rl-step { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 18px; padding: 20px 22px 20px 18px; border-radius: 20px; background: var(--cream); }
+  {{ scope }} .qb54-rl-step__n { grid-row: span 2; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; background: var(--navy); color: var(--gold); font-family: var(--fh); font-weight: 700; font-size: 24px; }
+  {{ scope }} .qb54-rl-step h3 { margin: 2px 0 0; font-family: var(--fh); font-weight: 700; font-size: 24px; line-height: 1.05; letter-spacing: 0; text-transform: uppercase; color: var(--ink); }
+  {{ scope }} .qb54-rl-step p { margin: 0; font-size: 15.5px; line-height: 1.55; color: var(--ink-2); }
+
+  /* ---------- Feed (story creatives) ---------- */
+  {{ scope }} .qb54-rl-feed { position: relative; padding-block: var(--pad-y); background: radial-gradient(800px 420px at 85% 0%, color-mix(in srgb, var(--navy) 80%, transparent), transparent 70%), var(--night); }
+  {{ scope }} .qb54-rl-feed .qb54-rl-lede { color: rgba(255, 255, 255, 0.75); }
+  {{ scope }} .qb54-rl-rail { display: grid; grid-auto-flow: column; grid-auto-columns: min(66%, 250px); gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 10px var(--gutter) 24px; margin-inline: calc(var(--gutter) * -1); scroll-padding-inline: var(--gutter); }
+  {{ scope }} .qb54-rl-rail::-webkit-scrollbar { display: none; }
+  {{ scope }} .qb54-rl-story { scroll-snap-align: start; margin: 0; }
+  {{ scope }} .qb54-rl-story__img { aspect-ratio: 9 / 16; border-radius: 26px; padding: 4px; background: linear-gradient(160deg, var(--gold), var(--gold-deep) 50%, var(--gold)); box-shadow: 0 30px 50px -30px rgba(0, 0, 0, 0.85); transition: transform 300ms var(--ease); }
+  {{ scope }} .qb54-rl-story__img img { width: 100%; height: 100%; object-fit: cover; border-radius: 22px; }
+  @media (hover: hover) { {{ scope }} .qb54-rl-story:hover .qb54-rl-story__img { transform: translateY(-6px) rotate(-1deg); } }
+  {{ scope }} .qb54-rl-story figcaption { margin-top: 12px; font-size: 13.5px; font-weight: 700; color: rgba(255, 255, 255, 0.8); }
+
+  /* ---------- Offer ---------- */
+  {{ scope }} .qb54-rl-offer { position: relative; isolation: isolate; padding-block: var(--pad-y); background: var(--gold); color: var(--on-gold); overflow: hidden; }
+  {{ scope }} .qb54-rl-offer::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(700px 360px at 12% 0%, rgba(255, 255, 255, 0.5), transparent 70%), radial-gradient(520px 320px at 100% 100%, rgba(0, 0, 0, 0.1), transparent 70%); }
+  {{ scope }} .qb54-rl-offer .qb54-rl-h2, {{ scope }} .qb54-rl-offer .qb54-rl-eyebrow { color: var(--on-gold); }
+  {{ scope }} .qb54-rl-offer .qb54-rl-h2 em { color: #ffffff; -webkit-text-stroke: 0; text-shadow: 0 2px 0 rgba(26, 28, 58, 0.25); }
+  {{ scope }} .qb54-rl-offer .qb54-rl-lede { color: color-mix(in srgb, var(--on-gold) 82%, transparent); }
+  {{ scope }} .qb54-rl-cards { display: grid; gap: 18px; }
+  {{ scope }} .qb54-rl-card { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 22px; border-radius: 26px; background: #ffffff; color: var(--ink); box-shadow: 0 30px 60px -36px rgba(17, 18, 40, 0.55); }
+  {{ scope }} .qb54-rl-card--hero { background: var(--navy); color: #ffffff; box-shadow: 0 0 0 3px var(--night), 0 40px 70px -36px rgba(17, 18, 40, 0.8); }
+  {{ scope }} .qb54-rl-card__tag { align-self: flex-start; padding: 6px 12px; border-radius: 999px; background: var(--cream); color: var(--ink-2); font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+  {{ scope }} .qb54-rl-card--hero .qb54-rl-card__tag { background: rgba(255, 255, 255, 0.12); color: #ffffff; }
+  {{ scope }} .qb54-rl-card__badge { position: absolute; top: -14px; right: 18px; padding: 8px 14px; border-radius: 999px; background: var(--flag-r); color: #ffffff; font-family: var(--fh); font-weight: 700; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; box-shadow: 0 12px 20px -12px rgba(0, 0, 0, 0.6); }
+  {{ scope }} .qb54-rl-card__imgs { display: flex; align-items: center; gap: 10px; }
+  {{ scope }} .qb54-rl-card__img { flex: 1; aspect-ratio: 16 / 10; border-radius: 16px; background: #ffffff; overflow: hidden; box-shadow: inset 0 0 0 1px var(--line); }
+  {{ scope }} .qb54-rl-card__img img { width: 100%; height: 100%; object-fit: contain; padding: 6%; }
+  {{ scope }} .qb54-rl-card--hero .qb54-rl-card__img { aspect-ratio: 1; }
+  {{ scope }} .qb54-rl-card__plus { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--gold); color: var(--on-gold); font-family: var(--fh); font-weight: 700; font-size: 22px; }
+  {{ scope }} .qb54-rl-card h3 { margin: 0; font-family: var(--fh); font-weight: 700; font-size: clamp(26px, 2.6vw, 34px); line-height: 1; letter-spacing: 0; text-transform: uppercase; color: inherit; }
+  {{ scope }} .qb54-rl-card__sub { margin: -8px 0 0; font-size: 14.5px; color: var(--ink-2); }
+  {{ scope }} .qb54-rl-card--hero .qb54-rl-card__sub { color: rgba(255, 255, 255, 0.75); }
+  {{ scope }} .qb54-rl-lines { display: grid; gap: 8px; padding: 14px 0; border-block: 1px solid var(--line); font-size: 14.5px; }
+  {{ scope }} .qb54-rl-card--hero .qb54-rl-lines { border-color: var(--line-dark); }
+  {{ scope }} .qb54-rl-lines li { display: flex; justify-content: space-between; gap: 12px; }
+  {{ scope }} .qb54-rl-lines li span:last-child { font-variant-numeric: tabular-nums; font-weight: 700; }
+  {{ scope }} .qb54-rl-card__total { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; margin-top: auto; }
+  {{ scope }} .qb54-rl-card__total span { font-size: 12.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.75; }
+  {{ scope }} .qb54-rl-card__total strong { font-family: var(--fh); font-weight: 700; font-size: 46px; line-height: 1; font-variant-numeric: tabular-nums; color: var(--navy); }
+  {{ scope }} .qb54-rl-card--hero .qb54-rl-card__total strong { color: var(--gold); }
+  {{ scope }} .qb54-rl-ship { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 700; color: #4ade80; }
+  {{ scope }} .qb54-rl-ship svg { width: 17px; height: 17px; }
+  {{ scope }} .qb54-rl-card .qb54-rl-btn { width: 100%; min-height: 58px; font-size: 18px; }
+  {{ scope }} .qb54-rl-card__alt { margin: -4px 0 0; text-align: center; font-size: 13.5px; }
+  {{ scope }} .qb54-rl-card__alt a { font-weight: 700; text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+
+  /* ---------- FAQ ---------- */
+  {{ scope }} .qb54-rl-faq { padding-block: var(--pad-y); background: var(--paper); color: var(--ink); }
+  {{ scope }} .qb54-rl-faq__grid { display: grid; gap: 30px; }
+  {{ scope }} .qb54-rl-faq .qb54-rl-lede { color: var(--ink-2); }
+  {{ scope }} .qb54-rl-qa { border-top: 1px solid var(--line); }
+  {{ scope }} .qb54-rl-qa:last-child { border-bottom: 1px solid var(--line); }
+  {{ scope }} .qb54-rl-qa summary { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 22px 0; list-style: none; cursor: pointer; font-size: 17.5px; font-weight: 700; line-height: 1.35; color: var(--ink); }
+  {{ scope }} .qb54-rl-qa summary::-webkit-details-marker { display: none; }
+  {{ scope }} .qb54-rl-plus { position: relative; flex: none; width: 36px; height: 36px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--line); transition: background-color 220ms var(--ease), transform 260ms var(--ease); }
+  {{ scope }} .qb54-rl-plus::before, {{ scope }} .qb54-rl-plus::after { content: ''; position: absolute; left: 50%; top: 50%; width: 12px; height: 2px; margin: -1px 0 0 -6px; border-radius: 2px; background: var(--ink); transition: transform 260ms var(--ease); }
+  {{ scope }} .qb54-rl-plus::after { transform: rotate(90deg); }
+  {{ scope }} .qb54-rl-qa[open] .qb54-rl-plus { background: var(--gold); box-shadow: none; transform: rotate(180deg); }
+  {{ scope }} .qb54-rl-qa[open] .qb54-rl-plus::after { transform: rotate(0deg); }
+  {{ scope }} .qb54-rl-qa__a { padding: 0 54px 24px 0; font-size: 15.5px; line-height: 1.65; color: var(--ink-2); }
+  {{ scope }} .qb54-rl-qa__a p { margin: 0 0 10px; }
+  {{ scope }} .qb54-rl-qa__a p:last-child { margin: 0; }
+  {{ scope }} .qb54-rl-qa__a a { color: var(--navy); font-weight: 700; text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+
+  /* ---------- Final ---------- */
+  {{ scope }} .qb54-rl-final { position: relative; isolation: isolate; overflow: hidden; padding-block: clamp(80px, 10vw, 150px); text-align: center; background: var(--night); }
+  {{ scope }} .qb54-rl-final__bg { position: absolute; inset: 0; z-index: -2; }
+  {{ scope }} .qb54-rl-final__bg img { width: 100%; height: 100%; object-fit: cover; object-position: center 60%; filter: blur(3px) saturate(1.1); transform: scale(1.06); }
+  {{ scope }} .qb54-rl-final::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, color-mix(in srgb, var(--night) 82%, transparent), color-mix(in srgb, var(--night) 70%, transparent) 50%, var(--night)); }
+  {{ scope }} .qb54-rl-final h2 { margin: 0; font-family: var(--fh); font-weight: 700; font-size: clamp(48px, 8vw, 116px); line-height: 0.88; letter-spacing: -0.015em; text-transform: uppercase; color: #ffffff; }
+  {{ scope }} .qb54-rl-final h2 em { display: block; font-style: normal; color: var(--gold); }
+  {{ scope }} .qb54-rl-final .qb54-rl-lede { margin-inline: auto; color: rgba(255, 255, 255, 0.82); }
+  {{ scope }} .qb54-rl-final .qb54-rl-ctas { justify-content: center; }
+  {{ scope }} .qb54-rl-final .qb54-rl-btn { min-height: 62px; padding: 0 34px; font-size: 19px; }
+  {{ scope }} .qb54-rl-trust { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 26px; }
+  {{ scope }} .qb54-rl-trust li { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); box-shadow: inset 0 0 0 1px var(--line-dark); font-size: 13px; font-weight: 700; color: #ffffff; }
+  {{ scope }} .qb54-rl-trust svg { width: 16px; height: 16px; color: var(--gold); }
+
+  /* ---------- Sticky bar + toast ---------- */
+  {{ scope }} .qb54-rl-sticky { position: fixed; z-index: 40; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 12px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: var(--navy); color: #ffffff; border-top: 3px solid var(--gold); box-shadow: 0 -14px 34px -14px rgba(0, 0, 0, 0.55); transform: translateY(115%); transition: transform 320ms var(--ease-emph); }
+  {{ scope }} .qb54-rl-sticky.is-visible { transform: translateY(0); }
+  {{ scope }} .qb54-rl-sticky__img { width: 46px; height: 46px; border-radius: 10px; background: #ffffff; overflow: hidden; flex: none; }
+  {{ scope }} .qb54-rl-sticky__img img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
+  {{ scope }} .qb54-rl-sticky__t { display: grid; gap: 2px; min-width: 0; flex: 1; }
+  {{ scope }} .qb54-rl-sticky__t strong { font-family: var(--fh); font-weight: 700; font-size: 18px; line-height: 1; text-transform: uppercase; }
+  {{ scope }} .qb54-rl-sticky__t span { font-size: 13px; font-weight: 700; color: var(--gold); }
+  {{ scope }} .qb54-rl-sticky .qb54-rl-btn { min-height: 46px; padding: 0 16px; font-size: 15px; }
+  {{ scope }} .qb54-rl-toast { position: fixed; z-index: 50; left: 12px; right: 12px; bottom: calc(86px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px 14px; padding: 14px 14px 14px 16px; border-radius: 18px; background: #ffffff; color: var(--ink); box-shadow: 0 26px 60px -18px rgba(17, 18, 40, 0.6), 0 0 0 1px rgba(17, 18, 40, 0.06); animation: qb54-rl-toast 360ms var(--ease-emph); }
+  @keyframes qb54-rl-toast { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+  {{ scope }} .qb54-rl-toast__ok { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #dcfce7; color: var(--ok); }
+  {{ scope }} .qb54-rl-toast__ok svg { width: 20px; height: 20px; }
+  {{ scope }} .qb54-rl-toast__t { display: grid; gap: 2px; min-width: 0; padding-right: 30px; }
+  {{ scope }} .qb54-rl-toast__t strong { font-size: 15px; }
+  {{ scope }} .qb54-rl-toast__t span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 13px; color: var(--ink-2); }
+  {{ scope }} .qb54-rl-toast__a { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; }
+  {{ scope }} .qb54-rl-toast__a .qb54-rl-btn { flex: 1; min-height: 50px; }
+  {{ scope }} .qb54-rl-toast__cart { font-size: 14px; font-weight: 700; color: var(--navy); text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  {{ scope }} .qb54-rl-toast__x { position: absolute; top: 10px; right: 10px; display: grid; place-items: center; width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer; }
+  {{ scope }} .qb54-rl-toast__x svg { width: 16px; height: 16px; }
+  {{ scope }} .qb54-rl-meter { grid-column: 1 / -1; display: grid; gap: 6px; }
+  {{ scope }} .qb54-rl-meter__bar { position: relative; height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--navy) 12%, transparent); overflow: hidden; }
+  {{ scope }} .qb54-rl-meter__bar i { position: absolute; top: 0; bottom: 0; left: 0; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--gold), #f59e0b); transition: width 450ms var(--ease); }
+  {{ scope }} .qb54-rl-meter.is-done .qb54-rl-meter__bar i { background: var(--ok); }
+  {{ scope }} .qb54-rl-meter__t { font-size: 13px; color: var(--ink-2); }
+  {{ scope }} .qb54-rl-meter__t strong { color: var(--ink); }
+  {{ scope }} .qb54-rl-meter.is-done .qb54-rl-meter__t strong { color: var(--ok); }
+
+  /* ---------- Reveal ---------- */
+  {{ scope }}.qb54-rl--js [data-qb54-rl-reveal] { opacity: 0; transform: translateY(26px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); }
+  {{ scope }}.qb54-rl--js [data-qb54-rl-reveal].is-in { opacity: 1; transform: none; }
+
+  /* ---------- Breakpoints ---------- */
+  @media screen and (min-width: 600px) {
+    {{ scope }} .qb54-rl-strip { grid-template-columns: auto minmax(0, 1fr) auto; padding: 16px 16px 16px 16px; }
+    {{ scope }} .qb54-rl-strip .qb54-rl-buy { grid-column: auto; }
+    {{ scope }} .qb54-rl-strip .qb54-rl-btn { width: auto; }
+    {{ scope }} .qb54-rl-rail { grid-auto-columns: 240px; }
+    {{ scope }} .qb54-rl-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media screen and (min-width: 750px) {
+    {{ scope }} .qb54-rl-sticky { display: none; }
+    {{ scope }} .qb54-rl-toast { left: auto; right: 24px; bottom: 24px; width: 400px; }
+  }
+  @media screen and (min-width: 990px) {
+    {{ scope }} .qb54-rl-bar__mid { display: inline-flex; }
+    {{ scope }} .qb54-rl-hero__grid { grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); }
+    {{ scope }} .qb54-rl-stage { justify-self: end; margin-right: 46px; }
+    {{ scope }} .qb54-rl-toc { position: sticky; top: 68px; padding-block: 12px; background: color-mix(in srgb, var(--night) 90%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+    {{ scope }} .qb54-rl-toc .qb54-rl-wrap { display: flex; align-items: center; gap: 18px; }
+    {{ scope }} .qb54-rl-toc__l { margin: 0; flex: none; }
+    {{ scope }} .qb54-rl-toc ol { margin: 0; padding: 2px; overflow: visible; flex-wrap: wrap; }
+    {{ scope }} .qb54-rl-reason { grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); grid-template-areas: 'media head' 'media body'; column-gap: clamp(48px, 6vw, 96px); row-gap: 18px; align-items: start; }
+    {{ scope }} .qb54-rl-reason__head { align-self: end; }
+    {{ scope }} .qb54-rl-reason--flip { grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); grid-template-areas: 'head media' 'body media'; }
+    {{ scope }} .qb54-rl-reason__media { align-self: center; }
+    {{ scope }} .qb54-rl-reason__media--inset { margin-bottom: 0; }
+    {{ scope }} .qb54-rl-inset { right: -34px; bottom: -34px; width: 46%; }
+    {{ scope }} .qb54-rl-reason--flip .qb54-rl-inset { left: -34px; }
+    {{ scope }} .qb54-rl-strip { max-width: 860px; margin-inline: auto; padding: 18px 18px 18px 18px; }
+    {{ scope }} .qb54-rl-bag__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    {{ scope }} .qb54-rl-how__grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); }
+    {{ scope }} .qb54-rl-rail { grid-auto-flow: row; grid-auto-columns: auto; grid-template-columns: repeat(5, minmax(0, 1fr)); overflow: visible; margin-inline: 0; padding-inline: 0; }
+    {{ scope }} .qb54-rl-story:nth-child(even) { transform: translateY(28px); }
+    {{ scope }} .qb54-rl-cards { max-width: 980px; margin-inline: auto; gap: 26px; }
+    {{ scope }} .qb54-rl-card { padding: 28px; }
+    {{ scope }} .qb54-rl-faq__grid { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 72px; align-items: start; }
+    {{ scope }} .qb54-rl-faq__aside { position: sticky; top: 100px; }
+  }
+  @media screen and (max-width: 599px) {
+    {{ scope }} .qb54-rl-ctas .qb54-rl-btn { width: 100%; }
+    {{ scope }} .qb54-rl-ctas .qb54-rl-buy { width: 100%; }
+    {{ scope }} .qb54-rl-bar .qb54-rl-btn small { display: none; }
+    {{ scope }} .qb54-rl-price { width: 92px; height: 92px; right: -8px; }
+    {{ scope }} .qb54-rl-price strong { font-size: 26px; }
+    {{ scope }} .qb54-rl-fly--y { left: -24px; width: 48px; }
+    {{ scope }} .qb54-rl-fly--r { right: -20px; width: 52px; }
+    {{ scope }} .qb54-rl-fly--b { left: -22px; width: 88px; }
+    {{ scope }} .qb54-rl-inset { width: 46%; right: -4px; }
+    {{ scope }} .qb54-rl-reason--flip .qb54-rl-inset { left: -4px; }
+    {{ scope }} .qb54-rl-pricerow strong { font-size: 40px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    {{ scope }} *, {{ scope }} *::before, {{ scope }} *::after { animation: none !important; transition: none !important; }
+    {{ scope }}.qb54-rl--js [data-qb54-rl-reveal] { opacity: 1; transform: none; }
+  }
+  body.qb54-rl-bar-on { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+  @media screen and (min-width: 750px) { body.qb54-rl-bar-on { padding-bottom: 0; } }
+</style>
+
+{%- capture i_cart -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h3l2.4 12h11l2.1-8H6.4"/></svg>{%- endcapture -%}
+{%- capture i_check -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>{%- endcapture -%}
+{%- capture i_arrow_down -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>{%- endcapture -%}
+{%- capture i_tv -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="m8 2 4 4 4-4"/></svg>{%- endcapture -%}
+{%- capture i_star -%}<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.6 7.7l5.8-.8z"/></svg>{%- endcapture -%}
+{%- capture i_truck -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 4h14v12H1zM15 9h4l4 4v3h-8z"/><circle cx="6" cy="18.5" r="2"/><circle cx="18" cy="18.5" r="2"/></svg>{%- endcapture -%}
+{%- capture i_shield -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-3.6 8-10V5l-8-3-8 3v7c0 6.4 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>{%- endcapture -%}
+{%- capture i_bolt -%}<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.4 2 4.6 13.4h6.1L9.8 22l8.6-11.4h-6.1L13.4 2z"/></svg>{%- endcapture -%}
+{%- capture flag_yellow -%}<img src="{{ 'qb54-ref54-sticker-yellow.webp' | asset_url }}" alt="" width="129" height="360" loading="lazy">{%- endcapture -%}
+{%- capture flag_red -%}<img src="{{ 'qb54-ref54-sticker-red.webp' | asset_url }}" alt="" width="153" height="360" loading="lazy">{%- endcapture -%}
+{%- capture bean_bag -%}<img src="{{ 'qb54-ref54-sticker-bag.webp' | asset_url }}" alt="" width="335" height="189" loading="lazy">{%- endcapture -%}
+
+{%- capture add_button -%}
+  {%- if can_buy -%}
+    <button type="button" class="qb54-rl-btn qb54-rl-btn--gold" data-qb54-rl-add data-variants="{{ v.id }}" data-title="{{ section.settings.bar_text | default: p.title | escape }}" data-label="{{ section.settings.add_label | escape }}"><span data-qb54-rl-icon>{{ i_cart }}</span><span data-qb54-rl-label>{{ section.settings.add_label | escape }}</span></button>
+    <p class="qb54-rl-err" data-qb54-rl-err role="alert" hidden></p>
+  {%- else -%}
+    <button type="button" class="qb54-rl-btn" disabled>Sold Out</button>
+  {%- endif -%}
+{%- endcapture -%}
+
+<div id="qb54-rl-{{ section.id }}" class="qb54-rl" data-free="{{ free_ship }}">
+  <header class="qb54-rl-bar">
+    <div class="qb54-rl-wrap qb54-rl-bar__in">
+      <a class="qb54-rl-bar__logo" href="{{ routes.root_url }}">
+        {%- if section.settings.logo != blank -%}
+          {{- section.settings.logo | image_url: width: 240 | image_tag: loading: 'eager', alt: shop.name, widths: '120,240', sizes: '120px' -}}
+        {%- else -%}
+          <span>{{ shop.name }}</span>
+        {%- endif -%}
+      </a>
+      {%- if p != blank -%}<p class="qb54-rl-bar__mid"><strong>{{ section.settings.bar_text | escape }}</strong> · {{ v.price | money }}</p>{%- endif -%}
+      <div class="qb54-rl-bar__end">
+        <a class="qb54-rl-cart" href="{{ routes.cart_url }}" aria-label="Cart">{{ i_cart }}<span class="qb54-rl-cart__n" data-qb54-rl-count hidden>0</span></a>
+        {%- if can_buy -%}
+          <div class="qb54-rl-buy"><button type="button" class="qb54-rl-btn qb54-rl-btn--gold" data-qb54-rl-add data-variants="{{ v.id }}" data-title="{{ section.settings.bar_text | default: p.title | escape }}" data-label="{{ section.settings.bar_cta | escape }}"><span data-qb54-rl-icon>{{ i_cart }}</span><span data-qb54-rl-label>{{ section.settings.bar_cta | escape }}</span></button><p class="qb54-rl-err" data-qb54-rl-err role="alert" hidden></p></div>
+        {%- endif -%}
+      </div>
+    </div>
+    <span class="qb54-rl-progress" aria-hidden="true"><i data-qb54-rl-progress></i></span>
+  </header>
+
+  <section class="qb54-rl-hero" data-qb54-rl-hero aria-labelledby="qb54-rl-h1-{{ section.id }}">
+    <div class="qb54-rl-wrap qb54-rl-hero__grid">
+      <div>
+        <p class="qb54-rl-kicker"><b>{{ section.settings.kicker_badge | escape }}</b>{{ section.settings.kicker | escape }}</p>
+        <h1 class="qb54-rl-title" id="qb54-rl-h1-{{ section.id }}">{{ section.settings.title }}</h1>
+        {%- if section.settings.deck != blank -%}<p class="qb54-rl-lede">{{ section.settings.deck | escape }}</p>{%- endif -%}
+        <div class="qb54-rl-byline">
+          <span class="qb54-rl-byline__av">{%- if section.settings.logo != blank -%}{{- section.settings.logo | image_url: width: 80 | image_tag: loading: 'eager', alt: '' -}}{%- endif -%}</span>
+          <span><strong>{{ section.settings.byline | escape }}</strong></span>
+          <i aria-hidden="true"></i>
+          <span>{{ section.settings.read_time | escape }}</span>
+        </div>
+        <div class="qb54-rl-ctas">
+          {%- if can_buy -%}
+            <div class="qb54-rl-buy"><button type="button" class="qb54-rl-btn qb54-rl-btn--gold qb54-rl-btn--shine" data-qb54-rl-add data-variants="{{ v.id }}" data-title="{{ section.settings.bar_text | default: p.title | escape }}" data-label="{{ section.settings.hero_cta | escape }}"><span data-qb54-rl-icon>{{ i_cart }}</span><span data-qb54-rl-label>{{ section.settings.hero_cta | escape }}</span> <small>{{ v.price | money }}</small></button><p class="qb54-rl-err" data-qb54-rl-err role="alert" hidden></p></div>
+          {%- endif -%}
+          <a class="qb54-rl-btn qb54-rl-btn--ghost" href="#qb54-rl-list-{{ section.id }}">{{ section.settings.hero_cta_2 | escape }}{{ i_arrow_down }}</a>
+        </div>
+        <ul class="qb54-rl-proof">
+          {%- if section.settings.proof_1 != blank -%}<li>{{ i_tv }}{{ section.settings.proof_1 | escape }}</li>{%- endif -%}
+          <li>{{ i_star }}
+            {%- if set_rating != blank and set_count != blank -%}QB54 rated {{ set_rating.rating | round: 1 }} · {{ set_count }} reviews{%- else -%}{{ section.settings.rating_fallback | escape }}{%- endif -%}
+          </li>
+          {%- if section.settings.proof_3 != blank -%}<li>{{ i_truck }}{{ section.settings.proof_3 | escape }}</li>{%- endif -%}
+        </ul>
+      </div>
+      <div class="qb54-rl-stage" aria-hidden="true">
+        <span class="qb54-rl-fly qb54-rl-fly--y"><img src="{{ 'qb54-ref54-sticker-yellow.webp' | asset_url }}" alt="" width="129" height="360" loading="eager"></span>
+        <span class="qb54-rl-fly qb54-rl-fly--r"><img src="{{ 'qb54-ref54-sticker-red.webp' | asset_url }}" alt="" width="153" height="360" loading="eager"></span>
+        <span class="qb54-rl-fly qb54-rl-fly--b"><img src="{{ 'qb54-ref54-sticker-bag.webp' | asset_url }}" alt="" width="335" height="189" loading="eager"></span>
+        <div class="qb54-rl-phone"><div class="qb54-rl-phone__screen">
+          {%- render 'qb54-rl-img', image: section.settings.hero_image, asset: section.settings.hero_asset, alt: '', sizes: '(min-width: 990px) 380px, 78vw', max_width: 760, loading: 'eager', priority: true -%}
+        </div></div>
+        {%- if p != blank -%}<span class="qb54-rl-price"><span><span>Only</span><strong>{{ v.price | money_without_trailing_zeros }}</strong></span></span>{%- endif -%}
+      </div>
+    </div>
+  </section>
+
+
+  <section class="qb54-rl-list" id="qb54-rl-list-{{ section.id }}" aria-label="{{ reason_total }} reasons">
+    {%- if reason_total > 0 -%}
+      <nav class="qb54-rl-toc" aria-label="{{ section.settings.toc_label | escape }}">
+        <div class="qb54-rl-wrap">
+          <p class="qb54-rl-toc__l">{{ section.settings.toc_label | escape }}</p>
+          <ol>
+            {%- for block in reason_blocks -%}
+              <li><a href="#qb54-rl-r-{{ block.id }}" data-qb54-rl-toc="{{ block.id }}"><span>{{ forloop.index }}</span>{{ block.settings.toc_label | default: block.settings.title | escape }}</a></li>
+            {%- endfor -%}
+          </ol>
+        </div>
+      </nav>
+    {%- endif -%}
+    <div class="qb54-rl-wrap qb54-rl-list__body">
+      {%- for block in reason_blocks -%}
+        {%- liquid
+          assign n = forloop.index
+          assign flip = false
+          assign n_mod = n | modulo: 2
+          if n_mod == 0
+            assign flip = true
+          endif
+          assign n_label = n
+          if n < 10
+            assign n_label = '0' | append: n
+          endif
+          assign chips = block.settings.chips | default: '' | split: '|'
+        -%}
+        <article class="qb54-rl-reason{% if flip %} qb54-rl-reason--flip{% endif %}" id="qb54-rl-r-{{ block.id }}" data-qb54-rl-reason="{{ block.id }}" {{ block.shopify_attributes }}>
+          <header class="qb54-rl-reason__head" data-qb54-rl-reveal>
+            <p class="qb54-rl-num"><b>{{ n_label }}</b><span>Reason {{ n }} of {{ reason_total }}</span></p>
+            <h2>{{ block.settings.title | escape }}{%- if block.settings.accent != blank -%} <em>{{ block.settings.accent | escape }}</em>{%- endif -%}</h2>
+          </header>
+          <div class="qb54-rl-reason__media{% if block.settings.inset_image != blank or block.settings.inset_asset != blank %} qb54-rl-reason__media--inset{% endif %}" data-qb54-rl-reveal>
+            <div class="qb54-rl-frame qb54-rl-frame--{{ block.settings.focal }}"><div class="qb54-rl-frame__in">
+              {%- render 'qb54-rl-img', image: block.settings.image, asset: block.settings.asset, alt: block.settings.image_alt, sizes: '(min-width: 990px) 520px, 92vw', max_width: 1080 -%}
+            </div></div>
+            {%- if block.settings.inset_image != blank or block.settings.inset_asset != blank -%}
+              <div class="qb54-rl-inset">
+                <div class="qb54-rl-inset__img">
+                  {%- render 'qb54-rl-img', image: block.settings.inset_image, asset: block.settings.inset_asset, alt: block.settings.inset_label, sizes: '(min-width: 990px) 240px, 42vw', max_width: 600 -%}
+                </div>
+                {%- if block.settings.inset_label != blank -%}<span class="qb54-rl-inset__l">{{ block.settings.inset_label | escape }}</span>{%- endif -%}
+              </div>
+            {%- endif -%}
+          </div>
+          <div class="qb54-rl-reason__body" data-qb54-rl-reveal>
+            {{ block.settings.text }}
+            {%- if chips.size > 0 -%}
+              <ul class="qb54-rl-chips">
+                {%- for chip in chips -%}
+                  {%- assign chip_lower = chip | downcase -%}
+                  <li>
+                    {%- if chip_lower contains 'yellow' -%}{{ flag_yellow }}{%- elsif chip_lower contains 'red' -%}{{ flag_red }}{%- elsif chip_lower contains 'bag' -%}{{ bean_bag }}{%- endif -%}
+                    {{ chip | strip | escape }}
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </div>
+        </article>
+        {%- if block.settings.cta_after and p != blank -%}
+          <aside class="qb54-rl-strip" aria-label="Buy {{ p.title | escape }}" data-qb54-rl-reveal>
+            <span class="qb54-rl-strip__img">{%- if p.featured_image != blank -%}{{- p.featured_image | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' -}}{%- endif -%}</span>
+            <span class="qb54-rl-strip__t"><strong>{{ section.settings.strip_title | escape }} · {{ v.price | money }}</strong><span>{{ section.settings.strip_text | escape }}</span></span>
+            <div class="qb54-rl-buy">{{ add_button }}</div>
+          </aside>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </section>
+
+  {%- if p != blank -%}
+    <section class="qb54-rl-bag qb54-rl-light" aria-labelledby="qb54-rl-bag-h-{{ section.id }}">
+      <div class="qb54-rl-wrap qb54-rl-bag__grid">
+        <div class="qb54-rl-bag__img" data-qb54-rl-reveal>
+          {%- if p.featured_image != blank -%}
+            {{- p.featured_image | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500,750,1000', sizes: '(min-width: 990px) 560px, 92vw', alt: p.featured_image.alt | default: p.title -}}
+          {%- endif -%}
+          <span class="qb54-rl-bag__tag">{{ section.settings.bag_tag | escape }}</span>
+        </div>
+        <div data-qb54-rl-reveal>
+          <p class="qb54-rl-eyebrow">{{ section.settings.bag_eyebrow | escape }}</p>
+          <h2 class="qb54-rl-h2" id="qb54-rl-bag-h-{{ section.id }}">{{ section.settings.bag_heading }}</h2>
+          {%- if section.settings.bag_text != blank -%}<p class="qb54-rl-lede">{{ section.settings.bag_text | escape }}</p>{%- endif -%}
+          <ul class="qb54-rl-team">
+            {%- for item in bag_items -%}
+              {%- assign item_lower = item | downcase -%}
+              <li>
+                {%- if item_lower contains 'yellow' -%}{{ flag_yellow }}{%- elsif item_lower contains 'red' -%}{{ flag_red }}{%- elsif item_lower contains 'bag' -%}{{ bean_bag }}{%- endif -%}
+                {{ item | strip | escape }}<small>{{ section.settings.bag_per | escape }}</small>
+              </li>
+            {%- endfor -%}
+          </ul>
+          {%- if section.settings.bag_note != blank -%}<p class="qb54-rl-bag__note">{{ section.settings.bag_note | escape }}</p>{%- endif -%}
+          <div class="qb54-rl-pricerow">
+            <strong>{{ v.price | money }}</strong>
+            {%- if can_buy -%}<span class="qb54-rl-stock">{{ section.settings.stock_note | escape }}</span>{%- endif -%}
+          </div>
+          <div class="qb54-rl-buy">{{ add_button }}</div>
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+
+  {%- if step_blocks.size > 0 -%}
+    <section class="qb54-rl-how qb54-rl-light" aria-labelledby="qb54-rl-how-h-{{ section.id }}">
+      <div class="qb54-rl-wrap qb54-rl-how__grid">
+        <div class="qb54-rl-how__img" data-qb54-rl-reveal>
+          {%- render 'qb54-rl-img', image: section.settings.how_image, asset: section.settings.how_asset, alt: section.settings.how_image_alt, sizes: '(min-width: 990px) 600px, 92vw', max_width: 1200 -%}
+        </div>
+        <div data-qb54-rl-reveal>
+          <p class="qb54-rl-eyebrow">{{ section.settings.how_eyebrow | escape }}</p>
+          <h2 class="qb54-rl-h2 qb54-rl-head" id="qb54-rl-how-h-{{ section.id }}">{{ section.settings.how_heading }}</h2>
+          <ol class="qb54-rl-steps">
+            {%- for block in step_blocks -%}
+              <li class="qb54-rl-step" {{ block.shopify_attributes }}>
+                <span class="qb54-rl-step__n" aria-hidden="true">{{ forloop.index }}</span>
+                <h3>{{ block.settings.title | escape }}</h3>
+                <p>{{ block.settings.text | escape }}</p>
+              </li>
+            {%- endfor -%}
+          </ol>
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+
+  {%- if story_blocks.size > 0 -%}
+    <section class="qb54-rl-feed" aria-labelledby="qb54-rl-feed-h-{{ section.id }}">
+      <div class="qb54-rl-wrap">
+        <header class="qb54-rl-head qb54-rl-center" data-qb54-rl-reveal>
+          <p class="qb54-rl-eyebrow">{{ section.settings.feed_eyebrow | escape }}</p>
+          <h2 class="qb54-rl-h2" id="qb54-rl-feed-h-{{ section.id }}">{{ section.settings.feed_heading }}</h2>
+          {%- if section.settings.feed_text != blank -%}<p class="qb54-rl-lede">{{ section.settings.feed_text | escape }}</p>{%- endif -%}
+        </header>
+        <div class="qb54-rl-rail">
+          {%- for block in story_blocks -%}
+            <figure class="qb54-rl-story" {{ block.shopify_attributes }}>
+              <div class="qb54-rl-story__img">
+                {%- render 'qb54-rl-img', image: block.settings.image, asset: block.settings.asset, alt: block.settings.alt, sizes: '(min-width: 990px) 230px, 66vw', max_width: 540 -%}
+              </div>
+              {%- if block.settings.caption != blank -%}<figcaption>{{ block.settings.caption | escape }}</figcaption>{%- endif -%}
+            </figure>
+          {%- endfor -%}
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+
+  {%- if p != blank -%}
+    <section class="qb54-rl-offer" id="qb54-rl-offer-{{ section.id }}" aria-labelledby="qb54-rl-offer-h-{{ section.id }}">
+      <div class="qb54-rl-wrap">
+        <header class="qb54-rl-head qb54-rl-center" data-qb54-rl-reveal>
+          <p class="qb54-rl-eyebrow">{{ section.settings.offer_eyebrow | escape }}</p>
+          <h2 class="qb54-rl-h2" id="qb54-rl-offer-h-{{ section.id }}">{{ section.settings.offer_heading }}</h2>
+          {%- if section.settings.offer_text != blank -%}<p class="qb54-rl-lede">{{ section.settings.offer_text | escape }}</p>{%- endif -%}
+        </header>
+        <div class="qb54-rl-cards">
+          <article class="qb54-rl-card" data-qb54-rl-reveal>
+            <span class="qb54-rl-card__tag">{{ section.settings.card1_tag | escape }}</span>
+            <div class="qb54-rl-card__imgs"><div class="qb54-rl-card__img">{%- if p.featured_image != blank -%}{{- p.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '350,700', sizes: '(min-width: 990px) 420px, 88vw', alt: p.title -}}{%- endif -%}</div></div>
+            <h3>{{ section.settings.card1_title | escape }}</h3>
+            <p class="qb54-rl-card__sub">{{ section.settings.card1_text | escape }}</p>
+            <ul class="qb54-rl-lines">
+              {%- for item in bag_items -%}<li><span>{{ item | strip | escape }}</span><span>{{ section.settings.bag_per | escape }}</span></li>{%- endfor -%}
+            </ul>
+            <div class="qb54-rl-card__total"><span>Total</span><strong>{{ v.price | money }}</strong></div>
+            <div class="qb54-rl-buy">{{ add_button }}</div>
+          </article>
+
+          {%- if combo_ok -%}
+            <article class="qb54-rl-card qb54-rl-card--hero" data-qb54-rl-reveal>
+              {%- if free_ship > 0 and combo_total >= free_ship -%}<span class="qb54-rl-card__badge">{{ section.settings.card2_badge | escape }}</span>{%- endif -%}
+              <span class="qb54-rl-card__tag">{{ section.settings.card2_tag | escape }}</span>
+              <div class="qb54-rl-card__imgs">
+                <div class="qb54-rl-card__img">{%- if set_p.featured_image != blank -%}{{- set_p.featured_image | image_url: width: 500 | image_tag: loading: 'lazy', widths: '250,500', sizes: '(min-width: 990px) 200px, 40vw', alt: set_p.title -}}{%- endif -%}</div>
+                <span class="qb54-rl-card__plus" aria-hidden="true">+</span>
+                <div class="qb54-rl-card__img">{%- if p.featured_image != blank -%}{{- p.featured_image | image_url: width: 500 | image_tag: loading: 'lazy', widths: '250,500', sizes: '(min-width: 990px) 200px, 40vw', alt: p.title -}}{%- endif -%}</div>
+              </div>
+              <h3>{{ section.settings.card2_title | escape }}</h3>
+              <p class="qb54-rl-card__sub">{{ section.settings.card2_text | escape }}</p>
+              <ul class="qb54-rl-lines">
+                <li><span>{{ section.settings.card2_set_label | default: set_p.title | escape }}</span><span>{{ set_v.price | money }}</span></li>
+                <li><span>{{ section.settings.card2_ref_label | default: p.title | escape }}</span><span>{{ v.price | money }}</span></li>
+              </ul>
+              {%- if free_ship > 0 and combo_total >= free_ship -%}<span class="qb54-rl-ship">{{ i_truck }}Free shipping (orders {{ free_ship | money_without_trailing_zeros }}+)</span>{%- endif -%}
+              <div class="qb54-rl-card__total"><span>Total</span><strong>{{ combo_total | money }}</strong></div>
+              <div class="qb54-rl-buy">
+                <button type="button" class="qb54-rl-btn qb54-rl-btn--gold qb54-rl-btn--shine" data-qb54-rl-add data-variants="{{ set_v.id }},{{ v.id }}" data-title="{{ section.settings.card2_set_label | default: set_p.title | escape }} + {{ section.settings.bar_text | default: p.title | escape }}" data-label="{{ section.settings.card2_cta | escape }}"><span data-qb54-rl-icon>{{ i_cart }}</span><span data-qb54-rl-label>{{ section.settings.card2_cta | escape }}</span></button>
+                <p class="qb54-rl-err" data-qb54-rl-err role="alert" hidden></p>
+              </div>
+              {%- if section.settings.card2_alt_label != blank -%}<p class="qb54-rl-card__alt"><a href="{{ shop_url }}">{{ section.settings.card2_alt_label | escape }}</a></p>{%- endif -%}
+            </article>
+          {%- endif -%}
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+
+  {%- if faq_blocks.size > 0 -%}
+    <section class="qb54-rl-faq qb54-rl-light" aria-labelledby="qb54-rl-faq-h-{{ section.id }}">
+      <div class="qb54-rl-wrap qb54-rl-faq__grid">
+        <div class="qb54-rl-faq__aside" data-qb54-rl-reveal>
+          <p class="qb54-rl-eyebrow">{{ section.settings.faq_eyebrow | escape }}</p>
+          <h2 class="qb54-rl-h2" id="qb54-rl-faq-h-{{ section.id }}">{{ section.settings.faq_heading }}</h2>
+        </div>
+        <div>
+          {%- for block in faq_blocks -%}
+            <details class="qb54-rl-qa"{% if forloop.first %} open{% endif %} {{ block.shopify_attributes }}>
+              <summary>{{ block.settings.question | escape }}<span class="qb54-rl-plus" aria-hidden="true"></span></summary>
+              <div class="qb54-rl-qa__a">{{ block.settings.answer }}</div>
+            </details>
+          {%- endfor -%}
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+
+  <section class="qb54-rl-final" data-qb54-rl-final aria-labelledby="qb54-rl-final-h-{{ section.id }}">
+    <div class="qb54-rl-final__bg" aria-hidden="true">
+      {%- render 'qb54-rl-img', image: section.settings.final_image, asset: section.settings.final_asset, alt: '', sizes: '100vw', max_width: 1600 -%}
+    </div>
+    <div class="qb54-rl-wrap" data-qb54-rl-reveal>
+      <h2 id="qb54-rl-final-h-{{ section.id }}">{{ section.settings.final_heading | escape }} <em>{{ section.settings.final_accent | escape }}</em></h2>
+      {%- if section.settings.final_text != blank -%}<p class="qb54-rl-lede">{{ section.settings.final_text | escape }}</p>{%- endif -%}
+      <div class="qb54-rl-ctas">
+        {%- if can_buy -%}
+          <div class="qb54-rl-buy"><button type="button" class="qb54-rl-btn qb54-rl-btn--gold qb54-rl-btn--shine" data-qb54-rl-add data-variants="{{ v.id }}" data-title="{{ section.settings.bar_text | default: p.title | escape }}" data-label="{{ section.settings.final_cta | escape }}"><span data-qb54-rl-icon>{{ i_cart }}</span><span data-qb54-rl-label>{{ section.settings.final_cta | escape }}</span> <small>{{ v.price | money }}</small></button><p class="qb54-rl-err" data-qb54-rl-err role="alert" hidden></p></div>
+        {%- endif -%}
+      </div>
+      <ul class="qb54-rl-trust">
+        {%- if section.settings.proof_3 != blank -%}<li>{{ i_truck }}{{ section.settings.proof_3 | escape }}</li>{%- endif -%}
+        {%- if section.settings.stock_note != blank -%}<li>{{ i_bolt }}{{ section.settings.stock_note | escape }}</li>{%- endif -%}
+        {%- if section.settings.returns_note != blank -%}<li>{{ i_shield }}{{ section.settings.returns_note | escape }}</li>{%- endif -%}
+      </ul>
+    </div>
+  </section>
+
+  {%- if can_buy and section.settings.show_sticky_bar -%}
+    <div class="qb54-rl-sticky" data-qb54-rl-sticky aria-hidden="true">
+      <span class="qb54-rl-sticky__img">{%- if p.featured_image != blank -%}{{- p.featured_image | image_url: width: 120 | image_tag: loading: 'lazy', alt: '' -}}{%- endif -%}</span>
+      <span class="qb54-rl-sticky__t"><strong>{{ section.settings.bar_text | escape }}</strong><span>{{ v.price | money }}</span></span>
+      <div class="qb54-rl-buy"><button type="button" class="qb54-rl-btn qb54-rl-btn--gold" tabindex="-1" data-qb54-rl-add data-variants="{{ v.id }}" data-title="{{ section.settings.bar_text | default: p.title | escape }}" data-label="{{ section.settings.sticky_cta | escape }}"><span data-qb54-rl-icon>{{ i_cart }}</span><span data-qb54-rl-label>{{ section.settings.sticky_cta | escape }}</span></button><p class="qb54-rl-err" data-qb54-rl-err role="alert" hidden></p></div>
+    </div>
+  {%- endif -%}
+
+  <div class="qb54-rl-toast" data-qb54-rl-toast role="status" aria-live="polite" hidden>
+    <span class="qb54-rl-toast__ok" aria-hidden="true">{{ i_check }}</span>
+    <div class="qb54-rl-toast__t"><strong>Added to cart</strong><span data-qb54-rl-toast-meta></span></div>
+    {%- if free_ship > 0 -%}
+      <div class="qb54-rl-meter" data-qb54-rl-meter>
+        <span class="qb54-rl-meter__bar"><i data-qb54-rl-meter-fill></i></span>
+        <span class="qb54-rl-meter__t" data-qb54-rl-meter-text></span>
+      </div>
+    {%- endif -%}
+    <div class="qb54-rl-toast__a">
+      <a class="qb54-rl-btn qb54-rl-btn--gold" href="{{ routes.root_url | append: '/checkout' | replace: '//', '/' }}">Checkout</a>
+      <a class="qb54-rl-toast__cart" href="{{ routes.cart_url }}">View cart</a>
+    </div>
+    <button type="button" class="qb54-rl-toast__x" data-qb54-rl-toast-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var id = '{{ section.id }}';
+    var root = document.getElementById('qb54-rl-' + id);
+    if (!root) return;
+    window.__qb54Rl = window.__qb54Rl || {};
+    if (window.__qb54Rl[id]) window.__qb54Rl[id].destroy();
+
+    var cleanups = [];
+    var shopRoot = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var freeShip = parseInt(root.getAttribute('data-free'), 10) || 0;
+    var moneyFormat = {{ shop.money_format | json }};
+    root.classList.add('qb54-rl--js');
+    function $all(sel) { return Array.prototype.slice.call(root.querySelectorAll(sel)); }
+
+    function formatMoney(cents) {
+      var value = (cents / 100).toFixed(2);
+      var withCommas = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      return String(moneyFormat || '${{ "{{" }}amount}}').replace(/\{\{\s*(\w+)\s*\}\}/, function (m, kind) {
+        if (kind === 'amount_no_decimals') return Math.round(cents / 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        if (kind === 'amount_with_comma_separator') return value.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        return withCommas;
+      });
+    }
+
+    /* ---- Cart count, toast with free-shipping progress ---- */
+    var countEls = $all('[data-qb54-rl-count]');
+    var toast = root.querySelector('[data-qb54-rl-toast]');
+    var toastMeta = root.querySelector('[data-qb54-rl-toast-meta]');
+    var meter = root.querySelector('[data-qb54-rl-meter]');
+    var toastTimer = 0;
+    function updateCount(cart, bump) {
+      var count = (cart && cart.item_count) || 0;
+      countEls.forEach(function (el) {
+        el.textContent = count;
+        el.hidden = count === 0;
+        if (bump && !reduce) { el.classList.remove('is-bump'); void el.offsetWidth; el.classList.add('is-bump'); }
+      });
+    }
+    function setMeter(total) {
+      if (!meter || !freeShip) return;
+      var fill = meter.querySelector('[data-qb54-rl-meter-fill]');
+      var text = meter.querySelector('[data-qb54-rl-meter-text]');
+      var left = freeShip - total;
+      var goal = formatMoney(freeShip).replace(/[.,]00(?=\D*$)/, '');
+      meter.classList.toggle('is-done', left <= 0);
+      if (fill) fill.style.width = Math.min(100, Math.round(total / freeShip * 100)) + '%';
+      if (!text) return;
+      text.textContent = '';
+      var strong = document.createElement('strong');
+      if (left <= 0) {
+        strong.textContent = 'Free shipping unlocked.';
+        text.appendChild(strong);
+        text.appendChild(document.createTextNode(' Your order is ' + goal + ' or more.'));
+      } else {
+        text.appendChild(document.createTextNode('Add '));
+        strong.textContent = formatMoney(left);
+        text.appendChild(strong);
+        text.appendChild(document.createTextNode(' more for free shipping (' + goal + '+).'));
+      }
+    }
+    function hideToast() { clearTimeout(toastTimer); if (toast) toast.hidden = true; }
+    function showToast(title, cart) {
+      if (!toast) return;
+      var count = (cart && cart.item_count) || 0;
+      if (toastMeta) toastMeta.textContent = (title ? title + ' · ' : '') + count + (count === 1 ? ' item' : ' items') + ' in your cart';
+      setMeter((cart && cart.total_price) || 0);
+      toast.hidden = false;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(hideToast, 9000);
+    }
+    cleanups.push(function () { clearTimeout(toastTimer); });
+    fetch(shopRoot + 'cart.js', { headers: { 'Accept': 'application/json' } })
+      .then(function (r) { return r.json(); }).then(function (cart) { updateCount(cart, false); }).catch(function () {});
+
+    /* ---- Add to cart (one or several variants in one request) ---- */
+    var cartIcon = '{{ i_cart | strip_newlines }}';
+    var checkIcon = '{{ i_check | strip_newlines }}';
+    function setButton(btn, mode, message) {
+      var label = btn.querySelector('[data-qb54-rl-label]');
+      var icon = btn.querySelector('[data-qb54-rl-icon]');
+      var err = btn.parentNode.querySelector('[data-qb54-rl-err]');
+      btn.classList.remove('is-added', 'is-error');
+      btn.removeAttribute('aria-busy');
+      if (err) { err.hidden = true; err.textContent = ''; }
+      if (mode === 'loading') {
+        btn.setAttribute('aria-busy', 'true');
+        if (icon) icon.innerHTML = '<span class="qb54-rl-spin"></span>';
+        if (label) label.textContent = 'Adding…';
+      } else if (mode === 'added') {
+        btn.classList.add('is-added');
+        if (icon) icon.innerHTML = checkIcon;
+        if (label) label.textContent = 'Added';
+        setTimeout(function () { setButton(btn, 'idle'); }, 2200);
+      } else if (mode === 'error') {
+        btn.classList.add('is-error');
+        if (icon) icon.innerHTML = cartIcon;
+        if (label) label.textContent = 'Try again';
+        if (err && message) { err.textContent = message; err.hidden = false; }
+      } else {
+        if (icon) icon.innerHTML = cartIcon;
+        if (label) label.textContent = btn.getAttribute('data-label') || 'Add to cart';
+      }
+    }
+    function addToCart(btn) {
+      if (btn.getAttribute('aria-busy') === 'true') return;
+      var items = (btn.getAttribute('data-variants') || '').split(',').filter(Boolean).map(function (variantId) { return { id: Number(variantId), quantity: 1 }; });
+      if (!items.length) return;
+      setButton(btn, 'loading');
+      var bundled = [];
+      document.documentElement.dispatchEvent(new CustomEvent('cart:bundled-sections', { bubbles: true, detail: { sections: bundled } }));
+      var body = { items: items };
+      if (bundled.length) { body.sections = bundled.join(','); body.sections_url = window.location.pathname; }
+      fetch(shopRoot + 'cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        body: JSON.stringify(body)
+      })
+        .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, json: j }; }); })
+        .then(function (res) {
+          if (!res.ok || res.json.status) throw res.json;
+          if (window.theme && theme.settings && theme.settings.cartType === 'page') { window.location.href = shopRoot + 'cart'; return; }
+          var drawer = document.querySelector('cart-drawer');
+          var hasDrawer = !!(drawer && typeof drawer.show === 'function');
+          if (hasDrawer) drawer.show(btn);
+          return fetch(shopRoot + 'cart.js', { headers: { 'Accept': 'application/json' } })
+            .then(function (r) { return r.json(); })
+            .then(function (cart) {
+              cart.sections = res.json.sections;
+              if (window.theme && theme.pubsub && theme.pubsub.publish) theme.pubsub.publish(theme.pubsub.PUB_SUB_EVENTS.cartUpdate, { source: 'qb54-ref54', productVariantId: String(items[0].id), cart: cart });
+              updateCount(cart, true);
+              if (!hasDrawer) showToast(btn.getAttribute('data-title'), cart);
+              setButton(btn, 'added');
+            });
+        })
+        .catch(function (error) {
+          var message = error && (error.description || error.message);
+          setButton(btn, 'error', typeof message === 'string' ? message : 'Something went wrong. Please try again.');
+        });
+    }
+    function onClick(event) {
+      if (event.target.closest('[data-qb54-rl-toast-close]')) { hideToast(); return; }
+      var btn = event.target.closest('[data-qb54-rl-add]');
+      if (btn) { event.preventDefault(); addToCart(btn); }
+    }
+    root.addEventListener('click', onClick);
+    cleanups.push(function () { root.removeEventListener('click', onClick); });
+
+    /* ---- Reading progress ---- */
+    var progress = root.querySelector('[data-qb54-rl-progress]');
+    var ticking = false;
+    function paintProgress() {
+      ticking = false;
+      if (!progress) return;
+      var rect = root.getBoundingClientRect();
+      var total = rect.height - window.innerHeight;
+      var p = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 0;
+      progress.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+    }
+    function onScroll() { if (!ticking) { ticking = true; window.requestAnimationFrame(paintProgress); } }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    cleanups.push(function () { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); });
+    paintProgress();
+
+    /* ---- Article nav: highlight the reason being read ---- */
+    var tocLinks = $all('[data-qb54-rl-toc]');
+    if (tocLinks.length && 'IntersectionObserver' in window) {
+      var spy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          var current = e.target.getAttribute('data-qb54-rl-reason');
+          tocLinks.forEach(function (a) { a.setAttribute('aria-current', a.getAttribute('data-qb54-rl-toc') === current ? 'true' : 'false'); });
+        });
+      }, { rootMargin: '-45% 0px -50% 0px' });
+      $all('[data-qb54-rl-reason]').forEach(function (el) { spy.observe(el); });
+      cleanups.push(function () { spy.disconnect(); });
+    }
+
+    /* ---- Mobile sticky bar: after the hero, hidden over the final CTA ---- */
+    var sticky = root.querySelector('[data-qb54-rl-sticky]');
+    var hero = root.querySelector('[data-qb54-rl-hero]');
+    var finalSection = root.querySelector('[data-qb54-rl-final]');
+    var heroVisible = true, finalVisible = false;
+    function updateSticky() {
+      if (!sticky) return;
+      var show = !heroVisible && !finalVisible;
+      sticky.classList.toggle('is-visible', show);
+      sticky.setAttribute('aria-hidden', show ? 'false' : 'true');
+      $all('[data-qb54-rl-sticky] button').forEach(function (b) { b.tabIndex = show ? 0 : -1; });
+      document.body.classList.toggle('qb54-rl-bar-on', show);
+    }
+    if (sticky && 'IntersectionObserver' in window) {
+      var stickyIo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.target === hero) heroVisible = e.isIntersecting;
+          if (e.target === finalSection) finalVisible = e.isIntersecting;
+        });
+        updateSticky();
+      });
+      if (hero) stickyIo.observe(hero);
+      if (finalSection) stickyIo.observe(finalSection);
+      cleanups.push(function () { stickyIo.disconnect(); document.body.classList.remove('qb54-rl-bar-on'); });
+    }
+
+    /* ---- Reveal on scroll ---- */
+    var reveals = $all('[data-qb54-rl-reveal]');
+    if (!reduce && 'IntersectionObserver' in window) {
+      var revealIo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-in'); revealIo.unobserve(e.target); } });
+      }, { rootMargin: '0px 0px -8% 0px' });
+      reveals.forEach(function (el) { revealIo.observe(el); });
+      cleanups.push(function () { revealIo.disconnect(); });
+    } else {
+      reveals.forEach(function (el) { el.classList.add('is-in'); });
+    }
+
+    function onUnload(event) { if (event.detail && event.detail.sectionId === id) destroy(); }
+    document.addEventListener('shopify:section:unload', onUnload);
+    cleanups.push(function () { document.removeEventListener('shopify:section:unload', onUnload); });
+    function destroy() {
+      while (cleanups.length) { try { cleanups.pop()(); } catch (e) {} }
+      delete window.__qb54Rl[id];
+    }
+    window.__qb54Rl[id] = { destroy: destroy };
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "QB54 REF54 Listicle",
+  "tag": "section",
+  "class": "qb54-rl-section",
+  "settings": [
+    { "type": "header", "content": "Products" },
+    { "type": "product", "id": "product", "label": "Main product (REF54)" },
+    { "type": "product", "id": "set_product", "label": "Game set for the combo card" },
+    { "type": "url", "id": "shop_url", "label": "Link to choose another set color" },
+    { "type": "range", "id": "free_ship_threshold", "label": "Free shipping threshold", "info": "Shows progress in the cart popup and the combo card badge. 0 turns it off.", "min": 0, "max": 500, "step": 5, "unit": "$", "default": 225 },
+    { "type": "header", "content": "Top bar" },
+    { "type": "image_picker", "id": "logo", "label": "Logo" },
+    { "type": "text", "id": "bar_text", "label": "Product name", "default": "REF54" },
+    { "type": "text", "id": "bar_cta", "label": "Button", "default": "Add to cart" },
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "kicker_badge", "label": "Badge", "default": "New" },
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "The flag toss game" },
+    { "type": "inline_richtext", "id": "title", "label": "Headline", "default": "5 reasons QB54 owners are adding <em>REF54</em> to game day" },
+    { "type": "textarea", "id": "deck", "label": "Intro" },
+    { "type": "text", "id": "byline", "label": "Byline", "default": "By the QB54 Team" },
+    { "type": "text", "id": "read_time", "label": "Read time", "default": "3 min read" },
+    { "type": "image_picker", "id": "hero_image", "label": "Phone image", "info": "Optional. Uses the bundled REF54 story image when empty." },
+    { "type": "text", "id": "hero_asset", "label": "Bundled phone image file", "default": "qb54-ref54-story-2.webp" },
+    { "type": "text", "id": "hero_cta", "label": "Button", "default": "Add REF54 to cart" },
+    { "type": "text", "id": "hero_cta_2", "label": "Second button", "default": "Read the 5 reasons" },
+    { "type": "text", "id": "proof_1", "label": "Proof 1", "default": "As seen on Shark Tank" },
+    { "type": "text", "id": "rating_fallback", "label": "Proof 2 when no review data", "default": "Hundreds of 5-star reviews" },
+    { "type": "text", "id": "proof_3", "label": "Proof 3", "default": "Free shipping on orders $225+" },
+    { "type": "header", "content": "The list" },
+    { "type": "text", "id": "toc_label", "label": "Article nav label", "default": "In this article" },
+    { "type": "text", "id": "strip_title", "label": "Buy strip title", "default": "REF54" },
+    { "type": "text", "id": "strip_text", "label": "Buy strip text", "default": "The flag toss game for your QB54 chairs" },
+    { "type": "text", "id": "add_label", "label": "Add to cart label", "default": "Add to cart" },
+    { "type": "header", "content": "What's in the bag" },
+    { "type": "text", "id": "bag_eyebrow", "label": "Eyebrow", "default": "What's inside" },
+    { "type": "inline_richtext", "id": "bag_heading", "label": "Heading", "default": "Everything for <em>two teams</em>" },
+    { "type": "textarea", "id": "bag_text", "label": "Text", "default": "Each team gets its own set to throw." },
+    { "type": "text", "id": "bag_items", "label": "Items", "info": "Separate with |", "default": "1 yellow flag|1 red flag|1 blue bean bag" },
+    { "type": "text", "id": "bag_per", "label": "Item suffix", "default": "Per team" },
+    { "type": "text", "id": "bag_note", "label": "Note", "default": "Pictured: the complete REF54 kit." },
+    { "type": "text", "id": "bag_tag", "label": "Image tag", "default": "The REF54 kit" },
+    { "type": "text", "id": "stock_note", "label": "Stock note", "default": "In stock, ships within 1 business day" },
+    { "type": "text", "id": "returns_note", "label": "Returns note", "default": "30-day returns" },
+    { "type": "header", "content": "How to play" },
+    { "type": "text", "id": "how_eyebrow", "label": "Eyebrow", "default": "How to play" },
+    { "type": "inline_richtext", "id": "how_heading", "label": "Heading", "default": "Game on in <em>3 steps</em>" },
+    { "type": "image_picker", "id": "how_image", "label": "Image" },
+    { "type": "text", "id": "how_asset", "label": "Bundled image file", "default": "qb54-ref54-target-chair.webp" },
+    { "type": "text", "id": "how_image_alt", "label": "Image description", "default": "A QB54 chair set up as the REF54 target" },
+    { "type": "header", "content": "Seen in your feed" },
+    { "type": "text", "id": "feed_eyebrow", "label": "Eyebrow", "default": "As seen in your feed" },
+    { "type": "inline_richtext", "id": "feed_heading", "label": "Heading", "default": "New game. <em>Same QB54 chairs.</em>" },
+    { "type": "textarea", "id": "feed_text", "label": "Text" },
+    { "type": "header", "content": "Offer" },
+    { "type": "text", "id": "offer_eyebrow", "label": "Eyebrow", "default": "Pick your play" },
+    { "type": "inline_richtext", "id": "offer_heading", "label": "Heading", "default": "Add REF54 to <em>game day</em>" },
+    { "type": "textarea", "id": "offer_text", "label": "Text" },
+    { "type": "text", "id": "card1_tag", "label": "Card 1 tag", "default": "Already own QB54?" },
+    { "type": "text", "id": "card1_title", "label": "Card 1 title", "default": "REF54" },
+    { "type": "text", "id": "card1_text", "label": "Card 1 text", "default": "The flag toss game for the chairs you already have." },
+    { "type": "text", "id": "card2_tag", "label": "Card 2 tag", "default": "New to QB54?" },
+    { "type": "text", "id": "card2_badge", "label": "Card 2 badge", "default": "Ships free" },
+    { "type": "text", "id": "card2_title", "label": "Card 2 title", "default": "QB54 + REF54" },
+    { "type": "text", "id": "card2_text", "label": "Card 2 text", "default": "Two games. One QB54 setup." },
+    { "type": "text", "id": "card2_set_label", "label": "Card 2 game set line", "default": "QB54 Black Game Set" },
+    { "type": "text", "id": "card2_ref_label", "label": "Card 2 REF54 line", "default": "REF54 flag toss game" },
+    { "type": "text", "id": "card2_cta", "label": "Card 2 button", "default": "Add both to cart" },
+    { "type": "text", "id": "card2_alt_label", "label": "Card 2 link label", "default": "Prefer Navy or Red? Choose your set" },
+    { "type": "header", "content": "FAQ" },
+    { "type": "text", "id": "faq_eyebrow", "label": "Eyebrow", "default": "FAQ" },
+    { "type": "inline_richtext", "id": "faq_heading", "label": "Heading", "default": "Questions? <em>Answered.</em>" },
+    { "type": "header", "content": "Final call" },
+    { "type": "image_picker", "id": "final_image", "label": "Background image" },
+    { "type": "text", "id": "final_asset", "label": "Bundled background file", "default": "qb54-ref54-upgrade.webp" },
+    { "type": "text", "id": "final_heading", "label": "Heading", "default": "Throw the flag." },
+    { "type": "text", "id": "final_accent", "label": "Heading second line", "default": "Take your shot." },
+    { "type": "textarea", "id": "final_text", "label": "Text" },
+    { "type": "text", "id": "final_cta", "label": "Button", "default": "Add REF54 to cart" },
+    { "type": "header", "content": "Mobile sticky bar" },
+    { "type": "checkbox", "id": "show_sticky_bar", "label": "Show sticky bar on mobile", "default": true },
+    { "type": "text", "id": "sticky_cta", "label": "Button", "default": "Add to cart" },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_gold", "label": "Gold", "default": "#fdc439" },
+    { "type": "color", "id": "color_navy", "label": "Navy", "default": "#363a66" },
+    { "type": "color", "id": "color_night", "label": "Dark background", "default": "#12142b" },
+    { "type": "color", "id": "color_cream", "label": "Cream", "default": "#f4f2e8" }
+  ],
+  "blocks": [
+    {
+      "type": "reason",
+      "name": "Reason",
+      "limit": 10,
+      "settings": [
+        { "type": "text", "id": "toc_label", "label": "Short label for the article nav" },
+        { "type": "text", "id": "title", "label": "Headline", "default": "New game." },
+        { "type": "text", "id": "accent", "label": "Headline second line (gold)", "default": "Same QB54 chairs." },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>REF54 turns the QB54 chairs you already own into a brand-new target game.</p>" },
+        { "type": "image_picker", "id": "image", "label": "Image", "info": "Optional. Uses the bundled file below when empty." },
+        { "type": "text", "id": "asset", "label": "Bundled image file", "default": "qb54-ref54-new-game.webp" },
+        { "type": "text", "id": "image_alt", "label": "Image description" },
+        {
+          "type": "select", "id": "focal", "label": "Image focus",
+          "options": [ { "value": "center", "label": "Center" }, { "value": "top", "label": "Top" }, { "value": "bottom", "label": "Bottom" } ],
+          "default": "center"
+        },
+        { "type": "image_picker", "id": "inset_image", "label": "Inset image" },
+        { "type": "text", "id": "inset_asset", "label": "Bundled inset file" },
+        { "type": "text", "id": "inset_label", "label": "Inset label" },
+        { "type": "text", "id": "chips", "label": "Chips", "info": "Separate with |. Yellow, red and bag items get icons." },
+        { "type": "checkbox", "id": "cta_after", "label": "Show a buy strip after this reason", "default": false }
+      ]
+    },
+    {
+      "type": "step",
+      "name": "How-to step",
+      "limit": 5,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Set the target" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Use a QB54 chair as the target." }
+      ]
+    },
+    {
+      "type": "story",
+      "name": "Story image",
+      "limit": 8,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "asset", "label": "Bundled image file", "default": "qb54-ref54-story-1.webp" },
+        { "type": "text", "id": "alt", "label": "Image description" },
+        { "type": "text", "id": "caption", "label": "Caption" }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ",
+      "limit": 10,
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "Do I need QB54 to play REF54?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>REF54 uses a QB54 chair as its target.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "QB54 REF54 Listicle",
+      "blocks": [ { "type": "reason" }, { "type": "step" }, { "type": "story" }, { "type": "faq" } ]
+    }
+  ],
+  "disabled_on": { "groups": ["header", "footer", "custom.overlay"] }
+}
+{% endschema %}

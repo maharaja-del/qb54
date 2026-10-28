@@ -1,0 +1,51 @@
+{%- comment -%}
+  Image for the qb54-ref54-listicle section: an image picked in the theme editor when set,
+  otherwise the bundled theme asset.
+
+  Accepts:
+  - image: {Object} image_picker value (optional)
+  - asset: {String} Bundled asset file name, e.g. qb54-ref54-new-game.webp
+  - alt: {String}
+  - sizes: {String}
+  - max_width: {Number} Largest width to request for picked images
+  - loading: {String} lazy (default) or eager
+  - priority: {Boolean} Adds fetchpriority="high"
+{%- endcomment -%}
+{%- liquid
+  assign img_loading = loading | default: 'lazy'
+  assign img_max = max_width | default: 1200
+  assign img_fetch = 'auto'
+  if priority
+    assign img_fetch = 'high'
+  endif
+-%}
+{%- if image != blank -%}
+  {{- image | image_url: width: img_max | image_tag: loading: img_loading, fetchpriority: img_fetch, widths: '360,540,720,960,1200', sizes: sizes, alt: alt -}}
+{%- elsif asset != blank -%}
+  {%- liquid
+    # Intrinsic sizes of the bundled assets, so the browser can reserve space.
+    case asset
+      when 'qb54-ref54-new-game.webp'
+        assign dims = '840x1150'
+      when 'qb54-ref54-flag-landing.webp'
+        assign dims = '560x810'
+      when 'qb54-ref54-upgrade.webp'
+        assign dims = '1080x1180'
+      when 'qb54-ref54-target-chair.webp'
+        assign dims = '1080x680'
+      when 'qb54-ref54-called-out.webp'
+        assign dims = '520x900'
+      when 'qb54-ref54-flags-closeup.webp'
+        assign dims = '393x323'
+      when 'qb54-ref54-tailgate.webp'
+        assign dims = '760x1031'
+      when 'qb54-ref54-targets.webp'
+        assign dims = '900x556'
+      else
+        assign dims = '540x960'
+    endcase
+    assign img_w = dims | split: 'x' | first
+    assign img_h = dims | split: 'x' | last
+  -%}
+  <img src="{{ asset | asset_url }}" alt="{{ alt | escape }}" width="{{ img_w }}" height="{{ img_h }}" loading="{{ img_loading }}" fetchpriority="{{ img_fetch }}" decoding="async">
+{%- endif -%}

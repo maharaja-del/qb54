@@ -1,0 +1,363 @@
+{
+  "sections": {
+    "main-page": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "heading_size": "title-xl tracking-heading",
+        "heading_alignment": "text-left",
+        "heading_tag": "h1",
+        "text_size": "text-base",
+        "padding_top": 72,
+        "padding_bottom": 120,
+        "divider": false,
+        "narrow": true,
+        "rounded": false
+      }
+    },
+    "listicle": {
+      "type": "qb54-ref54-listicle",
+      "name": "REF54 Listicle",
+      "blocks": {
+        "reason_same_chairs": {
+          "type": "reason",
+          "settings": {
+            "toc_label": "Same chairs",
+            "title": "New game.",
+            "accent": "Same QB54 chairs.",
+            "text": "<p>REF54 turns the QB54 chairs you already own into a brand-new target game. Nothing new to set up: cover the hole with the flap, fold the back fabric down so only the seat is left, and the chair becomes the target.</p>",
+            "asset": "qb54-ref54-new-game.webp",
+            "image_alt": "Friends in referee jerseys tossing REF54 flags at a QB54 chair target",
+            "focal": "center",
+            "inset_asset": "qb54-ref54-targets.webp",
+            "inset_label": "The target",
+            "cta_after": false
+          }
+        },
+        "reason_flag_toss": {
+          "type": "reason",
+          "settings": {
+            "toc_label": "Flag toss",
+            "title": "Introducing",
+            "accent": "the flag toss game.",
+            "text": "<p>Throw yellow flags, red flags and blue bean bags. Hit the target and claim your bragging rights.</p><p>Each team gets its own yellow flag, red flag and blue bean bag, so two teams can go head to head.</p>",
+            "asset": "qb54-ref54-flag-landing.webp",
+            "image_alt": "A yellow REF54 flag landing on the target",
+            "focal": "top",
+            "chips": "Yellow flag|Red flag|Blue bean bag",
+            "cta_after": true
+          }
+        },
+        "reason_looks_easy": {
+          "type": "reason",
+          "settings": {
+            "toc_label": "Looks easy",
+            "title": "It looks easy",
+            "accent": "until you're the one throwing.",
+            "text": "<p>A flag doesn't fly like a football. It flutters, drifts and lands wherever it wants, with everyone watching. That's what keeps people lining up for one more throw.</p><p><strong>Grab REF54 and take your shot.</strong></p>",
+            "asset": "qb54-ref54-called-out.webp",
+            "image_alt": "A player pointing at flags that landed on the REF54 target",
+            "focal": "center",
+            "inset_asset": "qb54-ref54-flags-closeup.webp",
+            "inset_label": "On target",
+            "cta_after": false
+          }
+        },
+        "reason_two_games": {
+          "type": "reason",
+          "settings": {
+            "toc_label": "Two games",
+            "title": "Two games.",
+            "accent": "One QB54 setup.",
+            "text": "<p>Play QB54, then turn a chair into the REF54 target. Same chairs, same backyard or tailgate, and another fun way to bring everyone together on game day.</p>",
+            "asset": "qb54-ref54-tailgate.webp",
+            "image_alt": "QB54 goal posts and a REF54 target chair set up together at a tailgate",
+            "focal": "center",
+            "cta_after": true
+          }
+        },
+        "reason_salute": {
+          "type": "reason",
+          "settings": {
+            "toc_label": "Salute the refs",
+            "title": "Your QB54 fun",
+            "accent": "doesn't stop here.",
+            "text": "<p>REF54 celebrates the men and women who give their time to officiate football and every other sport. Throw the flag like the officials do and bring a fresh challenge to every gathering.</p>",
+            "asset": "qb54-ref54-upgrade.webp",
+            "image_alt": "A yellow flag flying toward the REF54 target",
+            "focal": "center",
+            "cta_after": false
+          }
+        },
+        "step_target": {
+          "type": "step",
+          "settings": {
+            "title": "Set the target",
+            "text": "Use a QB54 chair: cover the hole with the flap and fold the back fabric down so only the seat is left."
+          }
+        },
+        "step_throw": {
+          "type": "step",
+          "settings": {
+            "title": "Throw the flags",
+            "text": "Each team throws its yellow flag, red flag and blue bean bag at the target."
+          }
+        },
+        "step_brag": {
+          "type": "step",
+          "settings": {
+            "title": "Claim bragging rights",
+            "text": "Hit the target and the bragging rights are yours."
+          }
+        },
+        "story_new_game": {
+          "type": "story",
+          "settings": {
+            "asset": "qb54-ref54-story-1.webp",
+            "alt": "New game. Same QB54 chairs. It looks easy until you're the one throwing. Grab REF54 and take your shot.",
+            "caption": "New game. Same QB54 chairs."
+          }
+        },
+        "story_introducing": {
+          "type": "story",
+          "settings": {
+            "asset": "qb54-ref54-story-2.webp",
+            "alt": "Introducing REF54, the flag toss game. Throw yellow flags, red flags and blue bean bags. Hit the target and claim your bragging rights.",
+            "caption": "Introducing REF54"
+          }
+        },
+        "story_upgrade": {
+          "type": "story",
+          "settings": {
+            "asset": "qb54-ref54-story-3.webp",
+            "alt": "Your QB54 just got an upgrade. Meet REF54, the new flag-toss add-on game that brings even more fun to your QB54 setup.",
+            "caption": "Your QB54 just got an upgrade"
+          }
+        },
+        "story_two_games": {
+          "type": "story",
+          "settings": {
+            "asset": "qb54-ref54-story-4.webp",
+            "alt": "Two games. One QB54 setup. Add REF54 and discover another fun way to bring everyone together on game day.",
+            "caption": "Two games. One QB54 setup."
+          }
+        },
+        "story_fun": {
+          "type": "story",
+          "settings": {
+            "asset": "qb54-ref54-story-5.webp",
+            "alt": "Your QB54 fun doesn't stop here. Meet REF54, the exciting add-on that brings a fresh challenge to every gathering.",
+            "caption": "The fun doesn't stop here"
+          }
+        },
+        "faq_need_qb54": {
+          "type": "faq",
+          "settings": {
+            "question": "Do I need QB54 to play REF54?",
+            "answer": "<p>REF54 uses a QB54 chair as its target: cover the hole with the flap and fold the back fabric down so only the seat is left. Don't have QB54 yet? Add a game set and REF54 together.</p>"
+          }
+        },
+        "faq_included": {
+          "type": "faq",
+          "settings": {
+            "question": "What comes with REF54?",
+            "answer": "<p>Each team gets 1 yellow flag, 1 red flag and 1 blue bean bag. The complete kit is pictured on this page and on the <a href=\"/products/ref54\">REF54 product page</a>.</p>"
+          }
+        },
+        "faq_ship": {
+          "type": "faq",
+          "settings": {
+            "question": "When will my order ship?",
+            "answer": "<p>In-stock orders ship within 1 business day.</p>"
+          }
+        },
+        "faq_free_ship": {
+          "type": "faq",
+          "settings": {
+            "question": "Is shipping free?",
+            "answer": "<p>Orders of $225 or more ship free. REF54 together with a QB54 game set gets you there.</p>"
+          }
+        },
+        "faq_returns": {
+          "type": "faq",
+          "settings": {
+            "question": "What's your return policy?",
+            "answer": "<p>Returns are accepted within 30 days on unused items in their original packaging. See our <a href=\"/pages/return-policy\">return policy</a> for full details.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "reason_same_chairs",
+        "reason_flag_toss",
+        "reason_looks_easy",
+        "reason_two_games",
+        "reason_salute",
+        "step_target",
+        "step_throw",
+        "step_brag",
+        "story_new_game",
+        "story_introducing",
+        "story_upgrade",
+        "story_two_games",
+        "story_fun",
+        "faq_need_qb54",
+        "faq_included",
+        "faq_ship",
+        "faq_free_ship",
+        "faq_returns"
+      ],
+      "settings": {
+        "product": "ref54",
+        "set_product": "qb54-black-game-set",
+        "shop_url": "shopify://collections/qb54-game-set-1",
+        "free_ship_threshold": 225,
+        "logo": "shopify://shop_images/QB54_Ball_Logo_only_copy_copy_410x_25d11a0b-a689-4422-9e25-846e937323d1.png",
+        "bar_text": "REF54",
+        "bar_cta": "Add to cart",
+        "kicker_badge": "New",
+        "kicker": "The flag toss game",
+        "title": "5 reasons QB54 owners are adding <em>REF54</em> to game day",
+        "deck": "Meet REF54, the new flag-toss add-on that brings even more fun to your QB54 setup. Throw yellow flags, red flags and blue bean bags, hit the target, and claim your bragging rights.",
+        "byline": "By the QB54 Team",
+        "read_time": "3 min read",
+        "hero_asset": "qb54-ref54-story-2.webp",
+        "hero_cta": "Add REF54 to cart",
+        "hero_cta_2": "Read the 5 reasons",
+        "proof_1": "As seen on Shark Tank",
+        "rating_fallback": "Hundreds of 5-star reviews",
+        "proof_3": "Free shipping on orders $225+",
+        "toc_label": "In this article",
+        "strip_title": "REF54",
+        "strip_text": "The flag toss game for your QB54 chairs",
+        "add_label": "Add to cart",
+        "bag_eyebrow": "What's inside",
+        "bag_heading": "Everything for <em>two teams</em>",
+        "bag_text": "Each team gets its own set to throw.",
+        "bag_items": "1 yellow flag|1 red flag|1 blue bean bag",
+        "bag_per": "Per team",
+        "bag_note": "Pictured: the complete REF54 kit.",
+        "bag_tag": "The REF54 kit",
+        "stock_note": "In stock, ships within 1 business day",
+        "returns_note": "30-day returns",
+        "how_eyebrow": "How to play",
+        "how_heading": "Game on in <em>3 steps</em>",
+        "how_asset": "qb54-ref54-target-chair.webp",
+        "how_image_alt": "A QB54 chair set up as the REF54 target",
+        "feed_eyebrow": "As seen in your feed",
+        "feed_heading": "New game. <em>Same QB54 chairs.</em>",
+        "feed_text": "Swipe through REF54 in action.",
+        "offer_eyebrow": "Pick your play",
+        "offer_heading": "Add REF54 to <em>game day</em>",
+        "offer_text": "Already have the chairs? Add REF54. Starting fresh? Get both, and your order ships free.",
+        "card1_tag": "Already own QB54?",
+        "card1_title": "REF54",
+        "card1_text": "The flag toss game for the chairs you already have.",
+        "card2_tag": "New to QB54?",
+        "card2_badge": "Ships free",
+        "card2_title": "QB54 + REF54",
+        "card2_text": "Two games. One QB54 setup.",
+        "card2_set_label": "QB54 Black Game Set",
+        "card2_ref_label": "REF54 flag toss game",
+        "card2_cta": "Add both to cart",
+        "card2_alt_label": "Prefer Navy or Red? Choose your set",
+        "faq_eyebrow": "FAQ",
+        "faq_heading": "Questions? <em>Answered.</em>",
+        "final_asset": "qb54-ref54-new-game.webp",
+        "final_heading": "Throw the flag.",
+        "final_accent": "Take your shot.",
+        "final_text": "REF54 is the flag toss game for your QB54 chairs. It looks easy until you're the one throwing.",
+        "final_cta": "Add REF54 to cart",
+        "show_sticky_bar": true,
+        "sticky_cta": "Add to cart",
+        "color_gold": "#fdc439",
+        "color_navy": "#363a66",
+        "color_night": "#12142b",
+        "color_cream": "#f4f2e8"
+      }
+    },
+    "footer_links": {
+      "type": "simple-links",
+      "name": "Simple Links Section",
+      "blocks": {
+        "link_privacy": {
+          "type": "link",
+          "settings": {
+            "link_text": "Privacy Policy",
+            "link_url": "https://playqb54.com/pages/privacy-policy"
+          }
+        },
+        "link_terms": {
+          "type": "link",
+          "settings": {
+            "link_text": "Terms of Service",
+            "link_url": "https://playqb54.com/pages/terms-of-service"
+          }
+        },
+        "link_return": {
+          "type": "link",
+          "settings": {
+            "link_text": "Return Policy",
+            "link_url": "https://playqb54.com/pages/return-policy"
+          }
+        },
+        "link_refund": {
+          "type": "link",
+          "settings": {
+            "link_text": "Refund Policy",
+            "link_url": "https://playqb54.com/pages/refund-policy"
+          }
+        },
+        "link_shipping": {
+          "type": "link",
+          "settings": {
+            "link_text": "Shipping Policy",
+            "link_url": "https://playqb54.com/pages/shipping-policy"
+          }
+        }
+      },
+      "block_order": [
+        "link_privacy",
+        "link_terms",
+        "link_return",
+        "link_refund",
+        "link_shipping"
+      ],
+      "settings": {
+        "section_bg": "#12142b",
+        "section_padding_top": 30,
+        "section_padding_bottom": 30,
+        "max_width": 1200,
+        "link_spacing": 30,
+        "link_color": "#fdc439",
+        "link_bg_color": "rgba(0,0,0,0)",
+        "link_border_color": "rgba(0,0,0,0)",
+        "link_font_size": 15,
+        "link_font_weight": "400",
+        "link_text_decoration": "underline",
+        "link_padding_x": 12,
+        "link_padding_y": 8,
+        "link_border_radius": 0,
+        "link_border_width": 0,
+        "link_letter_spacing": 0,
+        "link_uppercase": false,
+        "link_hover_color": "#ffffff",
+        "link_hover_bg_color": "rgba(0,0,0,0)",
+        "link_hover_border_color": "rgba(0,0,0,0)",
+        "link_hover_text_decoration": "none",
+        "link_hover_transform": 0,
+        "mobile_section_padding_top": 20,
+        "mobile_section_padding_bottom": 20,
+        "mobile_link_spacing": 16,
+        "mobile_link_font_size": 14,
+        "mobile_link_padding_x": 10,
+        "mobile_link_padding_y": 6,
+        "mobile_link_width": 90
+      }
+    }
+  },
+  "order": [
+    "main-page",
+    "listicle",
+    "footer_links"
+  ]
+}
