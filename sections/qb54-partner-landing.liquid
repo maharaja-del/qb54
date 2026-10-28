@@ -1,0 +1,1205 @@
+{%- liquid
+  assign scope = '#qb54-pa-' | append: section.id
+  assign code = section.settings.code | strip | upcase
+  assign pct = section.settings.discount_percent
+  assign keep = 100 | minus: pct
+  assign free_ship = section.settings.free_ship_threshold | times: 100
+  assign shop_url = section.settings.shop_url | default: routes.all_products_collection_url
+  assign sets = section.settings.sets
+  assign fan_products = section.settings.fan_products
+  assign reel_blocks = section.blocks | where: 'type', 'reel'
+  assign review_blocks = section.blocks | where: 'type', 'review'
+  assign step_blocks = section.blocks | where: 'type', 'step'
+  assign faq_blocks = section.blocks | where: 'type', 'faq'
+  assign partner = section.settings.partner_name
+
+  # Products that show the price after the code: the code collection, or every set when none is chosen.
+  assign eligible = '|'
+  if section.settings.code_collection != blank
+    for p in section.settings.code_collection.products limit: 50
+      assign eligible = eligible | append: p.id | append: '|'
+    endfor
+  else
+    for p in sets
+      assign eligible = eligible | append: p.id | append: '|'
+    endfor
+  endif
+
+  # Hero buy card: the first three single-option sets in stock.
+  assign hero_count = 0
+  for p in sets
+    if p.has_only_default_variant and p.available and hero_count < 3
+      assign hero_count = hero_count | plus: 1
+    endif
+  endfor
+
+  assign lead = sets.first
+  assign lead_rating = lead.metafields.reviews.rating.value
+  assign lead_count = lead.metafields.reviews.rating_count.value
+  assign checkout_url = routes.root_url | append: '/checkout' | replace: '//', '/'
+-%}
+
+<style>
+  {{ scope }} {
+    --gold: {{ section.settings.color_gold }};
+    --gold-deep: color-mix(in srgb, var(--gold) 80%, #000000);
+    --gold-soft: color-mix(in srgb, var(--gold) 18%, transparent);
+    --on-gold: #1a1c3a;
+    --navy: {{ section.settings.color_navy }};
+    --night: {{ section.settings.color_night }};
+    --cream: {{ section.settings.color_cream }};
+    --live: #e11d48;
+    --paper: #ffffff;
+    --ink: #171717;
+    --ink-2: #4a4c57;
+    --muted: #6b6d78;
+    --line: #e6e2d3;
+    --line-dark: rgba(255, 255, 255, 0.14);
+    --ok: #15803d;
+    --sale: #e11d48;
+    --fh: var(--font-heading-family);
+    --fb: var(--font-body-family);
+    --pad-y: clamp(64px, 8vw, 112px);
+    --max: 1280px;
+    --gutter: clamp(16px, 4vw, 40px);
+    --ease: cubic-bezier(0.2, 0, 0, 1);
+    --ease-emph: cubic-bezier(0.05, 0.7, 0.1, 1);
+    --shadow: 0 1px 2px rgba(17, 18, 40, 0.06), 0 16px 36px -22px rgba(17, 18, 40, 0.4);
+    --shadow-lg: 0 2px 6px rgba(9, 10, 26, 0.12), 0 40px 80px -36px rgba(9, 10, 26, 0.75);
+    position: relative;
+    background: var(--night);
+    color: #ffffff;
+    font-family: var(--fb);
+    -webkit-font-smoothing: antialiased;
+    /* position + clip: absolutely positioned bits can never widen the page */
+    overflow-x: clip;
+  }
+  {{ scope }} *, {{ scope }} *::before, {{ scope }} *::after { box-sizing: border-box; }
+  {{ scope }} a { color: inherit; text-decoration: none; }
+  {{ scope }} ul, {{ scope }} ol { list-style: none; margin: 0; padding: 0; }
+  {{ scope }} p, {{ scope }} blockquote { text-wrap: pretty; }
+  {{ scope }} img { display: block; max-width: 100%; }
+  {{ scope }} [hidden] { display: none !important; }
+  {{ scope }} :focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+  {{ scope }} .qb54-pa-wrap { width: min(var(--max), 100% - var(--gutter) * 2); margin-inline: auto; }
+  {{ scope }} .qb54-pa-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  /* ---------- Type ---------- */
+  {{ scope }} .qb54-pa-h2 { margin: 0; font-family: var(--fh); font-weight: 700; font-size: clamp(36px, 5vw, 64px); line-height: 0.95; letter-spacing: -0.005em; text-transform: uppercase; text-wrap: balance; color: inherit; }
+  {{ scope }} .qb54-pa-h2 em { font-style: normal; color: var(--gold); }
+  {{ scope }} .qb54-pa-light .qb54-pa-h2 { color: var(--ink); }
+  {{ scope }} .qb54-pa-light .qb54-pa-h2 em { color: var(--navy); }
+  {{ scope }} .qb54-pa-eyebrow { display: flex; align-items: center; gap: 12px; margin: 0 0 16px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+  {{ scope }} .qb54-pa-eyebrow::before { content: ''; width: 28px; height: 3px; border-radius: 3px; background: currentColor; }
+  {{ scope }} .qb54-pa-light .qb54-pa-eyebrow { color: var(--navy); }
+  {{ scope }} .qb54-pa-center { text-align: center; }
+  {{ scope }} .qb54-pa-center .qb54-pa-eyebrow { justify-content: center; }
+  {{ scope }} .qb54-pa-center .qb54-pa-eyebrow::after { content: ''; width: 28px; height: 3px; border-radius: 3px; background: currentColor; }
+  {{ scope }} .qb54-pa-lede { margin: 18px 0 0; max-width: 60ch; font-size: clamp(16px, 1.3vw, 18.5px); line-height: 1.65; }
+  {{ scope }} .qb54-pa-center .qb54-pa-lede { margin-inline: auto; }
+  {{ scope }} .qb54-pa-light .qb54-pa-lede { color: var(--ink-2); }
+  {{ scope }} .qb54-pa-head { margin-bottom: clamp(32px, 4vw, 52px); }
+  {{ scope }} .qb54-pa-head--split { display: grid; gap: 18px; }
+  {{ scope }} .qb54-pa-link { font-weight: 700; font-size: 15px; text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+
+  /* ---------- Buttons ---------- */
+  {{ scope }} .qb54-pa-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 0 26px; border: 0; border-radius: 10px; font-family: var(--fh); font-weight: 700; font-size: 17px; line-height: 1; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; cursor: pointer; overflow: hidden; isolation: isolate; transition: transform 160ms var(--ease), background-color 160ms var(--ease), box-shadow 160ms var(--ease); }
+  {{ scope }} .qb54-pa-btn svg { width: 18px; height: 18px; flex: none; }
+  {{ scope }} .qb54-pa-btn [data-qb54-pa-icon] { display: inline-flex; }
+  {{ scope }} .qb54-pa-btn--gold { background: var(--gold); color: var(--on-gold); box-shadow: 0 14px 30px -14px color-mix(in srgb, var(--gold) 70%, transparent); }
+  {{ scope }} .qb54-pa-btn--gold:hover { background: color-mix(in srgb, var(--gold) 86%, #ffffff); transform: translateY(-2px); }
+  {{ scope }} .qb54-pa-btn--shine::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.7) 48%, transparent 66%); transform: translateX(-120%); animation: qb54-pa-shine 4.2s var(--ease) infinite 1.2s; }
+  {{ scope }} .qb54-pa-btn--ghost { background: rgba(255, 255, 255, 0.07); color: #ffffff; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.4); }
+  {{ scope }} .qb54-pa-btn--ghost:hover { background: rgba(255, 255, 255, 0.14); transform: translateY(-2px); }
+  {{ scope }} .qb54-pa-btn--navy { background: var(--navy); color: #ffffff; }
+  {{ scope }} .qb54-pa-btn--navy:hover { background: color-mix(in srgb, var(--navy) 85%, #ffffff); transform: translateY(-2px); }
+  {{ scope }} .qb54-pa-btn--white { background: #ffffff; color: var(--on-gold); box-shadow: 0 16px 34px -16px rgba(17, 18, 40, 0.55); }
+  {{ scope }} .qb54-pa-btn--white:hover { transform: translateY(-2px); }
+  {{ scope }} .qb54-pa-btn[aria-busy='true'] { pointer-events: none; opacity: 0.85; }
+  {{ scope }} .qb54-pa-btn.is-added { background: var(--ok); color: #ffffff; box-shadow: none; }
+  {{ scope }} .qb54-pa-btn.is-error { background: #b91c1c; color: #ffffff; box-shadow: none; }
+  {{ scope }} .qb54-pa-btn[disabled] { background: #e7e5dd; color: var(--muted); box-shadow: none; cursor: not-allowed; }
+  {{ scope }} .qb54-pa-spin { width: 18px; height: 18px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: qb54-pa-rot 700ms linear infinite; }
+  {{ scope }} .qb54-pa-err { margin: 8px 0 0; font-size: 13px; color: #b91c1c; }
+  @keyframes qb54-pa-shine { 0% { transform: translateX(-120%); } 55%, 100% { transform: translateX(120%); } }
+  @keyframes qb54-pa-rot { to { transform: rotate(360deg); } }
+
+  /* ---------- Top bar ---------- */
+  {{ scope }} .qb54-pa-bar { position: sticky; top: 0; z-index: 30; background: color-mix(in srgb, var(--night) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line-dark); }
+  {{ scope }} .qb54-pa-bar__in { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 68px; }
+  {{ scope }} .qb54-pa-bar__brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  {{ scope }} .qb54-pa-bar__brand img { width: auto; height: 40px; }
+  {{ scope }} .qb54-pa-bar__x { display: none; align-items: center; gap: 12px; font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255, 255, 255, 0.8); white-space: nowrap; }
+  {{ scope }} .qb54-pa-bar__x b { font-family: var(--fh); font-size: 18px; color: var(--gold); }
+  {{ scope }} .qb54-pa-bar__end { display: flex; align-items: center; gap: 10px; }
+  {{ scope }} .qb54-pa-bar__code { display: none; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.07); box-shadow: inset 0 0 0 1px var(--line-dark); font-size: 13px; color: rgba(255, 255, 255, 0.85); }
+  {{ scope }} .qb54-pa-bar__code strong { padding: 3px 8px; border-radius: 6px; background: var(--gold); color: var(--on-gold); letter-spacing: 0.1em; }
+  {{ scope }} .qb54-pa-bar .qb54-pa-btn { min-height: 44px; padding: 0 16px; font-size: 15px; }
+  {{ scope }} .qb54-pa-cart { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--line-dark); }
+  {{ scope }} .qb54-pa-cart:hover { background: rgba(255, 255, 255, 0.08); }
+  {{ scope }} .qb54-pa-cart svg { width: 21px; height: 21px; }
+  {{ scope }} .qb54-pa-cart__n { position: absolute; top: -3px; right: -3px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: var(--gold); color: var(--on-gold); font-size: 11px; font-weight: 700; line-height: 20px; text-align: center; }
+  {{ scope }} .qb54-pa-cart__n.is-bump { animation: qb54-pa-bump 420ms var(--ease-emph); }
+  @keyframes qb54-pa-bump { 0% { transform: scale(0.4); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+
+  /* ---------- Hero ---------- */
+  {{ scope }} .qb54-pa-hero { position: relative; isolation: isolate; overflow: hidden; display: flex; align-items: center; min-height: min(880px, calc(100svh - 68px)); padding-block: clamp(44px, 6vw, 96px); }
+  {{ scope }} .qb54-pa-hero__bg { position: absolute; inset: 0; z-index: -3; }
+  {{ scope }} .qb54-pa-hero__bg img { width: 100%; height: 100%; object-fit: cover; object-position: {{ section.settings.hero_focal }}; }
+  {{ scope }} .qb54-pa-hero::before { content: ''; position: absolute; inset: 0; z-index: -2; background: linear-gradient(90deg, color-mix(in srgb, var(--night) 95%, transparent) 0%, color-mix(in srgb, var(--night) 84%, transparent) 40%, color-mix(in srgb, var(--night) 40%, transparent) 75%, color-mix(in srgb, var(--night) 60%, transparent) 100%), linear-gradient(0deg, var(--night) 0%, transparent 35%); }
+  {{ scope }} .qb54-pa-hero::after { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(640px 420px at 16% 72%, color-mix(in srgb, var(--gold) 16%, transparent), transparent 70%); pointer-events: none; }
+  {{ scope }} .qb54-pa-hero__grid { display: grid; gap: clamp(40px, 5vw, 72px); align-items: center; }
+  {{ scope }} .qb54-pa-onair { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 22px; padding: 7px 14px 7px 10px; border-radius: 999px; background: rgba(9, 10, 26, 0.55); box-shadow: inset 0 0 0 1px var(--line-dark); backdrop-filter: blur(8px); font-size: 12.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #ffffff; }
+  {{ scope }} .qb54-pa-onair i { position: relative; width: 10px; height: 10px; border-radius: 50%; background: var(--live); }
+  {{ scope }} .qb54-pa-onair i::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--live); opacity: 0; animation: qb54-pa-pulse 1.8s var(--ease) infinite; }
+  {{ scope }} .qb54-pa-onair b { color: var(--gold); }
+  @keyframes qb54-pa-pulse { 0% { transform: scale(0.6); opacity: 0.9; } 100% { transform: scale(1.6); opacity: 0; } }
+  {{ scope }} .qb54-pa-title { margin: 0; font-family: var(--fh); font-weight: 700; text-transform: uppercase; color: #ffffff; line-height: 0.9; }
+  {{ scope }} .qb54-pa-title__offer { display: block; white-space: nowrap; font-size: min(24vw, 200px); line-height: 0.84; letter-spacing: -0.025em; padding-bottom: 0.04em; background: linear-gradient(180deg, #fff3c4 0%, var(--gold) 48%, var(--gold-deep) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; filter: drop-shadow(0 12px 40px color-mix(in srgb, var(--gold) 28%, transparent)); }
+  {{ scope }} .qb54-pa-title__line { display: block; margin-top: 10px; font-size: clamp(34px, 4.4vw, 64px); line-height: 0.95; text-wrap: balance; }
+  {{ scope }} .qb54-pa-hero .qb54-pa-lede { color: rgba(255, 255, 255, 0.86); }
+
+  /* Score-bug code ticket */
+  {{ scope }} .qb54-pa-bug { display: inline-flex; align-items: stretch; margin-top: 28px; border-radius: 14px; overflow: hidden; box-shadow: 0 20px 40px -24px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.12); }
+  {{ scope }} .qb54-pa-bug > * { display: grid; align-content: center; padding: 10px 16px; }
+  {{ scope }} .qb54-pa-bug__team { background: var(--navy); font-family: var(--fh); font-weight: 700; font-size: 20px; letter-spacing: 0.04em; color: #ffffff; }
+  {{ scope }} .qb54-pa-bug__code { gap: 2px; background: #ffffff; color: var(--on-gold); }
+  {{ scope }} .qb54-pa-bug__code span { font-size: 10.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  {{ scope }} .qb54-pa-bug__code strong { font-family: var(--fh); font-weight: 700; font-size: 32px; line-height: 0.95; letter-spacing: 0.08em; }
+  {{ scope }} .qb54-pa-bug__off { background: var(--gold); color: var(--on-gold); font-family: var(--fh); font-weight: 700; font-size: 24px; line-height: 1; text-align: center; }
+  {{ scope }} .qb54-pa-bug__off small { display: block; font-size: 11px; letter-spacing: 0.14em; }
+  {{ scope }} .qb54-pa-bug__copy { grid-auto-flow: column; gap: 6px; border: 0; background: var(--night); color: #ffffff; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; }
+  {{ scope }} .qb54-pa-bug__copy:hover { background: color-mix(in srgb, var(--night) 70%, var(--navy)); }
+  {{ scope }} .qb54-pa-bug__copy svg { width: 16px; height: 16px; }
+  {{ scope }} .qb54-pa-applied { display: flex; align-items: center; gap: 8px; margin: 12px 0 0; font-size: 13.5px; color: rgba(255, 255, 255, 0.82); }
+  {{ scope }} .qb54-pa-applied svg { width: 18px; height: 18px; padding: 3px; border-radius: 50%; background: var(--ok); color: #ffffff; flex: none; }
+  {{ scope }} .qb54-pa-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  {{ scope }} .qb54-pa-hero .qb54-pa-ctas .qb54-pa-btn { min-height: 60px; padding: 0 30px; font-size: 18px; }
+  {{ scope }} .qb54-pa-proof { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--line-dark); }
+  {{ scope }} .qb54-pa-proof li { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 500; color: rgba(255, 255, 255, 0.86); }
+  {{ scope }} .qb54-pa-proof svg { width: 17px; height: 17px; color: var(--gold); flex: none; }
+
+  /* Hero buy card */
+  {{ scope }} .qb54-pa-buycard { position: relative; justify-self: center; width: min(100%, 430px); border-radius: 20px; background: var(--paper); color: var(--ink); box-shadow: var(--shadow-lg); }
+  {{ scope }} .qb54-pa-buycard__ribbon { position: absolute; z-index: 3; top: -14px; left: 18px; display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 8px; background: var(--night); color: #ffffff; font-size: 11.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; box-shadow: 0 10px 20px -12px rgba(0, 0, 0, 0.7); }
+  {{ scope }} .qb54-pa-buycard__ribbon i { width: 8px; height: 8px; border-radius: 50%; background: var(--live); }
+  {{ scope }} .qb54-pa-buycard__media { position: relative; aspect-ratio: 1 / 0.84; border-radius: 20px 20px 0 0; overflow: hidden; background: #ffffff; }
+  {{ scope }} .qb54-pa-buycard__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 7% 6% 3%; }
+  {{ scope }} .qb54-pa-buycard__off { position: absolute; top: 16px; right: 16px; padding: 7px 12px; border-radius: 999px; background: var(--gold); color: var(--on-gold); font-family: var(--fh); font-weight: 700; font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; }
+  {{ scope }} .qb54-pa-buycard__body { display: grid; gap: 10px; padding: 20px 22px 22px; border-top: 1px solid var(--line); }
+  {{ scope }} .qb54-pa-buycard__title { margin: 0; font-family: var(--fh); font-weight: 700; font-size: 23px; line-height: 1.08; letter-spacing: 0; text-transform: uppercase; color: var(--ink); }
+  {{ scope }} .qb54-pa-rating { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink-2); }
+  {{ scope }} .qb54-pa-rating b { color: var(--ink); }
+  {{ scope }} .qb54-pa-stars { display: inline-flex; gap: 2px; color: var(--gold); }
+  {{ scope }} .qb54-pa-stars svg { width: 15px; height: 15px; }
+  {{ scope }} .qb54-pa-price { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+  {{ scope }} .qb54-pa-now { font-family: var(--fh); font-weight: 700; line-height: 1; color: var(--navy); font-variant-numeric: tabular-nums; }
+  {{ scope }} .qb54-pa-now small { margin-right: 2px; font-family: var(--fb); font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); }
+  {{ scope }} .qb54-pa-was { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1.5px; font-variant-numeric: tabular-nums; }
+  {{ scope }} .qb54-pa-save { padding: 5px 10px; border-radius: 6px; background: var(--sale); color: #ffffff; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  {{ scope }} .qb54-pa-buycard .qb54-pa-now { font-size: 40px; }
+  {{ scope }} .qb54-pa-buycard .qb54-pa-was { font-size: 16px; }
+  {{ scope }} .qb54-pa-codenote { margin: 0; font-size: 13px; color: var(--ink-2); }
+  {{ scope }} .qb54-pa-codenote strong { color: var(--ink); letter-spacing: 0.06em; }
+  {{ scope }} .qb54-pa-swatches { display: flex; align-items: center; gap: 10px; }
+  {{ scope }} .qb54-pa-swatches span { margin-right: 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  {{ scope }} .qb54-pa-sw { width: 30px; height: 30px; border: 0; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.6), 0 0 0 1px var(--line); cursor: pointer; transition: transform 160ms var(--ease), box-shadow 160ms var(--ease); }
+  {{ scope }} .qb54-pa-sw:hover { transform: scale(1.08); }
+  {{ scope }} .qb54-pa-sw[aria-pressed='true'] { box-shadow: inset 0 0 0 2px #ffffff, 0 0 0 2.5px var(--gold); }
+  {{ scope }} .qb54-pa-buycard .qb54-pa-btn { width: 100%; min-height: 56px; }
+  {{ scope }} .qb54-pa-instock { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); }
+  {{ scope }} .qb54-pa-instock::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18); }
+
+  /* ---------- Ticker ---------- */
+  {{ scope }} .qb54-pa-ticker { overflow: hidden; background: var(--gold); color: var(--on-gold); }
+  {{ scope }} .qb54-pa-ticker__track { display: flex; width: max-content; animation: qb54-pa-marquee 40s linear infinite; }
+  {{ scope }} .qb54-pa-ticker:hover .qb54-pa-ticker__track { animation-play-state: paused; }
+  {{ scope }} .qb54-pa-ticker__g { display: flex; flex: none; }
+  {{ scope }} .qb54-pa-ticker__i { display: inline-flex; align-items: center; gap: 24px; padding: 16px 0 16px 24px; font-family: var(--fh); font-weight: 700; font-size: 19px; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+  {{ scope }} .qb54-pa-ticker__i svg { width: 16px; height: 16px; }
+  @keyframes qb54-pa-marquee { to { transform: translateX(-50%); } }
+
+  /* ---------- Partner welcome (lower third) ---------- */
+  {{ scope }} .qb54-pa-partner { padding-block: clamp(48px, 6vw, 80px); background: var(--night); }
+  {{ scope }} .qb54-pa-l3 { position: relative; display: grid; gap: 18px; align-items: center; padding: 20px; border-radius: 22px; background: linear-gradient(100deg, var(--navy), color-mix(in srgb, var(--navy) 60%, var(--night))); box-shadow: inset 0 0 0 1px var(--line-dark), var(--shadow-lg); overflow: hidden; }
+  {{ scope }} .qb54-pa-l3::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--gold); }
+  {{ scope }} .qb54-pa-l3__who { display: flex; align-items: center; gap: 16px; }
+  {{ scope }} .qb54-pa-avatar { position: relative; flex: none; display: grid; place-items: center; width: 76px; height: 76px; border-radius: 50%; background: var(--night); box-shadow: 0 0 0 3px var(--gold); overflow: hidden; }
+  {{ scope }} .qb54-pa-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  {{ scope }} .qb54-pa-avatar svg { width: 36px; height: 36px; color: var(--gold); }
+  {{ scope }} .qb54-pa-l3__name { display: grid; gap: 4px; }
+  {{ scope }} .qb54-pa-l3__name span { font-size: 11.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); }
+  {{ scope }} .qb54-pa-l3__name strong { font-family: var(--fh); font-weight: 700; font-size: clamp(26px, 3vw, 36px); line-height: 1; text-transform: uppercase; color: #ffffff; }
+  {{ scope }} .qb54-pa-l3 p { margin: 0; font-size: 16px; line-height: 1.6; color: rgba(255, 255, 255, 0.85); }
+  {{ scope }} .qb54-pa-l3 p strong { color: var(--gold); letter-spacing: 0.04em; }
+  {{ scope }} .qb54-pa-l3__watch { display: inline-flex; align-items: center; gap: 10px; justify-self: start; padding: 10px 16px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); box-shadow: inset 0 0 0 1px var(--line-dark); font-size: 14px; font-weight: 700; color: #ffffff; white-space: nowrap; }
+  {{ scope }} .qb54-pa-l3__watch:hover { background: rgba(255, 255, 255, 0.14); }
+  {{ scope }} .qb54-pa-l3__watch svg { width: 22px; height: 22px; color: #ff3b3b; }
+
+  /* ---------- Product grids ---------- */
+  {{ scope }} .qb54-pa-sets { padding-block: var(--pad-y); background: var(--cream); color: var(--ink); }
+  {{ scope }} .qb54-pa-fans { padding-block: var(--pad-y); background: var(--paper); color: var(--ink); }
+  {{ scope }} .qb54-pa-grid { display: grid; grid-auto-flow: column; grid-auto-columns: 72%; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 4px var(--gutter) 12px; margin-inline: calc(var(--gutter) * -1); scroll-padding-inline: var(--gutter); }
+  {{ scope }} .qb54-pa-grid::-webkit-scrollbar { display: none; }
+  {{ scope }} .qb54-pa-grid > * { scroll-snap-align: start; }
+  {{ scope }} .qb54-pa-card { position: relative; display: flex; flex-direction: column; min-width: 0; border: 1px solid var(--line); border-radius: 18px; background: #ffffff; overflow: hidden; transition: transform 200ms var(--ease), box-shadow 200ms var(--ease), border-color 200ms var(--ease); }
+  @media (hover: hover) {
+    {{ scope }} .qb54-pa-card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--gold) 60%, var(--line)); box-shadow: 0 22px 40px -26px rgba(17, 18, 40, 0.55); }
+    {{ scope }} .qb54-pa-card:hover .qb54-pa-card__media img { transform: scale(1.04); }
+  }
+  {{ scope }} .qb54-pa-card__media { position: relative; display: block; aspect-ratio: 1; background: #ffffff; }
+  {{ scope }} .qb54-pa-card__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 7%; transition: transform 500ms var(--ease); }
+  {{ scope }} .qb54-pa-card__tag { position: absolute; z-index: 2; top: 12px; left: 12px; max-width: calc(100% - 100px); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 5px 10px; border-radius: 6px; background: var(--navy); color: #ffffff; font-family: var(--fh); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; }
+  {{ scope }} .qb54-pa-card__tag b { color: var(--gold); }
+  {{ scope }} .qb54-pa-card__off { position: absolute; z-index: 2; top: 12px; right: 12px; padding: 5px 10px; border-radius: 999px; background: var(--gold); color: var(--on-gold); font-family: var(--fh); font-weight: 700; font-size: 14px; letter-spacing: 0.04em; text-transform: uppercase; }
+  {{ scope }} .qb54-pa-card__body { display: flex; flex-direction: column; gap: 8px; flex: 1; padding: 14px 16px 16px; border-top: 1px solid var(--line); }
+  {{ scope }} .qb54-pa-card__stars { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; color: var(--ink-2); }
+  {{ scope }} .qb54-pa-card__stars svg { width: 14px; height: 14px; color: var(--gold); }
+  {{ scope }} .qb54-pa-card__stars b { color: var(--ink); }
+  {{ scope }} .qb54-pa-card__t { margin: 0; min-height: 2.6em; font-family: var(--fb); font-weight: 700; font-size: 15px; line-height: 1.3; letter-spacing: 0; text-transform: none; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  {{ scope }} .qb54-pa-card__p { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; margin-top: auto; }
+  {{ scope }} .qb54-pa-card__p .qb54-pa-now { font-size: 26px; }
+  {{ scope }} .qb54-pa-card__p .qb54-pa-was { font-size: 14px; }
+  {{ scope }} .qb54-pa-card__code { margin: -2px 0 0; font-size: 12.5px; font-weight: 700; color: var(--sale); }
+  {{ scope }} .qb54-pa-card__code strong { letter-spacing: 0.06em; }
+  {{ scope }} .qb54-pa-card .qb54-pa-btn { width: 100%; min-height: 48px; padding: 0 12px; font-size: 15px; }
+  {{ scope }} .qb54-pa-note { margin: 22px 0 0; text-align: center; font-size: 13px; color: var(--muted); }
+
+  /* ---------- Reels ---------- */
+  {{ scope }} .qb54-pa-reels { position: relative; padding-block: var(--pad-y); background: radial-gradient(800px 380px at 80% 0%, color-mix(in srgb, var(--navy) 75%, transparent), transparent 70%), var(--night); }
+  {{ scope }} .qb54-pa-reels .qb54-pa-lede { color: rgba(255, 255, 255, 0.75); }
+  {{ scope }} .qb54-pa-rail { display: grid; grid-auto-flow: column; grid-auto-columns: min(66%, 250px); gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 6px var(--gutter) 10px; margin-inline: calc(var(--gutter) * -1); scroll-padding-inline: var(--gutter); }
+  {{ scope }} .qb54-pa-rail::-webkit-scrollbar { display: none; }
+  {{ scope }} .qb54-pa-reel { position: relative; scroll-snap-align: start; aspect-ratio: 9 / 16; margin: 0; border-radius: 20px; overflow: hidden; background: var(--navy); box-shadow: 0 0 0 1px var(--line-dark), 0 24px 48px -24px rgba(0, 0, 0, 0.8); cursor: pointer; }
+  {{ scope }} .qb54-pa-reel video, {{ scope }} .qb54-pa-reel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  {{ scope }} .qb54-pa-reel::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, 0.3), transparent 25%, transparent 58%, rgba(5, 6, 18, 0.88)); pointer-events: none; }
+  {{ scope }} .qb54-pa-reel figcaption { position: absolute; z-index: 2; left: 14px; right: 14px; bottom: 14px; font-family: var(--fh); font-weight: 700; font-size: 20px; line-height: 1.05; text-transform: uppercase; }
+  {{ scope }} .qb54-pa-reel__play { position: absolute; z-index: 2; top: 50%; left: 50%; display: grid; place-items: center; width: 58px; height: 58px; margin: -29px 0 0 -29px; border-radius: 50%; background: rgba(255, 255, 255, 0.92); color: var(--on-gold); transition: opacity 200ms var(--ease); }
+  {{ scope }} .qb54-pa-reel__play svg { width: 22px; height: 22px; margin-left: 3px; }
+  {{ scope }} .qb54-pa-reel.is-playing .qb54-pa-reel__play { opacity: 0; }
+  {{ scope }} .qb54-pa-reel__snd { position: absolute; z-index: 3; top: 10px; right: 10px; display: grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: 50%; background: rgba(9, 10, 26, 0.62); color: #ffffff; cursor: pointer; }
+  {{ scope }} .qb54-pa-reel__snd svg { width: 16px; height: 16px; }
+  {{ scope }} .qb54-pa-reel__snd .is-on { display: none; }
+  {{ scope }} .qb54-pa-reel.is-unmuted .qb54-pa-reel__snd .is-on { display: block; }
+  {{ scope }} .qb54-pa-reel.is-unmuted .qb54-pa-reel__snd .is-off { display: none; }
+
+  /* ---------- Steps ---------- */
+  {{ scope }} .qb54-pa-steps { position: relative; isolation: isolate; overflow: hidden; padding-block: var(--pad-y); background: var(--gold); color: var(--on-gold); }
+  {{ scope }} .qb54-pa-steps::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(620px 300px at 10% 0%, rgba(255, 255, 255, 0.5), transparent 70%), radial-gradient(520px 320px at 100% 100%, rgba(0, 0, 0, 0.1), transparent 70%); }
+  {{ scope }} .qb54-pa-steps .qb54-pa-h2, {{ scope }} .qb54-pa-steps .qb54-pa-eyebrow { color: var(--on-gold); }
+  {{ scope }} .qb54-pa-steps__list { display: grid; gap: 14px; margin-top: clamp(30px, 4vw, 48px); }
+  {{ scope }} .qb54-pa-step { position: relative; display: grid; gap: 10px; padding: 26px 24px; border-radius: 18px; background: #ffffff; color: var(--ink); box-shadow: 0 20px 40px -28px rgba(17, 18, 40, 0.55); overflow: hidden; }
+  {{ scope }} .qb54-pa-step__n { position: absolute; right: 14px; top: -10px; font-family: var(--fh); font-weight: 700; font-size: 110px; line-height: 1; color: color-mix(in srgb, var(--navy) 10%, transparent); }
+  {{ scope }} .qb54-pa-step__i { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--navy); color: var(--gold); font-family: var(--fh); font-weight: 700; font-size: 20px; }
+  {{ scope }} .qb54-pa-step h3 { position: relative; margin: 8px 0 0; font-family: var(--fh); font-weight: 700; font-size: 26px; line-height: 1.02; letter-spacing: 0; text-transform: uppercase; color: var(--ink); }
+  {{ scope }} .qb54-pa-step p { position: relative; margin: 0; font-size: 15.5px; line-height: 1.55; color: var(--ink-2); }
+  {{ scope }} .qb54-pa-step mark { padding: 1px 7px; border-radius: 5px; background: var(--gold); color: var(--on-gold); font-weight: 700; letter-spacing: 0.06em; }
+
+  /* ---------- Reviews ---------- */
+  {{ scope }} .qb54-pa-reviews { padding-block: var(--pad-y); background: var(--cream); color: var(--ink); }
+  {{ scope }} .qb54-pa-score { display: inline-flex; align-items: center; gap: 12px; margin-top: 18px; padding: 10px 16px; border-radius: 999px; background: #ffffff; box-shadow: var(--shadow); font-size: 14px; color: var(--ink-2); }
+  {{ scope }} .qb54-pa-score b { font-family: var(--fh); font-size: 22px; color: var(--ink); }
+  {{ scope }} .qb54-pa-revrail { display: grid; grid-auto-flow: column; grid-auto-columns: 84%; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 6px var(--gutter) 10px; margin-inline: calc(var(--gutter) * -1); scroll-padding-inline: var(--gutter); }
+  {{ scope }} .qb54-pa-revrail::-webkit-scrollbar { display: none; }
+  {{ scope }} .qb54-pa-review { scroll-snap-align: start; display: flex; flex-direction: column; gap: 16px; margin: 0; padding: 26px; border-radius: 18px; background: #ffffff; box-shadow: var(--shadow); }
+  {{ scope }} .qb54-pa-review blockquote { margin: 0; padding: 0; border: 0; font-family: var(--fb); font-style: normal; font-weight: 500; font-size: 17px; line-height: 1.6; letter-spacing: 0; text-transform: none; color: var(--ink); }
+  {{ scope }} .qb54-pa-review footer { margin-top: auto; display: flex; align-items: center; gap: 12px; }
+  {{ scope }} .qb54-pa-av { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--navy); color: var(--gold); font-family: var(--fh); font-weight: 700; font-size: 18px; }
+  {{ scope }} .qb54-pa-review cite { display: block; font-style: normal; font-weight: 700; font-size: 14.5px; color: var(--ink); }
+  {{ scope }} .qb54-pa-verified { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--ok); }
+  {{ scope }} .qb54-pa-verified svg { width: 13px; height: 13px; }
+
+  /* ---------- FAQ ---------- */
+  {{ scope }} .qb54-pa-faq { padding-block: var(--pad-y); background: var(--paper); color: var(--ink); }
+  {{ scope }} .qb54-pa-faq__grid { display: grid; gap: 30px; }
+  {{ scope }} .qb54-pa-qa { border-top: 1px solid var(--line); }
+  {{ scope }} .qb54-pa-qa:last-child { border-bottom: 1px solid var(--line); }
+  {{ scope }} .qb54-pa-qa summary { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 22px 0; list-style: none; cursor: pointer; font-size: 17.5px; font-weight: 700; line-height: 1.35; color: var(--ink); }
+  {{ scope }} .qb54-pa-qa summary::-webkit-details-marker { display: none; }
+  {{ scope }} .qb54-pa-plus { position: relative; flex: none; width: 36px; height: 36px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--line); transition: background-color 220ms var(--ease), transform 260ms var(--ease); }
+  {{ scope }} .qb54-pa-plus::before, {{ scope }} .qb54-pa-plus::after { content: ''; position: absolute; left: 50%; top: 50%; width: 12px; height: 2px; margin: -1px 0 0 -6px; border-radius: 2px; background: var(--ink); transition: transform 260ms var(--ease); }
+  {{ scope }} .qb54-pa-plus::after { transform: rotate(90deg); }
+  {{ scope }} .qb54-pa-qa[open] .qb54-pa-plus { background: var(--gold); box-shadow: none; transform: rotate(180deg); }
+  {{ scope }} .qb54-pa-qa[open] .qb54-pa-plus::after { transform: rotate(0deg); }
+  {{ scope }} .qb54-pa-qa__a { padding: 0 54px 24px 0; font-size: 15.5px; line-height: 1.65; color: var(--ink-2); }
+  {{ scope }} .qb54-pa-qa__a p { margin: 0 0 10px; }
+  {{ scope }} .qb54-pa-qa__a p:last-child { margin: 0; }
+  {{ scope }} .qb54-pa-qa__a a { color: var(--navy); font-weight: 700; text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+
+  /* ---------- Final ---------- */
+  {{ scope }} .qb54-pa-final { position: relative; isolation: isolate; overflow: hidden; padding-block: clamp(80px, 10vw, 150px); text-align: center; background: var(--night); }
+  {{ scope }} .qb54-pa-final__bg { position: absolute; inset: 0; z-index: -2; }
+  {{ scope }} .qb54-pa-final__bg img { width: 100%; height: 100%; object-fit: cover; }
+  {{ scope }} .qb54-pa-final::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, color-mix(in srgb, var(--night) 82%, transparent), color-mix(in srgb, var(--night) 66%, transparent) 50%, var(--night)); }
+  {{ scope }} .qb54-pa-final h2 { margin: 0; font-family: var(--fh); font-weight: 700; font-size: clamp(46px, 7.5vw, 110px); line-height: 0.88; letter-spacing: -0.015em; text-transform: uppercase; color: #ffffff; }
+  {{ scope }} .qb54-pa-final h2 em { display: block; font-style: normal; color: var(--gold); }
+  {{ scope }} .qb54-pa-final .qb54-pa-lede { color: rgba(255, 255, 255, 0.84); }
+  {{ scope }} .qb54-pa-final .qb54-pa-bug { margin-top: 30px; }
+  {{ scope }} .qb54-pa-final .qb54-pa-ctas { justify-content: center; }
+  {{ scope }} .qb54-pa-final .qb54-pa-btn { min-height: 62px; padding: 0 34px; font-size: 19px; }
+  {{ scope }} .qb54-pa-trust { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 26px; }
+  {{ scope }} .qb54-pa-trust li { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); box-shadow: inset 0 0 0 1px var(--line-dark); font-size: 13px; font-weight: 700; }
+  {{ scope }} .qb54-pa-trust svg { width: 16px; height: 16px; color: var(--gold); }
+
+  /* ---------- Sticky bar + toast ---------- */
+  {{ scope }} .qb54-pa-sticky { position: fixed; z-index: 40; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: var(--navy); border-top: 3px solid var(--gold); box-shadow: 0 -14px 34px -14px rgba(0, 0, 0, 0.55); transform: translateY(115%); transition: transform 320ms var(--ease-emph); }
+  {{ scope }} .qb54-pa-sticky.is-visible { transform: translateY(0); }
+  {{ scope }} .qb54-pa-sticky__t { display: grid; gap: 2px; min-width: 0; }
+  {{ scope }} .qb54-pa-sticky__t strong { font-family: var(--fh); font-weight: 700; font-size: 19px; line-height: 1; text-transform: uppercase; color: var(--gold); }
+  {{ scope }} .qb54-pa-sticky__t span { font-size: 12px; color: rgba(255, 255, 255, 0.82); }
+  {{ scope }} .qb54-pa-sticky .qb54-pa-btn { min-height: 46px; padding: 0 18px; font-size: 16px; flex: none; }
+  {{ scope }} .qb54-pa-toast { position: fixed; z-index: 50; left: 12px; right: 12px; bottom: calc(86px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px 14px; padding: 14px 14px 14px 16px; border-radius: 18px; background: #ffffff; color: var(--ink); box-shadow: 0 26px 60px -18px rgba(17, 18, 40, 0.6), 0 0 0 1px rgba(17, 18, 40, 0.06); animation: qb54-pa-toast 360ms var(--ease-emph); }
+  @keyframes qb54-pa-toast { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+  {{ scope }} .qb54-pa-toast__ok { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #dcfce7; color: var(--ok); }
+  {{ scope }} .qb54-pa-toast__ok svg { width: 20px; height: 20px; }
+  {{ scope }} .qb54-pa-toast__t { display: grid; gap: 2px; min-width: 0; padding-right: 30px; }
+  {{ scope }} .qb54-pa-toast__t strong { font-size: 15px; }
+  {{ scope }} .qb54-pa-toast__t span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 13px; color: var(--ink-2); }
+  {{ scope }} .qb54-pa-toast__a { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; }
+  {{ scope }} .qb54-pa-toast__a .qb54-pa-btn { flex: 1; min-height: 50px; }
+  {{ scope }} .qb54-pa-toast__cart { font-size: 14px; font-weight: 700; color: var(--navy); text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  {{ scope }} .qb54-pa-toast__x { position: absolute; top: 10px; right: 10px; display: grid; place-items: center; width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer; }
+  {{ scope }} .qb54-pa-toast__x svg { width: 16px; height: 16px; }
+  {{ scope }} .qb54-pa-meter { grid-column: 1 / -1; display: grid; gap: 6px; }
+  {{ scope }} .qb54-pa-meter__bar { position: relative; height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--navy) 12%, transparent); overflow: hidden; }
+  {{ scope }} .qb54-pa-meter__bar i { position: absolute; top: 0; bottom: 0; left: 0; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--gold), #f59e0b); transition: width 450ms var(--ease); }
+  {{ scope }} .qb54-pa-meter.is-done .qb54-pa-meter__bar i { background: var(--ok); }
+  {{ scope }} .qb54-pa-meter__t { font-size: 13px; color: var(--ink-2); }
+  {{ scope }} .qb54-pa-meter__t strong { color: var(--ink); }
+  {{ scope }} .qb54-pa-meter.is-done .qb54-pa-meter__t strong { color: var(--ok); }
+
+  {{ scope }}.qb54-pa--js [data-qb54-pa-reveal] { opacity: 0; transform: translateY(24px); transition: opacity 560ms var(--ease), transform 560ms var(--ease); }
+  {{ scope }}.qb54-pa--js [data-qb54-pa-reveal].is-in { opacity: 1; transform: none; }
+
+  /* ---------- Breakpoints ---------- */
+  @media screen and (min-width: 600px) {
+    {{ scope }} .qb54-pa-grid { grid-auto-columns: 44%; }
+    {{ scope }} .qb54-pa-rail { grid-auto-columns: 240px; }
+    {{ scope }} .qb54-pa-steps__list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    {{ scope }} .qb54-pa-revrail { grid-auto-columns: 46%; }
+  }
+  @media screen and (min-width: 750px) {
+    {{ scope }} .qb54-pa-sticky { display: none; }
+    {{ scope }} .qb54-pa-toast { left: auto; right: 24px; bottom: 24px; width: 400px; }
+    {{ scope }} .qb54-pa-l3 { grid-template-columns: auto minmax(0, 1fr) auto; gap: 28px; padding: 22px 26px 22px 30px; }
+    {{ scope }} .qb54-pa-l3__watch { justify-self: end; }
+  }
+  @media screen and (min-width: 990px) {
+    {{ scope }} .qb54-pa-bar__x, {{ scope }} .qb54-pa-bar__code { display: inline-flex; }
+    {{ scope }} .qb54-pa-hero__grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); }
+    {{ scope }} .qb54-pa-title__offer { font-size: min(13vw, 190px); }
+    {{ scope }} .qb54-pa-buycard { justify-self: end; }
+    {{ scope }} .qb54-pa-head--split { grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+    {{ scope }} .qb54-pa-grid { grid-auto-flow: row; grid-auto-columns: auto; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; overflow: visible; margin-inline: 0; padding-inline: 0; }
+    {{ scope }} .qb54-pa-fans .qb54-pa-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    {{ scope }} .qb54-pa-rail { grid-auto-flow: row; grid-auto-columns: auto; grid-template-columns: repeat(6, minmax(0, 1fr)); overflow: visible; margin-inline: 0; padding-inline: 0; }
+    {{ scope }} .qb54-pa-revrail { grid-auto-flow: row; grid-auto-columns: auto; grid-template-columns: repeat(3, minmax(0, 1fr)); overflow: visible; margin-inline: 0; padding-inline: 0; }
+    {{ scope }} .qb54-pa-faq__grid { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 72px; align-items: start; }
+    {{ scope }} .qb54-pa-faq__aside { position: sticky; top: 100px; }
+  }
+  @media screen and (max-width: 599px) {
+    {{ scope }} .qb54-pa-hero { min-height: 0; }
+    {{ scope }} .qb54-pa-ctas .qb54-pa-btn, {{ scope }} .qb54-pa-ctas .qb54-pa-buy { width: 100%; }
+    {{ scope }} .qb54-pa-bug { display: flex; width: 100%; }
+    {{ scope }} .qb54-pa-bug > * { padding: 10px 12px; }
+    {{ scope }} .qb54-pa-bug__team { display: none; }
+    {{ scope }} .qb54-pa-bug__code { flex: 1; }
+    {{ scope }} .qb54-pa-bar .qb54-pa-btn { padding: 0 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    {{ scope }} *, {{ scope }} *::before, {{ scope }} *::after { animation: none !important; transition: none !important; }
+    {{ scope }}.qb54-pa--js [data-qb54-pa-reveal] { opacity: 1; transform: none; }
+  }
+  body.qb54-pa-bar-on { padding-bottom: calc(70px + env(safe-area-inset-bottom)); }
+  @media screen and (min-width: 750px) { body.qb54-pa-bar-on { padding-bottom: 0; } }
+</style>
+
+{%- capture i_cart -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h3l2.4 12h11l2.1-8H6.4"/></svg>{%- endcapture -%}
+{%- capture i_check -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>{%- endcapture -%}
+{%- capture i_arrow -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>{%- endcapture -%}
+{%- capture i_copy -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>{%- endcapture -%}
+{%- capture i_star -%}<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.6 7.7l5.8-.8z"/></svg>{%- endcapture -%}
+{%- capture i_tv -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="m8 2 4 4 4-4"/></svg>{%- endcapture -%}
+{%- capture i_truck -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 4h14v12H1zM15 9h4l4 4v3h-8z"/><circle cx="6" cy="18.5" r="2"/><circle cx="18" cy="18.5" r="2"/></svg>{%- endcapture -%}
+{%- capture i_shield -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-3.6 8-10V5l-8-3-8 3v7c0 6.4 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>{%- endcapture -%}
+{%- capture i_bolt -%}<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.4 2 4.6 13.4h6.1L9.8 22l8.6-11.4h-6.1L13.4 2z"/></svg>{%- endcapture -%}
+{%- capture i_mic -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5M8 22h8"/></svg>{%- endcapture -%}
+{%- capture i_play -%}<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>{%- endcapture -%}
+{%- capture i_yt -%}<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12a31 31 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-4.8 31 31 0 0 0-.5-4.8zM9.8 15.1V8.9L15.2 12z"/></svg>{%- endcapture -%}
+{%- capture i_mute -%}<svg class="is-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m23 9-6 6M17 9l6 6"/></svg><svg class="is-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>{%- endcapture -%}
+{%- capture stars_5 -%}<span class="qb54-pa-stars">{{ i_star }}{{ i_star }}{{ i_star }}{{ i_star }}{{ i_star }}</span>{%- endcapture -%}
+
+{%- capture score_bug -%}
+  <div class="qb54-pa-bug">
+    <span class="qb54-pa-bug__team">QB54</span>
+    <span class="qb54-pa-bug__code"><span>Promo code</span><strong>{{ code }}</strong></span>
+    <span class="qb54-pa-bug__off">{{ pct }}%<small>OFF</small></span>
+    <button type="button" class="qb54-pa-bug__copy" data-qb54-pa-copy="{{ code | escape }}">{{ i_copy }}<span data-qb54-pa-copy-label aria-live="polite">Copy</span></button>
+  </div>
+{%- endcapture -%}
+
+<div id="qb54-pa-{{ section.id }}" class="qb54-pa" data-code="{{ code | escape }}" data-auto-apply="{{ section.settings.auto_apply_code }}" data-free="{{ free_ship }}">
+  <header class="qb54-pa-bar">
+    <div class="qb54-pa-wrap qb54-pa-bar__in">
+      <a class="qb54-pa-bar__brand" href="{{ routes.root_url }}">
+        {%- if section.settings.logo != blank -%}
+          {{- section.settings.logo | image_url: width: 240 | image_tag: loading: 'eager', alt: shop.name, widths: '120,240', sizes: '120px' -}}
+        {%- else -%}
+          <span>{{ shop.name }}</span>
+        {%- endif -%}
+        <span class="qb54-pa-bar__x"><b>×</b>{{ partner | escape }}</span>
+      </a>
+      <div class="qb54-pa-bar__end">
+        {%- if code != blank -%}<span class="qb54-pa-bar__code">{{ pct }}% off with <strong>{{ code }}</strong></span>{%- endif -%}
+        <a class="qb54-pa-cart" href="{{ routes.cart_url }}" aria-label="Cart">{{ i_cart }}<span class="qb54-pa-cart__n" data-qb54-pa-count hidden>0</span></a>
+        <a class="qb54-pa-btn qb54-pa-btn--gold" href="#qb54-pa-sets-{{ section.id }}">{{ section.settings.bar_cta | escape }}</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="qb54-pa-hero" data-qb54-pa-hero aria-labelledby="qb54-pa-h1-{{ section.id }}">
+    {%- if section.settings.hero_image != blank -%}
+      <div class="qb54-pa-hero__bg">{{- section.settings.hero_image | image_url: width: 2400 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '800,1200,1600,2000,2400', sizes: '100vw', alt: '' -}}</div>
+    {%- endif -%}
+    <div class="qb54-pa-wrap qb54-pa-hero__grid">
+      <div>
+        <p class="qb54-pa-onair"><i aria-hidden="true"></i>{{ section.settings.onair_label | escape }} <b>{{ partner | escape }}</b></p>
+        <h1 class="qb54-pa-title" id="qb54-pa-h1-{{ section.id }}">
+          <span class="qb54-pa-title__offer">{{ pct }}% Off</span>
+          <span class="qb54-pa-title__line">{{ section.settings.hero_line | escape }}</span>
+        </h1>
+        {%- if section.settings.hero_text != blank -%}<p class="qb54-pa-lede">{{ section.settings.hero_text | escape }}</p>{%- endif -%}
+        {%- if code != blank -%}
+          {{ score_bug }}
+          {%- if section.settings.auto_apply_code -%}<p class="qb54-pa-applied">{{ i_check }}{{ section.settings.applied_note | escape }}</p>{%- endif -%}
+        {%- endif -%}
+        <div class="qb54-pa-ctas">
+          <a class="qb54-pa-btn qb54-pa-btn--gold qb54-pa-btn--shine" href="#qb54-pa-sets-{{ section.id }}">{{ section.settings.hero_cta | escape }}{{ i_arrow }}</a>
+          {%- if reel_blocks.size > 0 and section.settings.hero_cta_2 != blank -%}<a class="qb54-pa-btn qb54-pa-btn--ghost" href="#qb54-pa-reels-{{ section.id }}">{{ section.settings.hero_cta_2 | escape }}</a>{%- endif -%}
+        </div>
+        <ul class="qb54-pa-proof">
+          {%- if section.settings.proof_1 != blank -%}<li>{{ i_tv }}{{ section.settings.proof_1 | escape }}</li>{%- endif -%}
+          <li>{{ i_star }}
+            {%- if lead_rating != blank and lead_count != blank -%}Rated {{ lead_rating.rating | round: 1 }} · {{ lead_count }} reviews{%- else -%}{{ section.settings.rating_fallback | escape }}{%- endif -%}
+          </li>
+          {%- if section.settings.proof_3 != blank -%}<li>{{ i_truck }}{{ section.settings.proof_3 | escape }}</li>{%- endif -%}
+        </ul>
+      </div>
+
+      {%- if hero_count > 0 -%}
+        <aside class="qb54-pa-buycard" aria-label="Featured deal" data-qb54-pa-switch>
+          <span class="qb54-pa-buycard__ribbon"><i aria-hidden="true"></i>{{ section.settings.card_ribbon | escape }}</span>
+          {%- assign hero_i = 0 -%}
+          {%- for p in sets -%}
+            {%- unless p.has_only_default_variant and p.available -%}{%- continue -%}{%- endunless -%}
+            {%- if hero_i >= 3 -%}{%- break -%}{%- endif -%}
+            {%- liquid
+              assign hero_i = hero_i | plus: 1
+              assign v = p.selected_or_first_available_variant
+              assign sale = v.price | times: keep | divided_by: 100
+              assign save = v.price | minus: sale
+              assign r = p.metafields.reviews.rating.value
+              assign rc = p.metafields.reviews.rating_count.value
+            -%}
+            <div data-qb54-pa-panel="{{ hero_i }}"{% if hero_i > 1 %} hidden{% endif %}>
+              <div class="qb54-pa-buycard__media">
+                {%- if p.featured_image != blank -%}{{- p.featured_image | image_url: width: 900 | image_tag: loading: 'eager', widths: '450,700,900', sizes: '(min-width: 990px) 430px, 92vw', alt: p.title -}}{%- endif -%}
+                <span class="qb54-pa-buycard__off">{{ pct }}% off</span>
+              </div>
+              <div class="qb54-pa-buycard__body">
+                <span class="qb54-pa-rating">{{ stars_5 }}
+                  {%- if r != blank and rc != blank -%}<span><b>{{ r.rating | round: 1 }}</b> · {{ rc }} reviews</span>{%- else -%}<span>{{ section.settings.rating_card_fallback | escape }}</span>{%- endif -%}
+                </span>
+                <h2 class="qb54-pa-buycard__title">{{ p.title | escape }}</h2>
+                <div class="qb54-pa-price">
+                  <span class="qb54-pa-now">{{ sale | money }}</span>
+                  <s class="qb54-pa-was"><span class="qb54-pa-sr">Regular price </span>{{ v.price | money }}</s>
+                  <span class="qb54-pa-save">Save {{ save | money }}</span>
+                </div>
+                <p class="qb54-pa-codenote">With code <strong>{{ code }}</strong> at checkout</p>
+                {%- if hero_count > 1 -%}
+                  <div class="qb54-pa-swatches" role="group" aria-label="Choose a color">
+                    <span>Color</span>
+                    {%- assign sw_i = 0 -%}
+                    {%- for sp in sets -%}
+                      {%- unless sp.has_only_default_variant and sp.available -%}{%- continue -%}{%- endunless -%}
+                      {%- if sw_i >= 3 -%}{%- break -%}{%- endif -%}
+                      {%- liquid
+                        assign sw_i = sw_i | plus: 1
+                        assign sw_color = section.settings.color_gold
+                        assign sw_name = sp.title
+                        if sp.handle contains 'black'
+                          assign sw_color = '#171717'
+                          assign sw_name = 'Black'
+                        elsif sp.handle contains 'navy'
+                          assign sw_color = '#2a3163'
+                          assign sw_name = 'Navy'
+                        elsif sp.handle contains 'red'
+                          assign sw_color = '#c8102e'
+                          assign sw_name = 'Red'
+                        endif
+                      -%}
+                      <button type="button" class="qb54-pa-sw" style="--sw: {{ sw_color }};" data-qb54-pa-to="{{ sw_i }}" aria-pressed="{% if sw_i == hero_i %}true{% else %}false{% endif %}" aria-label="{{ sw_name | escape }}"></button>
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+                <div class="qb54-pa-buy">
+                  <button type="button" class="qb54-pa-btn qb54-pa-btn--gold" data-qb54-pa-add data-variants="{{ v.id }}" data-title="{{ p.title | escape }}" data-label="Add to Cart"><span data-qb54-pa-icon>{{ i_cart }}</span><span data-qb54-pa-label>Add to Cart</span></button>
+                  <p class="qb54-pa-err" data-qb54-pa-err role="alert" hidden></p>
+                </div>
+                <span class="qb54-pa-instock">{{ section.settings.stock_note | escape }}</span>
+              </div>
+            </div>
+          {%- endfor -%}
+        </aside>
+      {%- endif -%}
+    </div>
+  </section>
+
+  {%- assign ticker = section.settings.ticker_items | default: '' | split: '|' -%}
+  {%- if ticker.size > 0 -%}
+    <div class="qb54-pa-ticker">
+      <div class="qb54-pa-ticker__track">
+        {%- for pass in (1..2) -%}
+          <div class="qb54-pa-ticker__g"{% if pass == 2 %} aria-hidden="true"{% endif %}>
+            {%- for rep in (1..2) -%}{%- for item in ticker -%}<span class="qb54-pa-ticker__i">{{ item | strip | escape }}{{ i_bolt }}</span>{%- endfor -%}{%- endfor -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <section class="qb54-pa-partner" aria-label="{{ partner | escape }}">
+    <div class="qb54-pa-wrap">
+      <div class="qb54-pa-l3" data-qb54-pa-reveal>
+        <div class="qb54-pa-l3__who">
+          <span class="qb54-pa-avatar">
+            {%- if section.settings.partner_image != blank -%}
+              {{- section.settings.partner_image | image_url: width: 200 | image_tag: loading: 'lazy', alt: partner -}}
+            {%- else -%}
+              {{ i_mic }}
+            {%- endif -%}
+          </span>
+          <span class="qb54-pa-l3__name"><span>{{ section.settings.welcome_kicker | escape }}</span><strong>{{ partner | escape }}</strong></span>
+        </div>
+        <p>{{ section.settings.welcome_text | escape }} <strong>{{ code }}</strong></p>
+        {%- if section.settings.partner_url != blank -%}<a class="qb54-pa-l3__watch" href="{{ section.settings.partner_url }}" target="_blank" rel="noopener">{{ i_yt }}{{ section.settings.partner_url_label | escape }}</a>{%- endif -%}
+      </div>
+    </div>
+  </section>
+
+  {%- if sets.size > 0 -%}
+    <section class="qb54-pa-sets qb54-pa-light" id="qb54-pa-sets-{{ section.id }}" aria-labelledby="qb54-pa-sets-h-{{ section.id }}">
+      <div class="qb54-pa-wrap">
+        <header class="qb54-pa-head qb54-pa-head--split" data-qb54-pa-reveal>
+          <div>
+            <p class="qb54-pa-eyebrow">{{ section.settings.sets_eyebrow | escape }}</p>
+            <h2 class="qb54-pa-h2" id="qb54-pa-sets-h-{{ section.id }}">{{ section.settings.sets_heading }}</h2>
+            {%- if section.settings.sets_text != blank -%}<p class="qb54-pa-lede">{{ section.settings.sets_text | escape }}</p>{%- endif -%}
+          </div>
+          {%- if section.settings.sets_link_label != blank -%}<a class="qb54-pa-link" href="{{ shop_url }}">{{ section.settings.sets_link_label | escape }}</a>{%- endif -%}
+        </header>
+        <div class="qb54-pa-grid">
+          {%- for p in sets -%}
+            {%- liquid
+              assign tag = ''
+              if forloop.first
+                assign tag = section.settings.first_tag
+              elsif p.has_only_default_variant == false
+                assign tag = section.settings.custom_tag
+              endif
+              assign token = '|' | append: p.id | append: '|'
+              assign set_code = false
+              if eligible contains token
+                assign set_code = true
+              endif
+            -%}
+            {%- render 'qb54-pa-card', product: p, keep: keep, code: code, code_ok: set_code, tag: tag, sizes: '(min-width: 990px) 300px, (min-width: 600px) 44vw, 72vw' -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+
+  {%- if reel_blocks.size > 0 -%}
+    <section class="qb54-pa-reels" id="qb54-pa-reels-{{ section.id }}" aria-labelledby="qb54-pa-reels-h-{{ section.id }}">
+      <div class="qb54-pa-wrap">
+        <header class="qb54-pa-head" data-qb54-pa-reveal>
+          <p class="qb54-pa-eyebrow">{{ section.settings.reels_eyebrow | escape }}</p>
+          <h2 class="qb54-pa-h2" id="qb54-pa-reels-h-{{ section.id }}">{{ section.settings.reels_heading }}</h2>
+          {%- if section.settings.reels_text != blank -%}<p class="qb54-pa-lede">{{ section.settings.reels_text | escape }}</p>{%- endif -%}
+        </header>
+        <div class="qb54-pa-rail">
+          {%- for block in reel_blocks -%}
+            <figure class="qb54-pa-reel" data-qb54-pa-reel {{ block.shopify_attributes }}>
+              {%- comment %}theme-check-disable RemoteAsset{% endcomment -%}
+              {%- if block.settings.poster_url != blank -%}<img src="{{ block.settings.poster_url }}" alt="" loading="lazy" width="540" height="960">{%- endif -%}
+              {%- comment %}theme-check-enable RemoteAsset{% endcomment -%}
+              <video muted loop playsinline preload="none" data-src="{{ block.settings.video_url | escape }}"{% if block.settings.poster_url != blank %} poster="{{ block.settings.poster_url }}"{% endif %} aria-label="{{ block.settings.caption | escape }}"></video>
+              <button type="button" class="qb54-pa-reel__snd" data-qb54-pa-sound aria-label="Turn sound on">{{ i_mute }}</button>
+              <span class="qb54-pa-reel__play" aria-hidden="true">{{ i_play }}</span>
+              {%- if block.settings.caption != blank -%}<figcaption>{{ block.settings.caption | escape }}</figcaption>{%- endif -%}
+            </figure>
+          {%- endfor -%}
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+
+  {%- if fan_products.size > 0 -%}
+    <section class="qb54-pa-fans qb54-pa-light" aria-labelledby="qb54-pa-fans-h-{{ section.id }}">
+      <div class="qb54-pa-wrap">
+        <header class="qb54-pa-head qb54-pa-head--split" data-qb54-pa-reveal>
+          <div>
+            <p class="qb54-pa-eyebrow">{{ section.settings.fans_eyebrow | escape }}</p>
+            <h2 class="qb54-pa-h2" id="qb54-pa-fans-h-{{ section.id }}">{{ section.settings.fans_heading }}</h2>
+            {%- if section.settings.fans_text != blank -%}<p class="qb54-pa-lede">{{ section.settings.fans_text | escape }}</p>{%- endif -%}
+          </div>
+        </header>
+        <div class="qb54-pa-grid">
+          {%- for p in fan_products -%}
+            {%- unless p.available -%}{%- continue -%}{%- endunless -%}
+            {%- assign token = '|' | append: p.id | append: '|' -%}
+            {%- assign fan_code = false -%}
+            {%- if eligible contains token -%}{%- assign fan_code = true -%}{%- endif -%}
+            {%- render 'qb54-pa-card', product: p, keep: keep, code: code, code_ok: fan_code, sizes: '(min-width: 990px) 400px, (min-width: 600px) 44vw, 72vw' -%}
+          {%- endfor -%}
+        </div>
+        {%- if section.settings.fans_note != blank -%}<p class="qb54-pa-note">{{ section.settings.fans_note | escape }}</p>{%- endif -%}
+      </div>
+    </section>
+  {%- endif -%}
+
+  {%- if step_blocks.size > 0 -%}
+    <section class="qb54-pa-steps" aria-labelledby="qb54-pa-steps-h-{{ section.id }}">
+      <div class="qb54-pa-wrap">
+        <div class="qb54-pa-center" data-qb54-pa-reveal>
+          <p class="qb54-pa-eyebrow">{{ section.settings.steps_eyebrow | escape }}</p>
+          <h2 class="qb54-pa-h2" id="qb54-pa-steps-h-{{ section.id }}">{{ section.settings.steps_heading | escape }}</h2>
+        </div>
+        <ol class="qb54-pa-steps__list">
+          {%- for block in step_blocks -%}
+            {%- liquid
+              assign step_text = block.settings.text | escape
+              if code != blank
+                assign marked = '<mark>' | append: code | append: '</mark>'
+                assign step_text = step_text | replace: code, marked
+              endif
+            -%}
+            <li class="qb54-pa-step" data-qb54-pa-reveal {{ block.shopify_attributes }}>
+              <span class="qb54-pa-step__n" aria-hidden="true">0{{ forloop.index }}</span>
+              <span class="qb54-pa-step__i" aria-hidden="true">{{ forloop.index }}</span>
+              <h3>{{ block.settings.title | escape }}</h3>
+              <p>{{ step_text }}</p>
+            </li>
+          {%- endfor -%}
+        </ol>
+      </div>
+    </section>
+  {%- endif -%}
+
+  {%- if review_blocks.size > 0 -%}
+    <section class="qb54-pa-reviews qb54-pa-light" aria-labelledby="qb54-pa-rev-h-{{ section.id }}">
+      <div class="qb54-pa-wrap">
+        <header class="qb54-pa-head qb54-pa-center" data-qb54-pa-reveal>
+          <p class="qb54-pa-eyebrow">{{ section.settings.reviews_eyebrow | escape }}</p>
+          <h2 class="qb54-pa-h2" id="qb54-pa-rev-h-{{ section.id }}">{{ section.settings.reviews_heading }}</h2>
+          <p class="qb54-pa-score">{{ stars_5 }}
+            {%- if lead_rating != blank and lead_count != blank -%}<span><b>{{ lead_rating.rating | round: 1 }}</b> average · {{ lead_count }} reviews</span>{%- else -%}<span>{{ section.settings.rating_fallback | escape }}</span>{%- endif -%}
+          </p>
+        </header>
+        <div class="qb54-pa-revrail" tabindex="0" aria-label="Customer reviews">
+          {%- for block in review_blocks -%}
+            <figure class="qb54-pa-review" {{ block.shopify_attributes }}>
+              {{ stars_5 }}
+              <blockquote>“{{ block.settings.quote | escape }}”</blockquote>
+              <footer>
+                <span class="qb54-pa-av" aria-hidden="true">{{ block.settings.name | slice: 0 | upcase }}</span>
+                <span><cite>{{ block.settings.name | escape }}</cite><span class="qb54-pa-verified">{{ i_check }}Verified Buyer</span></span>
+              </footer>
+            </figure>
+          {%- endfor -%}
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+
+  {%- if faq_blocks.size > 0 -%}
+    <section class="qb54-pa-faq qb54-pa-light" aria-labelledby="qb54-pa-faq-h-{{ section.id }}">
+      <div class="qb54-pa-wrap qb54-pa-faq__grid">
+        <div class="qb54-pa-faq__aside" data-qb54-pa-reveal>
+          <p class="qb54-pa-eyebrow">{{ section.settings.faq_eyebrow | escape }}</p>
+          <h2 class="qb54-pa-h2" id="qb54-pa-faq-h-{{ section.id }}">{{ section.settings.faq_heading }}</h2>
+        </div>
+        <div>
+          {%- for block in faq_blocks -%}
+            <details class="qb54-pa-qa"{% if forloop.first %} open{% endif %} {{ block.shopify_attributes }}>
+              <summary>{{ block.settings.question | escape }}<span class="qb54-pa-plus" aria-hidden="true"></span></summary>
+              <div class="qb54-pa-qa__a">{{ block.settings.answer }}</div>
+            </details>
+          {%- endfor -%}
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+
+  <section class="qb54-pa-final" data-qb54-pa-final aria-labelledby="qb54-pa-final-h-{{ section.id }}">
+    {%- if section.settings.final_image != blank -%}
+      <div class="qb54-pa-final__bg" aria-hidden="true">{{- section.settings.final_image | image_url: width: 2000 | image_tag: loading: 'lazy', widths: '800,1200,1600,2000', sizes: '100vw', alt: '' -}}</div>
+    {%- endif -%}
+    <div class="qb54-pa-wrap" data-qb54-pa-reveal>
+      <h2 id="qb54-pa-final-h-{{ section.id }}">{{ section.settings.final_heading | escape }} <em>{{ section.settings.final_accent | escape }}</em></h2>
+      {%- if section.settings.final_text != blank -%}<p class="qb54-pa-lede" style="margin-inline: auto;">{{ section.settings.final_text | escape }}</p>{%- endif -%}
+      {%- if code != blank -%}{{ score_bug }}{%- endif -%}
+      <div class="qb54-pa-ctas">
+        <a class="qb54-pa-btn qb54-pa-btn--gold qb54-pa-btn--shine" href="#qb54-pa-sets-{{ section.id }}">{{ section.settings.final_cta | escape }}{{ i_arrow }}</a>
+      </div>
+      <ul class="qb54-pa-trust">
+        {%- if section.settings.proof_3 != blank -%}<li>{{ i_truck }}{{ section.settings.proof_3 | escape }}</li>{%- endif -%}
+        {%- if section.settings.stock_note != blank -%}<li>{{ i_bolt }}{{ section.settings.stock_note | escape }}</li>{%- endif -%}
+        {%- if section.settings.returns_note != blank -%}<li>{{ i_shield }}{{ section.settings.returns_note | escape }}</li>{%- endif -%}
+      </ul>
+    </div>
+  </section>
+
+  {%- if section.settings.show_sticky_bar -%}
+    <div class="qb54-pa-sticky" data-qb54-pa-sticky aria-hidden="true">
+      <div class="qb54-pa-sticky__t"><strong>{{ pct }}% off · {{ code }}</strong><span>{{ section.settings.sticky_text | escape }}</span></div>
+      <a class="qb54-pa-btn qb54-pa-btn--gold" href="#qb54-pa-sets-{{ section.id }}" tabindex="-1">{{ section.settings.sticky_cta | escape }}</a>
+    </div>
+  {%- endif -%}
+
+  <div class="qb54-pa-toast" data-qb54-pa-toast role="status" aria-live="polite" hidden>
+    <span class="qb54-pa-toast__ok" aria-hidden="true">{{ i_check }}</span>
+    <div class="qb54-pa-toast__t"><strong>Added to cart</strong><span data-qb54-pa-toast-meta></span></div>
+    {%- if free_ship > 0 -%}
+      <div class="qb54-pa-meter" data-qb54-pa-meter>
+        <span class="qb54-pa-meter__bar"><i data-qb54-pa-meter-fill></i></span>
+        <span class="qb54-pa-meter__t" data-qb54-pa-meter-text></span>
+      </div>
+    {%- endif -%}
+    <div class="qb54-pa-toast__a">
+      <a class="qb54-pa-btn qb54-pa-btn--gold" href="{{ checkout_url }}{% if code != blank %}?discount={{ code | url_encode }}{% endif %}">Checkout</a>
+      <a class="qb54-pa-toast__cart" href="{{ routes.cart_url }}">View cart</a>
+    </div>
+    <button type="button" class="qb54-pa-toast__x" data-qb54-pa-toast-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var id = '{{ section.id }}';
+    var root = document.getElementById('qb54-pa-' + id);
+    if (!root) return;
+    window.__qb54Pa = window.__qb54Pa || {};
+    if (window.__qb54Pa[id]) window.__qb54Pa[id].destroy();
+
+    var cleanups = [];
+    var shopRoot = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var code = root.getAttribute('data-code');
+    var freeShip = parseInt(root.getAttribute('data-free'), 10) || 0;
+    var moneyFormat = {{ shop.money_format | json }};
+    root.classList.add('qb54-pa--js');
+    function $all(sel, ctx) { return Array.prototype.slice.call((ctx || root).querySelectorAll(sel)); }
+
+    function formatMoney(cents) {
+      var value = (cents / 100).toFixed(2);
+      var withCommas = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      return String(moneyFormat || '${{ "{{" }}amount}}').replace(/\{\{\s*(\w+)\s*\}\}/, function (m, kind) {
+        if (kind === 'amount_no_decimals') return Math.round(cents / 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        if (kind === 'amount_with_comma_separator') return value.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        return withCommas;
+      });
+    }
+
+    /* ---- Apply the partner code to the cart (once per session) ---- */
+    if (code && root.getAttribute('data-auto-apply') === 'true' && !(window.Shopify && window.Shopify.designMode)) {
+      var key = 'qb54_pa_code_' + code;
+      var done = false;
+      try { done = !!sessionStorage.getItem(key); } catch (e) {}
+      if (!done) {
+        fetch(shopRoot + 'discount/' + encodeURIComponent(code) + '?redirect=' + encodeURIComponent(shopRoot + 'cart.js'), { credentials: 'same-origin' })
+          .then(function () { try { sessionStorage.setItem(key, '1'); } catch (e) {} })
+          .catch(function () {});
+      }
+    }
+
+    /* ---- Hero card color switcher ---- */
+    $all('[data-qb54-pa-switch]').forEach(function (card) {
+      card.addEventListener('click', function (event) {
+        var btn = event.target.closest('[data-qb54-pa-to]');
+        if (!btn) return;
+        var to = btn.getAttribute('data-qb54-pa-to');
+        $all('[data-qb54-pa-panel]', card).forEach(function (panel) { panel.hidden = panel.getAttribute('data-qb54-pa-panel') !== to; });
+        $all('[data-qb54-pa-to]', card).forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-qb54-pa-to') === to ? 'true' : 'false'); });
+        // The clicked swatch is now in a hidden panel; keep focus on its twin.
+        var twin = $all('[data-qb54-pa-to="' + to + '"]', card).filter(function (b) { return b.offsetParent !== null; })[0];
+        if (twin) twin.focus();
+      });
+    });
+
+    /* ---- Copy code ---- */
+    function onCopy(btn) {
+      var value = btn.getAttribute('data-qb54-pa-copy');
+      var label = btn.querySelector('[data-qb54-pa-copy-label]');
+      var ok = function () { if (label) { label.textContent = 'Copied!'; setTimeout(function () { label.textContent = 'Copy'; }, 1800); } };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(value).then(ok, ok);
+      else ok();
+    }
+
+    /* ---- Cart: count, toast with free-shipping progress, add ---- */
+    var countEls = $all('[data-qb54-pa-count]');
+    var toast = root.querySelector('[data-qb54-pa-toast]');
+    var toastMeta = root.querySelector('[data-qb54-pa-toast-meta]');
+    var meter = root.querySelector('[data-qb54-pa-meter]');
+    var toastTimer = 0;
+    function updateCount(cart, bump) {
+      var count = (cart && cart.item_count) || 0;
+      countEls.forEach(function (el) {
+        el.textContent = count;
+        el.hidden = count === 0;
+        if (bump && !reduce) { el.classList.remove('is-bump'); void el.offsetWidth; el.classList.add('is-bump'); }
+      });
+    }
+    function setMeter(total) {
+      if (!meter || !freeShip) return;
+      var fill = meter.querySelector('[data-qb54-pa-meter-fill]');
+      var text = meter.querySelector('[data-qb54-pa-meter-text]');
+      var left = freeShip - total;
+      var goal = formatMoney(freeShip).replace(/[.,]00(?=\D*$)/, '');
+      meter.classList.toggle('is-done', left <= 0);
+      if (fill) fill.style.width = Math.min(100, Math.round(total / freeShip * 100)) + '%';
+      if (!text) return;
+      text.textContent = '';
+      var strong = document.createElement('strong');
+      if (left <= 0) {
+        strong.textContent = 'Free shipping unlocked.';
+        text.appendChild(strong);
+        text.appendChild(document.createTextNode(' Your order is ' + goal + ' or more.'));
+      } else {
+        text.appendChild(document.createTextNode('Add '));
+        strong.textContent = formatMoney(left);
+        text.appendChild(strong);
+        text.appendChild(document.createTextNode(' more for free shipping (' + goal + '+).'));
+      }
+    }
+    function hideToast() { clearTimeout(toastTimer); if (toast) toast.hidden = true; }
+    function showToast(title, cart) {
+      if (!toast) return;
+      var count = (cart && cart.item_count) || 0;
+      if (toastMeta) toastMeta.textContent = (title ? title + ' · ' : '') + count + (count === 1 ? ' item' : ' items') + ' in your cart';
+      setMeter((cart && cart.total_price) || 0);
+      toast.hidden = false;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(hideToast, 9000);
+    }
+    cleanups.push(function () { clearTimeout(toastTimer); });
+    fetch(shopRoot + 'cart.js', { headers: { 'Accept': 'application/json' } })
+      .then(function (r) { return r.json(); }).then(function (cart) { updateCount(cart, false); }).catch(function () {});
+
+    var cartIcon = '{{ i_cart | strip_newlines }}';
+    var checkIcon = '{{ i_check | strip_newlines }}';
+    function setButton(btn, mode, message) {
+      var label = btn.querySelector('[data-qb54-pa-label]');
+      var icon = btn.querySelector('[data-qb54-pa-icon]');
+      var err = btn.parentNode.querySelector('[data-qb54-pa-err]');
+      btn.classList.remove('is-added', 'is-error');
+      btn.removeAttribute('aria-busy');
+      if (err) { err.hidden = true; err.textContent = ''; }
+      if (mode === 'loading') {
+        btn.setAttribute('aria-busy', 'true');
+        if (icon) icon.innerHTML = '<span class="qb54-pa-spin"></span>';
+        if (label) label.textContent = 'Adding…';
+      } else if (mode === 'added') {
+        btn.classList.add('is-added');
+        if (icon) icon.innerHTML = checkIcon;
+        if (label) label.textContent = 'Added';
+        setTimeout(function () { setButton(btn, 'idle'); }, 2200);
+      } else if (mode === 'error') {
+        btn.classList.add('is-error');
+        if (icon) icon.innerHTML = cartIcon;
+        if (label) label.textContent = 'Try Again';
+        if (err && message) { err.textContent = message; err.hidden = false; }
+      } else {
+        if (icon) icon.innerHTML = cartIcon;
+        if (label) label.textContent = btn.getAttribute('data-label') || 'Add to Cart';
+      }
+    }
+    function addToCart(btn) {
+      if (btn.getAttribute('aria-busy') === 'true') return;
+      var items = (btn.getAttribute('data-variants') || '').split(',').filter(Boolean).map(function (v) { return { id: Number(v), quantity: 1 }; });
+      if (!items.length) return;
+      setButton(btn, 'loading');
+      var bundled = [];
+      document.documentElement.dispatchEvent(new CustomEvent('cart:bundled-sections', { bubbles: true, detail: { sections: bundled } }));
+      var body = { items: items };
+      if (bundled.length) { body.sections = bundled.join(','); body.sections_url = window.location.pathname; }
+      fetch(shopRoot + 'cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        body: JSON.stringify(body)
+      })
+        .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, json: j }; }); })
+        .then(function (res) {
+          if (!res.ok || res.json.status) throw res.json;
+          if (window.theme && theme.settings && theme.settings.cartType === 'page') { window.location.href = shopRoot + 'cart'; return; }
+          var drawer = document.querySelector('cart-drawer');
+          var hasDrawer = !!(drawer && typeof drawer.show === 'function');
+          if (hasDrawer) drawer.show(btn);
+          return fetch(shopRoot + 'cart.js', { headers: { 'Accept': 'application/json' } })
+            .then(function (r) { return r.json(); })
+            .then(function (cart) {
+              cart.sections = res.json.sections;
+              if (window.theme && theme.pubsub && theme.pubsub.publish) theme.pubsub.publish(theme.pubsub.PUB_SUB_EVENTS.cartUpdate, { source: 'qb54-partner', productVariantId: String(items[0].id), cart: cart });
+              updateCount(cart, true);
+              if (!hasDrawer) showToast(btn.getAttribute('data-title'), cart);
+              setButton(btn, 'added');
+            });
+        })
+        .catch(function (error) {
+          var message = error && (error.description || error.message);
+          setButton(btn, 'error', typeof message === 'string' ? message : 'Something went wrong. Please try again.');
+        });
+    }
+    function onClick(event) {
+      if (event.target.closest('[data-qb54-pa-toast-close]')) { hideToast(); return; }
+      var copy = event.target.closest('[data-qb54-pa-copy]');
+      if (copy) { onCopy(copy); return; }
+      var btn = event.target.closest('[data-qb54-pa-add]');
+      if (btn) { event.preventDefault(); addToCart(btn); }
+    }
+    root.addEventListener('click', onClick);
+    cleanups.push(function () { root.removeEventListener('click', onClick); });
+
+    /* ---- Reels: one plays at a time (first in view, or hovered), tap for sound ---- */
+    var reels = $all('[data-qb54-pa-reel]');
+    var ratios = [];
+    var active = null;
+    function load(fig) {
+      var video = fig.querySelector('video');
+      if (video && !video.getAttribute('src') && video.getAttribute('data-src')) { video.setAttribute('src', video.getAttribute('data-src')); video.preload = 'metadata'; }
+      return video;
+    }
+    function play(fig) {
+      var video = load(fig);
+      if (!video) return;
+      var p = video.play();
+      if (p && p.then) p.then(function () { fig.classList.add('is-playing'); }).catch(function () {});
+    }
+    function pause(fig) { var video = fig.querySelector('video'); if (video && !video.paused) video.pause(); fig.classList.remove('is-playing'); }
+    function activate(fig) { if (fig === active) return; if (active) pause(active); active = fig; if (fig) play(fig); }
+    if (reels.length && 'IntersectionObserver' in window) {
+      var reelIo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { ratios[reels.indexOf(e.target)] = e.isIntersecting ? e.intersectionRatio : 0; });
+        if (reduce) return;
+        if (active && (ratios[reels.indexOf(active)] || 0) >= 0.6) return;
+        var next = null;
+        reels.forEach(function (r, i) { if (!next && (ratios[i] || 0) >= 0.6) next = r; });
+        activate(next);
+      }, { threshold: [0, 0.6, 1] });
+      reels.forEach(function (r) { reelIo.observe(r); });
+      cleanups.push(function () { reelIo.disconnect(); });
+    }
+    reels.forEach(function (fig) {
+      fig.addEventListener('mouseenter', function () { if (!reduce) activate(fig); });
+      fig.addEventListener('click', function (event) {
+        var video = load(fig);
+        if (!video) return;
+        var soundBtn = event.target.closest('[data-qb54-pa-sound]');
+        if (video.paused) { if (active === fig) active = null; activate(fig); if (!soundBtn) return; }
+        var unmute = video.muted;
+        reels.forEach(function (other) {
+          var ov = other.querySelector('video');
+          if (ov) ov.muted = true;
+          other.classList.remove('is-unmuted');
+          var b = other.querySelector('[data-qb54-pa-sound]');
+          if (b) b.setAttribute('aria-label', 'Turn sound on');
+        });
+        video.muted = !unmute;
+        fig.classList.toggle('is-unmuted', unmute);
+        var sb = fig.querySelector('[data-qb54-pa-sound]');
+        if (sb) sb.setAttribute('aria-label', unmute ? 'Turn sound off' : 'Turn sound on');
+      });
+    });
+
+    /* ---- Mobile sticky bar: after the hero, hidden over the final CTA ---- */
+    var sticky = root.querySelector('[data-qb54-pa-sticky]');
+    var hero = root.querySelector('[data-qb54-pa-hero]');
+    var finalSection = root.querySelector('[data-qb54-pa-final]');
+    var heroVisible = true, finalVisible = false;
+    function updateSticky() {
+      if (!sticky) return;
+      var show = !heroVisible && !finalVisible;
+      sticky.classList.toggle('is-visible', show);
+      sticky.setAttribute('aria-hidden', show ? 'false' : 'true');
+      $all('a', sticky).forEach(function (a) { a.tabIndex = show ? 0 : -1; });
+      document.body.classList.toggle('qb54-pa-bar-on', show);
+    }
+    if (sticky && 'IntersectionObserver' in window) {
+      var stickyIo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.target === hero) heroVisible = e.isIntersecting; if (e.target === finalSection) finalVisible = e.isIntersecting; });
+        updateSticky();
+      });
+      if (hero) stickyIo.observe(hero);
+      if (finalSection) stickyIo.observe(finalSection);
+      cleanups.push(function () { stickyIo.disconnect(); document.body.classList.remove('qb54-pa-bar-on'); });
+    }
+
+    /* ---- Reveal on scroll ---- */
+    var reveals = $all('[data-qb54-pa-reveal]');
+    if (!reduce && 'IntersectionObserver' in window) {
+      var revealIo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-in'); revealIo.unobserve(e.target); } });
+      }, { rootMargin: '0px 0px -8% 0px' });
+      reveals.forEach(function (el) { revealIo.observe(el); });
+      cleanups.push(function () { revealIo.disconnect(); });
+    } else {
+      reveals.forEach(function (el) { el.classList.add('is-in'); });
+    }
+
+    function onUnload(event) { if (event.detail && event.detail.sectionId === id) destroy(); }
+    document.addEventListener('shopify:section:unload', onUnload);
+    cleanups.push(function () { document.removeEventListener('shopify:section:unload', onUnload); });
+    function destroy() {
+      reels.forEach(pause);
+      while (cleanups.length) { try { cleanups.pop()(); } catch (e) {} }
+      delete window.__qb54Pa[id];
+    }
+    window.__qb54Pa[id] = { destroy: destroy };
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "QB54 Partner Landing",
+  "tag": "section",
+  "class": "qb54-pa-section",
+  "settings": [
+    { "type": "header", "content": "Partner" },
+    { "type": "text", "id": "partner_name", "label": "Partner or show name", "default": "The Jake Asman Show" },
+    { "type": "image_picker", "id": "partner_image", "label": "Partner photo or logo", "info": "Square works best. A microphone icon shows when empty." },
+    { "type": "url", "id": "partner_url", "label": "Partner channel link" },
+    { "type": "text", "id": "partner_url_label", "label": "Channel link label", "default": "Watch the show" },
+    { "type": "header", "content": "Offer" },
+    { "type": "text", "id": "code", "label": "Discount code", "info": "Must exist in Shopify Admin > Discounts.", "default": "ASMAN" },
+    { "type": "range", "id": "discount_percent", "label": "Discount percent", "min": 5, "max": 50, "step": 5, "unit": "%", "default": 15 },
+    { "type": "checkbox", "id": "auto_apply_code", "label": "Apply the code automatically for visitors", "default": true },
+    { "type": "text", "id": "applied_note", "label": "Auto-apply note", "default": "Code applied automatically when you shop this page" },
+    { "type": "collection", "id": "code_collection", "label": "Products the code applies to", "info": "These show the price after the code. Leave empty to treat every game set below as eligible." },
+    { "type": "range", "id": "free_ship_threshold", "label": "Free shipping threshold", "min": 0, "max": 500, "step": 5, "unit": "$", "default": 225 },
+    { "type": "url", "id": "shop_url", "label": "Shop all link" },
+    { "type": "header", "content": "Top bar" },
+    { "type": "image_picker", "id": "logo", "label": "Logo" },
+    { "type": "text", "id": "bar_cta", "label": "Button", "default": "Shop the deal" },
+    { "type": "header", "content": "Hero" },
+    { "type": "image_picker", "id": "hero_image", "label": "Background photo" },
+    {
+      "type": "select", "id": "hero_focal", "label": "Photo position",
+      "options": [ { "value": "center center", "label": "Center" }, { "value": "center top", "label": "Top" }, { "value": "center bottom", "label": "Bottom" }, { "value": "70% center", "label": "Right" }, { "value": "30% center", "label": "Left" } ],
+      "default": "center center"
+    },
+    { "type": "text", "id": "onair_label", "label": "Badge label", "default": "As heard on" },
+    { "type": "text", "id": "hero_line", "label": "Line under the offer", "default": "QB54 for every listener" },
+    { "type": "textarea", "id": "hero_text", "label": "Text" },
+    { "type": "text", "id": "hero_cta", "label": "Button", "default": "Shop the deal" },
+    { "type": "text", "id": "hero_cta_2", "label": "Second button", "default": "Watch it in action" },
+    { "type": "text", "id": "proof_1", "label": "Proof 1", "default": "As seen on Shark Tank" },
+    { "type": "text", "id": "rating_fallback", "label": "Rating text when no review data", "default": "Hundreds of 5-star reviews" },
+    { "type": "text", "id": "proof_3", "label": "Proof 3", "default": "Free shipping on orders $225+" },
+    { "type": "text", "id": "card_ribbon", "label": "Product card ribbon", "default": "Listener deal" },
+    { "type": "text", "id": "rating_card_fallback", "label": "Product card rating text when no review data", "default": "5-star rated" },
+    { "type": "text", "id": "stock_note", "label": "Stock note", "default": "In stock, ships within 1 business day" },
+    { "type": "text", "id": "returns_note", "label": "Returns note", "default": "30-day returns" },
+    { "type": "text", "id": "ticker_items", "label": "Ticker", "info": "Separate with |" },
+    { "type": "header", "content": "Welcome card" },
+    { "type": "text", "id": "welcome_kicker", "label": "Kicker", "default": "Welcome, listeners of" },
+    { "type": "textarea", "id": "welcome_text", "label": "Text (the code is added at the end)", "default": "You heard it on the show. Now bring the game home. Your listener discount is waiting:" },
+    { "type": "header", "content": "Game sets" },
+    { "type": "product_list", "id": "sets", "label": "Game sets", "info": "The first three single-color sets also power the hero card.", "limit": 8 },
+    { "type": "text", "id": "sets_eyebrow", "label": "Eyebrow", "default": "The deals" },
+    { "type": "inline_richtext", "id": "sets_heading", "label": "Heading", "default": "Pick your set. <em>Save 15%.</em>" },
+    { "type": "textarea", "id": "sets_text", "label": "Text" },
+    { "type": "text", "id": "sets_link_label", "label": "Link label", "default": "Shop all game sets" },
+    { "type": "text", "id": "first_tag", "label": "Tag on the first set", "default": "#1 <b>Best Seller</b>" },
+    { "type": "text", "id": "custom_tag", "label": "Tag on sets with options", "default": "Your <b>logo</b>" },
+    { "type": "header", "content": "Videos" },
+    { "type": "text", "id": "reels_eyebrow", "label": "Eyebrow", "default": "As seen on your feed" },
+    { "type": "inline_richtext", "id": "reels_heading", "label": "Heading", "default": "100M+ views. <em>Zero chill.</em>" },
+    { "type": "textarea", "id": "reels_text", "label": "Text" },
+    { "type": "header", "content": "Fan gear" },
+    { "type": "product_list", "id": "fan_products", "label": "Products", "limit": 12 },
+    { "type": "text", "id": "fans_eyebrow", "label": "Eyebrow", "default": "For game day" },
+    { "type": "inline_richtext", "id": "fans_heading", "label": "Heading", "default": "Gear up for <em>Sunday</em>" },
+    { "type": "textarea", "id": "fans_text", "label": "Text" },
+    { "type": "text", "id": "fans_note", "label": "Note under the products" },
+    { "type": "header", "content": "Steps" },
+    { "type": "text", "id": "steps_eyebrow", "label": "Eyebrow", "default": "How it works" },
+    { "type": "text", "id": "steps_heading", "label": "Heading", "default": "Claim your deal in 3 steps" },
+    { "type": "header", "content": "Reviews" },
+    { "type": "text", "id": "reviews_eyebrow", "label": "Eyebrow", "default": "Wall of hype" },
+    { "type": "inline_richtext", "id": "reviews_heading", "label": "Heading", "default": "Families are <em>obsessed</em>" },
+    { "type": "header", "content": "FAQ" },
+    { "type": "text", "id": "faq_eyebrow", "label": "Eyebrow", "default": "FAQ" },
+    { "type": "inline_richtext", "id": "faq_heading", "label": "Heading", "default": "Questions? <em>Answered.</em>" },
+    { "type": "header", "content": "Final call" },
+    { "type": "image_picker", "id": "final_image", "label": "Background photo" },
+    { "type": "text", "id": "final_heading", "label": "Heading", "default": "Your backyard." },
+    { "type": "text", "id": "final_accent", "label": "Heading second line", "default": "Just went pro." },
+    { "type": "textarea", "id": "final_text", "label": "Text" },
+    { "type": "text", "id": "final_cta", "label": "Button", "default": "Shop the deal" },
+    { "type": "header", "content": "Mobile sticky bar" },
+    { "type": "checkbox", "id": "show_sticky_bar", "label": "Show sticky bar on mobile", "default": true },
+    { "type": "text", "id": "sticky_text", "label": "Text", "default": "Listener deal on QB54 game sets" },
+    { "type": "text", "id": "sticky_cta", "label": "Button", "default": "Shop" },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_gold", "label": "Gold", "default": "#fdc439" },
+    { "type": "color", "id": "color_navy", "label": "Navy", "default": "#363a66" },
+    { "type": "color", "id": "color_night", "label": "Dark background", "default": "#12142b" },
+    { "type": "color", "id": "color_cream", "label": "Cream", "default": "#f4f2e8" }
+  ],
+  "blocks": [
+    {
+      "type": "reel",
+      "name": "Video",
+      "limit": 8,
+      "settings": [
+        { "type": "text", "id": "video_url", "label": "Video URL (.mp4)" },
+        { "type": "text", "id": "poster_url", "label": "Poster image URL" },
+        { "type": "text", "id": "caption", "label": "Caption" }
+      ]
+    },
+    {
+      "type": "step",
+      "name": "Step",
+      "limit": 3,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Pick your set" },
+        { "type": "textarea", "id": "text", "label": "Text", "info": "The discount code is highlighted automatically.", "default": "Black, Navy or Red. Same game, your colors." }
+      ]
+    },
+    {
+      "type": "review",
+      "name": "Review",
+      "limit": 9,
+      "settings": [
+        { "type": "textarea", "id": "quote", "label": "Quote", "default": "This is hands down the best outdoor game I've ever owned." },
+        { "type": "text", "id": "name", "label": "Name", "default": "Mike R." }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ",
+      "limit": 10,
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "How do I use the code?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Shop from this page and the code is applied for you.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "QB54 Partner Landing", "blocks": [ { "type": "reel" }, { "type": "step" }, { "type": "review" }, { "type": "faq" } ] }
+  ],
+  "disabled_on": { "groups": ["header", "footer", "custom.overlay"] }
+}
+{% endschema %}

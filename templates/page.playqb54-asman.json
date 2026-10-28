@@ -1,0 +1,336 @@
+{
+  "sections": {
+    "main-page": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "heading_size": "title-xl tracking-heading",
+        "heading_alignment": "text-left",
+        "heading_tag": "h1",
+        "text_size": "text-base",
+        "padding_top": 72,
+        "padding_bottom": 120,
+        "divider": false,
+        "narrow": true,
+        "rounded": false
+      }
+    },
+    "partner": {
+      "type": "qb54-partner-landing",
+      "name": "Jake Asman Show Landing",
+      "blocks": {
+        "reel_showdown": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://playqb54.com/cdn/shop/videos/c/vp/89ce1bad12b6430ab45a295f1f4fed48/89ce1bad12b6430ab45a295f1f4fed48.HD-1080p-2.5Mbps-66302483.mp4",
+            "poster_url": "https://playqb54.com/cdn/shop/files/preview_images/89ce1bad12b6430ab45a295f1f4fed48.thumbnail.0000000000.jpg",
+            "caption": "Backyard showdown"
+          }
+        },
+        "reel_tailgate": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://playqb54.com/cdn/shop/videos/c/vp/8d48b3879cfc4fda95a105b184ff4332/8d48b3879cfc4fda95a105b184ff4332.HD-1080p-3.3Mbps-66302480.mp4",
+            "poster_url": "https://playqb54.com/cdn/shop/files/preview_images/8d48b3879cfc4fda95a105b184ff4332.thumbnail.0000000000.jpg",
+            "caption": "Tailgate MVP"
+          }
+        },
+        "reel_tank": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://playqb54.com/cdn/shop/videos/c/vp/3f1f3ebf0d4f4a25b9dff325cdd1fc97/3f1f3ebf0d4f4a25b9dff325cdd1fc97.HD-1080p-2.5Mbps-66302479.mp4",
+            "poster_url": "https://playqb54.com/cdn/shop/files/preview_images/3f1f3ebf0d4f4a25b9dff325cdd1fc97.thumbnail.0000000000.jpg",
+            "caption": "We took it to the Tank"
+          }
+        },
+        "reel_ten": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://playqb54.com/cdn/shop/videos/c/vp/8fcca6a05fcb43dd8db8202e2f25e739/8fcca6a05fcb43dd8db8202e2f25e739.HD-1080p-2.5Mbps-66302481.mp4",
+            "poster_url": "https://playqb54.com/cdn/shop/files/preview_images/8fcca6a05fcb43dd8db8202e2f25e739.thumbnail.0000000000.jpg",
+            "caption": "10 out of 10"
+          }
+        },
+        "reel_backyard": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://playqb54.com/cdn/shop/videos/c/vp/c947441f882049beba7ecea3659ec269/c947441f882049beba7ecea3659ec269.HD-1080p-2.5Mbps-66302482.mp4",
+            "poster_url": "https://playqb54.com/cdn/shop/files/preview_images/c947441f882049beba7ecea3659ec269.thumbnail.0000000000.jpg",
+            "caption": "Sunday in the backyard"
+          }
+        },
+        "reel_howto": {
+          "type": "reel",
+          "settings": {
+            "video_url": "https://playqb54.com/cdn/shop/videos/c/vp/ae0988a22e2b4313ab4b63b30b3c590d/ae0988a22e2b4313ab4b63b30b3c590d.HD-1080p-2.5Mbps-66302478.mp4",
+            "poster_url": "https://playqb54.com/cdn/shop/files/preview_images/ae0988a22e2b4313ab4b63b30b3c590d.thumbnail.0000000000.jpg",
+            "caption": "Learn it in seconds"
+          }
+        },
+        "step_pick": {
+          "type": "step",
+          "settings": {
+            "title": "Pick your set",
+            "text": "Black, Navy or Red. Same complete game, your colors."
+          }
+        },
+        "step_code": {
+          "type": "step",
+          "settings": {
+            "title": "Use code ASMAN",
+            "text": "Shop from this page and ASMAN is applied for you, or enter ASMAN at checkout for 15% off."
+          }
+        },
+        "step_play": {
+          "type": "step",
+          "settings": {
+            "title": "Game on",
+            "text": "In-stock orders ship within 1 business day. Set up takes about 2 minutes."
+          }
+        },
+        "review_1": {
+          "type": "review",
+          "settings": {
+            "quote": "This is hands down the best outdoor game I've ever owned. My family plays it every single weekend. It's become a tradition.",
+            "name": "Mike R."
+          }
+        },
+        "review_2": {
+          "type": "review",
+          "settings": {
+            "quote": "Brought this to a tailgate and it was the hit of the parking lot. Everyone wanted to play. Already ordered a set for my brother.",
+            "name": "Sarah K."
+          }
+        },
+        "review_3": {
+          "type": "review",
+          "settings": {
+            "quote": "Built like a tank and folds up super compact. We take it camping, to the beach — everywhere. Worth every penny.",
+            "name": "Jason T."
+          }
+        },
+        "review_4": {
+          "type": "review",
+          "settings": {
+            "quote": "I bought QB54 as a gift and it ended up being the highlight of the party. Everyone wanted to play, and it quickly turned into a full-on competition.",
+            "name": "Lisa L."
+          }
+        },
+        "review_5": {
+          "type": "review",
+          "settings": {
+            "quote": "We bought QB54 for our grandson and it turned out to be the perfect gift. Not only does he love playing it, but it's become something we enjoy doing together whenever we visit.",
+            "name": "Eugene T."
+          }
+        },
+        "review_6": {
+          "type": "review",
+          "settings": {
+            "quote": "Kids have loved it! They even played it in the snow today. Easy to assemble and the rules are easy to follow.",
+            "name": "Sydney"
+          }
+        },
+        "faq_how": {
+          "type": "faq",
+          "settings": {
+            "question": "How do I get 15% off?",
+            "answer": "<p>Shop from this page and code ASMAN is applied for you automatically. You can also enter ASMAN at checkout.</p>"
+          }
+        },
+        "faq_scope": {
+          "type": "faq",
+          "settings": {
+            "question": "What does code ASMAN apply to?",
+            "answer": "<p>QB54 game sets. The prices on this page already show what you'll pay with ASMAN.</p>"
+          }
+        },
+        "faq_box": {
+          "type": "faq",
+          "settings": {
+            "question": "What comes with a game set?",
+            "answer": "<p>2 chairs that support up to 275 lbs each, 2 sets of goal posts, a football, a kicking tee, a ball pump with steel needle and printed rules, all in a carrying bag.</p>"
+          }
+        },
+        "faq_players": {
+          "type": "faq",
+          "settings": {
+            "question": "How many people can play?",
+            "answer": "<p>2 to 8 players. Setup takes about 2 minutes, and the first team to 54 wins.</p>"
+          }
+        },
+        "faq_ship": {
+          "type": "faq",
+          "settings": {
+            "question": "When will my order ship?",
+            "answer": "<p>In-stock orders ship within 1 business day.</p>"
+          }
+        },
+        "faq_returns": {
+          "type": "faq",
+          "settings": {
+            "question": "What's your return policy?",
+            "answer": "<p>Returns are accepted within 30 days on unused items in their original packaging. See our <a href=\"/pages/return-policy\">return policy</a> for full details.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "reel_showdown",
+        "reel_tailgate",
+        "reel_tank",
+        "reel_ten",
+        "reel_backyard",
+        "reel_howto",
+        "step_pick",
+        "step_code",
+        "step_play",
+        "review_1",
+        "review_2",
+        "review_3",
+        "review_4",
+        "review_5",
+        "review_6",
+        "faq_how",
+        "faq_scope",
+        "faq_box",
+        "faq_players",
+        "faq_ship",
+        "faq_returns"
+      ],
+      "settings": {
+        "partner_name": "The Jake Asman Show",
+        "partner_url": "https://www.youtube.com/@JakeAsman",
+        "partner_url_label": "Watch The Jake Asman Show",
+        "code": "ASMAN",
+        "discount_percent": 15,
+        "auto_apply_code": true,
+        "applied_note": "Code applied automatically when you shop this page",
+        "code_collection": "qb54-game-set-1",
+        "free_ship_threshold": 225,
+        "shop_url": "shopify://collections/qb54-game-set-1",
+        "logo": "shopify://shop_images/QB54_Ball_Logo_only_copy_copy_410x_25d11a0b-a689-4422-9e25-846e937323d1.png",
+        "bar_cta": "Shop the deal",
+        "hero_image": "shopify://shop_images/QB54_Draft_Vent_LP.png",
+        "hero_focal": "center center",
+        "onair_label": "As heard on",
+        "hero_line": "Your post-game just went pro",
+        "hero_text": "QB54 is the backyard football game that folds out of two chairs and sets up in 2 minutes. Jake Asman Show listeners take 15% off every game set.",
+        "hero_cta": "Shop the deal",
+        "hero_cta_2": "Watch it in action",
+        "proof_1": "As seen on Shark Tank",
+        "rating_fallback": "Hundreds of 5-star reviews",
+        "proof_3": "Free shipping on orders $225+",
+        "card_ribbon": "Listener deal",
+        "rating_card_fallback": "5-star rated",
+        "stock_note": "In stock, ships within 1 business day",
+        "returns_note": "30-day returns",
+        "ticker_items": "15% off with code ASMAN|Jake Asman Show listener deal|Free shipping on orders $225+|Ships in 1 business day|As seen on Shark Tank",
+        "welcome_kicker": "Welcome, listeners of",
+        "welcome_text": "You heard it after the game. Now bring the game home: QB54 sets up in 2 minutes, and your listener discount is waiting. Your code:",
+        "sets": [
+          "qb54-black-game-set",
+          "qb54-navy-blue-game-set",
+          "qb54-red-set",
+          "custom-logo-backyard-football-game-qb54"
+        ],
+        "sets_eyebrow": "The deals",
+        "sets_heading": "Pick your set. <em>Save 15%.</em>",
+        "sets_text": "Every set is the complete game: 2 chairs that support up to 275 lbs each, 2 sets of goal posts, a football, kicking tee, ball pump and a carrying bag.",
+        "sets_link_label": "Shop all game sets",
+        "first_tag": "#1 <b>Best Seller</b>",
+        "custom_tag": "Top <b>gift pick</b>",
+        "reels_eyebrow": "As seen on your feed",
+        "reels_heading": "100M+ views. <em>Zero chill.</em>",
+        "reels_text": "Backyards, tailgates and the Shark Tank stage. This is QB54 in the wild.",
+        "fan_products": [
+          "new-york-jets-fan-flag-1-flag",
+          "jets-throw-blanket",
+          "new-york-jets-9-throwback-football-vintage-logo",
+          "jets-picnic-caddy",
+          "jets-table",
+          "philadelphia-eagles-tent-copy"
+        ],
+        "fans_eyebrow": "For Jets Sundays",
+        "fans_heading": "Gear up for <em>Jets Sundays</em>",
+        "fans_text": "Jets gear from the QB54 shop, including the officially licensed Jets fan flag with Velcro to attach to your QB54 goal posts.",
+        "fans_note": "Code ASMAN applies to QB54 game sets. Jets gear is shown at its regular price.",
+        "steps_eyebrow": "How it works",
+        "steps_heading": "Claim your 15% in 3 steps",
+        "reviews_eyebrow": "Wall of hype",
+        "reviews_heading": "Families are <em>obsessed</em>",
+        "faq_eyebrow": "FAQ",
+        "faq_heading": "Questions? <em>Answered.</em>",
+        "final_image": "shopify://shop_images/friends-drinking-having-fun-at-a-backyard-bbq-throwing-a-football.png",
+        "final_heading": "Your post-game.",
+        "final_accent": "Just went pro.",
+        "final_text": "15% off every QB54 game set with code ASMAN, for Jake Asman Show listeners.",
+        "final_cta": "Shop the deal",
+        "show_sticky_bar": true,
+        "sticky_text": "Listener deal on QB54 game sets",
+        "sticky_cta": "Shop",
+        "color_gold": "#fdc439",
+        "color_navy": "#363a66",
+        "color_night": "#12142b",
+        "color_cream": "#f4f2e8"
+      }
+    },
+    "footer_links": {
+      "type": "simple-links",
+      "name": "Simple Links Section",
+      "blocks": {
+        "link_privacy": {
+          "type": "link",
+          "settings": { "link_text": "Privacy Policy", "link_url": "https://playqb54.com/pages/privacy-policy" }
+        },
+        "link_terms": {
+          "type": "link",
+          "settings": { "link_text": "Terms of Service", "link_url": "https://playqb54.com/pages/terms-of-service" }
+        },
+        "link_return": {
+          "type": "link",
+          "settings": { "link_text": "Return Policy", "link_url": "https://playqb54.com/pages/return-policy" }
+        },
+        "link_refund": {
+          "type": "link",
+          "settings": { "link_text": "Refund Policy", "link_url": "https://playqb54.com/pages/refund-policy" }
+        },
+        "link_shipping": {
+          "type": "link",
+          "settings": { "link_text": "Shipping Policy", "link_url": "https://playqb54.com/pages/shipping-policy" }
+        }
+      },
+      "block_order": ["link_privacy", "link_terms", "link_return", "link_refund", "link_shipping"],
+      "settings": {
+        "section_bg": "#12142b",
+        "section_padding_top": 30,
+        "section_padding_bottom": 30,
+        "max_width": 1200,
+        "link_spacing": 30,
+        "link_color": "#fdc439",
+        "link_bg_color": "rgba(0,0,0,0)",
+        "link_border_color": "rgba(0,0,0,0)",
+        "link_font_size": 15,
+        "link_font_weight": "400",
+        "link_text_decoration": "underline",
+        "link_padding_x": 12,
+        "link_padding_y": 8,
+        "link_border_radius": 0,
+        "link_border_width": 0,
+        "link_letter_spacing": 0,
+        "link_uppercase": false,
+        "link_hover_color": "#ffffff",
+        "link_hover_bg_color": "rgba(0,0,0,0)",
+        "link_hover_border_color": "rgba(0,0,0,0)",
+        "link_hover_text_decoration": "none",
+        "link_hover_transform": 0,
+        "mobile_section_padding_top": 20,
+        "mobile_section_padding_bottom": 20,
+        "mobile_link_spacing": 16,
+        "mobile_link_font_size": 14,
+        "mobile_link_padding_x": 10,
+        "mobile_link_padding_y": 6,
+        "mobile_link_width": 90
+      }
+    }
+  },
+  "order": ["main-page", "partner", "footer_links"]
+}

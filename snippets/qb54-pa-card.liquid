@@ -1,0 +1,58 @@
+{%- comment -%}
+  Product card for the qb54-partner-landing section.
+
+  Accepts:
+  - product: {Object}
+  - keep: {Number} Percent of the price kept after the code (85 for 15% off)
+  - code: {String} Discount code
+  - code_ok: {Boolean} Show the price after the code
+  - tag: {String} Small label over the image (optional)
+  - title: {String} Title override (optional)
+  - sizes: {String} Image sizes attribute
+{%- endcomment -%}
+{%- liquid
+  assign v = product.selected_or_first_available_variant
+  assign card_price = v.price
+  assign card_sale = card_price | times: keep | divided_by: 100
+  assign card_save = card_price | minus: card_sale
+  assign card_multi = true
+  if product.has_only_default_variant
+    assign card_multi = false
+  endif
+  assign card_rating = product.metafields.reviews.rating.value
+  assign card_count = product.metafields.reviews.rating_count.value
+-%}
+<article class="qb54-pa-card">
+  <a class="qb54-pa-card__media" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+    {%- if product.featured_image != blank -%}
+      {{- product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '350,500,700', sizes: sizes, alt: '' -}}
+    {%- endif -%}
+    {%- if tag != blank -%}<span class="qb54-pa-card__tag">{{ tag }}</span>{%- endif -%}
+    {%- if code_ok -%}<span class="qb54-pa-card__off">{{ 100 | minus: keep }}% off</span>{%- endif -%}
+  </a>
+  <div class="qb54-pa-card__body">
+    {%- if card_rating != blank and card_count != blank -%}
+      <span class="qb54-pa-card__stars" aria-label="Rated {{ card_rating.rating | round: 1 }} out of 5 from {{ card_count }} reviews"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.6 7.7l5.8-.8z"/></svg><b>{{ card_rating.rating | round: 1 }}</b> ({{ card_count }})</span>
+    {%- endif -%}
+    <h3 class="qb54-pa-card__t"><a href="{{ product.url }}">{{ title | default: product.title | escape }}</a></h3>
+    <div class="qb54-pa-card__p">
+      {%- if code_ok -%}
+        <span class="qb54-pa-now">{% if card_multi %}<small>From </small>{% endif %}{{ card_sale | money }}</span>
+        <s class="qb54-pa-was"><span class="qb54-pa-sr">Regular price </span>{{ card_price | money }}</s>
+      {%- else -%}
+        <span class="qb54-pa-now">{% if card_multi %}<small>From </small>{% endif %}{{ card_price | money }}</span>
+      {%- endif -%}
+    </div>
+    {%- if code_ok -%}<p class="qb54-pa-card__code">Save {{ card_save | money }} with <strong>{{ code }}</strong></p>{%- endif -%}
+    <div class="qb54-pa-buy">
+      {%- if card_multi -%}
+        <a class="qb54-pa-btn qb54-pa-btn--navy" href="{{ product.url }}">Choose Options<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      {%- elsif v.available -%}
+        <button type="button" class="qb54-pa-btn qb54-pa-btn--gold" data-qb54-pa-add data-variants="{{ v.id }}" data-title="{{ title | default: product.title | escape }}" data-label="Add to Cart"><span data-qb54-pa-icon><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h3l2.4 12h11l2.1-8H6.4"/></svg></span><span data-qb54-pa-label>Add to Cart</span></button>
+        <p class="qb54-pa-err" data-qb54-pa-err role="alert" hidden></p>
+      {%- else -%}
+        <button type="button" class="qb54-pa-btn" disabled>Sold Out</button>
+      {%- endif -%}
+    </div>
+  </div>
+</article>
