@@ -37,6 +37,23 @@
   assign lead_rating = lead.metafields.reviews.rating.value
   assign lead_count = lead.metafields.reviews.rating_count.value
   assign checkout_url = routes.root_url | append: '/checkout' | replace: '//', '/'
+
+  # Partner visuals: an image picked in the editor wins, then the bundled theme asset.
+  assign host_ok = false
+  if section.settings.partner_cutout != blank or section.settings.partner_cutout_asset != blank
+    assign host_ok = true
+  endif
+  assign avatar_ok = false
+  if section.settings.partner_image != blank or section.settings.partner_avatar_asset != blank
+    assign avatar_ok = true
+  endif
+  assign channel_url = section.settings.partner_url
+  assign subscribe_url = channel_url
+  if channel_url contains 'youtube.com'
+    assign subscribe_url = channel_url | append: '?sub_confirmation=1'
+  endif
+  assign episode_blocks = section.blocks | where: 'type', 'episode'
+  assign host_name = section.settings.host_name | default: partner
 -%}
 
 <style>
@@ -115,6 +132,11 @@
   {{ scope }} .qb54-pa-btn--navy:hover { background: color-mix(in srgb, var(--navy) 85%, #ffffff); transform: translateY(-2px); }
   {{ scope }} .qb54-pa-btn--white { background: #ffffff; color: var(--on-gold); box-shadow: 0 16px 34px -16px rgba(17, 18, 40, 0.55); }
   {{ scope }} .qb54-pa-btn--white:hover { transform: translateY(-2px); }
+  {{ scope }} .qb54-pa-btn--yt .qb54-pa-ytlogo { width: 28px; height: 20px; }
+  {{ scope }} .qb54-pa-btn--sub { background: #e00000; color: #ffffff; box-shadow: 0 14px 30px -14px rgba(224, 0, 0, 0.65); }
+  {{ scope }} .qb54-pa-btn--sub:hover { background: #c40000; transform: translateY(-2px); }
+  {{ scope }} .qb54-pa-btn--sub svg { width: 22px; height: 22px; }
+  {{ scope }} .qb54-pa-head__aside { justify-self: start; }
   {{ scope }} .qb54-pa-btn[aria-busy='true'] { pointer-events: none; opacity: 0.85; }
   {{ scope }} .qb54-pa-btn.is-added { background: var(--ok); color: #ffffff; box-shadow: none; }
   {{ scope }} .qb54-pa-btn.is-error { background: #b91c1c; color: #ffffff; box-shadow: none; }
@@ -148,7 +170,38 @@
   {{ scope }} .qb54-pa-hero__bg img { width: 100%; height: 100%; object-fit: cover; object-position: {{ section.settings.hero_focal }}; }
   {{ scope }} .qb54-pa-hero::before { content: ''; position: absolute; inset: 0; z-index: -2; background: linear-gradient(90deg, color-mix(in srgb, var(--night) 95%, transparent) 0%, color-mix(in srgb, var(--night) 84%, transparent) 40%, color-mix(in srgb, var(--night) 40%, transparent) 75%, color-mix(in srgb, var(--night) 60%, transparent) 100%), linear-gradient(0deg, var(--night) 0%, transparent 35%); }
   {{ scope }} .qb54-pa-hero::after { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(640px 420px at 16% 72%, color-mix(in srgb, var(--gold) 16%, transparent), transparent 70%); pointer-events: none; }
-  {{ scope }} .qb54-pa-hero__grid { display: grid; gap: clamp(40px, 5vw, 72px); align-items: center; }
+  {{ scope }} .qb54-pa-hero__grid { display: grid; grid-template-areas: 'top' 'stage' 'bottom' 'card'; column-gap: clamp(40px, 5vw, 72px); row-gap: 28px; align-items: center; }
+  {{ scope }} .qb54-pa-hero__top { grid-area: top; }
+  {{ scope }} .qb54-pa-hero__bottom { grid-area: bottom; }
+  {{ scope }} .qb54-pa-hero__bottom > .qb54-pa-lede:first-child { margin-top: 0; }
+  {{ scope }} .qb54-pa-buycard { grid-area: card; }
+  {{ scope }} .qb54-pa-onair__av { flex: none; width: 30px; height: 30px; margin-left: -4px; border-radius: 50%; overflow: hidden; background: #ffffff; box-shadow: 0 0 0 2px var(--gold); }
+  {{ scope }} .qb54-pa-onair__av img { width: 100%; height: 100%; object-fit: cover; }
+  {{ scope }} .qb54-pa-onair .qb54-pa-ytlogo { width: 26px; height: 18px; flex: none; }
+  {{ scope }} .qb54-pa-bar__av { width: 28px; height: 28px; border-radius: 50%; overflow: hidden; background: #ffffff; box-shadow: 0 0 0 2px var(--gold); }
+  {{ scope }} .qb54-pa-bar__av img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Host stage: partner cut-out under a gold spotlight, broadcast name plate, YouTube badge, product card */
+  {{ scope }} .qb54-pa-stage { grid-area: stage; position: relative; justify-self: center; width: min(100%, 420px); aspect-ratio: 54 / 62; }
+  {{ scope }} .qb54-pa-stage__disc { position: absolute; left: 5%; right: 5%; top: 3%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--gold) 34%, transparent) 0%, color-mix(in srgb, var(--gold) 10%, transparent) 46%, transparent 70%), repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.07) 0 1px, transparent 1px 24px), color-mix(in srgb, var(--navy) 55%, transparent); box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--gold) 60%, transparent), 0 0 140px -30px color-mix(in srgb, var(--gold) 55%, transparent); }
+  {{ scope }} .qb54-pa-stage__host { position: absolute; z-index: 1; left: 50%; bottom: 13%; width: 82%; transform: translateX(-48%); -webkit-mask-image: linear-gradient(180deg, #000 86%, transparent 100%); mask-image: linear-gradient(180deg, #000 86%, transparent 100%); }
+  {{ scope }} .qb54-pa-stage__host img { width: 100%; height: auto; filter: drop-shadow(-12px 0 26px color-mix(in srgb, var(--gold) 28%, transparent)) drop-shadow(0 30px 40px rgba(0, 0, 0, 0.55)); }
+  {{ scope }} .qb54-pa-ytchip { position: absolute; z-index: 3; right: -2%; top: 16%; display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px 10px 12px; border-radius: 14px; background: #ffffff; color: var(--ink); box-shadow: 0 22px 36px -18px rgba(0, 0, 0, 0.85); transform: rotate(4deg); transition: transform 200ms var(--ease); }
+  {{ scope }} .qb54-pa-ytchip:hover { transform: rotate(2deg) translateY(-3px); }
+  {{ scope }} .qb54-pa-ytchip svg { width: 36px; height: 26px; flex: none; }
+  {{ scope }} .qb54-pa-ytchip span { display: grid; font-size: 10.5px; font-weight: 700; line-height: 1.15; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  {{ scope }} .qb54-pa-ytchip strong { font-family: var(--fh); font-size: 25px; letter-spacing: 0; line-height: 1; color: var(--ink); }
+  {{ scope }} .qb54-pa-stage__product { position: absolute; z-index: 2; left: -1%; bottom: 25%; width: 34%; aspect-ratio: 1; border-radius: 18px; background: #ffffff; box-shadow: 0 0 0 4px var(--gold), 0 24px 40px -18px rgba(0, 0, 0, 0.85); transform: rotate(-7deg); transition: transform 220ms var(--ease); }
+  {{ scope }} .qb54-pa-stage__product:hover { transform: rotate(-3deg) translateY(-4px); }
+  {{ scope }} .qb54-pa-stage__product img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 10%; }
+  {{ scope }} .qb54-pa-stage__product span { position: absolute; top: -13px; right: -14px; padding: 6px 10px; border-radius: 999px; background: var(--gold); color: var(--on-gold); font-family: var(--fh); font-weight: 700; font-size: 14px; letter-spacing: 0.04em; text-transform: uppercase; box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.6); }
+  {{ scope }} .qb54-pa-nameplate { position: absolute; z-index: 3; left: 4%; right: 4%; bottom: 2%; display: grid; gap: 4px; padding: 16px 20px 14px 26px; border-radius: 16px; background: linear-gradient(100deg, var(--navy), color-mix(in srgb, var(--navy) 55%, var(--night))); box-shadow: inset 0 0 0 1px var(--line-dark), 0 24px 40px -20px rgba(0, 0, 0, 0.85); }
+  {{ scope }} .qb54-pa-nameplate::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; border-radius: 16px 0 0 16px; background: var(--gold); }
+  {{ scope }} .qb54-pa-nameplate strong { font-family: var(--fh); font-weight: 700; font-size: clamp(28px, 3vw, 40px); line-height: 1; text-transform: uppercase; color: #ffffff; }
+  {{ scope }} .qb54-pa-nameplate__role { font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
+  {{ scope }} .qb54-pa-nameplate__live { position: absolute; left: 22px; top: -13px; display: inline-flex; align-items: center; gap: 7px; padding: 5px 10px; border-radius: 6px; background: #e00000; color: #ffffff; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.6); }
+  {{ scope }} .qb54-pa-nameplate__live i { width: 7px; height: 7px; border-radius: 50%; background: #ffffff; animation: qb54-pa-blink 1.4s ease-in-out infinite; }
+  @keyframes qb54-pa-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
   {{ scope }} .qb54-pa-onair { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 22px; padding: 7px 14px 7px 10px; border-radius: 999px; background: rgba(9, 10, 26, 0.55); box-shadow: inset 0 0 0 1px var(--line-dark); backdrop-filter: blur(8px); font-size: 12.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #ffffff; }
   {{ scope }} .qb54-pa-onair i { position: relative; width: 10px; height: 10px; border-radius: 50%; background: var(--live); }
   {{ scope }} .qb54-pa-onair i::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--live); opacity: 0; animation: qb54-pa-pulse 1.8s var(--ease) infinite; }
@@ -219,22 +272,67 @@
   {{ scope }} .qb54-pa-ticker__i svg { width: 16px; height: 16px; }
   @keyframes qb54-pa-marquee { to { transform: translateX(-50%); } }
 
-  /* ---------- Partner welcome (lower third) ---------- */
-  {{ scope }} .qb54-pa-partner { padding-block: clamp(48px, 6vw, 80px); background: var(--night); }
-  {{ scope }} .qb54-pa-l3 { position: relative; display: grid; gap: 18px; align-items: center; padding: 20px; border-radius: 22px; background: linear-gradient(100deg, var(--navy), color-mix(in srgb, var(--navy) 60%, var(--night))); box-shadow: inset 0 0 0 1px var(--line-dark), var(--shadow-lg); overflow: hidden; }
-  {{ scope }} .qb54-pa-l3::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--gold); }
-  {{ scope }} .qb54-pa-l3__who { display: flex; align-items: center; gap: 16px; }
-  {{ scope }} .qb54-pa-avatar { position: relative; flex: none; display: grid; place-items: center; width: 76px; height: 76px; border-radius: 50%; background: var(--night); box-shadow: 0 0 0 3px var(--gold); overflow: hidden; }
-  {{ scope }} .qb54-pa-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  {{ scope }} .qb54-pa-avatar svg { width: 36px; height: 36px; color: var(--gold); }
-  {{ scope }} .qb54-pa-l3__name { display: grid; gap: 4px; }
-  {{ scope }} .qb54-pa-l3__name span { font-size: 11.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); }
-  {{ scope }} .qb54-pa-l3__name strong { font-family: var(--fh); font-weight: 700; font-size: clamp(26px, 3vw, 36px); line-height: 1; text-transform: uppercase; color: #ffffff; }
-  {{ scope }} .qb54-pa-l3 p { margin: 0; font-size: 16px; line-height: 1.6; color: rgba(255, 255, 255, 0.85); }
-  {{ scope }} .qb54-pa-l3 p strong { color: var(--gold); letter-spacing: 0.04em; }
-  {{ scope }} .qb54-pa-l3__watch { display: inline-flex; align-items: center; gap: 10px; justify-self: start; padding: 10px 16px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); box-shadow: inset 0 0 0 1px var(--line-dark); font-size: 14px; font-weight: 700; color: #ffffff; white-space: nowrap; }
-  {{ scope }} .qb54-pa-l3__watch:hover { background: rgba(255, 255, 255, 0.14); }
-  {{ scope }} .qb54-pa-l3__watch svg { width: 22px; height: 22px; color: #ff3b3b; }
+
+  /* ---------- The show (partner's YouTube) ---------- */
+  {{ scope }} .qb54-pa-show { position: relative; padding-block: var(--pad-y); background: radial-gradient(900px 420px at 12% 0%, color-mix(in srgb, var(--navy) 80%, transparent), transparent 70%), radial-gradient(640px 380px at 100% 100%, rgba(255, 0, 0, 0.1), transparent 70%), var(--night); }
+  {{ scope }} .qb54-pa-show .qb54-pa-lede { color: rgba(255, 255, 255, 0.78); }
+  {{ scope }} .qb54-pa-show__grid { display: grid; gap: 18px; }
+  {{ scope }} .qb54-pa-feature { display: grid; gap: 16px; align-content: start; }
+  {{ scope }} .qb54-pa-feature__cap { display: flex; align-items: center; gap: 14px; margin: 0; }
+  {{ scope }} .qb54-pa-feature__cap > svg { width: 40px; height: 28px; flex: none; }
+  {{ scope }} .qb54-pa-feature__cap span { display: grid; gap: 3px; flex: 1; min-width: 0; font-size: 13px; color: rgba(255, 255, 255, 0.66); }
+  {{ scope }} .qb54-pa-feature__cap strong { font-family: var(--fh); font-weight: 700; font-size: clamp(18px, 1.7vw, 22px); line-height: 1.1; text-transform: uppercase; color: #ffffff; }
+  {{ scope }} .qb54-pa-feature__cap a { flex: none; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; text-decoration: underline; text-decoration-color: #ff0000; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  {{ scope }} .qb54-pa-feature__cap a svg { width: 14px; height: 14px; }
+  {{ scope }} .qb54-pa-player { position: relative; aspect-ratio: 16 / 9; border-radius: 22px; overflow: hidden; background: #000000; box-shadow: 0 0 0 3px var(--gold), 0 40px 70px -36px rgba(0, 0, 0, 0.9); }
+  {{ scope }} .qb54-pa-player__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 700ms var(--ease); }
+  {{ scope }} .qb54-pa-player::after { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, transparent 28%, transparent 55%, rgba(5, 6, 18, 0.88) 100%); pointer-events: none; }
+  {{ scope }} .qb54-pa-player__btn { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; width: 100%; border: 0; background: transparent; cursor: pointer; }
+  {{ scope }} .qb54-pa-player__play svg { width: 96px; height: 68px; filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.55)); transition: transform 200ms var(--ease); }
+  @media (hover: hover) {
+    {{ scope }} .qb54-pa-player:hover .qb54-pa-player__img { transform: scale(1.03); }
+    {{ scope }} .qb54-pa-player:hover .qb54-pa-player__play svg { transform: scale(1.1); }
+  }
+  {{ scope }} .qb54-pa-player.is-playing > :not(iframe) { display: none; }
+  {{ scope }} .qb54-pa-player.is-playing::after { display: none; }
+  {{ scope }} .qb54-pa-player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  {{ scope }} .qb54-pa-channel { display: flex; flex-direction: column; gap: 18px; padding: 24px; border-radius: 22px; background: linear-gradient(160deg, color-mix(in srgb, var(--navy) 92%, #ffffff), color-mix(in srgb, var(--navy) 55%, var(--night))); box-shadow: inset 0 0 0 1px var(--line-dark), 0 40px 70px -40px rgba(0, 0, 0, 0.85); }
+  {{ scope }} .qb54-pa-channel__who { display: flex; align-items: center; gap: 18px; }
+  {{ scope }} .qb54-pa-channel__av { position: relative; flex: none; display: grid; place-items: center; width: 84px; height: 84px; border-radius: 50%; background: #ffffff; box-shadow: 0 0 0 3px #ff0000, 0 0 0 8px rgba(255, 0, 0, 0.16); }
+  {{ scope }} .qb54-pa-channel__av img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  {{ scope }} .qb54-pa-channel__av > svg { width: 36px; height: 36px; color: var(--navy); }
+  {{ scope }} .qb54-pa-channel__badge { position: absolute; right: -8px; bottom: -2px; display: grid; place-items: center; width: 36px; height: 27px; border-radius: 8px; background: #ffffff; box-shadow: 0 6px 12px -6px rgba(0, 0, 0, 0.7); }
+  {{ scope }} .qb54-pa-channel__badge svg { width: 24px; height: 17px; }
+  {{ scope }} .qb54-pa-channel__name strong { display: block; font-family: var(--fh); font-weight: 700; font-size: 32px; line-height: 1; text-transform: uppercase; color: #ffffff; }
+  {{ scope }} .qb54-pa-channel__name span { display: block; margin-top: 7px; font-size: 14px; color: rgba(255, 255, 255, 0.72); }
+  {{ scope }} .qb54-pa-channel__stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  {{ scope }} .qb54-pa-channel__stats li { padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.06); box-shadow: inset 0 0 0 1px var(--line-dark); }
+  {{ scope }} .qb54-pa-channel__stats strong { display: block; font-family: var(--fh); font-weight: 700; font-size: 32px; line-height: 1; color: var(--gold); }
+  {{ scope }} .qb54-pa-channel__stats span { display: block; margin-top: 5px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255, 255, 255, 0.66); }
+  {{ scope }} .qb54-pa-channel__bio { margin: 0; font-size: 15px; line-height: 1.6; color: rgba(255, 255, 255, 0.84); }
+  {{ scope }} .qb54-pa-channel__ctas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  {{ scope }} .qb54-pa-channel__ctas .qb54-pa-btn { min-height: 50px; padding: 0 12px; font-size: 15px; }
+  {{ scope }} .qb54-pa-channel__code { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 12px 12px 16px; border-radius: 14px; background: var(--gold); color: var(--on-gold); }
+  {{ scope }} .qb54-pa-channel__code > span { font-size: 13.5px; font-weight: 700; line-height: 1.35; }
+  {{ scope }} .qb54-pa-channel__code button { flex: none; display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border: 0; border-radius: 10px; background: #ffffff; color: var(--on-gold); font-size: 11.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
+  {{ scope }} .qb54-pa-channel__code button strong { font-family: var(--fh); font-size: 22px; letter-spacing: 0.08em; }
+  {{ scope }} .qb54-pa-channel__code svg { width: 15px; height: 15px; }
+  {{ scope }} .qb54-pa-show__more { margin: clamp(40px, 4.5vw, 60px) 0 16px; font-family: var(--fh); font-weight: 700; font-size: 24px; line-height: 1; letter-spacing: 0.02em; text-transform: uppercase; color: #ffffff; }
+  {{ scope }} .qb54-pa-eps { display: grid; grid-auto-flow: column; grid-auto-columns: 78%; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 4px var(--gutter) 8px; margin-inline: calc(var(--gutter) * -1); scroll-padding-inline: var(--gutter); }
+  {{ scope }} .qb54-pa-eps::-webkit-scrollbar { display: none; }
+  {{ scope }} .qb54-pa-ep { scroll-snap-align: start; display: flex; flex-direction: column; gap: 10px; }
+  {{ scope }} .qb54-pa-ep__img { position: relative; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; background: #000000; box-shadow: 0 0 0 1px var(--line-dark), 0 24px 40px -26px rgba(0, 0, 0, 0.8); }
+  {{ scope }} .qb54-pa-ep__img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 500ms var(--ease); }
+  {{ scope }} .qb54-pa-ep__play { position: absolute; inset: 0; display: grid; place-items: center; }
+  {{ scope }} .qb54-pa-ep__play svg { width: 54px; height: 38px; filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.55)); transition: transform 200ms var(--ease); }
+  {{ scope }} .qb54-pa-ep__t { font-size: 15px; font-weight: 700; line-height: 1.35; color: #ffffff; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  {{ scope }} .qb54-pa-ep__w { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: rgba(255, 255, 255, 0.62); }
+  {{ scope }} .qb54-pa-ep__w svg { width: 14px; height: 14px; }
+  @media (hover: hover) {
+    {{ scope }} .qb54-pa-ep:hover .qb54-pa-ep__img img { transform: scale(1.04); }
+    {{ scope }} .qb54-pa-ep:hover .qb54-pa-ep__play svg { transform: scale(1.12); }
+    {{ scope }} .qb54-pa-ep:hover .qb54-pa-ep__w { color: #ffffff; }
+  }
 
   /* ---------- Product grids ---------- */
   {{ scope }} .qb54-pa-sets { padding-block: var(--pad-y); background: var(--cream); color: var(--ink); }
@@ -374,6 +472,7 @@
   /* ---------- Breakpoints ---------- */
   @media screen and (min-width: 600px) {
     {{ scope }} .qb54-pa-grid { grid-auto-columns: 44%; }
+    {{ scope }} .qb54-pa-eps { grid-auto-columns: 46%; }
     {{ scope }} .qb54-pa-rail { grid-auto-columns: 240px; }
     {{ scope }} .qb54-pa-steps__list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     {{ scope }} .qb54-pa-revrail { grid-auto-columns: 46%; }
@@ -381,12 +480,18 @@
   @media screen and (min-width: 750px) {
     {{ scope }} .qb54-pa-sticky { display: none; }
     {{ scope }} .qb54-pa-toast { left: auto; right: 24px; bottom: 24px; width: 400px; }
-    {{ scope }} .qb54-pa-l3 { grid-template-columns: auto minmax(0, 1fr) auto; gap: 28px; padding: 22px 26px 22px 30px; }
-    {{ scope }} .qb54-pa-l3__watch { justify-self: end; }
   }
   @media screen and (min-width: 990px) {
     {{ scope }} .qb54-pa-bar__x, {{ scope }} .qb54-pa-bar__code { display: inline-flex; }
-    {{ scope }} .qb54-pa-hero__grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); }
+    {{ scope }} .qb54-pa-hero__grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); grid-template-areas: 'top card' 'bottom card'; row-gap: 0; }
+    {{ scope }} .qb54-pa-hero__grid--host { grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); grid-template-areas: 'top stage' 'bottom stage'; }
+    {{ scope }} .qb54-pa-hero__top { align-self: end; }
+    {{ scope }} .qb54-pa-hero__bottom { align-self: start; }
+    {{ scope }} .qb54-pa-hero__bottom > .qb54-pa-lede:first-child { margin-top: 18px; }
+    {{ scope }} .qb54-pa-stage { justify-self: end; width: min(100%, 540px); }
+    {{ scope }} .qb54-pa-head__aside { justify-self: end; }
+    {{ scope }} .qb54-pa-show__grid { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 26px; }
+    {{ scope }} .qb54-pa-eps { grid-auto-flow: row; grid-auto-columns: auto; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; overflow: visible; margin-inline: 0; padding-inline: 0; }
     {{ scope }} .qb54-pa-title__offer { font-size: min(13vw, 190px); }
     {{ scope }} .qb54-pa-buycard { justify-self: end; }
     {{ scope }} .qb54-pa-head--split { grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
@@ -405,6 +510,18 @@
     {{ scope }} .qb54-pa-bug__team { display: none; }
     {{ scope }} .qb54-pa-bug__code { flex: 1; }
     {{ scope }} .qb54-pa-bar .qb54-pa-btn { padding: 0 14px; }
+    {{ scope }} .qb54-pa-ytchip { padding: 8px 12px 8px 10px; gap: 8px; right: -1%; }
+    {{ scope }} .qb54-pa-ytchip svg { width: 28px; height: 20px; }
+    {{ scope }} .qb54-pa-ytchip strong { font-size: 20px; }
+    {{ scope }} .qb54-pa-stage__product { width: 32%; border-radius: 14px; }
+    {{ scope }} .qb54-pa-stage__product span { font-size: 12px; padding: 5px 8px; }
+    {{ scope }} .qb54-pa-nameplate { padding: 14px 16px 12px 22px; }
+    {{ scope }} .qb54-pa-channel { padding: 20px; }
+    {{ scope }} .qb54-pa-channel__code { flex-wrap: wrap; }
+    {{ scope }} .qb54-pa-feature__cap a { display: none; }
+    {{ scope }} .qb54-pa-onair { gap: 8px; padding: 6px 12px 6px 9px; font-size: 10.5px; letter-spacing: 0.08em; }
+    {{ scope }} .qb54-pa-onair__av { width: 26px; height: 26px; }
+    {{ scope }} .qb54-pa-onair .qb54-pa-ytlogo { width: 22px; height: 16px; }
   }
   @media (prefers-reduced-motion: reduce) {
     {{ scope }} *, {{ scope }} *::before, {{ scope }} *::after { animation: none !important; transition: none !important; }
@@ -427,6 +544,14 @@
 {%- capture i_play -%}<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>{%- endcapture -%}
 {%- capture i_yt -%}<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12a31 31 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-4.8 31 31 0 0 0-.5-4.8zM9.8 15.1V8.9L15.2 12z"/></svg>{%- endcapture -%}
 {%- capture i_mute -%}<svg class="is-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m23 9-6 6M17 9l6 6"/></svg><svg class="is-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>{%- endcapture -%}
+{%- capture i_yt_full -%}<svg class="qb54-pa-ytlogo" viewBox="0 0 28 20" aria-hidden="true"><path d="M27.4 3.1A3.5 3.5 0 0 0 24.9.6C22.7 0 14 0 14 0S5.3 0 3.1.6A3.5 3.5 0 0 0 .6 3.1 36.6 36.6 0 0 0 0 10a36.6 36.6 0 0 0 .6 6.9 3.5 3.5 0 0 0 2.5 2.5C5.3 20 14 20 14 20s8.7 0 10.9-.6a3.5 3.5 0 0 0 2.5-2.5A36.6 36.6 0 0 0 28 10a36.6 36.6 0 0 0-.6-6.9z" fill="#FF0000"/><path d="M11.2 14.3 18.5 10l-7.3-4.3z" fill="#fff"/></svg>{%- endcapture -%}
+{%- capture avatar_img -%}
+  {%- if section.settings.partner_image != blank -%}
+    {{- section.settings.partner_image | image_url: width: 240 | image_tag: loading: 'lazy', alt: host_name, widths: '120,240', sizes: '96px' -}}
+  {%- elsif section.settings.partner_avatar_asset != blank -%}
+    <img src="{{ section.settings.partner_avatar_asset | asset_url }}" alt="{{ host_name | escape }}" width="240" height="240" loading="lazy">
+  {%- endif -%}
+{%- endcapture -%}
 {%- capture stars_5 -%}<span class="qb54-pa-stars">{{ i_star }}{{ i_star }}{{ i_star }}{{ i_star }}{{ i_star }}</span>{%- endcapture -%}
 
 {%- capture score_bug -%}
@@ -447,7 +572,7 @@
         {%- else -%}
           <span>{{ shop.name }}</span>
         {%- endif -%}
-        <span class="qb54-pa-bar__x"><b>×</b>{{ partner | escape }}</span>
+        <span class="qb54-pa-bar__x"><b>×</b>{%- if avatar_ok -%}<span class="qb54-pa-bar__av">{{ avatar_img }}</span>{%- endif -%}{{ partner | escape }}</span>
       </a>
       <div class="qb54-pa-bar__end">
         {%- if code != blank -%}<span class="qb54-pa-bar__code">{{ pct }}% off with <strong>{{ code }}</strong></span>{%- endif -%}
@@ -461,13 +586,47 @@
     {%- if section.settings.hero_image != blank -%}
       <div class="qb54-pa-hero__bg">{{- section.settings.hero_image | image_url: width: 2400 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '800,1200,1600,2000,2400', sizes: '100vw', alt: '' -}}</div>
     {%- endif -%}
-    <div class="qb54-pa-wrap qb54-pa-hero__grid">
-      <div>
-        <p class="qb54-pa-onair"><i aria-hidden="true"></i>{{ section.settings.onair_label | escape }} <b>{{ partner | escape }}</b></p>
+    <div class="qb54-pa-wrap qb54-pa-hero__grid{% if host_ok %} qb54-pa-hero__grid--host{% endif %}">
+      <div class="qb54-pa-hero__top">
+        <p class="qb54-pa-onair">
+          {%- if avatar_ok -%}<span class="qb54-pa-onair__av">{{ avatar_img }}</span>{%- else -%}<i aria-hidden="true"></i>{%- endif -%}
+          {{ section.settings.onair_label | escape }} <b>{{ partner | escape }}</b>
+          {%- if channel_url contains 'youtube.com' -%}{{ i_yt_full }}{%- endif -%}
+        </p>
         <h1 class="qb54-pa-title" id="qb54-pa-h1-{{ section.id }}">
           <span class="qb54-pa-title__offer">{{ pct }}% Off</span>
           <span class="qb54-pa-title__line">{{ section.settings.hero_line | escape }}</span>
         </h1>
+      </div>
+
+      {%- if host_ok -%}
+        <div class="qb54-pa-stage">
+          <span class="qb54-pa-stage__disc" aria-hidden="true"></span>
+          <span class="qb54-pa-stage__host">
+            {%- if section.settings.partner_cutout != blank -%}
+              {{- section.settings.partner_cutout | image_url: width: 1000 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '400,600,800,1000', sizes: '(min-width: 990px) 460px, 84vw', alt: host_name -}}
+            {%- else -%}
+              <img src="{{ section.settings.partner_cutout_asset | asset_url }}" alt="{{ host_name | escape }}" width="717" height="871" loading="eager" fetchpriority="high">
+            {%- endif -%}
+          </span>
+          {%- if section.settings.channel_subs != blank -%}
+            <a class="qb54-pa-ytchip" href="{{ subscribe_url }}" target="_blank" rel="noopener">{{ i_yt_full }}<span><strong>{{ section.settings.channel_subs | escape }}</strong>subscribers</span></a>
+          {%- endif -%}
+          {%- if lead != blank -%}
+            <a class="qb54-pa-stage__product" href="#qb54-pa-sets-{{ section.id }}" aria-label="Shop {{ lead.title | escape }}">
+              {{- lead.featured_image | image_url: width: 500 | image_tag: loading: 'eager', widths: '250,500', sizes: '200px', alt: '' -}}
+              <span>{{ pct }}% off</span>
+            </a>
+          {%- endif -%}
+          <div class="qb54-pa-nameplate">
+            <span class="qb54-pa-nameplate__live"><i aria-hidden="true"></i>{{ section.settings.host_tagline | escape }}</span>
+            <strong>{{ host_name | escape }}</strong>
+            <span class="qb54-pa-nameplate__role">{{ section.settings.host_role | escape }}</span>
+          </div>
+        </div>
+      {%- endif -%}
+
+      <div class="qb54-pa-hero__bottom">
         {%- if section.settings.hero_text != blank -%}<p class="qb54-pa-lede">{{ section.settings.hero_text | escape }}</p>{%- endif -%}
         {%- if code != blank -%}
           {{ score_bug }}
@@ -475,7 +634,11 @@
         {%- endif -%}
         <div class="qb54-pa-ctas">
           <a class="qb54-pa-btn qb54-pa-btn--gold qb54-pa-btn--shine" href="#qb54-pa-sets-{{ section.id }}">{{ section.settings.hero_cta | escape }}{{ i_arrow }}</a>
-          {%- if reel_blocks.size > 0 and section.settings.hero_cta_2 != blank -%}<a class="qb54-pa-btn qb54-pa-btn--ghost" href="#qb54-pa-reels-{{ section.id }}">{{ section.settings.hero_cta_2 | escape }}</a>{%- endif -%}
+          {%- if host_ok and section.settings.hero_cta_show != blank -%}
+            <a class="qb54-pa-btn qb54-pa-btn--ghost qb54-pa-btn--yt" href="#qb54-pa-show-{{ section.id }}">{{ i_yt_full }}{{ section.settings.hero_cta_show | escape }}</a>
+          {%- elsif reel_blocks.size > 0 and section.settings.hero_cta_2 != blank -%}
+            <a class="qb54-pa-btn qb54-pa-btn--ghost" href="#qb54-pa-reels-{{ section.id }}">{{ section.settings.hero_cta_2 | escape }}</a>
+          {%- endif -%}
         </div>
         <ul class="qb54-pa-proof">
           {%- if section.settings.proof_1 != blank -%}<li>{{ i_tv }}{{ section.settings.proof_1 | escape }}</li>{%- endif -%}
@@ -486,7 +649,7 @@
         </ul>
       </div>
 
-      {%- if hero_count > 0 -%}
+      {%- if hero_count > 0 and host_ok == false -%}
         <aside class="qb54-pa-buycard" aria-label="Featured deal" data-qb54-pa-switch>
           <span class="qb54-pa-buycard__ribbon"><i aria-hidden="true"></i>{{ section.settings.card_ribbon | escape }}</span>
           {%- assign hero_i = 0 -%}
@@ -569,25 +732,6 @@
     </div>
   {%- endif -%}
 
-  <section class="qb54-pa-partner" aria-label="{{ partner | escape }}">
-    <div class="qb54-pa-wrap">
-      <div class="qb54-pa-l3" data-qb54-pa-reveal>
-        <div class="qb54-pa-l3__who">
-          <span class="qb54-pa-avatar">
-            {%- if section.settings.partner_image != blank -%}
-              {{- section.settings.partner_image | image_url: width: 200 | image_tag: loading: 'lazy', alt: partner -}}
-            {%- else -%}
-              {{ i_mic }}
-            {%- endif -%}
-          </span>
-          <span class="qb54-pa-l3__name"><span>{{ section.settings.welcome_kicker | escape }}</span><strong>{{ partner | escape }}</strong></span>
-        </div>
-        <p>{{ section.settings.welcome_text | escape }} <strong>{{ code }}</strong></p>
-        {%- if section.settings.partner_url != blank -%}<a class="qb54-pa-l3__watch" href="{{ section.settings.partner_url }}" target="_blank" rel="noopener">{{ i_yt }}{{ section.settings.partner_url_label | escape }}</a>{%- endif -%}
-      </div>
-    </div>
-  </section>
-
   {%- if sets.size > 0 -%}
     <section class="qb54-pa-sets qb54-pa-light" id="qb54-pa-sets-{{ section.id }}" aria-labelledby="qb54-pa-sets-h-{{ section.id }}">
       <div class="qb54-pa-wrap">
@@ -617,6 +761,89 @@
             {%- render 'qb54-pa-card', product: p, keep: keep, code: code, code_ok: set_code, tag: tag, sizes: '(min-width: 990px) 300px, (min-width: 600px) 44vw, 72vw' -%}
           {%- endfor -%}
         </div>
+      </div>
+    </section>
+  {%- endif -%}
+
+  {%- assign vid = section.settings.featured_video_id | strip -%}
+  {%- if channel_url != blank or vid != blank -%}
+    <section class="qb54-pa-show" id="qb54-pa-show-{{ section.id }}" aria-labelledby="qb54-pa-show-h-{{ section.id }}">
+      <div class="qb54-pa-wrap">
+        <header class="qb54-pa-head qb54-pa-head--split" data-qb54-pa-reveal>
+          <div>
+            <p class="qb54-pa-eyebrow">{{ section.settings.show_eyebrow | escape }}</p>
+            <h2 class="qb54-pa-h2" id="qb54-pa-show-h-{{ section.id }}">{{ section.settings.show_heading }}</h2>
+            {%- if section.settings.show_text != blank -%}<p class="qb54-pa-lede">{{ section.settings.show_text | escape }}</p>{%- endif -%}
+          </div>
+          {%- if channel_url != blank -%}
+            <a class="qb54-pa-btn qb54-pa-btn--sub qb54-pa-head__aside" href="{{ subscribe_url }}" target="_blank" rel="noopener">{{ i_yt }}{{ section.settings.subscribe_label | escape }}</a>
+          {%- endif -%}
+        </header>
+
+        <div class="qb54-pa-show__grid">
+          {%- if vid != blank -%}
+            <div class="qb54-pa-feature" data-qb54-pa-reveal>
+            <div class="qb54-pa-player" data-qb54-pa-player data-id="{{ vid | escape }}" data-title="{{ section.settings.featured_title | escape }}">
+              {%- comment %}theme-check-disable RemoteAsset{% endcomment -%}
+              <img class="qb54-pa-player__img" src="https://i.ytimg.com/vi/{{ vid | url_encode }}/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/{{ vid | url_encode }}/hqdefault.jpg'" alt="" width="1280" height="720" loading="lazy">
+              {%- comment %}theme-check-enable RemoteAsset{% endcomment -%}
+              <button type="button" class="qb54-pa-player__btn" aria-label="Play {{ section.settings.featured_title | default: 'the episode' | escape }}">
+                <span class="qb54-pa-player__play">{{ i_yt_full }}</span>
+              </button>
+            </div>
+            <p class="qb54-pa-feature__cap">{{ i_yt_full }}<span><strong>{{ section.settings.featured_title | default: partner | escape }}</strong>{{ partner | escape }} · YouTube</span><a href="https://www.youtube.com/watch?v={{ vid | url_encode }}" target="_blank" rel="noopener">Watch on YouTube{{ i_arrow }}</a></p>
+            </div>
+          {%- endif -%}
+
+          <aside class="qb54-pa-channel" data-qb54-pa-reveal>
+            <div class="qb54-pa-channel__who">
+              <span class="qb54-pa-channel__av">
+                {%- if avatar_ok -%}{{ avatar_img }}{%- else -%}{{ i_mic }}{%- endif -%}
+                <span class="qb54-pa-channel__badge">{{ i_yt_full }}</span>
+              </span>
+              <span class="qb54-pa-channel__name"><strong>{{ host_name | escape }}</strong>{%- if section.settings.channel_handle != blank -%}<span>{{ section.settings.channel_handle | escape }} · YouTube</span>{%- endif -%}</span>
+            </div>
+            {%- if section.settings.channel_subs != blank or section.settings.channel_videos != blank -%}
+              <ul class="qb54-pa-channel__stats">
+                {%- if section.settings.channel_subs != blank -%}<li><strong>{{ section.settings.channel_subs | escape }}</strong><span>subscribers</span></li>{%- endif -%}
+                {%- if section.settings.channel_videos != blank -%}<li><strong>{{ section.settings.channel_videos | escape }}</strong><span>videos</span></li>{%- endif -%}
+              </ul>
+            {%- endif -%}
+            {%- if section.settings.channel_bio != blank -%}<p class="qb54-pa-channel__bio">{{ section.settings.channel_bio | escape }}</p>{%- endif -%}
+            {%- if channel_url != blank -%}
+              <div class="qb54-pa-channel__ctas">
+                <a class="qb54-pa-btn qb54-pa-btn--sub" href="{{ subscribe_url }}" target="_blank" rel="noopener">{{ i_yt }}{{ section.settings.subscribe_label | escape }}</a>
+                <a class="qb54-pa-btn qb54-pa-btn--ghost" href="{{ channel_url }}" target="_blank" rel="noopener">{{ section.settings.partner_url_label | escape }}</a>
+              </div>
+            {%- endif -%}
+            {%- if code != blank -%}
+              <div class="qb54-pa-channel__code">
+                <span>{{ section.settings.welcome_text | escape }}</span>
+                <button type="button" data-qb54-pa-copy="{{ code | escape }}"><strong>{{ code }}</strong>{{ i_copy }}<span data-qb54-pa-copy-label aria-live="polite">Copy</span></button>
+              </div>
+            {%- endif -%}
+          </aside>
+        </div>
+
+        {%- if episode_blocks.size > 0 -%}
+          <h3 class="qb54-pa-show__more">{{ section.settings.episodes_heading | escape }}</h3>
+          <div class="qb54-pa-eps">
+            {%- for block in episode_blocks -%}
+              {%- assign ep = block.settings.video_id | strip -%}
+              {%- if ep == blank -%}{%- continue -%}{%- endif -%}
+              <a class="qb54-pa-ep" href="https://www.youtube.com/watch?v={{ ep | url_encode }}" target="_blank" rel="noopener" {{ block.shopify_attributes }}>
+                <span class="qb54-pa-ep__img">
+                  {%- comment %}theme-check-disable RemoteAsset{% endcomment -%}
+                  <img src="https://i.ytimg.com/vi/{{ ep | url_encode }}/hqdefault.jpg" alt="" width="480" height="360" loading="lazy">
+                  {%- comment %}theme-check-enable RemoteAsset{% endcomment -%}
+                  <span class="qb54-pa-ep__play">{{ i_yt_full }}</span>
+                </span>
+                <span class="qb54-pa-ep__t">{{ block.settings.title | escape }}</span>
+                <span class="qb54-pa-ep__w">Watch on YouTube{{ i_arrow }}</span>
+              </a>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
       </div>
     </section>
   {%- endif -%}
@@ -836,6 +1063,24 @@
         // The clicked swatch is now in a hidden panel; keep focus on its twin.
         var twin = $all('[data-qb54-pa-to="' + to + '"]', card).filter(function (b) { return b.offsetParent !== null; })[0];
         if (twin) twin.focus();
+      });
+    });
+
+    /* ---- YouTube player: show the thumbnail until clicked, then load the privacy-enhanced embed ---- */
+    $all('[data-qb54-pa-player]').forEach(function (player) {
+      var btn = player.querySelector('.qb54-pa-player__btn');
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        if (player.querySelector('iframe')) return;
+        var iframe = document.createElement('iframe');
+        iframe.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(player.getAttribute('data-id')) + '?autoplay=1&rel=0&playsinline=1';
+        iframe.title = player.getAttribute('data-title') || 'YouTube video';
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+        player.appendChild(iframe);
+        player.classList.add('is-playing');
+        iframe.focus();
       });
     });
 
@@ -1078,9 +1323,20 @@
   "settings": [
     { "type": "header", "content": "Partner" },
     { "type": "text", "id": "partner_name", "label": "Partner or show name", "default": "The Jake Asman Show" },
-    { "type": "image_picker", "id": "partner_image", "label": "Partner photo or logo", "info": "Square works best. A microphone icon shows when empty." },
+    { "type": "image_picker", "id": "partner_image", "label": "Partner avatar", "info": "Square headshot. Used in the top bar, badge and channel card." },
+    { "type": "text", "id": "partner_avatar_asset", "label": "Or bundled avatar file", "info": "Theme asset file name, used when no avatar is picked." },
+    { "type": "image_picker", "id": "partner_cutout", "label": "Partner cut-out photo", "info": "Transparent PNG/WebP of the partner. Fills the hero. Leave empty to show the product card instead." },
+    { "type": "text", "id": "partner_cutout_asset", "label": "Or bundled cut-out file", "info": "Theme asset file name, used when no cut-out is picked." },
+    { "type": "text", "id": "host_name", "label": "Host name", "info": "For the name plate and channel card. Defaults to the show name." },
+    { "type": "text", "id": "host_role", "label": "Host role", "default": "Host" },
+    { "type": "text", "id": "host_tagline", "label": "Name plate tag", "default": "Live on YouTube" },
     { "type": "url", "id": "partner_url", "label": "Partner channel link" },
-    { "type": "text", "id": "partner_url_label", "label": "Channel link label", "default": "Watch the show" },
+    { "type": "text", "id": "partner_url_label", "label": "Channel link label", "default": "Visit channel" },
+    { "type": "text", "id": "channel_handle", "label": "Channel handle", "info": "e.g. @JakeAsman" },
+    { "type": "text", "id": "channel_subs", "label": "Subscriber count", "info": "e.g. 84.3K. Update by hand; leave empty to hide." },
+    { "type": "text", "id": "channel_videos", "label": "Video count", "info": "e.g. 2.7K. Leave empty to hide." },
+    { "type": "textarea", "id": "channel_bio", "label": "Channel bio" },
+    { "type": "text", "id": "subscribe_label", "label": "Subscribe button", "default": "Subscribe" },
     { "type": "header", "content": "Offer" },
     { "type": "text", "id": "code", "label": "Discount code", "info": "Must exist in Shopify Admin > Discounts.", "default": "ASMAN" },
     { "type": "range", "id": "discount_percent", "label": "Discount percent", "min": 5, "max": 50, "step": 5, "unit": "%", "default": 15 },
@@ -1103,7 +1359,8 @@
     { "type": "text", "id": "hero_line", "label": "Line under the offer", "default": "QB54 for every listener" },
     { "type": "textarea", "id": "hero_text", "label": "Text" },
     { "type": "text", "id": "hero_cta", "label": "Button", "default": "Shop the deal" },
-    { "type": "text", "id": "hero_cta_2", "label": "Second button", "default": "Watch it in action" },
+    { "type": "text", "id": "hero_cta_2", "label": "Second button (no cut-out)", "default": "Watch it in action" },
+    { "type": "text", "id": "hero_cta_show", "label": "Second button (with cut-out)", "default": "Watch the show" },
     { "type": "text", "id": "proof_1", "label": "Proof 1", "default": "As seen on Shark Tank" },
     { "type": "text", "id": "rating_fallback", "label": "Rating text when no review data", "default": "Hundreds of 5-star reviews" },
     { "type": "text", "id": "proof_3", "label": "Proof 3", "default": "Free shipping on orders $225+" },
@@ -1112,9 +1369,14 @@
     { "type": "text", "id": "stock_note", "label": "Stock note", "default": "In stock, ships within 1 business day" },
     { "type": "text", "id": "returns_note", "label": "Returns note", "default": "30-day returns" },
     { "type": "text", "id": "ticker_items", "label": "Ticker", "info": "Separate with |" },
-    { "type": "header", "content": "Welcome card" },
-    { "type": "text", "id": "welcome_kicker", "label": "Kicker", "default": "Welcome, listeners of" },
-    { "type": "textarea", "id": "welcome_text", "label": "Text (the code is added at the end)", "default": "You heard it on the show. Now bring the game home. Your listener discount is waiting:" },
+    { "type": "header", "content": "The show" },
+    { "type": "text", "id": "show_eyebrow", "label": "Eyebrow", "default": "From the show" },
+    { "type": "inline_richtext", "id": "show_heading", "label": "Heading", "default": "Watch the show. <em>Get the deal.</em>" },
+    { "type": "textarea", "id": "show_text", "label": "Text" },
+    { "type": "text", "id": "featured_video_id", "label": "Featured YouTube video ID", "info": "The part after v= in the link, e.g. KshPbpNKsdk" },
+    { "type": "text", "id": "featured_title", "label": "Featured video title" },
+    { "type": "text", "id": "welcome_text", "label": "Code callout text", "default": "Your listener code" },
+    { "type": "text", "id": "episodes_heading", "label": "Episodes heading", "default": "More from the show" },
     { "type": "header", "content": "Game sets" },
     { "type": "product_list", "id": "sets", "label": "Game sets", "info": "The first three single-color sets also power the hero card.", "limit": 8 },
     { "type": "text", "id": "sets_eyebrow", "label": "Eyebrow", "default": "The deals" },
@@ -1159,6 +1421,15 @@
     { "type": "color", "id": "color_cream", "label": "Cream", "default": "#f4f2e8" }
   ],
   "blocks": [
+    {
+      "type": "episode",
+      "name": "YouTube episode",
+      "limit": 6,
+      "settings": [
+        { "type": "text", "id": "video_id", "label": "YouTube video ID", "info": "The part after v= in the link" },
+        { "type": "text", "id": "title", "label": "Title" }
+      ]
+    },
     {
       "type": "reel",
       "name": "Video",

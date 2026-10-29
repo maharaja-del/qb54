@@ -171,9 +171,33 @@
             "question": "What's your return policy?",
             "answer": "<p>Returns are accepted within 30 days on unused items in their original packaging. See our <a href=\"/pages/return-policy\">return policy</a> for full details.</p>"
           }
+        },
+        "ep_wilson": {
+          "type": "episode",
+          "settings": {
+            "video_id": "HsbenTnT4Fk",
+            "title": "Garrett Wilson Wants To Remain (And WIN) With The Jets!"
+          }
+        },
+        "ep_mougey": {
+          "type": "episode",
+          "settings": {
+            "video_id": "VKN-SO6zFJY",
+            "title": "Will Darren Mougey LEAD The Jets Next Head Coaching Search?"
+          }
+        },
+        "ep_analyst": {
+          "type": "episode",
+          "settings": {
+            "video_id": "LWkNCHxhzzA",
+            "title": "Jets Analyst Reveals What MUST Happen After Dolphins DISASTER!"
+          }
         }
       },
       "block_order": [
+        "ep_wilson",
+        "ep_mougey",
+        "ep_analyst",
         "reel_showdown",
         "reel_tailgate",
         "reel_tank",
@@ -198,8 +222,18 @@
       ],
       "settings": {
         "partner_name": "The Jake Asman Show",
+        "partner_avatar_asset": "qb54-asman-jake-avatar.webp",
+        "partner_cutout_asset": "qb54-asman-jake.webp",
+        "host_name": "Jake Asman",
+        "host_role": "Host · The Jake Asman Show",
+        "host_tagline": "Jets postgame · Live on YouTube",
         "partner_url": "https://www.youtube.com/@JakeAsman",
-        "partner_url_label": "Watch The Jake Asman Show",
+        "partner_url_label": "Visit channel",
+        "channel_handle": "@JakeAsman",
+        "channel_subs": "84.3K",
+        "channel_videos": "2.7K",
+        "channel_bio": "Sports broadcaster and media personality known for his passionate analysis of New York sports. Jets postgame shows, live on YouTube.",
+        "subscribe_label": "Subscribe",
         "code": "ASMAN",
         "discount_percent": 15,
         "auto_apply_code": true,
@@ -224,8 +258,7 @@
         "stock_note": "In stock, ships within 1 business day",
         "returns_note": "30-day returns",
         "ticker_items": "15% off with code ASMAN|Jake Asman Show listener deal|Free shipping on orders $225+|Ships in 1 business day|As seen on Shark Tank",
-        "welcome_kicker": "Welcome, listeners of",
-        "welcome_text": "You heard it after the game. Now bring the game home: QB54 sets up in 2 minutes, and your listener discount is waiting. Your code:",
+        "welcome_text": "Your listener code for 15% off",
         "sets": [
           "qb54-black-game-set",
           "qb54-navy-blue-game-set",
@@ -270,7 +303,14 @@
         "color_gold": "#fdc439",
         "color_navy": "#363a66",
         "color_night": "#12142b",
-        "color_cream": "#f4f2e8"
+        "color_cream": "#f4f2e8",
+        "hero_cta_show": "Watch Jake's show",
+        "show_eyebrow": "From The Jake Asman Show",
+        "show_heading": "Watch the show. <em>Get the deal.</em>",
+        "show_text": "Catch Jake breaking down every Jets game, then bring the game home with 15% off QB54.",
+        "featured_video_id": "KshPbpNKsdk",
+        "featured_title": "Jets vs. Dolphins: Postgame Reaction",
+        "episodes_heading": "More from the show"
       }
     },
     "footer_links": {
@@ -279,26 +319,47 @@
       "blocks": {
         "link_privacy": {
           "type": "link",
-          "settings": { "link_text": "Privacy Policy", "link_url": "https://playqb54.com/pages/privacy-policy" }
+          "settings": {
+            "link_text": "Privacy Policy",
+            "link_url": "https://playqb54.com/pages/privacy-policy"
+          }
         },
         "link_terms": {
           "type": "link",
-          "settings": { "link_text": "Terms of Service", "link_url": "https://playqb54.com/pages/terms-of-service" }
+          "settings": {
+            "link_text": "Terms of Service",
+            "link_url": "https://playqb54.com/pages/terms-of-service"
+          }
         },
         "link_return": {
           "type": "link",
-          "settings": { "link_text": "Return Policy", "link_url": "https://playqb54.com/pages/return-policy" }
+          "settings": {
+            "link_text": "Return Policy",
+            "link_url": "https://playqb54.com/pages/return-policy"
+          }
         },
         "link_refund": {
           "type": "link",
-          "settings": { "link_text": "Refund Policy", "link_url": "https://playqb54.com/pages/refund-policy" }
+          "settings": {
+            "link_text": "Refund Policy",
+            "link_url": "https://playqb54.com/pages/refund-policy"
+          }
         },
         "link_shipping": {
           "type": "link",
-          "settings": { "link_text": "Shipping Policy", "link_url": "https://playqb54.com/pages/shipping-policy" }
+          "settings": {
+            "link_text": "Shipping Policy",
+            "link_url": "https://playqb54.com/pages/shipping-policy"
+          }
         }
       },
-      "block_order": ["link_privacy", "link_terms", "link_return", "link_refund", "link_shipping"],
+      "block_order": [
+        "link_privacy",
+        "link_terms",
+        "link_return",
+        "link_refund",
+        "link_shipping"
+      ],
       "settings": {
         "section_bg": "#12142b",
         "section_padding_top": 30,
@@ -332,5 +393,9 @@
       }
     }
   },
-  "order": ["main-page", "partner", "footer_links"]
+  "order": [
+    "main-page",
+    "partner",
+    "footer_links"
+  ]
 }
