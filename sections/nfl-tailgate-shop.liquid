@@ -2,9 +2,14 @@
   assign available_teams = '|'
   assign initial_team = blank
   assign total_products = 0
+  # Categories whose collection is empty are skipped everywhere, so they never show a blank placeholder card.
+  assign active_category_count = 0
 
   for block in section.blocks
     assign category_collection = block.settings.collection
+    if category_collection != blank and category_collection.products_count > 0
+      assign active_category_count = active_category_count | plus: 1
+    endif
     if category_collection != blank
       assign total_products = total_products | plus: category_collection.products_count
 
@@ -1345,7 +1350,7 @@
 
         <div class="tailgate-hub-hero__meta" aria-label="Collection highlights">
           <div class="tailgate-hub-stat">
-            <strong>{{ section.blocks.size }}</strong>
+            <strong>{{ active_category_count }}</strong>
             <span>Product categories</span>
           </div>
           <div class="tailgate-hub-stat">
@@ -1361,8 +1366,18 @@
 
       <div class="tailgate-hub-hero__visual" aria-label="Tailgate product categories">
         <div class="tailgate-hero-stack">
-          {%- for block in section.blocks limit: 5 -%}
-            {%- assign sample_product = block.settings.collection.products.first -%}
+          {%- assign hero_cards = 0 -%}
+          {%- for block in section.blocks -%}
+            {%- liquid
+              if block.settings.collection == blank or block.settings.collection.products_count == 0
+                continue
+              endif
+              if hero_cards >= 5
+                break
+              endif
+              assign hero_cards = hero_cards | plus: 1
+              assign sample_product = block.settings.collection.products.first
+            -%}
             <a class="tailgate-hero-card" href="#choose-your-team" data-category-intent="{{ block.settings.category_key | escape }}">
               <span class="tailgate-hero-card__media">
                 {%- if sample_product.featured_image != blank -%}
@@ -1393,13 +1408,14 @@
   <div class="tailgate-category-ticker" aria-label="Available categories">
     <div class="tailgate-shell tailgate-category-ticker__inner">
       {%- for block in section.blocks -%}
+        {%- if block.settings.collection == blank or block.settings.collection.products_count == 0 -%}{%- continue -%}{%- endif -%}
         <span class="tailgate-category-ticker__item">{{ block.settings.label | escape }}</span>
       {%- endfor -%}
     </div>
   </div>
 
   {%- liquid
-    assign category_count = section.blocks.size
+    assign category_count = active_category_count
     case category_count
       when 1
         assign category_count_word = 'One'
@@ -1431,6 +1447,9 @@
         {%- for block in section.blocks -%}
           {%- liquid
             assign category_collection = block.settings.collection
+            if category_collection == blank or category_collection.products_count == 0
+              continue
+            endif
             assign sample_product = category_collection.products.first
           -%}
           <a
@@ -1583,6 +1602,7 @@
               All <span data-category-count>0</span>
             </button>
             {%- for block in section.blocks -%}
+              {%- if block.settings.collection == blank or block.settings.collection.products_count == 0 -%}{%- continue -%}{%- endif -%}
               <button class="tailgate-category-filter" type="button" data-category-filter="{{ block.settings.category_key | escape }}">
                 {{ block.settings.label | escape }} <span data-category-count>0</span>
               </button>
